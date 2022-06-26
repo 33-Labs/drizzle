@@ -200,7 +200,7 @@
     deepmerge "^4.2.2"
     sha3 "^2.1.4"
 
-"@onflow/transport-http@^1.1.0":
+"@onflow/transport-http@^1.1.0", "@onflow/transport-http@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@onflow/transport-http/-/transport-http-1.2.0.tgz#9578854e8c750cde6427168fc4d18be4137e881f"
   integrity sha512-+Qejt1flUpB1B4sS1uFA9RNuL5+ZrOXC/1EyH2UpwuTZ4MIN3ATCVWiGaHr+LydgHzcBKugkiQLxAVYbBtFq6A==

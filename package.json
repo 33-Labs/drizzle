@@ -12,6 +12,7 @@
     "@headlessui/react": "^1.6.5",
     "@heroicons/react": "^1.0.6",
     "@onflow/fcl": "^1.0.2",
+    "@onflow/transport-http": "^1.2.0",
     "@tailwindcss/forms": "^0.5.2",
     "decimal.js": "^10.3.1",
     "flow-native-token-registry": "^0.1.3",
