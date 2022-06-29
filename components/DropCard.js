@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from "next/image"
 
 export default function DropCard() {
   return (
@@ -11,14 +11,14 @@ export default function DropCard() {
       </div>
 
       <div className="w-full px-8 mb-4">
-        <label className='w-full font-flow text-sm text-gray-400'>
+        <label className="w-full font-flow text-sm text-gray-400">
           by 0x0001, @2022-06-22
         </label>
       </div>
 
       <div className="w-full px-8 mb-4">
-        <p className='w-full font-flow text-sm'>
-          Even before merging it, the main branch will start to fail because, while 0.24.0 is already published, it's not the most "recent" version. This means the workflow step fails.
+        <p className="w-full font-flow text-sm">
+          {`Even before merging it, the main branch will start to fail because, while 0.24.0 is already published, it"s not the most "recent" version. This means the workflow step fails.`}
         </p>
       </div>
 
