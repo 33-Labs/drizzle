@@ -8,38 +8,41 @@ export default function Banner() {
       </h1>
 
       <div className="flex gap-x-4">
-        <div className="flex flex-col p-4 items-stretch gap-y-6 justify-between basis-1/3 shadow-xl">
+        <div className="flex flex-col p-4 items-stretch gap-y-4 justify-between basis-1/3 shadow-xl">
+          <label className="font-flow font-bold text-lg text-center">nDrop</label>
           <p className="text-center text-gray-500">distribute specific amount of token to specific accounts</p>
           <Link href="/new_drop">
             <button
               type="button"
-              className="h-[60px] px-3 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+              className="h-12 px-3 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
               >
-              create drop
+              create
             </button>
           </Link>
         </div>
 
-        <div className="flex flex-col p-4 items-stretch gap-y-6 justify-between basis-1/3 shadow-xl">
+        <div className="flex flex-col p-4 items-stretch gap-y-4 justify-between basis-1/3 shadow-xl">
+          <label className="font-flow font-bold text-lg text-center">rDrop</label>
           <p className="text-center text-gray-500">distribute random amount of token to limited accounts in specific group, first come first service</p>
           {/* <Link href="/new_random_packet"> */}
             <button
               type="button"
-              className="h-[60px] px-3 text-base font-medium shadow-sm text-black bg-gray-300 hover:bg-gray-400"
+              className="h-12 px-3 text-base font-medium shadow-sm text-black bg-gray-300 hover:bg-gray-400"
               >
-              create random packet
+              coming soon
             </button>
           {/* </Link> */}
         </div> 
 
-        <div className="flex flex-col p-4 items-stretch gap-y-6 justify-between basis-1/3 shadow-xl">
+        <div className="flex flex-col p-4 items-stretch gap-y-4 justify-between basis-1/3 shadow-xl">
+          <label className="font-flow font-bold text-lg text-center">iDrop</label>
           <p className="text-center text-gray-500">distribute specific amount of token to limited accounts in specific group, first come first service</p>
           {/* <Link href="/new_random_packet"> */}
             <button
               type="button"
-              className="h-[60px] px-3 text-base font-medium shadow-sm text-black bg-gray-300 hover:bg-gray-400"
+              className="h-12 px-3 text-base font-medium shadow-sm text-black bg-gray-300 hover:bg-gray-400"
               >
-              create identical packet
+              coming soon
             </button>
           {/* </Link> */}
         </div> 

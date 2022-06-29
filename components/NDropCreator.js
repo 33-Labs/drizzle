@@ -4,13 +4,16 @@ import Link from 'next/link'
 import { Switch } from '@headlessui/react'
 
 import TokenSelector from "./TokenSelector"
+import ReactDatePicker from './DatePicker'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function DropCreator(props) {
+export default function NDropCreator(props) {
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
+  const [startDate, setStartDate] = useState(new Date())
+  const [endDate, setEndDate] = useState(new Date())
 
   return (
     <>
@@ -18,7 +21,7 @@ export default function DropCreator(props) {
         {/** title */}
         <div>
           <h1 className="font-flow font-semibold text-4xl text-center">
-            create drop
+            create nDrop
           </h1>
         </div>
 
@@ -98,8 +101,8 @@ export default function DropCreator(props) {
 
 
         {/** time limit */}
-        <div>
-          <div className="flex justify-between">
+        {/* <div>
+          <div className="flex justify-between mb-4">
             <label className="block text-2xl font-bold font-flow">
               time limit
             </label>
@@ -121,9 +124,19 @@ export default function DropCreator(props) {
               />
             </Switch>
           </div>
-          {timeLockEnabled ? <div>YES</div> : <div>NO</div>}
+          {timeLockEnabled ? 
+          <div className="flex justify-between gap-x-2">
+            <div className="flex items-center gap-x-2">
+              <label className="font-flow font-bold">start</label>
+              <ReactDatePicker date={startDate} setDate={setStartDate} />
+            </div>
 
-        </div>
+            <div className="flex items-center gap-x-2">
+              <label className="font-flow font-bold">end</label>
+              <ReactDatePicker date={endDate} setDate={setEndDate} />
+            </div>
+          </div> : null}
+        </div> */}
 
         
         {/** create button */}

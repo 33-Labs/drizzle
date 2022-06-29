@@ -5,7 +5,7 @@ import styles from '../styles/Home.module.css'
 // import * as fcl from "@onflow/fcl";
 
 import NavigationBar from '../components/NavigationBar'
-import Banner from '../components/Banner'
+import Landing from '../components/Landing'
 // import TokenSelector from '../components/TokenSelector'
 // import RecipientsInput from '../components/RecipientsInput'
 // import WalletConnector from '../components/WalletConnector';
@@ -18,7 +18,7 @@ export default function Home() {
       <meta property="og:title" content="drizzle | airdrop tool" key="title" />
     </Head>
     <div className="container mx-auto max-w-[680px] min-w-[380px] px-8">
-      <Banner />
+      <Landing />
     </div>
     </>
   )
