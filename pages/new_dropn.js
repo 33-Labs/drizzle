@@ -1,7 +1,7 @@
 import Head from 'next/head'
-import NDropCreator from '../components/NDropCreator'
+import DropNCreator from '../components/DropNCreator'
 
-export default function NewNDrop(props) {
+export default function NewDropN(props) {
   return (
     <>
       <Head>
@@ -9,7 +9,7 @@ export default function NewNDrop(props) {
         <meta property="og:title" content="drizzle | airdrop tool" key="title" />
       </Head>
       <div className="container mx-auto max-w-[680px] min-w-[380px] px-6">
-        <NDropCreator user={props.user} />
+        <DropNCreator user={props.user} />
       </div>
     </>
   )

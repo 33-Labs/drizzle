@@ -15,7 +15,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function NDropCreator(props) {
+export default function DropNCreator(props) {
   const router = useRouter()
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startDate, setStartDate] = useState(new Date())
@@ -34,7 +34,7 @@ export default function NDropCreator(props) {
         {/** title */}
         <div>
           <h1 className="font-flow font-semibold text-4xl text-center">
-            create nDrop
+            create dropN
           </h1>
         </div>
 
