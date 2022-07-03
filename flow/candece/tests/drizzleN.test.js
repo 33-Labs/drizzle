@@ -218,6 +218,7 @@ async function createValidAirdrop(_claims, _startAt, _endAt) {
   const dropName = "TEST"
   const description = "Hello World"
   const image = null
+  const url = null
   const tokenIssuer = Alice
   const tokenContractName = "FUSD"
   const tokenProviderPath = "fusdVault"
@@ -226,7 +227,7 @@ async function createValidAirdrop(_claims, _startAt, _endAt) {
   const tokenAmount = 150.0
 
   const args = [
-    dropName, description, image, claims, startAt, endAt,
+    dropName, description, image, url, claims, startAt, endAt,
     tokenIssuer, tokenContractName, tokenProviderPath,
     tokenBalancePath, tokenReceiverPath, tokenAmount
   ]

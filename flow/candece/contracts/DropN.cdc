@@ -20,6 +20,7 @@ pub contract DropN {
         pub let createdAt: UFix64
         pub let dropID: UInt64
         pub let image: String?
+        pub let url: String?
         pub let tokenInfo: Drizzle.TokenInfo
         pub let startAt: UFix64?
         pub let endAt: UFix64?
@@ -113,6 +114,7 @@ pub contract DropN {
             description: String,
             host: Address,
             image: String?,
+            url: String?,
             tokenInfo: Drizzle.TokenInfo,
             vault: @FungibleToken.Vault,
             claims: {Address: UFix64},
@@ -128,12 +130,19 @@ pub contract DropN {
                 .concat(", want ").concat(tokenVaultType.identifier))
             }
 
+            if let _startAt = startAt {
+                if let _endAt = endAt {
+                    assert(_startAt < _endAt, message: "endAt should greater than startAt")
+                }
+            }
+
             self.name = name
             self.description = description
             self.host = host
             self.createdAt = getCurrentBlock().timestamp
             self.dropID = self.uuid
             self.image = image
+            self.url = url
             self.dropVault <- vault
             self.claims = claims
             self.tokenInfo = tokenInfo
@@ -187,6 +196,7 @@ pub contract DropN {
             description: String,
             host: Address,
             image: String?,
+            url: String?,
             tokenInfo: Drizzle.TokenInfo,
             vault: @FungibleToken.Vault,
             claims: {Address: UFix64},
@@ -198,6 +208,7 @@ pub contract DropN {
                 description: description, 
                 host: host,
                 image: image,
+                url: url,
                 tokenInfo: tokenInfo,
                 vault: <- vault,
                 claims: claims,
