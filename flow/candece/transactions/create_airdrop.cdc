@@ -5,7 +5,7 @@ import FungibleToken from "../contracts/FungibleToken.cdc"
 transaction(
     name: String,
     description: String,
-    image: String,
+    image: String?,
     claims: {Address: UFix64},
     startAt: UFix64?,
     endAt: UFix64?,

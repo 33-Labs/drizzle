@@ -18,15 +18,23 @@ function classNames(...classes) {
 export default function DropNCreator(props) {
   const router = useRouter()
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
-  const [startDate, setStartDate] = useState(new Date())
-  const [endDate, setEndDate] = useState(new Date())
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
 
-  const [name, setName] = useState("name")
-  const [desc, setDesc] = useState("distribute specific amount of token to specific accounts")
-  const [token, setToken] = useState({symbol: "FLOW"})
+  const namePlaceholder = "The name of this drop"
+  const [name, setName] = useState(null)
+  const descPlaceholder = "Detail information about this drop"
+  const [desc, setDesc] = useState("")
+  const [token, setToken] = useState(null)
 
   const [banner, setBanner] = useState(null)
+
+  const [nameError, setNameError] = useState(null)
   const [bannerError, setBannerError] = useState(null)
+
+  const checkParams = () => {
+    return token && (name && name.trim() != "") && !bannerError
+  }
 
   return (
     <>
@@ -41,12 +49,12 @@ export default function DropNCreator(props) {
         {/** preview */}
         <div className="flex justify-center">
           <DropCard
-            name={name}
+            name={name ? name : namePlaceholder}
             host={props.user.loggedIn ? props.user.addr : "0x0001"}
             createdAt={"2022-12-17 03:48"}
-            description={desc}
+            description={desc ? desc : descPlaceholder}
             amount={1024.2048}
-            tokenSymbol={token && token.symbol}
+            tokenSymbol={token ? token.symbol : "FLOW"}
             isPreview={true}
             banner={banner}
           />
@@ -58,16 +66,19 @@ export default function DropNCreator(props) {
             {"banner"}
           </label>
           {bannerError ? 
-            <label className="text-red-500">image size should be less than 3MB</label> : null
+            <label className="text-red-500">{bannerError}</label> : null
           }
           <ImageSelector imageSelectedCallback={setBanner} imageErrorCallback={setBannerError}/>
         </div>
 
         {/** name */}
-        <div>
+        <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
             name
           </label>
+          {nameError ? 
+            <label className="text-red-500">{nameError}</label> : null
+          }
           <div className="mt-1">
             <input
               type="text"
@@ -77,6 +88,11 @@ export default function DropNCreator(props) {
               placeholder="the name of this drop"
               onChange={(event) => {
                 setName(event.target.value)
+                if (event.target.value.trim() == '') {
+                  setNameError("invalid name")
+                } else {
+                  setNameError(null)
+                }
               }}
             />
           </div>
@@ -84,7 +100,7 @@ export default function DropNCreator(props) {
 
 
         {/** description */}
-        <div>
+        <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
             description
           </label>
@@ -94,10 +110,11 @@ export default function DropNCreator(props) {
               name="description"
               id="description"
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+
               defaultValue={''}
               spellCheck={false}
               placeholder={
-                "you can input 120 characters at most"
+                "detail information about this drop"
               }
               onChange={(event) => {
                 setDesc(event.target.value)
@@ -180,8 +197,6 @@ export default function DropNCreator(props) {
           </div> : null}
         </div> */}
 
-
-        
         {/** create button */}
         <div>
           <button
@@ -189,8 +204,11 @@ export default function DropNCreator(props) {
             className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
             onClick={() => {
               if (props.user.loggedIn) {
-                router.push("123/drops/456")
-                console.log("do create")
+                if (checkParams()) {
+                  router.push("123/drops/456")
+                } else {
+                  console.log("invalid params")
+                }
               } else {
                 fcl.authenticate()
               }

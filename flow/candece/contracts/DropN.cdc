@@ -9,8 +9,8 @@ pub contract DropN {
 
     pub event ContractInitialized()
 
-    pub event DropClaimed(dropID: UInt64, name: String, host: Address, image: String, claimer: Address, amount: UFix64)
-    pub event DropCreated(dropID: UInt64, name: String, host: Address, image: String, description: String)
+    pub event DropClaimed(dropID: UInt64, name: String, host: Address, claimer: Address, tokenIdentifier: String, amount: UFix64)
+    pub event DropCreated(dropID: UInt64, name: String, host: Address, description: String, tokenIdentifier: String)
     pub event DropDestroyed(dropID: UInt64, name: String, host: Address)
 
     pub resource Drop: Drizzle.IDropPublic {
@@ -19,7 +19,7 @@ pub contract DropN {
         pub let host: Address
         pub let createdAt: UFix64
         pub let dropID: UInt64
-        pub let image: String
+        pub let image: String?
         pub let tokenInfo: Drizzle.TokenInfo
         pub let startAt: UFix64?
         pub let endAt: UFix64?
@@ -56,8 +56,8 @@ pub contract DropN {
                 dropID: self.dropID,
                 name: self.name,
                 host: self.host,
-                image: self.image,
                 claimer: claimer,
+                tokenIdentifier: self.tokenInfo.tokenIdentifier,
                 amount: amount
             )
         }
@@ -112,13 +112,16 @@ pub contract DropN {
             name: String,
             description: String,
             host: Address,
-            image: String,
+            image: String?,
             tokenInfo: Drizzle.TokenInfo,
             vault: @FungibleToken.Vault,
             claims: {Address: UFix64},
             startAt: UFix64?,
             endAt: UFix64?
         ) {
+            pre {
+                name.length > 0: "invalid name"
+            }
             let tokenVaultType = CompositeType(tokenInfo.providerIdentifier)!
             if !vault.isInstance(tokenVaultType) {
                 panic("invalid token info: get ".concat(vault.getType().identifier)
@@ -183,7 +186,7 @@ pub contract DropN {
             name: String,
             description: String,
             host: Address,
-            image: String,
+            image: String?,
             tokenInfo: Drizzle.TokenInfo,
             vault: @FungibleToken.Vault,
             claims: {Address: UFix64},
@@ -207,8 +210,8 @@ pub contract DropN {
                 dropID: dropID,
                 name: drop.name,
                 host: drop.host,
-                image: drop.image,
                 description: drop.description,
+                tokenIdentifier: tokenInfo.tokenIdentifier
             )
 
             self.drops[dropID] <-! drop

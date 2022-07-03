@@ -43,7 +43,7 @@ pub contract Drizzle {
         pub let host: Address
         pub let createdAt: UFix64
         pub let dropID: UInt64
-        pub let image: String
+        pub let image: String?
         pub let tokenInfo: TokenInfo
         pub let startAt: UFix64?
         pub let endAt: UFix64?

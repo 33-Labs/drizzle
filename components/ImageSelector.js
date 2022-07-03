@@ -9,8 +9,9 @@ export default function ImageSelector(props) {
   
   const handleImageChosen = (file) => {
     console.log(file.size)
-    if (file.size > 3000000) {
-      props.imageErrorCallback("image oversize")
+    // The transaction limit of flow is 1.5 MB
+    if (file.size > 1000000) {
+      props.imageErrorCallback("max size of banner is 1 MB")
       return false
     } else {
       fileReader = new FileReader()

@@ -24,7 +24,7 @@ export default function DropCard(props) {
       <MemoizeBanner banner={banner} />
       <div className="w-full px-8 mt-4">
         <label className="text-2xl font-bold font-flow break-words">
-          {(name && name.trim() != "") ? name : "name"}
+          {name}
         </label>
       </div>
 

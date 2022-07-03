@@ -217,7 +217,7 @@ async function createValidAirdrop(_claims, _startAt, _endAt) {
 
   const dropName = "TEST"
   const description = "Hello World"
-  const image = ""
+  const image = null
   const tokenIssuer = Alice
   const tokenContractName = "FUSD"
   const tokenProviderPath = "fusdVault"
