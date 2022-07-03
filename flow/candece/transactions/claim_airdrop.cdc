@@ -1,5 +1,5 @@
 import Drizzle from "../contracts/Drizzle.cdc"
-import DrizzleN from "../contracts/DrizzleN.cdc"
+import DropN from "../contracts/DropN.cdc"
 import FungibleToken from "../contracts/FungibleToken.cdc"
 import FUSD from "../contracts/FUSD.cdc"
 
@@ -10,8 +10,8 @@ transaction(dropID: UInt64, host: Address) {
 
     prepare(acct: AuthAccount) {
         let dropCollection = getAccount(host)
-            .getCapability(DrizzleN.DropCollectionPublicPath)
-            .borrow<&DrizzleN.DropCollection{Drizzle.IDropCollectionPublic}>()
+            .getCapability(DropN.DropCollectionPublicPath)
+            .borrow<&DropN.DropCollection{Drizzle.IDropCollectionPublic}>()
             ?? panic("Could not borrow the public DropCollection from the host")
         
         let airdrop = dropCollection.borrowPublicDropRef(dropID: dropID)

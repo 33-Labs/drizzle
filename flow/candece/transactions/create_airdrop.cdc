@@ -1,5 +1,5 @@
 import Drizzle from "../contracts/Drizzle.cdc"
-import DrizzleN from "../contracts/DrizzleN.cdc"
+import DropN from "../contracts/DropN.cdc"
 import FungibleToken from "../contracts/FungibleToken.cdc"
 
 transaction(
@@ -7,6 +7,8 @@ transaction(
     description: String,
     image: String,
     claims: {Address: UFix64},
+    startAt: UFix64?,
+    endAt: UFix64?,
     tokenIssuer: Address,
     tokenContractName: String,
     tokenProviderPath: String,
@@ -14,19 +16,19 @@ transaction(
     tokenReceiverPath: String,
     tokenAmount: UFix64 
 ) {
-    let dropCollection: &DrizzleN.DropCollection
+    let dropCollection: &DropN.DropCollection
     let vault: &FungibleToken.Vault
 
     prepare(acct: AuthAccount) {
-        if acct.borrow<&DrizzleN.DropCollection>(from: DrizzleN.DropCollectionStoragePath) == nil {
-            acct.save(<- DrizzleN.createEmptyDropCollection(), to: DrizzleN.DropCollectionStoragePath)
-            acct.link<&DrizzleN.DropCollection{Drizzle.IDropCollectionPublic}>(
-                DrizzleN.DropCollectionPublicPath,
-                target: DrizzleN.DropCollectionStoragePath
+        if acct.borrow<&DropN.DropCollection>(from: DropN.DropCollectionStoragePath) == nil {
+            acct.save(<- DropN.createEmptyDropCollection(), to: DropN.DropCollectionStoragePath)
+            acct.link<&DropN.DropCollection{Drizzle.IDropCollectionPublic}>(
+                DropN.DropCollectionPublicPath,
+                target: DropN.DropCollectionStoragePath
             )
         }
 
-        self.dropCollection = acct.borrow<&DrizzleN.DropCollection>(from: DrizzleN.DropCollectionStoragePath)
+        self.dropCollection = acct.borrow<&DropN.DropCollection>(from: DropN.DropCollectionStoragePath)
             ?? panic("Could not borrow DropCollection from signer")
 
         let providerPath = StoragePath(identifier: tokenProviderPath)!
@@ -51,7 +53,9 @@ transaction(
             image: image, 
             tokenInfo: tokenInfo,
             vault: <- dropVault, 
-            claims: claims
+            claims: claims,
+            startAt: startAt,
+            endAt: endAt
         )
     }
 }

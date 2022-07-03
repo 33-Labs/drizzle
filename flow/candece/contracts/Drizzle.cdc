@@ -45,6 +45,8 @@ pub contract Drizzle {
         pub let dropID: UInt64
         pub let image: String
         pub let tokenInfo: TokenInfo
+        pub let startAt: UFix64?
+        pub let endAt: UFix64?
 
         pub var isClaimable: Bool
 

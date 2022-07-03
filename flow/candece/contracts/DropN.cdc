@@ -1,7 +1,7 @@
 import Drizzle from "./Drizzle.cdc"
 import FungibleToken from "./FungibleToken.cdc"
 
-pub contract DrizzleN {
+pub contract DropN {
 
     pub let DropCollectionStoragePath: StoragePath
     pub let DropCollectionPublicPath: PublicPath
@@ -21,6 +21,8 @@ pub contract DrizzleN {
         pub let dropID: UInt64
         pub let image: String
         pub let tokenInfo: Drizzle.TokenInfo
+        pub let startAt: UFix64?
+        pub let endAt: UFix64?
 
         pub var isClaimable: Bool
 
@@ -33,6 +35,14 @@ pub contract DrizzleN {
                 self.isClaimable: "not claimable"
                 self.claimed[receiver.owner!.address] == nil: "claimed"
                 !(self.claims[receiver.owner!.address] == nil): "not eligible"
+            }
+
+            if let startAt = self.startAt {
+                assert(getCurrentBlock().timestamp >= startAt, message: "not start yet")
+            }
+
+            if let endAt = self.endAt {
+                assert(getCurrentBlock().timestamp <= endAt, message: "already ended")
             }
 
             let claimer = receiver.owner!.address
@@ -106,6 +116,8 @@ pub contract DrizzleN {
             tokenInfo: Drizzle.TokenInfo,
             vault: @FungibleToken.Vault,
             claims: {Address: UFix64},
+            startAt: UFix64?,
+            endAt: UFix64?
         ) {
             let tokenVaultType = CompositeType(tokenInfo.providerIdentifier)!
             if !vault.isInstance(tokenVaultType) {
@@ -122,6 +134,8 @@ pub contract DrizzleN {
             self.dropVault <- vault
             self.claims = claims
             self.tokenInfo = tokenInfo
+            self.startAt = startAt
+            self.endAt = endAt
 
             self.isClaimable = true
             self.claimed = {}
@@ -173,6 +187,8 @@ pub contract DrizzleN {
             tokenInfo: Drizzle.TokenInfo,
             vault: @FungibleToken.Vault,
             claims: {Address: UFix64},
+            startAt: UFix64?,
+            endAt: UFix64?
         ): UInt64 {
             let drop <- create Drop(
                 name: name, 
@@ -181,7 +197,9 @@ pub contract DrizzleN {
                 image: image,
                 tokenInfo: tokenInfo,
                 vault: <- vault,
-                claims: claims
+                claims: claims,
+                startAt: startAt,
+                endAt: endAt
             )
 
             let dropID = drop.dropID
@@ -212,9 +230,9 @@ pub contract DrizzleN {
     }
 
     init() {
-        self.DropCollectionStoragePath = /storage/drizzleNDropCollectionStoragePath
-        self.DropCollectionPublicPath = /public/drizzleNDropCollectionPublicPath
-        self.DropCollectionPrivatePath = /private/drizzleNDropCollectionPrivatePath
+        self.DropCollectionStoragePath = /storage/drizzleDropNCollectionStoragePath
+        self.DropCollectionPublicPath = /public/drizzleDropNCollectionPublicPath
+        self.DropCollectionPrivatePath = /private/drizzleDropNCollectionPrivatePath
 
         emit ContractInitialized()
     }

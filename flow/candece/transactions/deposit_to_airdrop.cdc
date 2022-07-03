@@ -1,12 +1,12 @@
-import DrizzleN from "../contracts/DrizzleN.cdc"
+import DropN from "../contracts/DropN.cdc"
 import FUSD from "../contracts/FUSD.cdc"
 
 transaction(dropID: UInt64, amount: UFix64) {
-    let airdrop: &DrizzleN.Drop
+    let airdrop: &DropN.Drop
     let vault: &FUSD.Vault
 
     prepare(acct: AuthAccount) {
-        let dropCollection = acct.borrow<&DrizzleN.DropCollection>(from: DrizzleN.DropCollectionStoragePath)
+        let dropCollection = acct.borrow<&DropN.DropCollection>(from: DropN.DropCollectionStoragePath)
             ?? panic("Could not borrow dropCollection")
 
         self.vault = acct.borrow<&FUSD.Vault>(from: /storage/fusdVault)

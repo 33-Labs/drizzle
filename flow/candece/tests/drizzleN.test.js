@@ -1,12 +1,12 @@
 import path from "path"
-import { 
-  emulator, 
+import {
+  emulator,
   init,
   shallPass,
-  getAccountAddress, 
+  getAccountAddress,
   mintFlow,
   getFlowBalance,
-  deployContractByName, 
+  deployContractByName,
   sendTransaction,
   executeScript,
   shallResolve
@@ -14,7 +14,7 @@ import {
 
 jest.setTimeout(1000000)
 
-describe("DrizzleN", () => {
+describe("DropN", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
@@ -67,7 +67,7 @@ describe("DrizzleN", () => {
     expect(error).toBeNull()
 
     await checkFUSDBalance(Bob, claimAmount)
-    
+
     const [, error2] = await claimAirdrop(dropID, Alice, Bob)
     expect(error2.includes("claimed")).toBeTruthy()
 
@@ -82,6 +82,48 @@ describe("DrizzleN", () => {
     expect(parseFloat(claimed[Bob])).toBe(postClaimed)
   })
 
+  it("Should not be ok for claimers to claim their reward before the drop start", async () => {
+    await deployContracts()
+    await createValidAirdrop(null, (new Date()).getTime() / 1000 + 1000, null)
+
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const [, error] = await claimAirdrop(dropID, Alice, Bob)
+    expect(error.includes("not start yet")).toBeTruthy()
+  })
+
+  it("Should not be ok for claimers to claim their reward after the drop end", async () => {
+    await deployContracts()
+    await createValidAirdrop(null, null, (new Date()).getTime() / 1000 - 1000)
+
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const [, error] = await claimAirdrop(dropID, Alice, Bob)
+    expect(error.includes("already ended")).toBeTruthy()
+  })
+
+  it("Should be ok for claimers to claim their reward within the time window", async () => {
+    await deployContracts()
+    await createValidAirdrop(null, (new Date().getTime() / 1000 - 1000), (new Date()).getTime() / 1000 + 1000)
+
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const [, error] = await claimAirdrop(dropID, Alice, Bob)
+    expect(error).toBeNull()
+  })
+
   it("DROP owner should be able to add claims", async () => {
     await deployContracts()
     await createValidAirdrop()
@@ -90,7 +132,7 @@ describe("DrizzleN", () => {
     const Dave = await getAccountAddress("Dave")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0]) 
+    const dropID = parseInt(Object.keys(drops)[0])
 
     const newClaims = {
       [Dave]: "10.0"
@@ -105,20 +147,20 @@ describe("DrizzleN", () => {
 
   it("DROP owner should be able to toggle claimable", async () => {
     await deployContracts()
-    await createValidAirdrop() 
+    await createValidAirdrop()
 
     const Alice = await getAccountAddress("Alice")
     const Bob = await getAccountAddress("Bob")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0]) 
+    const dropID = parseInt(Object.keys(drops)[0])
 
     await toggleClaimable(dropID, Alice)
     const preClaimable = await getClaimable(dropID, Alice)
     expect(preClaimable).toBeFalsy()
 
     const [, error] = await claimAirdrop(dropID, Alice, Bob)
-    expect(error.includes("not claimable")).toBeTruthy() 
+    expect(error.includes("not claimable")).toBeTruthy()
 
     await toggleClaimable(dropID, Alice)
     const postClaimable = await getClaimable(dropID, Alice)
@@ -130,20 +172,20 @@ describe("DrizzleN", () => {
 
   it("DROP owner should be able to add fund to DROP if the balance is insufficient", async () => {
     const Bob = await getAccountAddress("Alice")
-  
+
     const claims = {
       [Bob]: "300.0"
     }
-  
+
     await deployContracts()
-    await createValidAirdrop(claims) 
-  
+    await createValidAirdrop(claims)
+
     const Alice = await getAccountAddress("Alice")
     const drops = await getAllDrops(Alice)
     const dropID = parseInt(Object.keys(drops)[0])
-  
+
     const [, error] = await claimAirdrop(dropID, Alice, Bob)
-    expect(error.includes("must be less than or equal than")).toBeTruthy() 
+    expect(error.includes("must be less than or equal than")).toBeTruthy()
 
     const [, error2] = await depositToAirdrop(dropID, Alice, "300.0")
     expect(error2).toBeNull()
@@ -153,41 +195,44 @@ describe("DrizzleN", () => {
   })
 })
 
-async function createValidAirdrop(_claims) {
-    const Alice = await getAccountAddress("Alice")
-    await setupFUSDVault(Alice)
-    await mintFlow(Alice, 100.0)
+async function createValidAirdrop(_claims, _startAt, _endAt) {
+  const Alice = await getAccountAddress("Alice")
+  await setupFUSDVault(Alice)
+  await mintFlow(Alice, 100.0)
 
-    const fusdAmount = 1000.0
-    await mintFUSD(Alice, fusdAmount, Alice)
-    await checkFUSDBalance(Alice, fusdAmount)
+  const fusdAmount = 1000.0
+  await mintFUSD(Alice, fusdAmount, Alice)
+  await checkFUSDBalance(Alice, fusdAmount)
 
-    const Bob = await getAccountAddress("Bob")
-    const Carl = await getAccountAddress("Carl")
+  const Bob = await getAccountAddress("Bob")
+  const Carl = await getAccountAddress("Carl")
 
-    const claims = _claims ?? {
-      [Bob]: "100.0",
-      [Carl]: "50.0"
-    }
+  const claims = _claims ?? {
+    [Bob]: "100.0",
+    [Carl]: "50.0"
+  }
 
-    const dropName = "TEST"
-    const description = "Hello World"
-    const image = ""
-    const tokenIssuer = Alice
-    const tokenContractName = "FUSD"
-    const tokenProviderPath = "fusdVault"
-    const tokenBalancePath = "fusdBalance"
-    const tokenReceiverPath = "fusdReceiver"
-    const tokenAmount = 150.0
+  const startAt = _startAt ?? null
+  const endAt = _endAt ?? null
 
-    const args = [
-      dropName, description, image, claims,
-      tokenIssuer, tokenContractName, tokenProviderPath,
-      tokenBalancePath, tokenReceiverPath, tokenAmount
-    ]
+  const dropName = "TEST"
+  const description = "Hello World"
+  const image = ""
+  const tokenIssuer = Alice
+  const tokenContractName = "FUSD"
+  const tokenProviderPath = "fusdVault"
+  const tokenBalancePath = "fusdBalance"
+  const tokenReceiverPath = "fusdReceiver"
+  const tokenAmount = 150.0
 
-    await createAirdrop(Alice, args)
-    await checkFUSDBalance(Alice, fusdAmount - tokenAmount)
+  const args = [
+    dropName, description, image, claims, startAt, endAt,
+    tokenIssuer, tokenContractName, tokenProviderPath,
+    tokenBalancePath, tokenReceiverPath, tokenAmount
+  ]
+
+  await createAirdrop(Alice, args)
+  await checkFUSDBalance(Alice, fusdAmount - tokenAmount)
 }
 
 // Helpers
@@ -195,12 +240,12 @@ async function createValidAirdrop(_claims) {
 async function deployContracts() {
   const Alice = await getAccountAddress("Alice")
   await deploy(Alice, "Drizzle")
-  await deploy(Alice, "DrizzleN")
+  await deploy(Alice, "DropN")
   await deploy(Alice, "FUSD")
 }
 
 async function deploy(deployer, contractName) {
-  const [, error] = await deployContractByName({ to: deployer, name: contractName})
+  const [, error] = await deployContractByName({ to: deployer, name: contractName })
   expect(error).toBeNull()
 }
 
@@ -218,13 +263,13 @@ async function mintFUSD(minter, amount, recipient) {
 }
 
 async function getFUSDBalance(account) {
-  const [result, err] = await shallResolve(executeScript({name: "get_fusd_balance", args: [account]}))
+  const [result, err] = await shallResolve(executeScript({ name: "get_fusd_balance", args: [account] }))
   return parseFloat(result)
 }
 
 async function checkFUSDBalance(account, expectedBalance) {
   const balance = await getFUSDBalance(account)
-  expect(balance).toBe(expectedBalance) 
+  expect(balance).toBe(expectedBalance)
 }
 
 // AirDrop
@@ -234,7 +279,7 @@ async function checkFUSDBalance(account, expectedBalance) {
 async function createAirdrop(host, args) {
   const signers = [host]
   const name = "create_airdrop"
-  const [tx, error] = await sendTransaction({name: name, signers: signers, args: args})
+  const [tx, error] = await sendTransaction({ name: name, signers: signers, args: args })
   expect(error).toBeNull()
 }
 
@@ -242,28 +287,28 @@ async function claimAirdrop(dropID, host, claimer) {
   const signers = [claimer]
   const name = "claim_airdrop"
   const args = [dropID, host]
-  return await sendTransaction({name: name, signers: signers, args: args})
+  return await sendTransaction({ name: name, signers: signers, args: args })
 }
 
 async function depositToAirdrop(dropID, host, amount) {
   const signers = [host]
   const name = "deposit_to_airdrop"
   const args = [dropID, amount]
-  return await sendTransaction({name: name, signers: signers, args: args})
+  return await sendTransaction({ name: name, signers: signers, args: args })
 }
 
 async function toggleClaimable(dropID, host) {
   const signers = [host]
   const name = "toggle_claimable"
   const args = [dropID]
-  return await sendTransaction({name: name, signers: signers, args: args})
+  return await sendTransaction({ name: name, signers: signers, args: args })
 }
 
 async function addClaims(dropID, host, newClaims) {
   const signers = [host]
   const name = "add_claims"
   const args = [dropID, newClaims]
-  return await sendTransaction({name: name, signers: signers, args: args})
+  return await sendTransaction({ name: name, signers: signers, args: args })
 }
 
 // ---- scripts ----
@@ -271,7 +316,7 @@ async function addClaims(dropID, host, newClaims) {
 async function getAllDrops(targetAccount) {
   const name = "get_all_drops"
   const args = [targetAccount]
-  const [result, error] = await executeScript({name: name, args: args})
+  const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
   return result
 }
@@ -279,7 +324,7 @@ async function getAllDrops(targetAccount) {
 async function getClaimAmount(dropID, host, claimer) {
   const name = "get_claim_amount"
   const args = [dropID, host, claimer]
-  const [result, error] = await executeScript({name: name, args: args})
+  const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
   return result
 }
@@ -287,7 +332,7 @@ async function getClaimAmount(dropID, host, claimer) {
 async function getDropVaultBalance(dropID, host) {
   const name = "get_drop_vault_balance"
   const args = [dropID, host]
-  const [result, error] = await executeScript({name: name, args: args})
+  const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
   return result
 }
@@ -295,7 +340,7 @@ async function getDropVaultBalance(dropID, host) {
 async function hasClaimedDrop(dropID, host, claimer) {
   const name = "has_claimed_drop"
   const args = [dropID, host, claimer]
-  const [result, error] = await executeScript({name: name, args: args})
+  const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
   return result
 }
@@ -303,7 +348,7 @@ async function hasClaimedDrop(dropID, host, claimer) {
 async function getClaimed(dropID, host) {
   const name = "get_claimed"
   const args = [dropID, host]
-  const [result, error] = await executeScript({name: name, args: args})
+  const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
   return result
 }
@@ -311,7 +356,7 @@ async function getClaimed(dropID, host) {
 async function getClaimable(dropID, host) {
   const name = "get_claimable"
   const args = [dropID, host]
-  const [result, error] = await executeScript({name: name, args: args})
+  const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
   return result
 }

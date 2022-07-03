@@ -1,13 +1,13 @@
-import DrizzleN from "../contracts/DrizzleN.cdc"
+import DropN from "../contracts/DropN.cdc"
 
 transaction(
     dropID: UInt64, 
     newClaims: {Address: UFix64}
 ) {
-    let airdrop: &DrizzleN.Drop
+    let airdrop: &DropN.Drop
     
     prepare(acct: AuthAccount) {
-        let dropCollection = acct.borrow<&DrizzleN.DropCollection>(from: DrizzleN.DropCollectionStoragePath)
+        let dropCollection = acct.borrow<&DropN.DropCollection>(from: DropN.DropCollectionStoragePath)
             ?? panic("Could not borrow dropCollection")
 
         self.airdrop = dropCollection.borrowDropRef(dropID: dropID)!
