@@ -18,7 +18,7 @@ export default function Drop() {
         <title>drizzle | airdrop tool</title>
         <meta property="og:title" content="drizzle | airdrop tool" key="title" />
       </Head>
-      <div className="container mx-auto max-w-[680px] min-w-[380px] flex flex-col items-center justify-center px-8">
+      <div className="container mx-auto max-w-[680px] min-w-[380px] flex flex-col items-center justify-center px-6">
         <DropCard />
         <ShareCard />
         <StatsCard />

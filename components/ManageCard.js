@@ -4,8 +4,8 @@ export default function ManageCard() {
   return (
     <>
     <label className="text-2xl font-bold font-flow">manage this drop</label>
-      <div className="mt-5 mb-10 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-y-2 items-center justify-start">
-        <div className="w-full flex justify-between gap-x-2">
+      <div className="w-full mt-5 mb-10 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-y-2 items-center justify-start">
+        <div className="w-full flex justify-between gap-x-3">
           <button
             type="button"
             className="min-h-[60px] basis-1/3 px-3 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
@@ -29,7 +29,7 @@ export default function ManageCard() {
         <div className="mt-4 w-full items-start">
           <label className="w-full text-lg font-bold font-flow">deposit to drop</label>
         </div>
-        <div className="w-full flex justify-between gap-x-2">
+        <div className="w-full flex justify-between gap-x-3">
             <input
               type="number"
               name="deposit"
@@ -61,7 +61,7 @@ export default function ManageCard() {
           />
           <button
             type="button"
-            className="mt-3 h-12 w-24 px-3 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            className="mt-4 h-12 w-24 px-3 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
             >
             add
           </button>

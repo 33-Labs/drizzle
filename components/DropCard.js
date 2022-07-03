@@ -2,7 +2,7 @@ import Image from "next/image"
 
 export default function DropCard() {
   return (
-    <div className="flex flex-col max-w-[360px] min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-stretch">
+    <div className="flex flex-col max-w-[480px] min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-stretch">
       <div className="w-full h-[200px] bg-drizzle-green relative">
         <Image src="/drizzle.png" alt="" layout="fill" objectFit="cover" />
       </div>
