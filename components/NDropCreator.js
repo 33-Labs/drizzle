@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 import Link from 'next/link'
 import { Switch } from '@headlessui/react'
+import * as fcl from "@onflow/fcl"
 
 import TokenSelector from "./TokenSelector"
 import ReactDatePicker from './DatePicker'
-import ImageUploader from './ImageUploader'
+import ImageSelector from './ImageSelector'
 import DropCard from './DropCard'
 import Decimal from 'decimal.js'
 
@@ -14,15 +16,17 @@ function classNames(...classes) {
 }
 
 export default function NDropCreator(props) {
+  const router = useRouter()
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
 
   const [name, setName] = useState("name")
   const [desc, setDesc] = useState("distribute specific amount of token to specific accounts")
-  const [amount, setAmount] = useState(new Decimal(0))
   const [token, setToken] = useState({symbol: "FLOW"})
+
   const [banner, setBanner] = useState(null)
+  const [bannerError, setBannerError] = useState(null)
 
   return (
     <>
@@ -38,10 +42,10 @@ export default function NDropCreator(props) {
         <div className="flex justify-center">
           <DropCard
             name={name}
-            host={"0x0001"}
-            createdAt={"2022-06-22"}
+            host={props.user.loggedIn ? props.user.addr : "0x0001"}
+            createdAt={"2022-12-17 03:48"}
             description={desc}
-            amount={amount.toString()}
+            amount={1024.2048}
             tokenSymbol={token && token.symbol}
             isPreview={true}
             banner={banner}
@@ -49,11 +53,14 @@ export default function NDropCreator(props) {
         </div>
 
         {/** image uploader */}
-        <div>
-          <label className="block text-2xl font-bold font-flow mb-2">
-            banner
+        <div className="flex flex-col gap-y-2">
+          <label className="block text-2xl font-bold font-flow">
+            {"banner"}
           </label>
-          <ImageUploader imageCallback={setBanner}/>
+          {bannerError ? 
+            <label className="text-red-500">image size should be less than 3MB</label> : null
+          }
+          <ImageSelector imageSelectedCallback={setBanner} imageErrorCallback={setBannerError}/>
         </div>
 
         {/** name */}
@@ -84,8 +91,8 @@ export default function NDropCreator(props) {
           <div className="mt-1">
             <textarea
               rows={4}
-              name="records"
-              id="records"
+              name="description"
+              id="description"
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               defaultValue={''}
               spellCheck={false}
@@ -105,6 +112,7 @@ export default function NDropCreator(props) {
           <TokenSelector 
             user={props.user}
             className="w-full" 
+            onTokenSelected={setToken}
           />
         </div>
 
@@ -176,16 +184,21 @@ export default function NDropCreator(props) {
         
         {/** create button */}
         <div>
-          <Link href="/0x123/drop/123">
-            <button
-              type="button"
-              className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
-              >
-              create
-            </button>
-          </Link>
+          <button
+            type="button"
+            className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            onClick={() => {
+              if (props.user.loggedIn) {
+                router.push("123/drops/456")
+                console.log("do create")
+              } else {
+                fcl.authenticate()
+              }
+            }}
+            >
+            {props.user.loggedIn ? "create" : "connect wallet"}
+          </button>
         </div>
-
       </div>
     </>
   )

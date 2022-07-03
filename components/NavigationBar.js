@@ -1,12 +1,15 @@
 import Image from "next/image"
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import * as fcl from "@onflow/fcl"
 import config from "../flow/config.js"
 import publicConfig from "../publicConfig.js"
+import { LogoutIcon } from "@heroicons/react/outline"
 
 export default function NavigationBar(props) {
   const user = props.user
+  const router = useRouter()
 
   const AuthedState = () => {
     return (
@@ -21,10 +24,12 @@ export default function NavigationBar(props) {
         </label>
         <button
           type="button"
-          className="h-12 w-10 px-1 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
-          onClick={fcl.unauthenticate}
-          >
-            {"->"}
+          className="h-5 w-5"
+          onClick={() => {
+            fcl.unauthenticate()
+            router.push("/")
+          }}>
+            <LogoutIcon />
         </button>
       </div>
     )

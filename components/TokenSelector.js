@@ -30,7 +30,6 @@ export default function TokenSelector(props) {
         token.id = `${token.address}.${token.contractName}`
         return token
       })
-      console.log(tokenList)
       setTokens(tokenList)
     })
   }, [setTokens])
@@ -49,7 +48,9 @@ export default function TokenSelector(props) {
         setBalance(0)
         drizzleService.queryBalance(token, props.user.addr).then((balance) => {
           setBalance(balance)
-          props.onBalanceFetched(balance)
+          if (props.onBalanceFetched) {
+            props.onBalanceFetched(balance)
+          }
         })
   
         setSelectedToken(token)
@@ -60,7 +61,7 @@ export default function TokenSelector(props) {
       {props.user && props.user.loggedIn ? (selectedToken 
         ? <Combobox.Label className="block text-md font-flow leading-10">your balance is {balance.toString()} {selectedToken.symbol}</Combobox.Label>
         : <Combobox.Label className="block text-md font-flow leading-10">select the token to transfer</Combobox.Label>
-      ) : null
+      ) : <Combobox.Label className="block text-md font-flow leading-10">connect wallet to select token</Combobox.Label>
       }
       <div className="relative mt-1">
         <Combobox.Input

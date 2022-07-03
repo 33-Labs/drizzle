@@ -10,7 +10,7 @@ import Landing from '../components/Landing'
 // import RecipientsInput from '../components/RecipientsInput'
 // import WalletConnector from '../components/WalletConnector';
 
-export default function Home() {
+export default function Home(props) {
   return (
     <>
     <Head>
@@ -18,7 +18,7 @@ export default function Home() {
       <meta property="og:title" content="drizzle | airdrop tool" key="title" />
     </Head>
     <div className="container mx-auto max-w-[680px] min-w-[380px] px-6">
-      <Landing />
+      <Landing user={props.user} auth={props.auth}/>
     </div>
     </>
   )

@@ -25,7 +25,7 @@ export default function ShareCard() {
               id="url"
               className="focus:ring-0 focus:border-drizzle-green bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-sm"
               contentEditable={false}
-              value={"https://www.drizzle.com/121212/1212/1212/1212"}
+              defaultValue={"https://www.drizzle.com/121212/1212/1212/1212"}
             />
           </div>
           <button

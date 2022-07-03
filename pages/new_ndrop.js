@@ -1,8 +1,7 @@
 import Head from 'next/head'
 import NDropCreator from '../components/NDropCreator'
 
-export default function NewDrop(props) {
-  console.log(props)
+export default function NewNDrop(props) {
   return (
     <>
       <Head>

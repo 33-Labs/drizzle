@@ -9,6 +9,7 @@ import Footer from '../components/Footer'
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState({loggedIn: null})
+
   useEffect(() => fcl.currentUser.subscribe(setUser), [])
 
   return (
@@ -20,7 +21,6 @@ function MyApp({ Component, pageProps }) {
       <Component {...pageProps} user={user} />
       <Footer />
     </>
-
   )
 
 }
