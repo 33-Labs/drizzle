@@ -5,6 +5,9 @@ import { Switch } from '@headlessui/react'
 
 import TokenSelector from "./TokenSelector"
 import ReactDatePicker from './DatePicker'
+import ImageUploader from './ImageUploader'
+import DropCard from './DropCard'
+import Decimal from 'decimal.js'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -15,6 +18,12 @@ export default function NDropCreator(props) {
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
 
+  const [name, setName] = useState("name")
+  const [desc, setDesc] = useState("distribute specific amount of token to specific accounts")
+  const [amount, setAmount] = useState(new Decimal(0))
+  const [token, setToken] = useState({symbol: "FLOW"})
+  const [banner, setBanner] = useState(null)
+
   return (
     <>
       <div className="flex flex-col gap-y-10">
@@ -23,6 +32,28 @@ export default function NDropCreator(props) {
           <h1 className="font-flow font-semibold text-4xl text-center">
             create nDrop
           </h1>
+        </div>
+
+        {/** preview */}
+        <div className="flex justify-center">
+          <DropCard
+            name={name}
+            host={"0x0001"}
+            createdAt={"2022-06-22"}
+            description={desc}
+            amount={amount.toString()}
+            tokenSymbol={token && token.symbol}
+            isPreview={true}
+            banner={banner}
+          />
+        </div>
+
+        {/** image uploader */}
+        <div>
+          <label className="block text-2xl font-bold font-flow mb-2">
+            banner
+          </label>
+          <ImageUploader imageCallback={setBanner}/>
         </div>
 
         {/** name */}
@@ -37,6 +68,9 @@ export default function NDropCreator(props) {
               id="name"
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               placeholder="the name of this drop"
+              onChange={(event) => {
+                setName(event.target.value)
+              }}
             />
           </div>
         </div>
@@ -59,7 +93,7 @@ export default function NDropCreator(props) {
                 "you can input 120 characters at most"
               }
               onChange={(event) => {
-                // if event.vaule
+                setDesc(event.target.value)
               }}
             />
           </div>
@@ -138,6 +172,7 @@ export default function NDropCreator(props) {
           </div> : null}
         </div> */}
 
+
         
         {/** create button */}
         <div>
@@ -146,10 +181,11 @@ export default function NDropCreator(props) {
               type="button"
               className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
               >
-              create drop
+              create
             </button>
           </Link>
         </div>
+
       </div>
     </>
   )
