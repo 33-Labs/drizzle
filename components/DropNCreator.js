@@ -15,6 +15,18 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+function isValidHttpUrl(string) {
+  let url
+  
+  try {
+    url = new URL(string)
+  } catch (_) {
+    return false
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:"
+}
+
 export default function DropNCreator(props) {
   const router = useRouter()
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
@@ -25,29 +37,56 @@ export default function DropNCreator(props) {
   const [name, setName] = useState(null)
   const descPlaceholder = "Detail information about this drop"
   const [desc, setDesc] = useState("")
+  const [url, setURL] = useState(null)
   const [token, setToken] = useState(null)
 
   const [banner, setBanner] = useState(null)
+  const [bannerSize, setBannerSize] = useState(0)
 
-  const [nameError, setNameError] = useState(null)
-  const [bannerError, setBannerError] = useState(null)
+  const [paramsError, setParamsError] = useState(null)
 
   const checkParams = () => {
-    return token && (name && name.trim() != "") && !bannerError
+    if (!name || name.trim() == "") {
+      return [false, "invalid name"]
+    }
+
+    if (url && !isValidHttpUrl(url)) {
+      return [false, "invalid url"]
+    }
+
+    if (!token) {
+      return [false, "invalid token"]
+    }
+
+    if (bannerSize > 1000000) {
+      return [false, "banner oversize"]
+    }
+
+    return [true, null]
+  }
+
+  const handleSubmit = (event) => {
+    if (props.user && props.user.loggedIn) {
+      const [valid, error] = checkParams()
+      if (valid) {
+        router.push("/123/drops/456")
+      } else {
+        setParamsError(error)
+      }
+    } else {
+      fcl.authenticate()
+    }
   }
 
   return (
     <>
-      <div className="flex flex-col gap-y-10">
         {/** title */}
-        <div>
-          <h1 className="font-flow font-semibold text-4xl text-center">
-            create dropN
-          </h1>
-        </div>
+        <h1 className="font-flow font-semibold text-4xl text-center mb-10">
+          create dropN
+        </h1>
 
         {/** preview */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-10">
           <DropCard
             name={name ? name : namePlaceholder}
             host={props.user.loggedIn ? props.user.addr : "0x0001"}
@@ -60,15 +99,19 @@ export default function DropNCreator(props) {
           />
         </div>
 
+        <div className="flex flex-col gap-y-10">
+
         {/** image uploader */}
-        <div className="flex flex-col gap-y-2">
+        <div className="flex flex-col gap-y-1">
           <label className="block text-2xl font-bold font-flow">
             {"banner"}
           </label>
-          {bannerError ? 
-            <label className="text-red-500">{bannerError}</label> : null
-          }
-          <ImageSelector imageSelectedCallback={setBanner} imageErrorCallback={setBannerError}/>
+          {/** The transaction limit of flow is 1.5 MB */}
+          <label className="block text-md font-flow leading-10">image size should be less than 1 MB</label>
+          <ImageSelector imageSelectedCallback={(_banner, _bannerSize) => {
+            setBanner(_banner)
+            setBannerSize(_bannerSize)
+          }} />
         </div>
 
         {/** name */}
@@ -76,23 +119,16 @@ export default function DropNCreator(props) {
           <label className="block text-2xl font-bold font-flow">
             name
           </label>
-          {nameError ? 
-            <label className="text-red-500">{nameError}</label> : null
-          }
           <div className="mt-1">
             <input
               type="text"
               name="name"
               id="name"
+              required
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               placeholder="the name of this drop"
               onChange={(event) => {
                 setName(event.target.value)
-                if (event.target.value.trim() == '') {
-                  setNameError("invalid name")
-                } else {
-                  setNameError(null)
-                }
               }}
             />
           </div>
@@ -122,6 +158,26 @@ export default function DropNCreator(props) {
             />
           </div>
         </div>
+
+        {/** url */}
+        <div className="flex flex-col gap-y-2">
+          <label className="block text-2xl font-bold font-flow">
+            url
+          </label>
+          <div className="mt-1">
+            <input
+              type="url"
+              name="url"
+              id="url"
+              pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
+              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              placeholder="the link about this drop"
+              onChange={(event) => {
+                setURL(event.target.value)
+              }}
+            />
+          </div>
+        </div> 
 
 
         {/** token selector */}
@@ -198,26 +254,20 @@ export default function DropNCreator(props) {
         </div> */}
 
         {/** create button */}
-        <div>
+        <div className="flex gap-x-4 items-center">
           <button
             type="button"
             className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
-            onClick={() => {
-              if (props.user.loggedIn) {
-                if (checkParams()) {
-                  router.push("123/drops/456")
-                } else {
-                  console.log("invalid params")
-                }
-              } else {
-                fcl.authenticate()
-              }
-            }}
+            onClick={handleSubmit}
             >
             {props.user.loggedIn ? "create" : "connect wallet"}
           </button>
+          {
+            paramsError ?
+            <label className="font-flow text-md text-red-500">{paramsError}</label> : null
+          }
         </div>
-      </div>
+        </div>
     </>
   )
 }

@@ -1,24 +1,13 @@
 export default function ImageSelector(props) {
-  let fileReader
-
-  const handleImageRead = (e) => {
-    const content = fileReader.result
-    props.imageErrorCallback(null)
-    props.imageSelectedCallback(content)
-  }
-  
   const handleImageChosen = (file) => {
     console.log(file.size)
-    // The transaction limit of flow is 1.5 MB
-    if (file.size > 1000000) {
-      props.imageErrorCallback("max size of banner is 1 MB")
-      return false
-    } else {
-      fileReader = new FileReader()
-      fileReader.onloadend = handleImageRead
-      fileReader.readAsDataURL(file)
+    const fileReader = new FileReader()
+    fileReader.onloadend = (e) => {
+      const content = fileReader.result
+      props.imageSelectedCallback(content, file.size)
     }
-  };
+    fileReader.readAsDataURL(file)
+  }
 
   return (
     <label>
