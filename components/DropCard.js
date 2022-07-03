@@ -12,8 +12,15 @@ const MemoizeBanner = React.memo(({banner}) => {
 
 export default function DropCard(props) {
   const isPreview = props.isPreview || true
+
+  const createdAt = props.createdAt || "unknown"
+  const timeLockEnabled = props.timeLockEnabled || false
+  const timezone = props.timezone
+  const startAt = props.startAt
+  const endAt = props.endAt
+
   const name = props.name
-  const hostInfo = `by ${props.host}@${props.createdAt}`
+  const host = props.host || "unknown"
   const desc = props.description
   const amount = props.amount
   const symbol = props.tokenSymbol
@@ -28,19 +35,33 @@ export default function DropCard(props) {
         </label>
       </div>
 
-      <div className="w-full px-8 mb-4">
+      <div className="w-full px-8 mb-4 flex flex-col">
         <label className="w-full font-flow text-sm text-gray-400 break-words">
-          {"by "}
+          {"created by "}
         <span> 
           <a 
-            href={`${publicConfig.flowscanURL}/account/${props.host ?? "0x0001"}`}
+            href={`${publicConfig.flowscanURL}/account/${host}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-black underline decoration-drizzle-green decoration-2">{props.host ?? "0x0001"}
+            className="text-black underline decoration-drizzle-green decoration-2">{host}
           </a>
         </span>
-          {`@${props.createdAt}`}
         </label>
+        <label className="w-full font-flow text-sm text-gray-400 break-words">
+          {`created at ${createdAt.toLocaleString()} (${timezone})`}
+        </label>
+        {timeLockEnabled ? (
+          startAt ? 
+          <label className="w-full font-flow text-sm text-gray-400 break-words" id="start_at">
+            {`start at ${startAt.toLocaleString()} (${timezone})`}
+          </label> : null
+        ) : null}
+        {timeLockEnabled ? (
+          endAt ? 
+          <label className="w-full font-flow text-sm text-gray-400 break-words" id="end_at">
+            {`end at ${endAt.toLocaleString()} (${timezone})`}
+          </label> : null
+        ) : null}
       </div>
 
       <div className="w-full px-8 mb-4">

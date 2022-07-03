@@ -6,7 +6,6 @@ import { Switch } from '@headlessui/react'
 import * as fcl from "@onflow/fcl"
 
 import TokenSelector from "./TokenSelector"
-import ReactDatePicker from './DatePicker'
 import ImageSelector from './ImageSelector'
 import DropCard from './DropCard'
 import Decimal from 'decimal.js'
@@ -17,7 +16,7 @@ function classNames(...classes) {
 
 function isValidHttpUrl(string) {
   let url
-  
+
   try {
     url = new URL(string)
   } catch (_) {
@@ -29,9 +28,11 @@ function isValidHttpUrl(string) {
 
 export default function DropNCreator(props) {
   const router = useRouter()
+
+  const timezone = (new Date()).toTimeString().slice(9).split(" ")[0]
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
+  const [startAt, setStartAt] = useState(null)
+  const [endAt, setEndAt] = useState(null)
 
   const namePlaceholder = "The name of this drop"
   const [name, setName] = useState(null)
@@ -62,6 +63,14 @@ export default function DropNCreator(props) {
       return [false, "banner oversize"]
     }
 
+    if (endAt && endAt.getTime() < (new Date()).getTime()) {
+      return [false, "drop ended"]
+    }
+
+    if (startAt && endAt && startAt.getTime() >= endAt.getTime()) {
+      return [false, "start time should be less than end time"]
+    }
+
     return [true, null]
   }
 
@@ -80,26 +89,30 @@ export default function DropNCreator(props) {
 
   return (
     <>
-        {/** title */}
-        <h1 className="font-flow font-semibold text-4xl text-center mb-10">
-          create dropN
-        </h1>
+      {/** title */}
+      <h1 className="font-flow font-semibold text-4xl text-center mb-10">
+        create dropN
+      </h1>
 
-        {/** preview */}
-        <div className="flex justify-center mb-10">
-          <DropCard
-            name={name ? name : namePlaceholder}
-            host={props.user.loggedIn ? props.user.addr : "0x0001"}
-            createdAt={"2022-12-17 03:48"}
-            description={desc ? desc : descPlaceholder}
-            amount={1024.2048}
-            tokenSymbol={token ? token.symbol : "FLOW"}
-            isPreview={true}
-            banner={banner}
-          />
-        </div>
+      {/** preview */}
+      <div className="flex justify-center mb-10">
+        <DropCard
+          name={name ? name : namePlaceholder}
+          host={props.user.loggedIn ? props.user.addr : "unknown"}
+          createdAt={`12/17/2022, 05:20:00 AM`}
+          description={desc ? desc : descPlaceholder}
+          amount={1024.2048}
+          tokenSymbol={token ? token.symbol : "FLOW"}
+          isPreview={true}
+          banner={banner}
+          startAt={startAt}
+          endAt={endAt}
+          timeLockEnabled={timeLockEnabled}
+          timezone={timezone}
+        />
+      </div>
 
-        <div className="flex flex-col gap-y-10">
+      <div className="flex flex-col gap-y-10">
 
         {/** image uploader */}
         <div className="flex flex-col gap-y-1">
@@ -177,14 +190,14 @@ export default function DropNCreator(props) {
               }}
             />
           </div>
-        </div> 
+        </div>
 
 
         {/** token selector */}
         <div>
-          <TokenSelector 
+          <TokenSelector
             user={props.user}
-            className="w-full" 
+            className="w-full"
             onTokenSelected={setToken}
           />
         </div>
@@ -209,17 +222,17 @@ export default function DropNCreator(props) {
               placeholder={
                 "0xf8d6e0586b0a20c7,1.6"
               }
-              onChange={(event) => {}}
+              onChange={(event) => { }}
             />
           </div>
         </div>
 
 
         {/** time limit */}
-        {/* <div>
+        <div>
           <div className="flex justify-between mb-4">
             <label className="block text-2xl font-bold font-flow">
-              time limit
+              time limit{` (${timezone})`}
             </label>
             <Switch
               checked={timeLockEnabled}
@@ -239,19 +252,30 @@ export default function DropNCreator(props) {
               />
             </Switch>
           </div>
+
           {timeLockEnabled ? 
-          <div className="flex justify-between gap-x-2">
+          <div className="flex justify-between gap-x-2 gap-y-2 flex-wrap">
             <div className="flex items-center gap-x-2">
-              <label className="font-flow font-bold">start</label>
-              <ReactDatePicker date={startDate} setDate={setStartDate} />
+              <label className="inline-block w-12 font-flow font-bold">start</label>
+              <input
+                type="datetime-local" 
+                id="start_at"
+                className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                onChange={(e) => {setStartAt(new Date(e.target.value))}}
+              />
             </div>
 
             <div className="flex items-center gap-x-2">
-              <label className="font-flow font-bold">end</label>
-              <ReactDatePicker date={endDate} setDate={setEndDate} />
+              <label className="inline-block w-12 font-flow font-bold">end</label>
+              <input
+                type="datetime-local" 
+                id="end_at"
+                className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                onChange={(e) => {setEndAt(new Date(e.target.value))}}
+              />
             </div>
           </div> : null}
-        </div> */}
+        </div>
 
         {/** create button */}
         <div className="flex gap-x-4 items-center">
@@ -259,15 +283,15 @@ export default function DropNCreator(props) {
             type="button"
             className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
             onClick={handleSubmit}
-            >
+          >
             {props.user.loggedIn ? "create" : "connect wallet"}
           </button>
           {
             paramsError ?
-            <label className="font-flow text-md text-red-500">{paramsError}</label> : null
+              <label className="font-flow text-md text-red-500">{paramsError}</label> : null
           }
         </div>
-        </div>
+      </div>
     </>
   )
 }
