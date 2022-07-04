@@ -19,6 +19,12 @@ if (!fungibleTokenAddress) throw "Missing NEXT_PUBLIC_FUNGIBLE_TOKEN_ADDRESS"
 const flowTokenAddress = process.env.NEXT_PUBLIC_FLOW_TOKEN_ADDRESS
 if (!flowTokenAddress) throw "Missing NEXT_PUBLIC_FLOW_TOKEN_ADDRESS"
 
+const drizzleAddress = process.env.NEXT_PUBLIC_DRIZZLE_ADDRESS
+if (!drizzleAddress) throw "Missing NEXT_PUBLIC_DRIZZLE_ADDRESS"
+
+const dropNAddress = process.env.NEXT_PUBLIC_DROPN_ADDRESS
+if (!dropNAddress) throw "Missing NEXT_PUBLIC_DROPN_ADDRESS"
+
 const publicConfig = {
   chainEnv,
   accessNodeAPI,
@@ -27,6 +33,8 @@ const publicConfig = {
   flowscanURL,
   fungibleTokenAddress,
   flowTokenAddress,
+  drizzleAddress,
+  dropNAddress
 }
 
 export default publicConfig

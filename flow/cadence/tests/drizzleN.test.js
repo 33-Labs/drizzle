@@ -232,6 +232,8 @@ async function createValidAirdrop(_claims, _startAt, _endAt) {
     tokenBalancePath, tokenReceiverPath, tokenAmount
   ]
 
+  console.log(args)
+
   await createAirdrop(Alice, args)
   await checkFUSDBalance(Alice, fusdAmount - tokenAmount)
 }

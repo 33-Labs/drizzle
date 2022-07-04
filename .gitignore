@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 
-/flow/candece/tests/node_modules
+/flow/cadence/tests/node_modules
 
 # testing
 /coverage

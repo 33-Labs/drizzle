@@ -7,12 +7,23 @@ import * as fcl from "@onflow/fcl"
 
 import TokenSelector from "./TokenSelector"
 import ImageSelector from './ImageSelector'
-import CSVSelector from './CSVSelector'
 import DropCard from './DropCard'
 import Decimal from 'decimal.js'
+import drizzleService from '../lib/drizzleService'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
+}
+
+const Pending = 'Pending'
+const Sealed = 'Sealed'
+const ExecutionFailed = 'Execution Failed'
+const Rejected = 'Transaction Rejected'
+const TransactionStatus = {
+  Pending,
+  Sealed,
+  ExecutionFailed,
+  Rejected
 }
 
 function isValidHttpUrl(string) {
@@ -27,7 +38,47 @@ function isValidHttpUrl(string) {
   return url.protocol === "http:" || url.protocol === "https:"
 }
 
+const getClaimsFromRecords = (records) => {
+  let claims = []
+  let amount = new Decimal(0)
+  for (let i = 0; i < records.length; i++) {
+    const record = records[i]
+    const claim = {
+      key: record.address,
+      value: record.amount.toFixed(8).toString()
+    }
+    claims.push(claim)
+    amount = amount.add(record.amount)
+  }
 
+  return [claims, amount.toFixed(8).toString()]
+}
+
+const filterRecords = (rawRecordsStr) => {
+  const rawRecords = rawRecordsStr.trim().split("\n").filter((r) => r != '')
+
+  let addresses = {}
+  let records = []
+  let invalidRecords = []
+  for (var i = 0; i < rawRecords.length; i++) {
+    let rawRecord = rawRecords[i]
+    try {
+      const [address, rawAmount] = rawRecord.split(",")
+      const amount = new Decimal(rawAmount)
+      if (!amount.isPositive() || amount.decimalPlaces() > 8) { throw "invalid amount" }
+      if (!address.startsWith("0x") || address.length != 18) { throw "invalid address" }
+
+      const bytes = Buffer.from(address.replace("0x", ""), "hex")
+      if (bytes.length != 8) { throw "invalid address" }
+      if (addresses[address]) { throw "duplicate address" }
+      addresses[address] = true
+      records.push({ id: i, address: address, amount: amount, rawRecord: rawRecord })
+    } catch (e) {
+      invalidRecords.push(rawRecord)
+    }
+  }
+  return [records, invalidRecords]
+}
 
 export default function DropNCreator(props) {
   const router = useRouter()
@@ -56,6 +107,9 @@ export default function DropNCreator(props) {
 
   const [paramsError, setParamsError] = useState(null)
   const [processed, setProcessed] = useState(false)
+
+  const [txid, setTxid] = useState(null)
+  const [txStatus, setTxStatus] = useState(null)
 
   const checkParams = () => {
     if (!name || name.trim() == "") {
@@ -93,37 +147,56 @@ export default function DropNCreator(props) {
     return [true, null]
   }
 
-  const filterRecords = (rawRecordsStr) => {
-    const rawRecords = rawRecordsStr.trim().split("\n").filter((r) => r != '')
-
-    let addresses = {}
-    let records = []
-    let invalidRecords = []
-    for (var i = 0; i < rawRecords.length; i++) {
-      let rawRecord = rawRecords[i]
-      try {
-        const [address, rawAmount] = rawRecord.split(",")
-        const amount = new Decimal(rawAmount)
-        if (!amount.isPositive() || amount.decimalPlaces() > 8) { throw "invalid amount" }
-        if (!address.startsWith("0x") || address.length != 18) { throw "invalid address" }
-
-        const bytes = Buffer.from(address.replace("0x", ""), "hex")
-        if (bytes.length != 8) { throw "invalid address" }
-        if (addresses[address]) { throw "duplicate address" }
-        addresses[address] = true
-        records.push({ id: i, address: address, amount: amount, rawRecord: rawRecord })
-      } catch (e) {
-        invalidRecords.push(rawRecord)
-      }
-    }
-    return [records, invalidRecords]
-  }
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     if (props.user && props.user.loggedIn) {
       const [valid, error] = checkParams()
       if (valid) {
-        router.push("/123/drops/456")
+        const [claims, tokenAmount] = getClaimsFromRecords(validRecords)
+        const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null 
+        const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
+        const tokenProviderPath = token.path.vault.replace("/storage/", "")
+        const tokenBalancePath = token.path.balance.replace("/public/", "")
+        const tokenReceiverPath = token.path.receiver.replace("/public/", "")
+
+        console.log(`
+          name: ${name}\n
+          desc: ${desc ?? ''}\n
+          url: ${url}\n
+          claims: ${claims}\n
+          startAt: ${_startAt}\n
+          endAt: ${_endAt}\n
+          tokenAddress: ${token.address}\n
+          contractName: ${token.contractName}\n
+          tokenProviderPath: ${tokenProviderPath}\n
+          tokenBalancePath: ${tokenBalancePath}\n
+          tokenReceiverPath: ${tokenReceiverPath}\n
+          tokenAmount: ${tokenAmount}\n
+          banner: ${banner}
+        `)
+
+        try {
+          const transactionId = await drizzleService.createDropN(
+            name, desc ?? '', banner, url, claims, _startAt, _endAt, 
+            token.address, token.contractName, tokenProviderPath,
+            tokenBalancePath, tokenReceiverPath, tokenAmount
+          )
+          console.log("txid: " + transactionId)
+          setTxid(transactionId)
+          setTxStatus(TransactionStatus.Pending)
+      
+          await fcl.tx(transactionId).onceSealed()
+          setTxStatus(TransactionStatus.Sealed)
+        } catch (e) {
+          console.log(e)
+          if (typeof e === "string" && e.includes("Execution failed")) {
+              setTxStatus(TransactionStatus.ExecutionFailed)
+          } else if (typeof e === "object" && e.message.includes("Declined")) {
+              setTxStatus(TransactionStatus.Rejected)
+          } else if (typeof e === "string" && e.includes("Declined")) {
+              setTxStatus(TransactionStatus.Rejected)
+          }
+        }
+        console.log("status: " + txStatus)
       } else {
         setParamsError(error)
       }
