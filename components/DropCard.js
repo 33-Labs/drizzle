@@ -25,14 +25,28 @@ export default function DropCard(props) {
   const amount = props.amount
   const symbol = props.tokenSymbol
   const banner = props.banner || "/drizzle.png"
+  const url = props.url
 
   return (
     <div className="flex flex-col w-[480px] min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-stretch">
       <MemoizeBanner banner={banner} />
       <div className="w-full px-8 mt-4">
-        <label className="text-2xl font-bold font-flow break-words">
-          {name}
-        </label>
+        {
+          url ? (
+            <a 
+              href={`${publicConfig.flowscanURL}/account/${host}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-black text-2xl font-bold font-flow break-words underline decoration-drizzle-green decoration-2">
+                {name}
+            </a>
+          ) : (
+            <label className="text-black text-2xl font-bold font-flow break-words">
+              {name}
+            </label>
+          )
+        }
+
       </div>
 
       <div className="w-full px-8 mb-4 flex flex-col">

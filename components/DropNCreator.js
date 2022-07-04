@@ -150,6 +150,7 @@ export default function DropNCreator(props) {
           tokenSymbol={token ? token.symbol : "FLOW"}
           isPreview={true}
           banner={banner}
+          url={url}
           startAt={startAt}
           endAt={endAt}
           timeLockEnabled={timeLockEnabled}
