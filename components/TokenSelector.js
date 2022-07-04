@@ -45,9 +45,9 @@ export default function TokenSelector(props) {
   return (
     <Combobox as="div" className={props.className} value={props.user && props.user.loggedIn && selectedToken} onChange={async (token) => {
       if (props.user && props.user.loggedIn) {
-        setBalance(0)
+        setBalance(new Decimal(0))
         drizzleService.queryBalance(token, props.user.addr).then((balance) => {
-          setBalance(balance)
+          setBalance(new Decimal(balance))
           if (props.onBalanceFetched) {
             props.onBalanceFetched(balance)
           }

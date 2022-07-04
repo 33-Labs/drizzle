@@ -7,6 +7,7 @@ import * as fcl from "@onflow/fcl"
 
 import TokenSelector from "./TokenSelector"
 import ImageSelector from './ImageSelector'
+import CSVSelector from './CSVSelector'
 import DropCard from './DropCard'
 import Decimal from 'decimal.js'
 
@@ -26,6 +27,8 @@ function isValidHttpUrl(string) {
   return url.protocol === "http:" || url.protocol === "https:"
 }
 
+
+
 export default function DropNCreator(props) {
   const router = useRouter()
 
@@ -44,7 +47,15 @@ export default function DropNCreator(props) {
   const [banner, setBanner] = useState(null)
   const [bannerSize, setBannerSize] = useState(0)
 
+  const [rawRecordsStr, setRawRecordsStr] = useState('')
+  const [validRecords, setValidRecords] = useState([])
+  const [invalidRecords, setInvalidRecords] = useState([])
+  const [recordsSum, setRecordsSum] = useState(new Decimal(0))
+
+  const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
+
   const [paramsError, setParamsError] = useState(null)
+  const [processed, setProcessed] = useState(false)
 
   const checkParams = () => {
     if (!name || name.trim() == "") {
@@ -71,7 +82,41 @@ export default function DropNCreator(props) {
       return [false, "start time should be less than end time"]
     }
 
+    if (!processed) {
+      return [false, "please process recipients & amounts"]
+    }
+
+    if (invalidRecords.length > 0) {
+      return [false, "there are some invalid records"]
+    }
+
     return [true, null]
+  }
+
+  const filterRecords = (rawRecordsStr) => {
+    const rawRecords = rawRecordsStr.trim().split("\n").filter((r) => r != '')
+
+    let addresses = {}
+    let records = []
+    let invalidRecords = []
+    for (var i = 0; i < rawRecords.length; i++) {
+      let rawRecord = rawRecords[i]
+      try {
+        const [address, rawAmount] = rawRecord.split(",")
+        const amount = new Decimal(rawAmount)
+        if (!amount.isPositive() || amount.decimalPlaces() > 8) { throw "invalid amount" }
+        if (!address.startsWith("0x") || address.length != 18) { throw "invalid address" }
+
+        const bytes = Buffer.from(address.replace("0x", ""), "hex")
+        if (bytes.length != 8) { throw "invalid address" }
+        if (addresses[address]) { throw "duplicate address" }
+        addresses[address] = true
+        records.push({ id: i, address: address, amount: amount, rawRecord: rawRecord })
+      } catch (e) {
+        invalidRecords.push(rawRecord)
+      }
+    }
+    return [records, invalidRecords]
   }
 
   const handleSubmit = (event) => {
@@ -120,7 +165,7 @@ export default function DropNCreator(props) {
             {"banner"}
           </label>
           {/** The transaction limit of flow is 1.5 MB */}
-          <label className="block text-md font-flow leading-10">image size should be less than 1 MB</label>
+          <label className="block text-md font-flow leading-8 mt-2">image size should be less than 1 MB</label>
           <ImageSelector imageSelectedCallback={(_banner, _bannerSize) => {
             setBanner(_banner)
             setBannerSize(_bannerSize)
@@ -199,34 +244,9 @@ export default function DropNCreator(props) {
             user={props.user}
             className="w-full"
             onTokenSelected={setToken}
+            onBalanceFetched={setTokenBalance}
           />
         </div>
-
-
-        {/** recipients & amounts */}
-        <div>
-          <label className="block text-2xl font-bold font-flow">
-            recipients & amounts
-          </label>
-          <label className="block font-flow text-md leading-10">
-            For each line, enter one address and the token amount, seperate with comma.
-          </label>
-          <div className="mt-1">
-            <textarea
-              rows={8}
-              name="recipients"
-              id="recipients"
-              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              defaultValue={''}
-              spellCheck={false}
-              placeholder={
-                "0xf8d6e0586b0a20c7,1.6"
-              }
-              onChange={(event) => { }}
-            />
-          </div>
-        </div>
-
 
         {/** time limit */}
         <div>
@@ -253,43 +273,203 @@ export default function DropNCreator(props) {
             </Switch>
           </div>
 
-          {timeLockEnabled ? 
-          <div className="flex justify-between gap-x-2 gap-y-2 flex-wrap">
-            <div className="flex items-center gap-x-2">
-              <label className="inline-block w-12 font-flow font-bold">start</label>
-              <input
-                type="datetime-local" 
-                id="start_at"
-                className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-                onChange={(e) => {setStartAt(new Date(e.target.value))}}
-              />
-            </div>
+          {timeLockEnabled ?
+            <div className="flex justify-between gap-x-2 gap-y-2 flex-wrap">
+              <div className="flex items-center gap-x-2">
+                <label className="inline-block w-12 font-flow font-bold">start</label>
+                <input
+                  type="datetime-local"
+                  id="start_at"
+                  className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                  onChange={(e) => { setStartAt(new Date(e.target.value)) }}
+                />
+              </div>
 
-            <div className="flex items-center gap-x-2">
-              <label className="inline-block w-12 font-flow font-bold">end</label>
-              <input
-                type="datetime-local" 
-                id="end_at"
-                className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-                onChange={(e) => {setEndAt(new Date(e.target.value))}}
-              />
-            </div>
-          </div> : null}
+              <div className="flex items-center gap-x-2">
+                <label className="inline-block w-12 font-flow font-bold">end</label>
+                <input
+                  type="datetime-local"
+                  id="end_at"
+                  className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                  onChange={(e) => { setEndAt(new Date(e.target.value)) }}
+                />
+              </div>
+            </div> : null}
         </div>
 
+
+        {/** recipients & amounts */}
+        <div>
+          <label className="block text-2xl font-bold font-flow">
+            recipients & amounts
+          </label>
+          <label className="block font-flow text-md leading-8 mt-2">
+            For each line, enter one address and the token amount, seperate with comma. Duplicate addresses is not allowed.
+          </label>
+          <div className="mt-1">
+            <textarea
+              rows={8}
+              name="recipients"
+              id="recipients"
+              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              spellCheck={false}
+              value={rawRecordsStr}
+              placeholder={
+                "0xf8d6e0586b0a20c7,1.6"
+              }
+              onChange={(event) => { setRawRecordsStr(event.target.value) }}
+            />
+            <div className="flex mt-2 gap-x-2 justify-between">
+              <div className="h-12 w-40 font-medium text-base shadow-sm bg-drizzle-green hover:bg-drizzle-green-dark">
+                <label htmlFor="csv_uploader" className="w-full inline-block text-center leading-[48px] ">upload csv</label>
+                <input id="csv_uploader" className="invisible" type="file"
+                  accept=".csv"
+                  onChange={(event) => {
+                    setProcessed(false)
+                    const f = event.target.files[0]
+                    const reader = new FileReader()
+                    reader.addEventListener('load', (e) => {
+                      const data = e.target.result
+                      setRawRecordsStr(data)
+                      event.target.value = null
+                    })
+                    reader.readAsText(f)
+                  }}
+                />
+              </div>
+              <button
+                type="button"
+                className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+                onClick={() => {
+                  if (token) {
+                    const [validRecords, invalidRecords] = filterRecords(rawRecordsStr.trim())
+                    setValidRecords(validRecords)
+                    setInvalidRecords(invalidRecords)
+                    setRecordsSum(validRecords.map((r) => r.amount).reduce((p, c) => p.add(c), new Decimal(0)))
+                    setProcessed(true)
+                  } else {
+                    setParamsError("token is not selected")
+                  }
+                }}
+              >
+                process
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {
+          validRecords.length > 0 || invalidRecords.length > 0 ? (
+            <div>
+              <label className="block text-2xl font-bold font-flow">
+                summary
+              </label>
+              <div className="mt-1 mb-30">
+                <ul role="list">
+                  <li key="valid count">
+                    <div className="flex items-center">
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        # of Valid Records
+                      </div>
+                      <div className="grow"></div>
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        {validRecords.length}
+                      </div>
+                    </div>
+                  </li>
+                  <li key="invalid count">
+                    <div className="flex items-center">
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        # of Invalid Records
+                      </div>
+                      <div className="grow"></div>
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        {invalidRecords.length}
+                      </div>
+                    </div>
+                  </li>
+                  <li key="total">
+                    <div className="flex items-center">
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        Total Token
+                      </div>
+                      <div className="grow"></div>
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        {recordsSum.toString()} {token && token.symbol}
+                      </div>
+                    </div>
+                  </li>
+                  <li key="balance">
+                    <div className="flex items-center">
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        Your Balance
+                      </div>
+                      <div className="grow"></div>
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        {tokenBalance.toString()} {token && token.symbol}
+                      </div>
+                    </div>
+                  </li>
+                  <li key="remaining">
+                    <div className="flex items-center">
+                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                        Remaining
+                      </div>
+                      <div className="grow"></div>
+                      {
+                        !(tokenBalance.sub(recordsSum).isNegative())
+                          ? <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                            {tokenBalance.sub(recordsSum).toString()} {token && token.symbol}
+                          </div>
+                          : <div className="flex-none w-30 text-md text-rose-500 font-flow font-semibold leading-10">
+                            {tokenBalance.sub(recordsSum).toString()} {token && token.symbol}
+                          </div>
+                      }
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          ) : null
+        }
+
+        {
+          invalidRecords.length > 0 && (
+            <div>
+              <label className="block text-2xl font-bold font-flow">
+                invalid records
+              </label>
+              <label className="block font-flow text-md leading-8 mt-2">
+                invalid format or invalid amount or duplicate accounts
+              </label>
+              <div className="mt-1">
+                <textarea
+                  rows={invalidRecords.length > 8 ? 8 : invalidRecords.length}
+                  name="invalid"
+                  id="invalid"
+                  className="focus:ring-rose-700 focus:border-rose-700 bg-rose-300/10 resize-none block w-full border-rose-700 font-flow text-lg placeholder:text-gray-300"
+                  disabled={true}
+                  value={(invalidRecords.reduce((p, c) => { return `${p}\n${c}` }, '')).trim()}
+                  spellCheck={false}
+                />
+              </div>
+            </div>
+          )
+        }
+
         {/** create button */}
-        <div className="flex gap-x-4 items-center">
-          <button
-            type="button"
-            className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
-            onClick={handleSubmit}
-          >
-            {props.user.loggedIn ? "create" : "connect wallet"}
-          </button>
+        <div className="w-full px-6 flex flex-col gap-y-2 items-center">
           {
             paramsError ?
               <label className="font-flow text-md text-red-500">{paramsError}</label> : null
           }
+          <button
+            type="button"
+            className="w-full h-12 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            onClick={handleSubmit}
+          >
+            {props.user.loggedIn ? "create" : "connect wallet"}
+          </button>
         </div>
       </div>
     </>

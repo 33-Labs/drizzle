@@ -14,9 +14,6 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
-      <Head>
-        <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/react-datepicker/2.14.1/react-datepicker.min.css" />
-      </Head>
       <NavigationBar user={user} />
       <Component {...pageProps} user={user} />
       <Footer />
