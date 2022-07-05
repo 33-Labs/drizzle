@@ -1,14 +1,5 @@
-import Image from 'next/image'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-// import { useState, useEffect } from "react"
-// import * as fcl from "@onflow/fcl";
-
-import NavigationBar from '../components/NavigationBar'
 import Landing from '../components/Landing'
-// import TokenSelector from '../components/TokenSelector'
-// import RecipientsInput from '../components/RecipientsInput'
-// import WalletConnector from '../components/WalletConnector';
 
 export default function Home(props) {
   return (
