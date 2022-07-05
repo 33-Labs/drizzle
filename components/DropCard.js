@@ -9,6 +9,7 @@ const MemoizeBanner = React.memo(({banner}) => {
     </div>
   )
 })
+MemoizeBanner.displayName = "MemozieBanner"
 
 export default function DropCard(props) {
   const isPreview = props.isPreview == true

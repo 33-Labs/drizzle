@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export default function DropList(props) {
   const drops = props.drops
   console.log(drops)
@@ -46,8 +48,8 @@ export default function DropList(props) {
                     <tr key={drop.dropID}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
-                            <img className="h-10 w-10 rounded-full" src={drop.image ?? "./drizzle.png"} alt="" />
+                          <div className="h-10 w-10 flex-shrink-0 relative">
+                            <Image className="rounded-full" src={drop.image ?? "./drizzle.png"} alt="" layout="fill" />
                           </div>
                           <div className="ml-4">
                             <div className="font-medium text-gray-900">{drop.name}</div>

@@ -38,7 +38,7 @@ export default function DropPresenter(props) {
     if (account && user && user.loggedIn) {
       getClaimableAmount(dropID, account, user.addr)
     }
-  }, [account, dropID])
+  }, [account, dropID, user])
 
   return (
     <>
