@@ -10,6 +10,7 @@ import ImageSelector from './ImageSelector'
 import DropCard from './DropCard'
 import Decimal from 'decimal.js'
 import drizzleService from '../lib/drizzleService'
+import utils from '../lib/utils'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -83,7 +84,7 @@ const filterRecords = (rawRecordsStr) => {
 export default function DropNCreator(props) {
   const router = useRouter()
 
-  const timezone = (new Date()).toTimeString().slice(9).split(" ")[0]
+  const timezone = utils.getTimezone()
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startAt, setStartAt] = useState(null)
   const [endAt, setEndAt] = useState(null)

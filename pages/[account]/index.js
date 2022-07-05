@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import { useState, useEffect } from 'react'
+import DropList from '../../components/DropList'
 import drizzleService from '../../lib/drizzleService'
 
 const convertDropNs = (dropNMaps) => {
@@ -13,7 +14,6 @@ const convertDropNs = (dropNMaps) => {
     dropNs.push(drop)
   }
 
-  console.log(dropNs)
   return dropNs.sort((a, b) => a.uuid > b.uuid)
 }
 
@@ -44,24 +44,8 @@ export default function Account(props) {
       <meta property="og:title" content="drizzle | airdrop tool" key="title" />
     </Head>
     <div className="container mx-auto max-w-[680px] min-w-[380px] px-6">
-      <div className="flex flex-col gap-y-2">
-        <label className="block text-2xl font-bold font-flow">
-          DropNs ({dropNs.length})
-        </label>
-        {
-          dropNs.length > 0 ? (
-            dropNs.map((drop) => {
-              return (
-                <div className="font-flow font-bold text-black">
-                  {drop.name}
-                </div>
-              )
-            })
-          ) : null
-        }
-      </div>
+      <DropList drops={dropNs} user={props.user} />
     </div>
-
     </>
   )
 }

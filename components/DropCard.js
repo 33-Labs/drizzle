@@ -11,11 +11,10 @@ const MemoizeBanner = React.memo(({banner}) => {
 })
 
 export default function DropCard(props) {
-  const isPreview = props.isPreview || true
+  const isPreview = props.isPreview == true
 
   const createdAt = props.createdAt || "unknown"
   const timeLockEnabled = props.timeLockEnabled || false
-  const timezone = props.timezone
   const startAt = props.startAt
   const endAt = props.endAt
 
@@ -62,18 +61,18 @@ export default function DropCard(props) {
         </span>
         </label>
         <label className="w-full font-flow text-sm text-gray-400 break-words">
-          {`created at ${createdAt.toLocaleString()} (${timezone})`}
+          {`created at ${createdAt.toLocaleString()}`}
         </label>
         {timeLockEnabled ? (
           startAt ? 
           <label className="w-full font-flow text-sm text-gray-400 break-words" id="start_at">
-            {`start at ${startAt.toLocaleString()} (${timezone})`}
+            {`start at ${startAt.toLocaleString()}`}
           </label> : null
         ) : null}
         {timeLockEnabled ? (
           endAt ? 
           <label className="w-full font-flow text-sm text-gray-400 break-words" id="end_at">
-            {`end at ${endAt.toLocaleString()} (${timezone})`}
+            {`end at ${endAt.toLocaleString()}`}
           </label> : null
         ) : null}
       </div>
@@ -84,19 +83,31 @@ export default function DropCard(props) {
         </p>
       </div>
 
-      <div className="mt-20 w-full px-8">
-        <label className="text-lg font-bold font-flow">YOU ARE ELIGIBLE FOR</label>
-      </div>
-      <div className="mt-1 w-full px-8">
-        <label className="text-2xl font-bold font-flow">{`${amount} ${symbol}`}</label>
-      </div>
+      {
+        amount ? (
+          <>
+          <div className="mt-20 w-full px-8">
+            <label className="text-lg font-bold font-flow">YOU ARE ELIGIBLE FOR</label>
+          </div>
+          <div className="mt-1 w-full px-8">
+            <label className="text-2xl font-bold font-flow">{`${amount} ${symbol}`}</label>
+          </div>
+          </>
+        ) : (
+          <div className="mt-20 w-full px-8">
+            <label className="text-lg font-bold font-flow">YOU ARE NOT ELIGIBLE</label>
+          </div> 
+        )
+      }
 
       <button
         type="button"
         className="mt-10 mx-8 mb-8 h-[48px] text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
         disabled={!isPreview}
         >
-        {isPreview ? "previewing" : "claim"}
+        {isPreview ? "PREVIEWING" : (
+          amount ? "CLAIM" : "NOT ELIGIBLE"
+        )}
       </button>
     </div>
   )

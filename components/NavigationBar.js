@@ -14,14 +14,24 @@ export default function NavigationBar(props) {
   const AuthedState = () => {
     return (
       <div className="flex gap-x-2 items-center">
-        <label> 
+        {/* <label> 
           <a 
-            href={`${publicConfig.flowscanURL}/account/${user?.addr ?? "No Address"}`}
+            href={`${publicConfig.flowscanURL}/account/${(user && user.addr) ?? "No Address"}`}
             target="_blank"
             rel="noopener noreferrer"
             className="font-flow text-lg underline decoration-drizzle-green decoration-2">{user?.addr ?? "No Address"}
           </a>
-        </label>
+        </label> */}
+        <button 
+          className="font-flow text-lg underline decoration-drizzle-green decoration-2"
+          onClick={() => {
+            if (user) {
+              router.push(`/${user.addr}`)
+            }
+          }}
+        >
+          {user?.addr ?? "No Address"}
+        </button>
         <button
           type="button"
           className="h-5 w-5"
