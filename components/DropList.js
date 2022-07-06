@@ -12,7 +12,7 @@ export default function DropList(props) {
     <div className="p-2">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-2xl font-bold text-gray-900">Drops ({drops.length})</h1>
+          <h1 className="text-2xl font-bold text-gray-900">My Drops ({drops.length})</h1>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button

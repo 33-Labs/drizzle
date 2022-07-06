@@ -21,13 +21,11 @@ export default function DropPresenter(props) {
   useEffect(() => {
     const getDrop = async (address, dropID) => {
       const drop = await drizzleService.queryDrop(address, dropID)
-      console.log("drop ", drop)
       setDrop(drop)
     }
 
     const getClaimStatus = async (dropID, host, claimer) => {
       const status = await drizzleService.queryClaimStatus(dropID, host, claimer)
-      console.log(status)
       setClaimStatus(status)
     }
 
@@ -62,6 +60,8 @@ export default function DropPresenter(props) {
                 timeLockEnabled={drop.startAt != null || drop.endAt != null}
                 timezone={timezone}
                 status={claimStatus}
+                dropID={drop.dropID}
+                token={drop.tokenInfo}
               />
             </div>
             <div className="flex flex-col items-center justify-center">

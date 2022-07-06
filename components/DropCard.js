@@ -1,6 +1,8 @@
 import Image from "next/image"
 import React from 'react'
+import drizzleService from "../lib/drizzleService"
 import publicConfig from "../publicConfig"
+import * as fcl from "@onflow/fcl"
 
 const MemoizeBanner = React.memo(({banner}) => {
   return (
@@ -47,13 +49,16 @@ export default function DropCard(props) {
   const startAt = props.startAt
   const endAt = props.endAt
 
+  const dropID = props.dropID
   const name = props.name
   const host = props.host || "unknown"
   const desc = props.description
   const status = props.status
 
+  const token = props.token
+  console.log(token)
   const amount = props.amount || status.amount
-  const symbol = props.tokenSymbol
+  const symbol = props.tokenSymbol || (token && token.symbol)
   const banner = props.banner || "/drizzle.png"
   const url = props.url
 
@@ -115,7 +120,7 @@ export default function DropCard(props) {
       </div>
 
       {
-        (status && status.amount) ? (
+        (isPreview || (status && status.amount)) ? (
           <>
           <div className="mt-20 w-full px-8">
             <label className="text-lg font-bold font-flow">YOU ARE ELIGIBLE FOR</label>
@@ -135,7 +140,27 @@ export default function DropCard(props) {
         type="button"
         className={`mt-10 mx-8 mb-8 h-[48px] text-base font-medium shadow-sm text-black 
         ${(isPreview || !status.claimable) ? "bg-gray-400 hover:bg-gray-500" : "bg-drizzle-green hover:bg-drizzle-green-dark"}`}
-        disabled={status && status.claimable}
+        disabled={!(status && status.claimable)}
+        onClick={async () => {
+          if (!isPreview && status.claimable) {
+            try {
+              console.log(token)
+              const transactionId = await drizzleService.claim(
+                dropID, 
+                host, 
+                token.account,
+                token.contractName,
+                token.providerPath.identifier,
+                token.balancePath.identifier,
+                token.receiverPath.identifier
+              )
+              console.log("txid: " + transactionId)
+              await fcl.tx(transactionId).onceSealed()
+            } catch (e) {
+              console.log(e)
+            }
+          }
+        }}
         >
         {isPreview ? "PREVIEWING" : (
           titleForClaimButton(status)
