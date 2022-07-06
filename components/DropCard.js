@@ -115,7 +115,7 @@ export default function DropCard(props) {
       </div>
 
       {
-        status.amount ? (
+        (status && status.amount) ? (
           <>
           <div className="mt-20 w-full px-8">
             <label className="text-lg font-bold font-flow">YOU ARE ELIGIBLE FOR</label>

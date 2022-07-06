@@ -49,7 +49,7 @@ export default function DropList(props) {
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {drops.map((drop) => (
-                    <Link href={`${props.user.addr}/drops/${drop.dropID}`}>
+                    <Link key={`${drop.dropID}-link`} href={`${props.user.addr}/drops/${drop.dropID}`}>
                     <tr key={drop.dropID}>
                       <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="flex items-center">
