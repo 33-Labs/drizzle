@@ -63,7 +63,7 @@ pub contract DropN {
             )
         }
         
-        pub fun getClaimAmount(address: Address): UFix64? {
+        pub fun getClaimableAmount(address: Address): UFix64? {
             return self.claims[address]
         }
 

@@ -11,6 +11,34 @@ const MemoizeBanner = React.memo(({banner}) => {
 })
 MemoizeBanner.displayName = "MemozieBanner"
 
+const titleForClaimButton = (claimStatus) => {
+  if (claimStatus.message == "not eligible") {
+    return "NOT ELIGIBLE"
+  }
+
+  if (claimStatus.message == "not claimable") {
+    return "NOT CLAIMABLE NOW"
+  }
+
+  if (claimStatus.message == "not start") {
+    return "NOT START NOW"
+  }
+
+  if (claimStatus.message == "ended") {
+    return "ENDED"
+  }
+
+  if (claimStatus.message == "claimed") {
+    return "YOU HAVE CLAIMED"
+  }
+
+  if (claimStatus.message == "eligible") {
+    return "CLAIM"
+  }
+
+  return "NOT ELIGIBLE"
+}
+
 export default function DropCard(props) {
   const isPreview = props.isPreview == true
 
@@ -22,7 +50,9 @@ export default function DropCard(props) {
   const name = props.name
   const host = props.host || "unknown"
   const desc = props.description
-  const amount = props.amount
+  const status = props.status
+
+  const amount = props.amount || status.amount
   const symbol = props.tokenSymbol
   const banner = props.banner || "/drizzle.png"
   const url = props.url
@@ -34,7 +64,7 @@ export default function DropCard(props) {
         {
           url ? (
             <a 
-              href={`${publicConfig.flowscanURL}/account/${host}`}
+              href={url}
               target="_blank"
               rel="noopener noreferrer"
               className="text-black text-2xl font-bold font-flow break-words underline decoration-drizzle-green decoration-2">
@@ -85,7 +115,7 @@ export default function DropCard(props) {
       </div>
 
       {
-        amount ? (
+        status.amount ? (
           <>
           <div className="mt-20 w-full px-8">
             <label className="text-lg font-bold font-flow">YOU ARE ELIGIBLE FOR</label>
@@ -103,11 +133,12 @@ export default function DropCard(props) {
 
       <button
         type="button"
-        className="mt-10 mx-8 mb-8 h-[48px] text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
-        disabled={!isPreview}
+        className={`mt-10 mx-8 mb-8 h-[48px] text-base font-medium shadow-sm text-black 
+        ${(isPreview || !status.claimable) ? "bg-gray-400 hover:bg-gray-500" : "bg-drizzle-green hover:bg-drizzle-green-dark"}`}
+        disabled={status && status.claimable}
         >
         {isPreview ? "PREVIEWING" : (
-          amount ? "CLAIM" : "NOT ELIGIBLE"
+          titleForClaimButton(status)
         )}
       </button>
     </div>

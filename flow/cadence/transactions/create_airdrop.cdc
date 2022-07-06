@@ -12,6 +12,7 @@ transaction(
     endAt: UFix64?,
     tokenIssuer: Address,
     tokenContractName: String,
+    tokenSymbol: String,
     tokenProviderPath: String,
     tokenBalancePath: String,
     tokenReceiverPath: String,
@@ -42,6 +43,7 @@ transaction(
         let tokenInfo = Drizzle.TokenInfo(
             account: tokenIssuer,
             contractName: tokenContractName,
+            symbol: tokenSymbol,
             providerPath: tokenProviderPath,
             balancePath: tokenBalancePath,
             receiverPath: tokenReceiverPath

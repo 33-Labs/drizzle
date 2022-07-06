@@ -6,7 +6,10 @@ pub fun main(address: Address): {UInt64: &{Drizzle.IDropPublic}} {
         getAccount(address)
         .getCapability(DropN.DropCollectionPublicPath)
         .borrow<&DropN.DropCollection{Drizzle.IDropCollectionPublic}>()
-        ?? panic("Could not borrow IDropCollectionPublic from address")
 
-    return dropCollection.getAllDrops()
+    if let collection = dropCollection {
+        return collection.getAllDrops()
+    }
+
+    return {}
 }

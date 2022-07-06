@@ -60,7 +60,7 @@ describe("DropN", () => {
     const preClaimed = await hasClaimedDrop(dropID, Alice, Bob)
     expect(preClaimed).toBeNull()
 
-    const claimAmount = parseFloat(await getClaimAmount(dropID, Alice, Bob))
+    const claimAmount = parseFloat(await getClaimableAmount(dropID, Alice, Bob))
     expect(claimAmount).toBe(100.0)
 
     const [, error] = await claimAirdrop(dropID, Alice, Bob)
@@ -221,6 +221,7 @@ async function createValidAirdrop(_claims, _startAt, _endAt) {
   const url = null
   const tokenIssuer = Alice
   const tokenContractName = "FUSD"
+  const tokenSymbol = "FUSD"
   const tokenProviderPath = "fusdVault"
   const tokenBalancePath = "fusdBalance"
   const tokenReceiverPath = "fusdReceiver"
@@ -228,11 +229,9 @@ async function createValidAirdrop(_claims, _startAt, _endAt) {
 
   const args = [
     dropName, description, image, url, claims, startAt, endAt,
-    tokenIssuer, tokenContractName, tokenProviderPath,
+    tokenIssuer, tokenContractName, tokenSymbol, tokenProviderPath,
     tokenBalancePath, tokenReceiverPath, tokenAmount
   ]
-
-  console.log(args)
 
   await createAirdrop(Alice, args)
   await checkFUSDBalance(Alice, fusdAmount - tokenAmount)
@@ -324,7 +323,7 @@ async function getAllDrops(targetAccount) {
   return result
 }
 
-async function getClaimAmount(dropID, host, claimer) {
+async function getClaimableAmount(dropID, host, claimer) {
   const name = "get_claim_amount"
   const args = [dropID, host, claimer]
   const [result, error] = await executeScript({ name: name, args: args })

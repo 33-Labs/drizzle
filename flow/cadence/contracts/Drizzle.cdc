@@ -11,6 +11,7 @@ pub contract Drizzle {
         pub let receiverIdentifier: String
         pub let account: Address
         pub let contractName: String
+        pub let symbol: String
         pub let providerPath: StoragePath
         pub let balancePath: PublicPath
         pub let receiverPath: PublicPath
@@ -18,6 +19,7 @@ pub contract Drizzle {
         init(
             account: Address, 
             contractName: String,
+            symbol: String,
             providerPath: String,
             balancePath: String,
             receiverPath: String 
@@ -31,6 +33,7 @@ pub contract Drizzle {
             self.receiverIdentifier = self.tokenIdentifier.concat(".Receiver")
             self.account = account
             self.contractName = contractName
+            self.symbol = symbol
             self.providerPath = StoragePath(identifier: providerPath)!
             self.balancePath = PublicPath(identifier: balancePath)!
             self.receiverPath = PublicPath(identifier: receiverPath)!
@@ -53,7 +56,7 @@ pub contract Drizzle {
 
         // For users to claim token
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct})
-        pub fun getClaimAmount(address: Address): UFix64?
+        pub fun getClaimableAmount(address: Address): UFix64?
         pub fun hasClaimed(address: Address): UFix64?
         pub fun getClaimed(): {Address: UFix64}
         pub fun getDropVaultBalance(): UFix64

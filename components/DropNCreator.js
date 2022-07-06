@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { useRouter } from 'next/router'
 
-import Link from 'next/link'
 import { Switch } from '@headlessui/react'
 import * as fcl from "@onflow/fcl"
 
@@ -82,8 +80,6 @@ const filterRecords = (rawRecordsStr) => {
 }
 
 export default function DropNCreator(props) {
-  const router = useRouter()
-
   const timezone = utils.getTimezone()
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startAt, setStartAt] = useState(null)
@@ -125,7 +121,7 @@ export default function DropNCreator(props) {
       return [false, "invalid token"]
     }
 
-    if (bannerSize > 1000000) {
+    if (bannerSize > 500000) {
       return [false, "banner oversize"]
     }
 
@@ -152,6 +148,8 @@ export default function DropNCreator(props) {
     if (props.user && props.user.loggedIn) {
       const [valid, error] = checkParams()
       if (valid) {
+        setParamsError(null)
+
         const [claims, tokenAmount] = getClaimsFromRecords(validRecords)
         const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null 
         const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
@@ -168,6 +166,7 @@ export default function DropNCreator(props) {
           endAt: ${_endAt}\n
           tokenAddress: ${token.address}\n
           contractName: ${token.contractName}\n
+          symbol: ${token.symbol}\n
           tokenProviderPath: ${tokenProviderPath}\n
           tokenBalancePath: ${tokenBalancePath}\n
           tokenReceiverPath: ${tokenReceiverPath}\n
@@ -178,7 +177,7 @@ export default function DropNCreator(props) {
         try {
           const transactionId = await drizzleService.createDropN(
             name, desc ?? '', banner, url, claims, _startAt, _endAt, 
-            token.address, token.contractName, tokenProviderPath,
+            token.address, token.contractName, token.symbol, tokenProviderPath,
             tokenBalancePath, tokenReceiverPath, tokenAmount
           )
           console.log("txid: " + transactionId)
@@ -239,8 +238,7 @@ export default function DropNCreator(props) {
           <label className="block text-2xl font-bold font-flow">
             {"banner"}
           </label>
-          {/** The transaction limit of flow is 1.5 MB */}
-          <label className="block text-md font-flow leading-8 mt-2">image size should be less than 1 MB</label>
+          <label className="block text-md font-flow leading-8 mt-2">image size should be less than 500 KB</label>
           <ImageSelector imageSelectedCallback={(_banner, _bannerSize) => {
             setBanner(_banner)
             setBannerSize(_bannerSize)
@@ -394,7 +392,7 @@ export default function DropNCreator(props) {
               }
               onChange={(event) => { setRawRecordsStr(event.target.value) }}
             />
-            <div className="flex mt-2 gap-x-2 justify-between">
+            <div className="flex mt-4 gap-x-2 justify-between">
               <div className="h-12 w-40 font-medium text-base shadow-sm bg-drizzle-green hover:bg-drizzle-green-dark">
                 <label htmlFor="csv_uploader" className="w-full inline-block text-center leading-[48px] ">upload csv</label>
                 <input id="csv_uploader" className="invisible" type="file"
@@ -533,14 +531,14 @@ export default function DropNCreator(props) {
         }
 
         {/** create button */}
-        <div className="w-full px-6 flex flex-col gap-y-2 items-center">
+        <div className="w-full mt-20 flex flex-col gap-y-2 items-center">
           {
             paramsError ?
               <label className="font-flow text-md text-red-500">{paramsError}</label> : null
           }
           <button
             type="button"
-            className="w-full h-12 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            className="w-full h-12 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
             onClick={handleSubmit}
           >
             {props.user.loggedIn ? "create" : "connect wallet"}

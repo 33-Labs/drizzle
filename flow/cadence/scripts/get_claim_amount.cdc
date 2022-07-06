@@ -11,5 +11,5 @@ pub fun main(dropID: UInt64, host: Address, claimer: Address): UFix64? {
     let drop = dropCollection.borrowPublicDropRef(dropID: dropID)
         ?? panic("Could not borrow drop")
 
-    return drop.getClaimAmount(address: claimer)    
+    return drop.getClaimableAmount(address: claimer)    
 }

@@ -1,12 +1,13 @@
 export default function ImageSelector(props) {
   const handleImageChosen = (file) => {
-    console.log(file.size)
-    const fileReader = new FileReader()
-    fileReader.onloadend = (e) => {
-      const content = fileReader.result
-      props.imageSelectedCallback(content, file.size)
+    if (file) {
+      const fileReader = new FileReader()
+      fileReader.onloadend = (e) => {
+        const content = fileReader.result
+        props.imageSelectedCallback(content, file.size)
+      }
+      fileReader.readAsDataURL(file)
     }
-    fileReader.readAsDataURL(file)
   }
 
   return (

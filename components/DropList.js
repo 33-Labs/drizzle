@@ -1,6 +1,10 @@
 import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+
 
 export default function DropList(props) {
+  const router = useRouter()
   const drops = props.drops
   console.log(drops)
 
@@ -14,6 +18,9 @@ export default function DropList(props) {
           <button
             type="button"
             className="inline-flex items-center justify-center border border-transparent bg-drizzle-green px-4 py-2 text-sm font-medium text-black shadow-sm hover:bg-drizzle-green-dark focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
+            onClick={() => {
+              router.push("/new_dropn")
+            }}
           >
             New
           </button>
@@ -38,27 +45,25 @@ export default function DropList(props) {
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Claimable
                     </th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                      <span className="sr-only">Detail</span>
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {drops.map((drop) => (
+                    <Link href={`${props.user.addr}/drops/${drop.dropID}`}>
                     <tr key={drop.dropID}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                      <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0 relative">
-                            <Image className="rounded-full" src={drop.image ?? "./drizzle.png"} alt="" layout="fill" />
+                            <Image className="rounded-sm" src={drop.image ?? "/drizzle.png"} alt="" layout="fill" objectFit="cover" />
                           </div>
                           <div className="ml-4">
-                            <div className="font-medium text-gray-900">{drop.name}</div>
+                            <label className="block font-medium text-gray-900 break-words max-w-[200px]">{drop.name}</label>
                           </div>
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         <div className="text-gray-500">
-                          {drop.tokenInfo.tokenIdentifier}
+                          {drop.tokenInfo.symbol}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -69,12 +74,8 @@ export default function DropList(props) {
                           {drop.isClaimable ? "TRUE" : "FALSE"}
                         </span>
                       </td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <a href={`${props.user.addr}/drops/${drop.dropID}`} className="text-drizzle-green-dark">
-                          Detail
-                        </a>
-                      </td>
                     </tr>
+                    </Link>
                   ))}
                 </tbody>
               </table>
