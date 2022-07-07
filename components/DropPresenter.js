@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 
 import Decimal from 'decimal.js'
 
@@ -14,6 +15,14 @@ import {
 } from '../lib/scripts'
 import { convertCadenceDateTime } from '../lib/utils'
 
+const dropFetcher = async (dropID, host) => {
+  return await queryDrop(dropID, host)
+}
+
+const claimStatusFetcher = async (dropID, host, claimer) => {
+  return await queryClaimStatus(dropID, host, claimer)
+}
+
 export default function DropPresenter(props) {
   const [drop, setDrop] = useState(null)
   const [claimStatus, setClaimStatus] = useState({message: "not eligible", claimableAmount: null})
@@ -21,26 +30,15 @@ export default function DropPresenter(props) {
   const account = props.account
   const dropID = props.dropID
   const user = props.user
+  const { data: dropData, error: dropError } = useSWR(
+    dropID && account ? [dropID, account] : null, dropFetcher)
+  const { data: claimStatusData, error: claimStatusError } = useSWR(
+    dropID && account && user && user.loggedIn ?  [dropID, account, user.addr] : null , claimStatusFetcher) 
 
   useEffect(() => {
-    const getDrop = async (address, dropID) => {
-      const drop = await queryDrop(address, dropID)
-      setDrop(drop)
-    }
-
-    const getClaimStatus = async (dropID, host, claimer) => {
-      const status = await queryClaimStatus(dropID, host, claimer)
-      setClaimStatus(status)
-    }
-
-    if (account) {
-      getDrop(account, dropID)
-    }
-
-    if (account && user && user.loggedIn) {
-      getClaimStatus(dropID, account, user.addr)
-    }
-  }, [account, dropID, user])
+    if (dropData) { setDrop(dropData) }
+    if (claimStatusData) { setClaimStatus(claimStatusData)}
+  }, [dropData, claimStatusData])
 
   return (
     <>
