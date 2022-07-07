@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 
 import * as fcl from "@onflow/fcl"
 import config from "../flow/config.js"
-import publicConfig from "../publicConfig.js"
 import { LogoutIcon } from "@heroicons/react/outline"
 
 export default function NavigationBar(props) {
@@ -14,14 +13,6 @@ export default function NavigationBar(props) {
   const AuthedState = () => {
     return (
       <div className="flex gap-x-2 items-center">
-        {/* <label> 
-          <a 
-            href={`${publicConfig.flowscanURL}/account/${(user && user.addr) ?? "No Address"}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-flow text-lg underline decoration-drizzle-green decoration-2">{user?.addr ?? "No Address"}
-          </a>
-        </label> */}
         <button 
           className="font-flow text-lg underline decoration-drizzle-green decoration-2"
           onClick={() => {

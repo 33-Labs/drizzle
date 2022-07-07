@@ -2,11 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-
 export default function DropList(props) {
   const router = useRouter()
   const drops = props.drops
-  console.log(drops)
 
   return (
     <div className="p-2">

@@ -1,8 +1,14 @@
 import Image from "next/image"
 import React from 'react'
-import drizzleService from "../lib/drizzleService"
 import publicConfig from "../publicConfig"
-import * as fcl from "@onflow/fcl"
+
+import { useRecoilState } from "recoil"
+import {
+  transactionInProgressState,
+  transactionStatusState
+} from "../lib/atoms"
+
+import { test } from "../lib/transactions"
 
 const MemoizeBanner = React.memo(({banner}) => {
   return (
@@ -61,6 +67,9 @@ export default function DropCard(props) {
   const symbol = props.tokenSymbol || (token && token.symbol)
   const banner = props.banner || "/drizzle.png"
   const url = props.url
+
+  const [, setTransactionInProgress] = useRecoilState(transactionInProgressState)
+  const [, setTransactionStatus] = useRecoilState(transactionStatusState)
 
   return (
     <div className="flex flex-col w-[480px] min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-stretch">
@@ -142,24 +151,28 @@ export default function DropCard(props) {
         ${(isPreview || !status.claimable) ? "bg-gray-400 hover:bg-gray-500" : "bg-drizzle-green hover:bg-drizzle-green-dark"}`}
         disabled={!(status && status.claimable)}
         onClick={async () => {
-          if (!isPreview && status.claimable) {
-            try {
-              console.log(token)
-              const transactionId = await drizzleService.claim(
-                dropID, 
-                host, 
-                token.account,
-                token.contractName,
-                token.providerPath.identifier,
-                token.balancePath.identifier,
-                token.receiverPath.identifier
-              )
-              console.log("txid: " + transactionId)
-              await fcl.tx(transactionId).onceSealed()
-            } catch (e) {
-              console.log(e)
-            }
-          }
+          console.log("YEYE")
+          await test(
+            setTransactionInProgress,
+            setTransactionStatus
+          )
+          // if (!isPreview && status.claimable) {
+          //   try {
+          //     const transactionId = await drizzleService.claim(
+          //       dropID, 
+          //       host, 
+          //       token.account,
+          //       token.contractName,
+          //       token.providerPath.identifier,
+          //       token.balancePath.identifier,
+          //       token.receiverPath.identifier
+          //     )
+          //     console.log("txid: " + transactionId)
+          //     await fcl.tx(transactionId).onceSealed()
+          //   } catch (e) {
+          //     console.log(e)
+          //   }
+          // }
         }}
         >
         {isPreview ? "PREVIEWING" : (
