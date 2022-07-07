@@ -15,13 +15,13 @@
         "Drizzle": {
             "source": "./contracts/Drizzle.cdc",
             "aliases": {
-                "testnet": "0x257c27ba4951541d"
+                "testnet": "0x69a2203998669971"
             }
         },
         "DropN": {
             "source": "./contracts/DropN.cdc",
             "aliases": {
-                "testnet": "0x257c27ba4951541d"
+                "testnet": "0x69a2203998669971"
             }
         }
     },

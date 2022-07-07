@@ -7,13 +7,15 @@ import TokenSelector from "./TokenSelector"
 import ImageSelector from './ImageSelector'
 import DropCard from './DropCard'
 import Decimal from 'decimal.js'
-import drizzleService from '../lib/drizzleService'
+import { createDrop } from '../lib/transactions'
 import utils from '../lib/utils'
 
 import { useRecoilState } from "recoil"
 import {
   basicNotificationContentState,
   showBasicNotificationState,
+  transactionInProgressState,
+  transactionStatusState
 } from "../lib/atoms"
 
 function classNames(...classes) {
@@ -88,6 +90,9 @@ const filterRecords = (rawRecordsStr) => {
 export default function DropNCreator(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
+  const [, setTransactionInProgress] = useRecoilState(transactionInProgressState)
+  const [, setTransactionStatus] = useRecoilState(transactionStatusState)
+
 
   const timezone = utils.getTimezone()
 
@@ -183,32 +188,10 @@ export default function DropNCreator(props) {
           banner: ${banner}
         `)
 
-        try {
-          const transactionId = await drizzleService.createDropN(
-            name, desc ?? '', banner, url, claims, _startAt, _endAt, 
-            token.address, token.contractName, token.symbol, tokenProviderPath,
-            tokenBalancePath, tokenReceiverPath, tokenAmount
-          )
-          console.log("txid: " + transactionId)
-          setTxid(transactionId)
-          setTxStatus(TransactionStatus.Pending)
-      
-          await fcl.tx(transactionId).onceSealed()
-          setTxStatus(TransactionStatus.Sealed)
-        } catch (e) {
-          console.log(e)
-          if (typeof e === "string" && e.includes("Execution failed")) {
-              setTxStatus(TransactionStatus.ExecutionFailed)
-          } else if (typeof e === "object" && e.message.includes("Declined")) {
-              setTxStatus(TransactionStatus.Rejected)
-          } else if (typeof e === "string" && e.includes("Declined")) {
-              setTxStatus(TransactionStatus.Rejected)
-          }
-        }
-        console.log("status: " + txStatus)
-      } else {
-        setShowBasicNotification(true)
-        setBasicNotificationContent({type: "exclamation", title: "Invalid Params", detail: error})
+        await createDrop(
+          name, desc ?? '', banner, url, claims, _startAt,
+          _endAt, token, tokenAmount, setTransactionInProgress, setTransactionStatus
+        )
       }
     } else {
       fcl.authenticate()
@@ -219,7 +202,7 @@ export default function DropNCreator(props) {
     <>
       {/** title */}
       <h1 className="font-flow font-semibold text-4xl text-center mb-10">
-        create dropN
+        Create Drop
       </h1>
 
       {/** preview */}

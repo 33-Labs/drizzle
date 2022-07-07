@@ -94,7 +94,7 @@ const NotificationContent = ({txStatus}) => {
             ) : null
           }
         </div>
-        <p className="mt-1 text-sm text-gray-500">{txStatus.error}</p>
+        <p className="mt-1 text-sm text-gray-500 truncate">{txStatus.error}</p>
       </div>
       </>
     )

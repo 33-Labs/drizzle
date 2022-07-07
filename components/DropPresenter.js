@@ -4,7 +4,10 @@ import ManageCard from './ManageCard'
 import StatsCard from './StatsCard'
 import { useEffect, useState } from 'react'
 
-import drizzleService from '../lib/drizzleService'
+import { 
+  queryDrop,
+  queryClaimStatus
+} from '../lib/scripts'
 import utils from '../lib/utils'
 import publicConfig from '../publicConfig'
 
@@ -20,12 +23,12 @@ export default function DropPresenter(props) {
 
   useEffect(() => {
     const getDrop = async (address, dropID) => {
-      const drop = await drizzleService.queryDrop(address, dropID)
+      const drop = await queryDrop(address, dropID)
       setDrop(drop)
     }
 
     const getClaimStatus = async (dropID, host, claimer) => {
-      const status = await drizzleService.queryClaimStatus(dropID, host, claimer)
+      const status = await queryClaimStatus(dropID, host, claimer)
       setClaimStatus(status)
     }
 

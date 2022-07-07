@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 import { useState, useEffect } from 'react'
 import DropList from '../../components/DropList'
-import drizzleService from '../../lib/drizzleService'
+import { queryDrops } from '../../lib/scripts'
 
 const convertDropNs = (dropNMaps) => {
   const dropIDs = Object.keys(dropNMaps)
@@ -28,7 +28,7 @@ export default function Account(props) {
   useEffect(() => {
     setLoading(true)
     const getDropNs = async (address) => {
-      const drops = await drizzleService.queryDropNs(address)
+      const drops = await queryDrops(address)
       setDropNs(convertDropNs(drops))
     }
 

@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 import { Combobox } from '@headlessui/react'
 
-import drizzleService from '../lib/drizzleService'
+import { queryBalance } from '../lib/scripts'
 import Decimal from 'decimal.js';
 
 import { TokenListProvider, ENV, Strategy } from 'flow-native-token-registry';
@@ -46,7 +46,7 @@ export default function TokenSelector(props) {
     <Combobox as="div" className={props.className} value={props.user && props.user.loggedIn && selectedToken} onChange={async (token) => {
       if (props.user && props.user.loggedIn) {
         setBalance(new Decimal(0))
-        drizzleService.queryBalance(token, props.user.addr).then((balance) => {
+        queryBalance(token, props.user.addr).then((balance) => {
           setBalance(new Decimal(balance))
           if (props.onBalanceFetched) {
             props.onBalanceFetched(balance)

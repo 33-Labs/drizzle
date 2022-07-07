@@ -60,6 +60,7 @@ export default function DropCard(props) {
   const host = props.host || "unknown"
   const desc = props.description
   const status = props.status
+  console.log(status)
 
   const token = props.token
   console.log(token)
@@ -152,6 +153,7 @@ export default function DropCard(props) {
         disabled={!(status && status.claimable)}
         onClick={async () => {
           console.log("YEYE")
+          setTransactionInProgress(false)
           await test(
             setTransactionInProgress,
             setTransactionStatus
