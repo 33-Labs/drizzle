@@ -21,7 +21,7 @@ import {
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
 const HostPlaceholder = "0x0001"
-const TokenPlaceholder = {symbol: "FLOW"}
+const TokenPlaceholder = { symbol: "FLOW" }
 const AmountPlaceholder = new Decimal(42)
 const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
 const URLPlaceholder = "https://the.link.you.want.to.add"
@@ -97,7 +97,7 @@ export default function DropNCreator(props) {
         setShowBasicNotification(false)
 
         const [claims, tokenAmount] = getClaimsFromRecords(validRecords)
-        const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null 
+        const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null
         const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
         const tokenProviderPath = token.path.vault.replace("/storage/", "")
         const tokenBalancePath = token.path.balance.replace("/public/", "")
@@ -143,6 +143,7 @@ export default function DropNCreator(props) {
           isPreview={true}
           banner={banner}
           name={name ?? NamePlaceholder}
+          url={url}
           host={props.user ? props.user.addr : HostPlaceholder}
           createdAt={CreatedAtPlaceholder}
           description={description ?? DescriptionPlaceholder}
@@ -186,7 +187,6 @@ export default function DropNCreator(props) {
             />
           </div>
         </div>
-
 
         {/** description */}
         <div className="flex flex-col gap-y-2">
@@ -338,7 +338,7 @@ export default function DropNCreator(props) {
                     setProcessed(true)
                   } else {
                     setShowBasicNotification(true)
-                    setBasicNotificationContent({type: "exclamation", title: "Invalid Params", detail: "Token is not selected"})
+                    setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "Token is not selected" })
                   }
                 }}
               >

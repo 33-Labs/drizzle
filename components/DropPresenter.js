@@ -1,15 +1,18 @@
+import { useEffect, useState } from 'react'
+
+import Decimal from 'decimal.js'
+
 import DropCard from './DropCard'
 import ShareCard from './ShareCard'
 import ManageCard from './ManageCard'
 import StatsCard from './StatsCard'
-import { useEffect, useState } from 'react'
 
+import publicConfig from '../publicConfig'
 import { 
   queryDrop,
   queryClaimStatus
 } from '../lib/scripts'
-import utils from '../lib/utils'
-import publicConfig from '../publicConfig'
+import { convertCadenceDateTime } from '../lib/utils'
 
 export default function DropPresenter(props) {
   const [drop, setDrop] = useState(null)
@@ -18,8 +21,6 @@ export default function DropPresenter(props) {
   const account = props.account
   const dropID = props.dropID
   const user = props.user
-
-  const timezone = utils.getTimezone()
 
   useEffect(() => {
     const getDrop = async (address, dropID) => {
@@ -48,23 +49,18 @@ export default function DropPresenter(props) {
           <>
             <div className="flex justify-center mb-10">
               <DropCard
-                name={drop.name}
-                host={drop.host}
-                createdAt={utils.convertCadenceDateTime(drop.createdAt)}
-                description={drop.description}
-                amount={claimStatus.claimableAmount}
-                // Need symbol in tokenInfo
-                tokenSymbol={drop.tokenInfo.symbol}
                 isPreview={false}
-                banner={drop.image ?? "/drizzle.png"}
+                banner={drop.image}
+                name={drop.name}
                 url={drop.url}
-                startAt={drop.startAt ? utils.convertCadenceDateTime(drop.startAt) : null}
-                endAt={drop.endAt ? utils.convertCadenceDateTime(drop.endAt) : null}
-                timeLockEnabled={drop.startAt != null || drop.endAt != null}
-                timezone={timezone}
-                status={claimStatus}
+                host={drop.host}
+                createdAt={convertCadenceDateTime(drop.createdAt)}
+                description={drop.description}
+                tokenInfo={drop.tokenInfo}
+                startAt={drop.startAt ? convertCadenceDateTime(drop.startAt) : null}
+                endAt={drop.endAt ? convertCadenceDateTime(drop.endAt) : null}
+                claimStatus={claimStatus}
                 dropID={drop.dropID}
-                token={drop.tokenInfo}
               />
             </div>
             <div className="flex flex-col items-center justify-center">
