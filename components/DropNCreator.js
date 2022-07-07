@@ -10,6 +10,12 @@ import Decimal from 'decimal.js'
 import drizzleService from '../lib/drizzleService'
 import utils from '../lib/utils'
 
+import { useRecoilState } from "recoil"
+import {
+  basicNotificationContentState,
+  showBasicNotificationState,
+} from "../lib/atoms"
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
@@ -80,7 +86,11 @@ const filterRecords = (rawRecordsStr) => {
 }
 
 export default function DropNCreator(props) {
+  const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
+  const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
+
   const timezone = utils.getTimezone()
+
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startAt, setStartAt] = useState(null)
   const [endAt, setEndAt] = useState(null)
@@ -102,7 +112,6 @@ export default function DropNCreator(props) {
 
   const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
 
-  const [paramsError, setParamsError] = useState(null)
   const [processed, setProcessed] = useState(false)
 
   const [txid, setTxid] = useState(null)
@@ -148,7 +157,7 @@ export default function DropNCreator(props) {
     if (props.user && props.user.loggedIn) {
       const [valid, error] = checkParams()
       if (valid) {
-        setParamsError(null)
+        setShowBasicNotification(false)
 
         const [claims, tokenAmount] = getClaimsFromRecords(validRecords)
         const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null 
@@ -198,7 +207,8 @@ export default function DropNCreator(props) {
         }
         console.log("status: " + txStatus)
       } else {
-        setParamsError(error)
+        setShowBasicNotification(true)
+        setBasicNotificationContent({type: "exclamation", title: "Invalid Params", detail: error})
       }
     } else {
       fcl.authenticate()
@@ -421,7 +431,8 @@ export default function DropNCreator(props) {
                     setRecordsSum(validRecords.map((r) => r.amount).reduce((p, c) => p.add(c), new Decimal(0)))
                     setProcessed(true)
                   } else {
-                    setParamsError("token is not selected")
+                    setShowBasicNotification(true)
+                    setBasicNotificationContent({type: "exclamation", title: "Invalid Params", detail: "Token is not selected"})
                   }
                 }}
               >
@@ -532,10 +543,6 @@ export default function DropNCreator(props) {
 
         {/** create button */}
         <div className="w-full mt-20 flex flex-col gap-y-2 items-center">
-          {
-            paramsError ?
-              <label className="font-flow text-md text-red-500">{paramsError}</label> : null
-          }
           <button
             type="button"
             className="w-full h-12 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
