@@ -87,12 +87,23 @@ const filterRecords = (rawRecordsStr) => {
   return [records, invalidRecords]
 }
 
+const DropDraft = {
+  name: "",
+  description: "",
+  namePlaceholder: "DROP NAME",
+  descriptionPlaceholder: "DESCRIPTION",
+  timeLockEnabled: false,
+  startAt: null,
+  endAt: null,
+  token: null,
+  banner: null
+}
+
 export default function DropNCreator(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
   const [, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
-
 
   const timezone = utils.getTimezone()
 

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import DropList from '../../components/DropList'
 import { queryDrops } from '../../lib/scripts'
+import useSWR from 'swr'
 
 const convertDropNs = (dropNMaps) => {
   const dropIDs = Object.keys(dropNMaps)
@@ -17,25 +18,22 @@ const convertDropNs = (dropNMaps) => {
   return dropNs.sort((a, b) => a.uuid > b.uuid)
 }
 
-export default function Account(props) {
-  const [dropNs, setDropNs] = useState([])
-  const [isLoading, setLoading] = useState(false)
+const dropsFetcher = async (address) => {
+  return await queryDrops(address)
+}
 
+export default function Account(props) {
   const router = useRouter()
   const { account } = router.query
-  console.log(account)
+
+  const [dropNs, setDropNs] = useState([])
+  const {data, error} = useSWR(account, dropsFetcher)
 
   useEffect(() => {
-    setLoading(true)
-    const getDropNs = async (address) => {
-      const drops = await queryDrops(address)
-      setDropNs(convertDropNs(drops))
+    if (data) {
+      setDropNs(convertDropNs(data))
     }
-
-    if (account) {
-      getDropNs(account)
-    }
-  }, [account])
+  }, [data])
   
   return (
     <>
