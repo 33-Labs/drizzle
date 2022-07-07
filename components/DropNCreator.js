@@ -1,14 +1,14 @@
 import { useState } from 'react'
-
 import { Switch } from '@headlessui/react'
 import * as fcl from "@onflow/fcl"
+import Decimal from 'decimal.js'
 
 import TokenSelector from "./TokenSelector"
 import ImageSelector from './ImageSelector'
 import DropCard from './DropCard'
-import Decimal from 'decimal.js'
+
 import { createDrop } from '../lib/transactions'
-import utils from '../lib/utils'
+import { classNames, filterRecords, getClaimsFromRecords, getTimezone, isValidHttpUrl } from '../lib/utils'
 
 import { useRecoilState } from "recoil"
 import {
@@ -18,86 +18,14 @@ import {
   transactionStatusState
 } from "../lib/atoms"
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
-const Pending = 'Pending'
-const Sealed = 'Sealed'
-const ExecutionFailed = 'Execution Failed'
-const Rejected = 'Transaction Rejected'
-const TransactionStatus = {
-  Pending,
-  Sealed,
-  ExecutionFailed,
-  Rejected
-}
-
-function isValidHttpUrl(string) {
-  let url
-
-  try {
-    url = new URL(string)
-  } catch (_) {
-    return false
-  }
-
-  return url.protocol === "http:" || url.protocol === "https:"
-}
-
-const getClaimsFromRecords = (records) => {
-  let claims = []
-  let amount = new Decimal(0)
-  for (let i = 0; i < records.length; i++) {
-    const record = records[i]
-    const claim = {
-      key: record.address,
-      value: record.amount.toFixed(8).toString()
-    }
-    claims.push(claim)
-    amount = amount.add(record.amount)
-  }
-
-  return [claims, amount.toFixed(8).toString()]
-}
-
-const filterRecords = (rawRecordsStr) => {
-  const rawRecords = rawRecordsStr.trim().split("\n").filter((r) => r != '')
-
-  let addresses = {}
-  let records = []
-  let invalidRecords = []
-  for (var i = 0; i < rawRecords.length; i++) {
-    let rawRecord = rawRecords[i]
-    try {
-      const [address, rawAmount] = rawRecord.split(",")
-      const amount = new Decimal(rawAmount)
-      if (!amount.isPositive() || amount.decimalPlaces() > 8) { throw "invalid amount" }
-      if (!address.startsWith("0x") || address.length != 18) { throw "invalid address" }
-
-      const bytes = Buffer.from(address.replace("0x", ""), "hex")
-      if (bytes.length != 8) { throw "invalid address" }
-      if (addresses[address]) { throw "duplicate address" }
-      addresses[address] = true
-      records.push({ id: i, address: address, amount: amount, rawRecord: rawRecord })
-    } catch (e) {
-      invalidRecords.push(rawRecord)
-    }
-  }
-  return [records, invalidRecords]
-}
-
-const DropDraft = {
-  name: "",
-  description: "",
-  namePlaceholder: "DROP NAME",
-  descriptionPlaceholder: "DESCRIPTION",
-  timeLockEnabled: false,
-  startAt: null,
-  endAt: null,
-  token: null,
-  banner: null
-}
+const NamePlaceholder = "DROP NAME"
+const DescriptionPlaceholder = "Detail information about this drop"
+const HostPlaceholder = "0x0001"
+const TokenPlaceholder = {symbol: "FLOW"}
+const AmountPlaceholder = new Decimal(42)
+const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
+const URLPlaceholder = "https://the.link.you.want.to.add"
+const Timezone = getTimezone()
 
 export default function DropNCreator(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
@@ -105,33 +33,26 @@ export default function DropNCreator(props) {
   const [, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
 
-  const timezone = utils.getTimezone()
+  const [banner, setBanner] = useState(null)
+  const [bannerSize, setBannerSize] = useState(0)
+
+  const [name, setName] = useState(null)
+  const [url, setURL] = useState(null)
+  const [description, setDescription] = useState(null)
 
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startAt, setStartAt] = useState(null)
   const [endAt, setEndAt] = useState(null)
 
-  const namePlaceholder = "The name of this drop"
-  const [name, setName] = useState(null)
-  const descPlaceholder = "Detail information about this drop"
-  const [desc, setDesc] = useState("")
-  const [url, setURL] = useState(null)
   const [token, setToken] = useState(null)
-
-  const [banner, setBanner] = useState(null)
-  const [bannerSize, setBannerSize] = useState(0)
 
   const [rawRecordsStr, setRawRecordsStr] = useState('')
   const [validRecords, setValidRecords] = useState([])
   const [invalidRecords, setInvalidRecords] = useState([])
   const [recordsSum, setRecordsSum] = useState(new Decimal(0))
-
   const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
 
   const [processed, setProcessed] = useState(false)
-
-  const [txid, setTxid] = useState(null)
-  const [txStatus, setTxStatus] = useState(null)
 
   const checkParams = () => {
     if (!name || name.trim() == "") {
@@ -219,24 +140,21 @@ export default function DropNCreator(props) {
       {/** preview */}
       <div className="flex justify-center mb-10">
         <DropCard
-          name={name ? name : namePlaceholder}
-          host={props.user.loggedIn ? props.user.addr : "unknown"}
-          createdAt={`12/17/2022, 05:20:00 AM`}
-          description={desc ? desc : descPlaceholder}
-          amount={1024.2048}
-          tokenSymbol={token ? token.symbol : "FLOW"}
           isPreview={true}
           banner={banner}
-          url={url}
+          name={name ?? NamePlaceholder}
+          host={props.user ? props.user.addr : HostPlaceholder}
+          createdAt={CreatedAtPlaceholder}
+          description={description ?? DescriptionPlaceholder}
+          token={token || TokenPlaceholder}
+          timeLockEnabled={timeLockEnabled}
           startAt={startAt}
           endAt={endAt}
-          timeLockEnabled={timeLockEnabled}
-          timezone={timezone}
+          amount={AmountPlaceholder}
         />
       </div>
 
       <div className="flex flex-col gap-y-10">
-
         {/** image uploader */}
         <div className="flex flex-col gap-y-1">
           <label className="block text-2xl font-bold font-flow">
@@ -261,7 +179,7 @@ export default function DropNCreator(props) {
               id="name"
               required
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              placeholder="the name of this drop"
+              placeholder={NamePlaceholder}
               onChange={(event) => {
                 setName(event.target.value)
               }}
@@ -284,12 +202,8 @@ export default function DropNCreator(props) {
 
               defaultValue={''}
               spellCheck={false}
-              placeholder={
-                "detail information about this drop"
-              }
-              onChange={(event) => {
-                setDesc(event.target.value)
-              }}
+              placeholder={DescriptionPlaceholder}
+              onChange={(event) => { setDescription(event.target.value) }}
             />
           </div>
         </div>
@@ -306,10 +220,8 @@ export default function DropNCreator(props) {
               id="url"
               pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              placeholder="the link about this drop"
-              onChange={(event) => {
-                setURL(event.target.value)
-              }}
+              placeholder={URLPlaceholder}
+              onChange={(event) => { setURL(event.target.value) }}
             />
           </div>
         </div>
@@ -329,7 +241,7 @@ export default function DropNCreator(props) {
         <div>
           <div className="flex justify-between mb-4">
             <label className="block text-2xl font-bold font-flow">
-              time limit{` (${timezone})`}
+              time limit{` (${Timezone})`}
             </label>
             <Switch
               checked={timeLockEnabled}
