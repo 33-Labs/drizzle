@@ -67,7 +67,7 @@ export default function StatsCard(props) {
                         </td>
                         <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
                           <div className="text-gray-500">
-                            {claim.amount}
+                            {claim.amount} {symbol}
                           </div>
                         </td>
                       </tr>

@@ -80,10 +80,10 @@ export default function DropPresenter(props) {
               <ShareCard 
                 url={`${publicConfig.appURL}/${account}/drops/${dropID}`} 
               />
+              <StatsCard stats={stats} />
               {
                 user && (user.addr == account) ? (
                   <>
-                    <StatsCard stats={stats} />
                     <ManageCard />
                   </>
                 ) : null
