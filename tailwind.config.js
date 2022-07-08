@@ -8,8 +8,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'drizzle-green': '#68EE8E',
-        'drizzle-green-dark': '#58D27D'
+        'drizzle-green': '#68ee8e',
+        'drizzle-green-dark': '#58d27d',
+        'disabled-gray': '#e2e8f0',
+        'disabled-gray-dark': '#cbd5e1'
       },
       fontFamily: {
         'flow': ['acumin-pro', 'sans-serif'],

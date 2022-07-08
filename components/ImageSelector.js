@@ -11,16 +11,20 @@ export default function ImageSelector(props) {
   }
 
   return (
-    <label>
-      <input type="file" accept="image/png, image/jpeg" className="text-sm
-        focus:outline-0
-        file:mr-5 file:py-2 file:px-6
-        file:rounded-full file:border-0
-        file:text-sm file:font-medium
-        file:bg-drizzle-green/30 file:text-drizzle-green-dark
-        hover:file:cursor-pointer hover:file:bg-drizzle-green-dark
-        hover:file:text-black
-      " onChange={(e) => {handleImageChosen(e.target.files[0])}}/>
-  </label>
+    <div className="h-12 max-w-[140px] px-3 shadow-sm 
+    font-medium text-base text-drizzle-green-dark bg-drizzle-green/50
+    rounded-full
+  hover:bg-drizzle-green-dark hover:text-black"
+    >
+      <label
+        htmlFor="image-selector"
+        className="w-full inline-block text-center leading-[48px] ">
+        Choose Image
+      </label>
+      <input id="image-selector" className="invisible" type="file"
+        accept="image/png, image/jpeg"
+        onChange={(e) => { handleImageChosen(e.target.files[0]) }}
+      />
+    </div>
   )
 }

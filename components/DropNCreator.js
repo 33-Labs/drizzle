@@ -125,6 +125,9 @@ export default function DropNCreator(props) {
           name, desc ?? '', banner, url, claims, _startAt,
           _endAt, token, tokenAmount, setTransactionInProgress, setTransactionStatus
         )
+      } else {
+        setShowBasicNotification(true)
+        setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: error })
       }
     } else {
       fcl.authenticate()
@@ -160,9 +163,9 @@ export default function DropNCreator(props) {
         {/** image uploader */}
         <div className="flex flex-col gap-y-1">
           <label className="block text-2xl font-bold font-flow">
-            {"banner"}
+            Banner
           </label>
-          <label className="block text-md font-flow leading-8 mt-2">image size should be less than 500 KB</label>
+          <label className="block text-md font-flow leading-6 mt-2 mb-2">Image size should be less than 500 KB</label>
           <ImageSelector imageSelectedCallback={(_banner, _bannerSize) => {
             setBanner(_banner)
             setBannerSize(_bannerSize)
@@ -172,7 +175,7 @@ export default function DropNCreator(props) {
         {/** name */}
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            name
+            Name
           </label>
           <div className="mt-1">
             <input
@@ -192,7 +195,7 @@ export default function DropNCreator(props) {
         {/** description */}
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            description
+            Description
           </label>
           <div className="mt-1">
             <textarea
@@ -212,7 +215,7 @@ export default function DropNCreator(props) {
         {/** url */}
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            url
+            URL
           </label>
           <div className="mt-1">
             <input
@@ -231,7 +234,7 @@ export default function DropNCreator(props) {
         <div>
           <div className="flex justify-between mb-4">
             <label className="block text-2xl font-bold font-flow">
-              time limit{` (${Timezone})`}
+              Time Limit{` (${Timezone})`}
             </label>
             <Switch
               checked={timeLockEnabled}
@@ -255,7 +258,7 @@ export default function DropNCreator(props) {
           {timeLockEnabled ?
             <div className="flex justify-between gap-x-2 gap-y-2 flex-wrap">
               <div className="flex items-center gap-x-2">
-                <label className="inline-block w-12 font-flow font-bold">start</label>
+                <label className="inline-block w-12 font-flow font-bold">Start</label>
                 <input
                   type="datetime-local"
                   id="start_at"
@@ -265,7 +268,7 @@ export default function DropNCreator(props) {
               </div>
 
               <div className="flex items-center gap-x-2">
-                <label className="inline-block w-12 font-flow font-bold">end</label>
+                <label className="inline-block w-12 font-flow font-bold">End</label>
                 <input
                   type="datetime-local"
                   id="end_at"
@@ -289,9 +292,9 @@ export default function DropNCreator(props) {
         {/** recipients & amounts */}
         <div>
           <label className="block text-2xl font-bold font-flow">
-            recipients & amounts
+            Recipients & Amounts
           </label>
-          <label className="block font-flow text-md leading-8 mt-2">
+          <label className="block font-flow text-md leading-6 mt-2 mb-2">
             For each line, enter one address and the token amount, seperate with comma. Duplicate addresses is not allowed.
           </label>
           <div className="mt-1">
@@ -308,19 +311,6 @@ export default function DropNCreator(props) {
               onChange={(event) => { setRawRecordsStr(event.target.value) }}
             />
             <div className="flex mt-4 gap-x-2 justify-between">
-              <CSVSelector 
-                  onChange={(event) => {
-                    setProcessed(false)
-                    const f = event.target.files[0]
-                    const reader = new FileReader()
-                    reader.addEventListener('load', (e) => {
-                      const data = e.target.result
-                      setRawRecordsStr(data)
-                      event.target.value = null
-                    })
-                    reader.readAsText(f)
-                  }
-              } />
               <button
                 type="button"
                 className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
@@ -337,8 +327,21 @@ export default function DropNCreator(props) {
                   }
                 }}
               >
-                process
+                Process
               </button>
+              <CSVSelector
+                onChange={(event) => {
+                  setProcessed(false)
+                  const f = event.target.files[0]
+                  const reader = new FileReader()
+                  reader.addEventListener('load', (e) => {
+                    const data = e.target.result
+                    setRawRecordsStr(data)
+                    event.target.value = null
+                  })
+                  reader.readAsText(f)
+                }
+                } />
             </div>
           </div>
         </div>
@@ -347,7 +350,7 @@ export default function DropNCreator(props) {
           validRecords.length > 0 || invalidRecords.length > 0 ? (
             <div>
               <label className="block text-2xl font-bold font-flow">
-                summary
+                Summary
               </label>
               <div className="mt-1 mb-30">
                 <ul role="list">
@@ -422,10 +425,10 @@ export default function DropNCreator(props) {
           invalidRecords.length > 0 && (
             <div>
               <label className="block text-2xl font-bold font-flow">
-                invalid records
+                Invalid records
               </label>
               <label className="block font-flow text-md leading-8 mt-2">
-                invalid format or invalid amount or duplicate accounts
+                Invalid format or invalid amount or duplicate accounts
               </label>
               <div className="mt-1">
                 <textarea
@@ -449,7 +452,7 @@ export default function DropNCreator(props) {
             className="w-full h-12 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
             onClick={handleSubmit}
           >
-            {props.user.loggedIn ? "create" : "connect wallet"}
+            {props.user.loggedIn ? "Create" : "Connect Wallet"}
           </button>
         </div>
       </div>

@@ -57,11 +57,11 @@ export default function TokenSelector(props) {
         props.onTokenSelected(token)
       }
     }}>
-      <Combobox.Label className="block text-2xl font-flow font-bold">token</Combobox.Label>
+      <Combobox.Label className="block text-2xl font-flow font-bold">Token</Combobox.Label>
       {props.user && props.user.loggedIn ? (selectedToken 
-        ? <Combobox.Label className="block text-md font-flow leading-10">your balance is {balance.toString()} {selectedToken.symbol}</Combobox.Label>
-        : <Combobox.Label className="block text-md font-flow leading-10">select the token to transfer</Combobox.Label>
-      ) : <Combobox.Label className="block text-md font-flow leading-10">connect wallet to select token</Combobox.Label>
+        ? <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Your balance is {balance.toString()} {selectedToken.symbol}</Combobox.Label>
+        : <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Select the token to transfer</Combobox.Label>
+      ) : <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Connect wallet to select token</Combobox.Label>
       }
       <div className="relative mt-1">
         <Combobox.Input

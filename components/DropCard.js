@@ -10,6 +10,8 @@ import {
 
 import { test } from "../lib/transactions"
 import Decimal from "decimal.js"
+import { ExternalLinkIcon } from "@heroicons/react/outline"
+import { classNames } from "../lib/utils"
 
 const MemoizeBanner = React.memo(({ banner }) => {
   return (
@@ -30,7 +32,10 @@ const MemoizeName = React.memo(({ name, url }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="text-black text-2xl font-bold font-flow break-words underline decoration-drizzle-green decoration-2">
-            {name}
+              {name}
+              <span className="inline-flex items-baseline">
+                <ExternalLinkIcon className="h-5 w-5 text-drizzle-green" />
+              </span>
           </a>
         ) : (
           <label className="text-black text-2xl font-bold font-flow break-words">
@@ -79,7 +84,7 @@ MemoizeBasicInfo.displayName = "MemoizeBasicInfo"
 const MemoizeDescription = React.memo(({ description }) => {
   return (
     <div className="w-full px-8 mb-4">
-      <p className="w-full font-flow text-sm break-words whitespace-pre-wrap">
+      <p className="w-full font-flow text-base break-words whitespace-pre-wrap">
         {description}
       </p>
     </div>
@@ -138,8 +143,10 @@ export default function DropCard(props) {
 
       <button
         type="button"
-        className={`mt-10 mx-8 mb-8 h-[48px] text-base font-medium shadow-sm text-black 
-        ${(isPreview || !claimStatus.claimable) ? "bg-gray-400 hover:bg-gray-500" : "bg-drizzle-green hover:bg-drizzle-green-dark"}`}
+        className={classNames(
+          (isPreview || !claimStatus.claimable) ? "bg-disabled-gray hover:bg-disabled-gray-dark" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+          `mt-10 mx-8 mb-8 h-[48px] text-base font-medium shadow-sm text-black rounded-2xl`
+        )}
         disabled={!(claimStatus && claimStatus.claimable)}
         onClick={async () => {
           setTransactionInProgress(false)

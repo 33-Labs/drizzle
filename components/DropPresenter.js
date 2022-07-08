@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
-
+import { SpinnerCircular } from 'spinners-react'
 import Decimal from 'decimal.js'
 
 import DropCard from './DropCard'
@@ -43,7 +43,7 @@ export default function DropPresenter(props) {
   return (
     <>
       {
-        drop ? (
+        (drop && claimStatus) ? (
           <>
             <div className="flex justify-center mb-10">
               <DropCard
@@ -74,7 +74,9 @@ export default function DropPresenter(props) {
             </div>
           </>
 
-        ) : null
+        ) : <div className="flex mt-10 justify-center">
+        <SpinnerCircular size={50} thickness={180} speed={100} color="#68ee8e" secondaryColor="#e2e8f0" />
+      </div>
       }
     </>
   )
