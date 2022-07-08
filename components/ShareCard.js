@@ -1,44 +1,51 @@
-import { QRCode } from 'react-qrcode-logo'
+import { QRCodeCanvas } from 'qrcode.react'
+import { useRef, useCallback } from 'react'
+
+const downloadQRCode = () => {
+  const canvas = document.getElementById("qr-gen");
+  const pngUrl = canvas
+    .toDataURL("image/png")
+    .replace("image/png", "image/octet-stream");
+  let downloadLink = document.createElement("a");
+  downloadLink.href = pngUrl;
+  downloadLink.download = `drop.png`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+};
+
 
 export default function ShareCard(props) {
   const url = props.url
+  const logo = props.logo || "/favicon.ico"
 
   return (
     <>
-    <label className="text-2xl font-bold font-flow">share this drop</label>
+      <label className="text-2xl font-bold font-flow">Share DROP</label>
 
-    <div className="flex flex-col gap-y-3 min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-center">
-      <div className="bg-drizzle-green mt-6">
-        <QRCode 
-          value={url}
-          qrStyle="dots"
-          fgColor="#58D27D"
-        />
-      </div>
-
-      <label className="text-lg font-bold font-flow">or</label>
-
-      <div className="w-full px-6 pb-6">
-        <div className="w-full mt-1 flex justify-between">
-          <div className="relative flex items-stretch flex-grow focus-within:z-10">
-            <input
-              type="text"
-              name="url"
-              id="url"
-              className="focus:ring-0 focus:border-drizzle-green bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-sm"
-              contentEditable={false}
-              defaultValue={url}
-            />
-          </div>
-          <button
-            type="button"
-            className="-ml-px px-4 py-2 text-sm font-medium  text-gray-700 bg-drizzle-green hover:bg-drizzle-green-dark focus:outline-none"
+      <div className="flex min-w-[200px] min-h-[200px] justify-center
+      ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
+      shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-center">
+        <button 
+          onClick={downloadQRCode}
           >
-            <span>copy</span>
-          </button>
-        </div>
+          <QRCodeCanvas
+            id="qr-gen"
+            value={url}
+            size={160}
+            bgColor={"#ffffff"}
+            fgColor={"#58d27d"}
+            level={"H"}
+            includeMargin={false}
+            imageSettings={{
+              src: logo,
+              height: 24,
+              width: 24,
+              excavate: true
+            }}
+          />
+        </button>
       </div>
-      </div>  
     </>
   )
 }

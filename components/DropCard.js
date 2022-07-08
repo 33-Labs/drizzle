@@ -32,10 +32,10 @@ const MemoizeName = React.memo(({ name, url }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="text-black text-2xl font-bold font-flow break-words underline decoration-drizzle-green decoration-2">
-              {name}
-              <span className="inline-flex items-baseline">
-                <ExternalLinkIcon className="h-5 w-5 text-drizzle-green" />
-              </span>
+            {name}
+            <span className="inline-flex items-baseline">
+              <ExternalLinkIcon className="h-5 w-5 text-drizzle-green" />
+            </span>
           </a>
         ) : (
           <label className="text-black text-2xl font-bold font-flow break-words">
@@ -65,10 +65,10 @@ const MemoizeBasicInfo = React.memo(({ host, createdAt, startAt, endAt }) => {
       <label className="w-full font-flow text-sm text-gray-400 break-words">
         {`created at ${createdAt.toLocaleString()}`}
       </label>
-      { startAt ?
-          <label className="w-full font-flow text-sm text-gray-400 break-words" id="start_at">
-            {`start at ${startAt.toLocaleString()}`}
-          </label> : null
+      {startAt ?
+        <label className="w-full font-flow text-sm text-gray-400 break-words" id="start_at">
+          {`start at ${startAt.toLocaleString()}`}
+        </label> : null
       }
       {
         endAt ?
@@ -114,7 +114,9 @@ export default function DropCard(props) {
   const symbol = isPreview ? (token && token.symbol) : (tokenInfo && tokenInfo.symbol)
 
   return (
-    <div className="flex flex-col w-[480px] min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-stretch rounded-3xl overflow-hidden">
+    <div className="flex flex-col w-[480px] min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]
+      ring-1 ring-black ring-opacity-5
+      mt-5 mb-5 items-stretch rounded-3xl overflow-hidden">
       {/* TODO: replace with new placeholder */}
       <MemoizeBanner banner={props.banner || "/flow-banner.jpg"} />
       <MemoizeName name={props.name} url={props.url} />

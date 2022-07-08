@@ -9,7 +9,7 @@ import ManageCard from './ManageCard'
 import StatsCard from './StatsCard'
 
 import publicConfig from '../publicConfig'
-import { 
+import {
   queryDrop,
   queryClaimStatus
 } from '../lib/scripts'
@@ -25,7 +25,7 @@ const claimStatusFetcher = async (dropID, host, claimer) => {
 
 export default function DropPresenter(props) {
   const [drop, setDrop] = useState(null)
-  const [claimStatus, setClaimStatus] = useState({message: "not eligible", claimableAmount: null})
+  const [claimStatus, setClaimStatus] = useState({ message: "not eligible", claimableAmount: null })
 
   const account = props.account
   const dropID = props.dropID
@@ -33,11 +33,11 @@ export default function DropPresenter(props) {
   const { data: dropData, error: dropError } = useSWR(
     dropID && account ? [dropID, account] : null, dropFetcher)
   const { data: claimStatusData, error: claimStatusError } = useSWR(
-    dropID && account && user && user.loggedIn ?  [dropID, account, user.addr] : null , claimStatusFetcher) 
+    dropID && account && user && user.loggedIn ? [dropID, account, user.addr] : null, claimStatusFetcher)
 
   useEffect(() => {
     if (dropData) { setDrop(dropData) }
-    if (claimStatusData) { setClaimStatus(claimStatusData)}
+    if (claimStatusData) { setClaimStatus(claimStatusData) }
   }, [dropData, claimStatusData])
 
   return (
@@ -62,21 +62,23 @@ export default function DropPresenter(props) {
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-            <ShareCard url={`${publicConfig.appURL}/${account}/drops/${dropID}`} />
-            {
-              user && (user.addr == account) ? (
-                <>
-                <StatsCard />
-                <ManageCard />
-                </>
-              ) : null
-            }
+              <ShareCard 
+                url={`${publicConfig.appURL}/${account}/drops/${dropID}`} 
+              />
+              {
+                user && (user.addr == account) ? (
+                  <>
+                    <StatsCard />
+                    <ManageCard />
+                  </>
+                ) : null
+              }
             </div>
           </>
 
         ) : <div className="flex mt-10 justify-center">
-        <SpinnerCircular size={50} thickness={180} speed={100} color="#68ee8e" secondaryColor="#e2e8f0" />
-      </div>
+          <SpinnerCircular size={50} thickness={180} speed={100} color="#68ee8e" secondaryColor="#e2e8f0" />
+        </div>
       }
     </>
   )
