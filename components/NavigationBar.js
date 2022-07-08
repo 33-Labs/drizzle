@@ -41,10 +41,10 @@ export default function NavigationBar(props) {
       <div>
         <button
           type="button"
-          className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+          className="h-12 w-40 px-6 text-base font-flow font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
           onClick={fcl.logIn}
           >
-          connect wallet
+          Connect Wallet
         </button>
       </div>
     )

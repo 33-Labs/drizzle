@@ -17,6 +17,7 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../lib/atoms"
+import CSVSelector from './CSVSelector'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -134,7 +135,7 @@ export default function DropNCreator(props) {
     <>
       {/** title */}
       <h1 className="font-flow font-semibold text-4xl text-center mb-10">
-        Create Drop
+        Create DROP
       </h1>
 
       {/** preview */}
@@ -226,17 +227,6 @@ export default function DropNCreator(props) {
           </div>
         </div>
 
-
-        {/** token selector */}
-        <div>
-          <TokenSelector
-            user={props.user}
-            className="w-full"
-            onTokenSelected={setToken}
-            onBalanceFetched={setTokenBalance}
-          />
-        </div>
-
         {/** time limit */}
         <div>
           <div className="flex justify-between mb-4">
@@ -286,6 +276,15 @@ export default function DropNCreator(props) {
             </div> : null}
         </div>
 
+        {/** token selector */}
+        <div>
+          <TokenSelector
+            user={props.user}
+            className="w-full"
+            onTokenSelected={setToken}
+            onBalanceFetched={setTokenBalance}
+          />
+        </div>
 
         {/** recipients & amounts */}
         <div>
@@ -309,10 +308,7 @@ export default function DropNCreator(props) {
               onChange={(event) => { setRawRecordsStr(event.target.value) }}
             />
             <div className="flex mt-4 gap-x-2 justify-between">
-              <div className="h-12 w-40 font-medium text-base shadow-sm bg-drizzle-green hover:bg-drizzle-green-dark">
-                <label htmlFor="csv_uploader" className="w-full inline-block text-center leading-[48px] ">upload csv</label>
-                <input id="csv_uploader" className="invisible" type="file"
-                  accept=".csv"
+              <CSVSelector 
                   onChange={(event) => {
                     setProcessed(false)
                     const f = event.target.files[0]
@@ -323,9 +319,8 @@ export default function DropNCreator(props) {
                       event.target.value = null
                     })
                     reader.readAsText(f)
-                  }}
-                />
-              </div>
+                  }
+              } />
               <button
                 type="button"
                 className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"

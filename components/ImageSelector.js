@@ -12,7 +12,7 @@ export default function ImageSelector(props) {
 
   return (
     <label>
-      <input type="file" accept="image/png, image/jpeg" className="text-sm text-grey-500
+      <input type="file" accept="image/png, image/jpeg" className="text-sm
         focus:outline-0
         file:mr-5 file:py-2 file:px-6
         file:rounded-full file:border-0
