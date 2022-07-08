@@ -45,7 +45,7 @@ export default function Account(props) {
     <div className="container mx-auto max-w-[680px] min-w-[380px] px-6">
       {
         !data ? 
-          <div className="flex mt-10 justify-center">
+          <div className="flex mt-10 h-[200px] justify-center">
             <SpinnerCircular size={50} thickness={180} speed={100} color="#68ee8e" secondaryColor="#e2e8f0" />
           </div> :
           <DropList drops={dropNs} user={props.user} />

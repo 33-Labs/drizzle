@@ -1,5 +1,4 @@
 import { QRCodeCanvas } from 'qrcode.react'
-import { useRef, useCallback } from 'react'
 
 const downloadQRCode = () => {
   const canvas = document.getElementById("qr-gen");

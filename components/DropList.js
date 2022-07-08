@@ -25,6 +25,7 @@ export default function DropList(props) {
         </div>
       </div>
 
+      {drops.length > 0 ?
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle px-4">
@@ -81,7 +82,12 @@ export default function DropList(props) {
             </div>
           </div>
         </div>
-      </div>
+      </div> : 
+      <div className="flex mb-10 justify-center">
+      <label className="leading-[200px] font-flow font-medium text-base text-gray-500">
+        {"You haven't created DROP yet"}
+      </label>
+    </div>}
     </div>
   )
 }

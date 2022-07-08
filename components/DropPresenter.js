@@ -12,7 +12,8 @@ import publicConfig from '../publicConfig'
 import {
   queryDrop,
   queryClaimStatus,
-  queryClaimed
+  queryClaimed,
+  queryStats
 } from '../lib/scripts'
 import { convertCadenceDateTime } from '../lib/utils'
 
@@ -28,10 +29,14 @@ const claimedFetcher = async (funcName, dropID, host) => {
   return await queryClaimed(dropID, host)
 }
 
+const statsFetcher = async (funcName, dropID, host) => {
+  return await queryStats(dropID, host)
+}
+
 export default function DropPresenter(props) {
   const [drop, setDrop] = useState(null)
   const [claimStatus, setClaimStatus] = useState({ message: "not eligible", claimableAmount: null })
-  const [claimed, setClaimed] = useState({})
+  const [stats, setStats] = useState({})
 
   const account = props.account
   const dropID = props.dropID
@@ -41,14 +46,14 @@ export default function DropPresenter(props) {
   const { data: claimStatusData, error: claimStatusError } = useSWR(
     dropID && account && user && user.loggedIn ? ["claimStatusFetcher", dropID, account, user.addr] : null, claimStatusFetcher)
 
-  const { data: claimedData, error: claimedError } = useSWR(
-    dropID && account ? ["claimedFetcher", dropID, account] : null, claimedFetcher)
+  const { data: statsData, error: statsError } = useSWR(
+    dropID && account ? ["statsFetcher", dropID, account] : null, statsFetcher)
 
   useEffect(() => {
     if (dropData) { setDrop(dropData) }
     if (claimStatusData) { setClaimStatus(claimStatusData) }
-    if (claimedData) { setClaimed(claimedData) }
-  }, [dropData, claimStatusData, claimedData])
+    if (statsData) { setStats(statsData) }
+  }, [dropData, claimStatusData, statsData])
 
   return (
     <>
@@ -78,7 +83,7 @@ export default function DropPresenter(props) {
               {
                 user && (user.addr == account) ? (
                   <>
-                    <StatsCard claimed={claimed} />
+                    <StatsCard stats={stats} />
                     <ManageCard />
                   </>
                 ) : null
@@ -86,7 +91,7 @@ export default function DropPresenter(props) {
             </div>
           </>
 
-        ) : <div className="flex mt-10 justify-center">
+        ) : <div className="flex h-[200px] mt-10 justify-center">
           <SpinnerCircular size={50} thickness={180} speed={100} color="#68ee8e" secondaryColor="#e2e8f0" />
         </div>
       }

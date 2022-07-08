@@ -265,7 +265,7 @@ export default function DropNCreator(props) {
                 <input
                   type="datetime-local"
                   id="start_at"
-                  className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                  className="rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
                   onChange={(e) => { setStartAt(new Date(e.target.value)) }}
                 />
               </div>
@@ -275,7 +275,7 @@ export default function DropNCreator(props) {
                 <input
                   type="datetime-local"
                   id="end_at"
-                  className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                  className="rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
                   onChange={(e) => { setEndAt(new Date(e.target.value)) }}
                 />
               </div>
