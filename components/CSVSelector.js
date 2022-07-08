@@ -7,7 +7,7 @@ export default function CSVSelector(props) {
       >Sample</a>
       <div className="h-12 max-w-[140px] px-3 shadow-sm 
       font-medium text-base text-drizzle-green-dark bg-drizzle-green/50
-      rounded-full
+      rounded-2xl
     hover:bg-drizzle-green-dark hover:text-black"
       >
         <label

@@ -183,7 +183,8 @@ export default function DropNCreator(props) {
               name="name"
               id="name"
               required
-              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              className="bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg rounded-2xl
+                focus:ring-drizzle-green-dark focus:border-drizzle-green-dark  placeholder:text-gray-300"
               placeholder={NamePlaceholder}
               onChange={(event) => {
                 setName(event.target.value)
@@ -202,7 +203,8 @@ export default function DropNCreator(props) {
               rows={4}
               name="description"
               id="description"
-              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
+                bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
 
               defaultValue={''}
               spellCheck={false}
@@ -223,7 +225,8 @@ export default function DropNCreator(props) {
               name="url"
               id="url"
               pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
-              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
+              bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               placeholder={URLPlaceholder}
               onChange={(event) => { setURL(event.target.value) }}
             />
@@ -302,7 +305,8 @@ export default function DropNCreator(props) {
               rows={8}
               name="recipients"
               id="recipients"
-              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
+              bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               spellCheck={false}
               value={rawRecordsStr}
               placeholder={
@@ -313,7 +317,7 @@ export default function DropNCreator(props) {
             <div className="flex mt-4 gap-x-2 justify-between">
               <button
                 type="button"
-                className="h-12 w-40 px-6 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+                className="h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
                 onClick={() => {
                   if (token) {
                     const [validRecords, invalidRecords] = filterRecords(rawRecordsStr.trim())
@@ -449,7 +453,7 @@ export default function DropNCreator(props) {
         <div className="w-full mt-20 flex flex-col gap-y-2 items-center">
           <button
             type="button"
-            className="w-full h-12 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            className="w-full h-[60px] text-xl font-semibold rounded-2xl shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
             onClick={handleSubmit}
           >
             {props.user.loggedIn ? "Create" : "Connect Wallet"}

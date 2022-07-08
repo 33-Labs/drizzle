@@ -15,7 +15,7 @@ export default function DropList(props) {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             type="button"
-            className="inline-flex items-center justify-center border border-transparent bg-drizzle-green px-4 py-2 text-sm font-medium text-black shadow-sm hover:bg-drizzle-green-dark focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
+            className="inline-flex items-center rounded-2xl justify-center border border-transparent bg-drizzle-green px-4 py-2 text-sm font-medium text-black shadow-sm hover:bg-drizzle-green-dark focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
             onClick={() => {
               router.push("/new_dropn")
             }}
@@ -28,9 +28,9 @@ export default function DropList(props) {
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle px-4">
-            <div className="overflow-hidden">
+            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-white">
+                <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                       Name
@@ -53,7 +53,7 @@ export default function DropList(props) {
                       <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0 relative">
-                            <Image className="rounded-sm" src={drop.image ?? "/drizzle.png"} alt="" layout="fill" objectFit="cover" />
+                            <Image className="rounded-xl" src={drop.image ?? "/flow-banner.jpg"} alt="" layout="fill" objectFit="cover" />
                           </div>
                           <div className="ml-4">
                             <label className="block font-medium text-gray-900 break-words max-w-[200px]">{drop.name}</label>

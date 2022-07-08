@@ -116,7 +116,7 @@ export default function DropCard(props) {
   return (
     <div className="flex flex-col w-[480px] min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-stretch rounded-3xl overflow-hidden">
       {/* TODO: replace with new placeholder */}
-      <MemoizeBanner banner={props.banner || "/drizzle.png"} />
+      <MemoizeBanner banner={props.banner || "/flow-banner.jpg"} />
       <MemoizeName name={props.name} url={props.url} />
       <MemoizeBasicInfo
         host={props.host} createdAt={props.createdAt}
