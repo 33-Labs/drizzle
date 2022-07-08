@@ -7,16 +7,16 @@ import { useState, useEffect } from 'react'
 import DropList from '../../components/DropList'
 import { queryDrops } from '../../lib/scripts'
 
-const convertDropNs = (dropNMaps) => {
-  const dropIDs = Object.keys(dropNMaps)
-  let dropNs = []
+const convertDrops = (dropMaps) => {
+  const dropIDs = Object.keys(dropMaps)
+  let drops = []
   for (let i = 0; i < dropIDs.length; i++) {
     const dropID = dropIDs[i]
-    const drop = dropNMaps[dropID]
-    dropNs.push(drop)
+    const drop = dropMaps[dropID]
+    drops.push(drop)
   }
 
-  return dropNs.sort((a, b) => a.uuid > b.uuid)
+  return drops.sort((a, b) => b.dropID - a.dropID)
 }
 
 const dropsFetcher = async (address) => {
@@ -27,12 +27,12 @@ export default function Account(props) {
   const router = useRouter()
   const { account } = router.query
 
-  const [dropNs, setDropNs] = useState([])
+  const [drops, setDrops] = useState([])
   const {data, error} = useSWR(account, dropsFetcher)
 
   useEffect(() => {
     if (data) {
-      setDropNs(convertDropNs(data))
+      setDrops(convertDrops(data))
     }
   }, [data])
   
@@ -48,7 +48,7 @@ export default function Account(props) {
           <div className="flex mt-10 h-[200px] justify-center">
             <SpinnerCircular size={50} thickness={180} speed={100} color="#68ee8e" secondaryColor="#e2e8f0" />
           </div> :
-          <DropList drops={dropNs} user={props.user} />
+          <DropList drops={drops} user={props.user} />
       }
     </div>
     </>

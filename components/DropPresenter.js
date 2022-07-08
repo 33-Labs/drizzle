@@ -36,7 +36,7 @@ const statsFetcher = async (funcName, dropID, host) => {
 export default function DropPresenter(props) {
   const [drop, setDrop] = useState(null)
   const [claimStatus, setClaimStatus] = useState({ message: "not eligible", claimableAmount: null })
-  const [stats, setStats] = useState({})
+  const [stats, setStats] = useState(null)
 
   const account = props.account
   const dropID = props.dropID
@@ -52,7 +52,9 @@ export default function DropPresenter(props) {
   useEffect(() => {
     if (dropData) { setDrop(dropData) }
     if (claimStatusData) { setClaimStatus(claimStatusData) }
-    if (statsData) { setStats(statsData) }
+    if (statsData) { 
+      console.log(statsData)
+      setStats(statsData) }
   }, [dropData, claimStatusData, statsData])
 
   return (

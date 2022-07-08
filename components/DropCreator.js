@@ -18,17 +18,18 @@ import {
   transactionStatusState
 } from "../lib/atoms"
 import CSVSelector from './CSVSelector'
+import WhitelistWithAmount from './WhitelistWithAmount'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
-const HostPlaceholder = "0x0001"
+const HostPlaceholder = "0x0042"
 const TokenPlaceholder = { symbol: "FLOW" }
 const AmountPlaceholder = new Decimal(42)
 const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
 const URLPlaceholder = "https://the.link.you.want.to.add"
 const Timezone = getTimezone()
 
-export default function DropNCreator(props) {
+export default function DropCreator(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
   const [, setTransactionInProgress] = useRecoilState(transactionInProgressState)
@@ -46,14 +47,10 @@ export default function DropNCreator(props) {
   const [endAt, setEndAt] = useState(null)
 
   const [token, setToken] = useState(null)
-
-  const [rawRecordsStr, setRawRecordsStr] = useState('')
-  const [validRecords, setValidRecords] = useState([])
-  const [invalidRecords, setInvalidRecords] = useState([])
-  const [recordsSum, setRecordsSum] = useState(new Decimal(0))
   const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
 
-  const [processed, setProcessed] = useState(false)
+  // For WhitelistWithAmount
+  const [whitelistWithAmountCallback, setWhitelistWithAmountCallback] = useState(null)
 
   const checkParams = () => {
     if (!name || name.trim() == "") {
@@ -80,11 +77,12 @@ export default function DropNCreator(props) {
       return [false, "start time should be less than end time"]
     }
 
-    if (!processed) {
-      return [false, "please process recipients & amounts"]
+    // TODO: should be checked only if WhitelistWithAmount be selected
+    if (!whitelistWithAmountCallback) {
+      return [false, "please process claims"]
     }
 
-    if (invalidRecords.length > 0) {
+    if (whitelistWithAmountCallback.invalidRecordsCount > 0) {
       return [false, "there are some invalid records"]
     }
 
@@ -97,16 +95,20 @@ export default function DropNCreator(props) {
       if (valid) {
         setShowBasicNotification(false)
 
-        const [claims, tokenAmount] = getClaimsFromRecords(validRecords)
+        const {claims, tokenAmount, } = whitelistWithAmountCallback
+        console.log("claims ", claims)
+        console.log("tokenAmount ", tokenAmount.toString())
+        const _description = description ?? ''
         const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null
         const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
         const tokenProviderPath = token.path.vault.replace("/storage/", "")
         const tokenBalancePath = token.path.balance.replace("/public/", "")
         const tokenReceiverPath = token.path.receiver.replace("/public/", "")
+        const _tokenAmount = tokenAmount.toFixed(8).toString()
 
         console.log(`
           name: ${name}\n
-          desc: ${desc ?? ''}\n
+          desc: ${_description}\n
           url: ${url}\n
           claims: ${claims}\n
           startAt: ${_startAt}\n
@@ -117,13 +119,13 @@ export default function DropNCreator(props) {
           tokenProviderPath: ${tokenProviderPath}\n
           tokenBalancePath: ${tokenBalancePath}\n
           tokenReceiverPath: ${tokenReceiverPath}\n
-          tokenAmount: ${tokenAmount}\n
+          tokenAmount: ${_tokenAmount}\n
           banner: ${banner}
         `)
 
         await createDrop(
-          name, desc ?? '', banner, url, claims, _startAt,
-          _endAt, token, tokenAmount, setTransactionInProgress, setTransactionStatus
+          name, _description, banner, url, claims, _startAt,
+          _endAt, token, _tokenAmount, setTransactionInProgress, setTransactionStatus
         )
       } else {
         setShowBasicNotification(true)
@@ -148,7 +150,7 @@ export default function DropNCreator(props) {
           banner={banner}
           name={name ?? NamePlaceholder}
           url={url}
-          host={props.user ? props.user.addr : HostPlaceholder}
+          host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
           createdAt={CreatedAtPlaceholder}
           description={description ?? DescriptionPlaceholder}
           token={token || TokenPlaceholder}
@@ -292,162 +294,13 @@ export default function DropNCreator(props) {
           />
         </div>
 
-        {/** recipients & amounts */}
         <div>
-          <label className="block text-2xl font-bold font-flow">
-            Recipients & Amounts
-          </label>
-          <label className="block font-flow text-md leading-6 mt-2 mb-2">
-            For each line, enter one address and the token amount, seperate with comma. Duplicate addresses is not allowed.
-          </label>
-          <div className="mt-1">
-            <textarea
-              rows={8}
-              name="recipients"
-              id="recipients"
-              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
-              bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              spellCheck={false}
-              value={rawRecordsStr}
-              placeholder={
-                "0xf8d6e0586b0a20c7,1.6"
-              }
-              onChange={(event) => { setRawRecordsStr(event.target.value) }}
-            />
-            <div className="flex mt-4 gap-x-2 justify-between">
-              <button
-                type="button"
-                className="h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
-                onClick={() => {
-                  if (token) {
-                    const [validRecords, invalidRecords] = filterRecords(rawRecordsStr.trim())
-                    setValidRecords(validRecords)
-                    setInvalidRecords(invalidRecords)
-                    setRecordsSum(validRecords.map((r) => r.amount).reduce((p, c) => p.add(c), new Decimal(0)))
-                    setProcessed(true)
-                  } else {
-                    setShowBasicNotification(true)
-                    setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "Token is not selected" })
-                  }
-                }}
-              >
-                Process
-              </button>
-              <CSVSelector
-                onChange={(event) => {
-                  setProcessed(false)
-                  const f = event.target.files[0]
-                  const reader = new FileReader()
-                  reader.addEventListener('load', (e) => {
-                    const data = e.target.result
-                    setRawRecordsStr(data)
-                    event.target.value = null
-                  })
-                  reader.readAsText(f)
-                }
-                } />
-            </div>
-          </div>
+          <WhitelistWithAmount 
+            token={token} 
+            tokenBalance={tokenBalance} 
+            callback={setWhitelistWithAmountCallback}
+          />
         </div>
-
-        {
-          validRecords.length > 0 || invalidRecords.length > 0 ? (
-            <div>
-              <label className="block text-2xl font-bold font-flow">
-                Summary
-              </label>
-              <div className="mt-1 mb-30">
-                <ul role="list">
-                  <li key="valid count">
-                    <div className="flex items-center">
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        # of Valid Records
-                      </div>
-                      <div className="grow"></div>
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        {validRecords.length}
-                      </div>
-                    </div>
-                  </li>
-                  <li key="invalid count">
-                    <div className="flex items-center">
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        # of Invalid Records
-                      </div>
-                      <div className="grow"></div>
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        {invalidRecords.length}
-                      </div>
-                    </div>
-                  </li>
-                  <li key="total">
-                    <div className="flex items-center">
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        Total Token
-                      </div>
-                      <div className="grow"></div>
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        {recordsSum.toString()} {token && token.symbol}
-                      </div>
-                    </div>
-                  </li>
-                  <li key="balance">
-                    <div className="flex items-center">
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        Your Balance
-                      </div>
-                      <div className="grow"></div>
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        {tokenBalance.toString()} {token && token.symbol}
-                      </div>
-                    </div>
-                  </li>
-                  <li key="remaining">
-                    <div className="flex items-center">
-                      <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                        Remaining
-                      </div>
-                      <div className="grow"></div>
-                      {
-                        !(tokenBalance.sub(recordsSum).isNegative())
-                          ? <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
-                            {tokenBalance.sub(recordsSum).toString()} {token && token.symbol}
-                          </div>
-                          : <div className="flex-none w-30 text-md text-rose-500 font-flow font-semibold leading-10">
-                            {tokenBalance.sub(recordsSum).toString()} {token && token.symbol}
-                          </div>
-                      }
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          ) : null
-        }
-
-        {
-          invalidRecords.length > 0 && (
-            <div>
-              <label className="block text-2xl font-bold font-flow">
-                Invalid records
-              </label>
-              <label className="block font-flow text-md leading-8 mt-2">
-                Invalid format or invalid amount or duplicate accounts
-              </label>
-              <div className="mt-1">
-                <textarea
-                  rows={invalidRecords.length > 8 ? 8 : invalidRecords.length}
-                  name="invalid"
-                  id="invalid"
-                  className="focus:ring-rose-700 focus:border-rose-700 bg-rose-300/10 resize-none block w-full border-rose-700 font-flow text-lg placeholder:text-gray-300"
-                  disabled={true}
-                  value={(invalidRecords.reduce((p, c) => { return `${p}\n${c}` }, '')).trim()}
-                  spellCheck={false}
-                />
-              </div>
-            </div>
-          )
-        }
 
         {/** create button */}
         <div className="w-full mt-20 flex flex-col gap-y-2 items-center">
