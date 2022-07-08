@@ -11,34 +11,44 @@ import StatsCard from './StatsCard'
 import publicConfig from '../publicConfig'
 import {
   queryDrop,
-  queryClaimStatus
+  queryClaimStatus,
+  queryClaimed
 } from '../lib/scripts'
 import { convertCadenceDateTime } from '../lib/utils'
 
-const dropFetcher = async (dropID, host) => {
+const dropFetcher = async (funcName, dropID, host) => {
   return await queryDrop(dropID, host)
 }
 
-const claimStatusFetcher = async (dropID, host, claimer) => {
+const claimStatusFetcher = async (funcName, dropID, host, claimer) => {
   return await queryClaimStatus(dropID, host, claimer)
+}
+
+const claimedFetcher = async (funcName, dropID, host) => {
+  return await queryClaimed(dropID, host)
 }
 
 export default function DropPresenter(props) {
   const [drop, setDrop] = useState(null)
   const [claimStatus, setClaimStatus] = useState({ message: "not eligible", claimableAmount: null })
+  const [claimed, setClaimed] = useState({})
 
   const account = props.account
   const dropID = props.dropID
   const user = props.user
   const { data: dropData, error: dropError } = useSWR(
-    dropID && account ? [dropID, account] : null, dropFetcher)
+    dropID && account ? ["dropFetcher", dropID, account] : null, dropFetcher)
   const { data: claimStatusData, error: claimStatusError } = useSWR(
-    dropID && account && user && user.loggedIn ? [dropID, account, user.addr] : null, claimStatusFetcher)
+    dropID && account && user && user.loggedIn ? ["claimStatusFetcher", dropID, account, user.addr] : null, claimStatusFetcher)
+
+  const { data: claimedData, error: claimedError } = useSWR(
+    dropID && account ? ["claimedFetcher", dropID, account] : null, claimedFetcher)
 
   useEffect(() => {
     if (dropData) { setDrop(dropData) }
     if (claimStatusData) { setClaimStatus(claimStatusData) }
-  }, [dropData, claimStatusData])
+    if (claimedData) { setClaimed(claimedData) }
+  }, [dropData, claimStatusData, claimedData])
 
   return (
     <>
@@ -68,7 +78,7 @@ export default function DropPresenter(props) {
               {
                 user && (user.addr == account) ? (
                   <>
-                    <StatsCard />
+                    <StatsCard claimed={claimed} />
                     <ManageCard />
                   </>
                 ) : null
