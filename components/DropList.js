@@ -17,7 +17,7 @@ export default function DropList(props) {
             type="button"
             className="inline-flex items-center rounded-2xl justify-center border border-transparent bg-drizzle-green px-4 py-2 text-sm font-medium text-black shadow-sm hover:bg-drizzle-green-dark focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
             onClick={() => {
-              router.push("/new_dropn")
+              router.push("/new_drop")
             }}
           >
             New
