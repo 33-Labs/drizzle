@@ -7,7 +7,7 @@ export default function Landing(props) {
   return (
     <div className="mt-10 mb-10 flex flex-col items-center gap-y-14">
       <h1 className="p-3 font-flow font-semibold text-5xl text-center">
-        An <span className="underline decoration-drizzle-green decoration-4">Airdrop</span> Tool for Everyone on Flow
+        An <span className="underline decoration-drizzle-green decoration-4">Airdrop</span> Tool for Everyone
       </h1>
 
       <div className="flex">

@@ -19,19 +19,17 @@ export default function ShareCard(props) {
   const logo = props.logo || "/favicon.ico"
 
   return (
-    <>
-      <label className="text-2xl font-bold font-flow">Share DROP</label>
-
-      <div className="flex min-w-[200px] min-h-[200px] justify-center
+    <div>
+      <div className="hidden sm:flex flex-col min-w-[240px] aspect-square justify-center
       ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
-      shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] mt-5 mb-10 items-center">
-        <button 
+      shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] items-center">
+        <button
           onClick={downloadQRCode}
-          >
+        >
           <QRCodeCanvas
             id="qr-gen"
             value={url}
-            size={160}
+            size={200}
             bgColor={"#ffffff"}
             fgColor={"#58d27d"}
             level={"H"}
@@ -45,6 +43,6 @@ export default function ShareCard(props) {
           />
         </button>
       </div>
-    </>
+    </div>
   )
 }

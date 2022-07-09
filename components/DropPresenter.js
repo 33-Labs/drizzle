@@ -79,9 +79,6 @@ export default function DropPresenter(props) {
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <ShareCard 
-                url={`${publicConfig.appURL}/${account}/drops/${dropID}`} 
-              />
               <StatsCard stats={stats} />
               {
                 user && (user.addr == account) ? (

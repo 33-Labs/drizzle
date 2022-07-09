@@ -1,27 +1,27 @@
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
-import { Combobox } from '@headlessui/react'
+import { useState, useEffect } from "react"
+import Image from "next/image"
+import { CheckIcon, SelectorIcon } from "@heroicons/react/solid"
+import { Combobox } from "@headlessui/react"
 
-import { queryBalance } from '../lib/scripts'
-import Decimal from 'decimal.js';
+import { queryBalance } from "../lib/scripts"
+import Decimal from "decimal.js";
 
-import { TokenListProvider, ENV, Strategy } from 'flow-native-token-registry';
-import publicConfig from '../publicConfig.js'
+import { TokenListProvider, ENV, Strategy } from "flow-native-token-registry";
+import publicConfig from "../publicConfig.js"
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ")
 }
 
 export default function TokenSelector(props) {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState("")
   const [selectedToken, setSelectedToken] = useState()
   const [balance, setBalance] = useState(new Decimal(0))
   const [tokens, setTokens] = useState([]);
 
   useEffect(() => {
     let env = ENV.Mainnet
-    if (publicConfig.chainEnv == 'testnet') {
+    if (publicConfig.chainEnv == "testnet") {
       env = ENV.Testnet
     }
 
@@ -35,7 +35,7 @@ export default function TokenSelector(props) {
   }, [setTokens])
 
   const filteredTokens =
-    query === ''
+    query === ""
       ? tokens
       : tokens.filter((token) => {
           const content = `${token.name} (${token.symbol})`
@@ -76,15 +76,15 @@ export default function TokenSelector(props) {
         </Combobox.Button>
 
         {filteredTokens.length > 0 && (
-          <Combobox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto  bg-white py-1 text-lg shadow-lg ring-1 ring-drizzle-green-dark ring-opacity-5 focus:outline-none">
+          <Combobox.Options className="absolute z-10 rounded-2xl mt-1 max-h-56 w-full overflow-auto  bg-white py-1 text-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             {filteredTokens.map((token) => (
               <Combobox.Option
                 key={token.id}
                 value={token}
                 className={({ active }) =>
                   classNames(
-                    'relative cursor-default select-none py-2 pl-3 pr-9',
-                    active ? 'bg-drizzle-green/50' : 'text-black'
+                    "relative cursor-default select-none py-2 pl-3 pr-9",
+                    active ? "bg-drizzle-green/50" : "text-black"
                   )
                 }
               >
@@ -94,14 +94,14 @@ export default function TokenSelector(props) {
                       <div className="w-6 h-6 relative">
                         <Image src={token.logoURI} alt="" layout="fill" objectFit="cover" className="rounded-full" />
                       </div>
-                      <span className={classNames('ml-3 truncate', selected && 'font-semibold')}>{`${token.name} (${token.symbol})`}</span>
+                      <span className={classNames("ml-3 truncate", selected && "font-semibold")}>{`${token.name} (${token.symbol})`}</span>
                     </div>
 
                     {selected && (
                       <span
                         className={classNames(
-                          'absolute inset-y-0 right-0 flex items-center pr-4',
-                          active ? 'text-black' : 'text-drizzle-green-dark'
+                          "absolute inset-y-0 right-0 flex items-center pr-4",
+                          active ? "text-black" : "text-drizzle-green-dark"
                         )}
                       >
                         <CheckIcon className="h-5 w-5" aria-hidden="true" />

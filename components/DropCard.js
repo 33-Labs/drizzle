@@ -12,6 +12,10 @@ import { test } from "../lib/transactions"
 import Decimal from "decimal.js"
 import { ExternalLinkIcon } from "@heroicons/react/outline"
 import { classNames } from "../lib/utils"
+import ShareCard from "./ShareCard"
+import ClaimCard from "./ClaimCard"
+import CriteriaCard from "./CriteriaCard"
+import TimeLimitCard from "./TimeLimitCard"
 
 const MemoizeBanner = React.memo(({ banner }) => {
   return (
@@ -24,7 +28,7 @@ MemoizeBanner.displayName = "MemozieBanner"
 
 const MemoizeName = React.memo(({ name, url }) => {
   return (
-    <div className="w-full px-8 mt-7 mb-6">
+    <div className="w-full mb-2">
       {
         url ? (
           <a
@@ -48,9 +52,9 @@ const MemoizeName = React.memo(({ name, url }) => {
 })
 MemoizeName.displayName = "MemoizeName"
 
-const MemoizeBasicInfo = React.memo(({ host, createdAt, startAt, endAt }) => {
+const MemoizeBasicInfo = React.memo(({ host, createdAt }) => {
   return (
-    <div className="w-full px-8 mb-4 flex flex-col">
+    <div className="w-full flex flex-col">
       <label className="w-full font-flow text-sm text-gray-400 break-words">
         {"created by "}
         <span>
@@ -65,17 +69,6 @@ const MemoizeBasicInfo = React.memo(({ host, createdAt, startAt, endAt }) => {
       <label className="w-full font-flow text-sm text-gray-400 break-words">
         {`created at ${createdAt.toLocaleString()}`}
       </label>
-      {startAt ?
-        <label className="w-full font-flow text-sm text-gray-400 break-words" id="start_at">
-          {`start at ${startAt.toLocaleString()}`}
-        </label> : null
-      }
-      {
-        endAt ?
-          <label className="w-full font-flow text-sm text-gray-400 break-words" id="end_at">
-            {`end at ${endAt.toLocaleString()}`}
-          </label> : null
-      }
     </div>
   )
 })
@@ -83,7 +76,7 @@ MemoizeBasicInfo.displayName = "MemoizeBasicInfo"
 
 const MemoizeDescription = React.memo(({ description }) => {
   return (
-    <div className="w-full px-8 mb-4">
+    <div className="w-full mb-10">
       <p className="w-full font-flow text-base break-words whitespace-pre-wrap">
         {description}
       </p>
@@ -92,17 +85,6 @@ const MemoizeDescription = React.memo(({ description }) => {
 })
 MemoizeDescription.displayName = "MemoizeDescription"
 
-const titleForClaimButton = (claimStatus, isPreview) => {
-  if (isPreview) { return "PREVIEWING" }
-  if (claimStatus.message == "not eligible") { return "NOT ELIGIBLE" }
-  if (claimStatus.message == "not claimable") { return "NOT CLAIMABLE NOW" }
-  if (claimStatus.message == "not start") { return "NOT START NOW" }
-  if (claimStatus.message == "ended") { return "ENDED" }
-  if (claimStatus.message == "claimed") { return "YOU HAVE CLAIMED" }
-  if (claimStatus.message == "eligible") { return "CLAIM" }
-  return "NOT ELIGIBLE"
-}
-
 export default function DropCard(props) {
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
@@ -110,73 +92,41 @@ export default function DropCard(props) {
   const isPreview = props.isPreview == true
   // Only created Drop has claimStatus
   const { token, tokenInfo, claimStatus } = props
-  const amount = new Decimal((claimStatus && claimStatus.amount) || props.amount || 0)
-  const symbol = isPreview ? (token && token.symbol) : (tokenInfo && tokenInfo.symbol)
 
   return (
-    <div className="flex flex-col w-[480px] min-w-[320px] shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]
+    <div className="w-full flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8">
+      <div className="flex flex-col
+      shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]
       ring-1 ring-black ring-opacity-5
-      mt-5 mb-5 items-stretch rounded-3xl overflow-hidden">
-      {/* TODO: replace with new placeholder */}
-      <MemoizeBanner banner={props.banner || "/flow-banner.jpg"} />
-      <MemoizeName name={props.name} url={props.url} />
-      <MemoizeBasicInfo
-        host={props.host} createdAt={props.createdAt}
-        startAt={props.startAt} endAt={props.endAt}
-      />
-      <MemoizeDescription description={props.description} />
-
-      {
-        (isPreview || (claimStatus && claimStatus.amount)) ? (
-          <>
-            <div className="mt-20 w-full px-8">
-              <label className="text-lg font-bold font-flow">YOU ARE ELIGIBLE FOR</label>
-            </div>
-            <div className="mt-1 w-full px-8">
-              <label className="text-2xl font-bold font-flow">{`${amount.toString()} ${symbol}`}</label>
-            </div>
-          </>
-        ) : (
-          <div className="mt-20 w-full px-8">
-            <label className="text-lg font-bold font-flow">YOU ARE NOT ELIGIBLE</label>
-          </div>
-        )
-      }
-
-      <button
-        type="button"
-        className={classNames(
-          (isPreview || !claimStatus.claimable) ? "bg-disabled-gray" : 
-          (transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark"),
-          `mt-10 mx-8 mb-8 h-[48px] text-base font-medium shadow-sm text-black rounded-2xl`
-        )}
-        disabled={isPreview || !(claimStatus && claimStatus.claimable) || transactionInProgress}
-        onClick={async () => {
-          await test(
-            setTransactionInProgress,
-            setTransactionStatus
-          )
-          // if (!isPreview && status.claimable) {
-          //   try {
-          //     const transactionId = await drizzleService.claim(
-          //       dropID, 
-          //       host, 
-          //       token.account,
-          //       token.contractName,
-          //       token.providerPath.identifier,
-          //       token.balancePath.identifier,
-          //       token.receiverPath.identifier
-          //     )
-          //     console.log("txid: " + transactionId)
-          //     await fcl.tx(transactionId).onceSealed()
-          //   } catch (e) {
-          //     console.log(e)
-          //   }
-          // }
-        }}
-      >
-        {titleForClaimButton(claimStatus, isPreview)}
-      </button>
+      items-stretch rounded-3xl overflow-hidden grow
+      sm:min-w-[320px] sm:max-w-[480px]
+      md:w-[480px]">
+        {/* TODO: replace with new placeholder */}
+        <MemoizeBanner banner={props.banner || "/flow-banner.jpg"} />
+        <div className="flex flex-col p-8 gap-y-5">
+          <MemoizeName name={props.name} url={props.url} />
+          <MemoizeBasicInfo
+            host={props.host} createdAt={props.createdAt}
+          />
+          {(props.startAt || props.endAt) ?
+            <TimeLimitCard startAt={props.startAt} endAt={props.endAt} /> : null}
+          <MemoizeDescription description={props.description} />
+        </div>
+      </div>
+      <div className="flex flex-col gap-y-8 w-full sm:max-w-[280px]">
+        <CriteriaCard />
+        <ClaimCard
+          isPreview={isPreview}
+          claimStatus={claimStatus}
+          token={token}
+          tokenInfo={tokenInfo}
+        />
+        {
+          props.dropID && props.host ?
+            <ShareCard url={`${publicConfig.appURL}/${props.host}/drops/${props.dropID}`} />
+            : <ShareCard url={`${publicConfig.appURL}/new_drop`} />
+        }
+      </div>
     </div>
   )
 }

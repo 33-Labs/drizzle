@@ -14,7 +14,7 @@ export default function Drop(props) {
         <title>drizzle | airdrop tool</title>
         <meta property="og:title" content="drizzle | airdrop tool" key="title" />
       </Head>
-      <div className="container mx-auto max-w-[680px] min-w-[380px] px-6">
+      <div className="container mx-auto max-w-[880px] min-w-[380px] px-6">
         <DropPresenter 
           account={account}
           dropID={dropID}
