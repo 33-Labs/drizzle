@@ -20,22 +20,23 @@ export default function StatsCard(props) {
   return (
     <div className="w-full flex flex-col items-center">
       <label className="text-2xl font-bold font-flow">DROP Stats</label>
-      <div className="w-full mt-5 mb-5 flex justify-center gap-x-3 items-stretch">
-        <div className="basis-1/4 rounded-2xl ring-1 ring-black ring-opacity-5 flex flex-col bg-drizzle-green px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
+      <div className="w-full flex flex-col mt-5 mb-5 justify-center gap-y-3 items-stretch
+      sm:flex-row sm:gap-x-3">
+        <div className="w-full rounded-2xl ring-1 ring-black ring-opacity-5 flex flex-col bg-drizzle-green px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
           <label className="text-base font-medium font-flow">
             Drop Balance
           </label>
           <label className="text-xl font-bold font-flow">{stats ? (new Decimal(stats.dropBalance)).toString() : "?" } {symbol}</label>
         </div>
 
-        <div className="basis-1/4 rounded-2xl ring-1 ring-black ring-opacity-5 flex flex-col bg-drizzle-green px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
+        <div className="w-full rounded-2xl ring-1 ring-black ring-opacity-5 flex flex-col bg-drizzle-green px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
           <label className="text-base font-medium font-flow">
             Claimed Amount
           </label>
           <label className="text-xl font-bold font-flow">{totalAmount.toString()} {symbol}</label>
         </div>
 
-        <div className="basis-1/4 rounded-2xl ring-1 ring-black ring-opacity-5 flex flex-col bg-drizzle-green px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
+        <div className="w-full rounded-2xl ring-1 ring-black ring-opacity-5 flex flex-col bg-drizzle-green px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
           <label className="text-base font-medium font-flow">
             Claimed Count
           </label>
@@ -45,8 +46,8 @@ export default function StatsCard(props) {
 
       {claimed.length > 0 ?
         <div className="w-full p-4 flex flex-col mb-10">
-          <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle px-4">
+          <div className="-my-2 -mx-4 overflow-x-auto">
+            <div className="inline-block min-w-full py-2 align-middle px-1">
               <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead className="bg-gray-50">

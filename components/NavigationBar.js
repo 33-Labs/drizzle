@@ -41,7 +41,7 @@ export default function NavigationBar(props) {
       <div>
         <button
           type="button"
-          className="h-12 w-40 px-6 text-base rounded-2xl font-flow font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+          className="h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
           onClick={fcl.logIn}
           >
           Connect Wallet

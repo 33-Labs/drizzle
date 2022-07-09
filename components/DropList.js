@@ -57,7 +57,7 @@ export default function DropList(props) {
                             <Image className="rounded-xl" src={drop.image ?? "/flow-banner.jpg"} alt="" layout="fill" objectFit="cover" />
                           </div>
                           <div className="ml-4">
-                            <label className="block font-medium text-gray-900 break-words max-w-[200px]">{drop.name}</label>
+                            <label className="block font-medium text-gray-900 break-words max-w-[300px]">{drop.name}</label>
                           </div>
                         </div>
                       </td>

@@ -94,12 +94,12 @@ export default function DropCard(props) {
   const { token, tokenInfo, claimStatus } = props
 
   return (
-    <div className="w-full flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8">
+    <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8">
       <div className="flex flex-col
       shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]
       ring-1 ring-black ring-opacity-5
       items-stretch rounded-3xl overflow-hidden grow
-      sm:min-w-[320px] sm:max-w-[480px]
+      sm:min-w-[320px]
       md:w-[480px]">
         {/* TODO: replace with new placeholder */}
         <MemoizeBanner banner={props.banner || "/flow-banner.jpg"} />
@@ -113,7 +113,7 @@ export default function DropCard(props) {
           <MemoizeDescription description={props.description} />
         </div>
       </div>
-      <div className="flex flex-col gap-y-8 w-full sm:max-w-[280px]">
+      <div className="flex flex-col gap-y-8">
         <CriteriaCard />
         <ClaimCard
           isPreview={isPreview}
