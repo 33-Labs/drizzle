@@ -42,7 +42,14 @@ export default function WhitelistWithAmount(props) {
             placeholder={
               "0xf8d6e0586b0a20c7,1.6"
             }
-            onChange={(event) => { setRawRecordsStr(event.target.value) }}
+            onChange={(event) => {
+              if (validRecords.length > 0 || invalidRecords.length > 0) {
+                setValidRecords([])
+                setInvalidRecords([])
+                setRecordsSum(new Decimal(0))
+              }
+              setRawRecordsStr(event.target.value) 
+            }}
           />
           <div className="flex mt-4 gap-x-2 justify-between">
             <button
@@ -66,7 +73,6 @@ export default function WhitelistWithAmount(props) {
                 setInvalidRecords(invalids)
                 const sum = valids.map((r) => r.amount).reduce((p, c) => p.add(c), new Decimal(0))
                 setRecordsSum(sum)
-                console.log("records Sum: ", recordsSum)
                 const claims = getClaimsFromRecords(valids)
                 props.callback({
                   claims: claims,

@@ -17,7 +17,7 @@ export default function ManageCard() {
             type="button"
             className="rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black bg-drizzle-green hover:bg-drizzle-green-dark"
             >
-            Withdraw All
+            Withdraw Funds 
           </button>
           <button
             type="button"

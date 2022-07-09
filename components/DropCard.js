@@ -104,7 +104,7 @@ const titleForClaimButton = (claimStatus, isPreview) => {
 }
 
 export default function DropCard(props) {
-  const [, setTransactionInProgress] = useRecoilState(transactionInProgressState)
+  const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
 
   const isPreview = props.isPreview == true
@@ -146,12 +146,12 @@ export default function DropCard(props) {
       <button
         type="button"
         className={classNames(
-          (isPreview || !claimStatus.claimable) ? "bg-disabled-gray hover:bg-disabled-gray-dark" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+          (isPreview || !claimStatus.claimable) ? "bg-disabled-gray" : 
+          (transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark"),
           `mt-10 mx-8 mb-8 h-[48px] text-base font-medium shadow-sm text-black rounded-2xl`
         )}
-        disabled={!(claimStatus && claimStatus.claimable)}
+        disabled={isPreview || !(claimStatus && claimStatus.claimable) || transactionInProgress}
         onClick={async () => {
-          setTransactionInProgress(false)
           await test(
             setTransactionInProgress,
             setTransactionStatus

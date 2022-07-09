@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Switch } from '@headlessui/react'
+import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
 
@@ -30,10 +31,11 @@ const URLPlaceholder = "https://the.link.you.want.to.add"
 const Timezone = getTimezone()
 
 export default function DropCreator(props) {
+  const router = useRouter()
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
-  const [, setTransactionInProgress] = useRecoilState(transactionInProgressState)
-  const [, setTransactionStatus] = useRecoilState(transactionStatusState)
+  const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
+  const [transactionStatus, setTransactionStatus] = useRecoilState(transactionStatusState)
 
   const [banner, setBanner] = useState(null)
   const [bannerSize, setBannerSize] = useState(0)
@@ -81,9 +83,11 @@ export default function DropCreator(props) {
     if (!whitelistWithAmountCallback) {
       return [false, "please process claims"]
     }
-
     if (whitelistWithAmountCallback.invalidRecordsCount > 0) {
       return [false, "there are some invalid records"]
+    }
+    if (whitelistWithAmountCallback.tokenAmount.cmp(tokenBalance)) {
+      return [false, "insufficient balance"]
     }
 
     return [true, null]
@@ -123,10 +127,17 @@ export default function DropCreator(props) {
           banner: ${banner}
         `)
 
-        await createDrop(
+        const res = await createDrop(
           name, _description, banner, url, claims, _startAt,
           _endAt, token, _tokenAmount, setTransactionInProgress, setTransactionStatus
         )
+        
+        if (res && res.status === 4 && res.statusCode === 0) {
+          const createDropEvent = res.events.find((e) => e.data.dropID)
+          if (createDropEvent) {
+            router.push(`${props.user && props.user.addr}/drops/${createDropEvent.data.dropID}`)
+          }
+        }
       } else {
         setShowBasicNotification(true)
         setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: error })
@@ -306,7 +317,11 @@ export default function DropCreator(props) {
         <div className="w-full mt-20 flex flex-col gap-y-2 items-center">
           <button
             type="button"
-            className="w-full h-[60px] text-xl font-semibold rounded-2xl shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            className={classNames(
+              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              "w-full h-[60px] text-xl font-semibold rounded-2xl shadow-sm text-black"
+            )}
+            disabled={transactionInProgress}
             onClick={handleSubmit}
           >
             {props.user.loggedIn ? "Create" : "Connect Wallet"}
