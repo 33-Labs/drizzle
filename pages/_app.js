@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import { useState, useEffect } from "react"
 import Head from 'next/head'
 import { RecoilRoot } from "recoil"
+import { useRouter } from 'next/router'
 
 import * as fcl from "@onflow/fcl"
 
@@ -12,7 +13,8 @@ import BasicNotification from '../components/BasicNotification'
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState({loggedIn: null})
-
+  const router = useRouter()
+  console.log(router.pathname)
   useEffect(() => fcl.currentUser.subscribe(setUser), [])
 
   return (

@@ -1,12 +1,11 @@
 import { CalendarIcon } from "@heroicons/react/outline"
 
 const TimeCard = ({ title, time, active }) => {
-  const color = active ? "drizzle-green" : "gray-300"
   return (
     <div className="w-full flex gap-x-2 items-center">
       <label className="block min-w-[60px] font-flow font-bold text-base">{title}</label>
-      <div className={`grow flex gap-x-2 ring-2 ring-${color} rounded-2xl p-3 `}>
-        <CalendarIcon className={`shrink-0 h-6 w-6 text-${color}`} aria-hidden="true" />
+      <div className={`grow flex gap-x-2 ring-2 ${active ? "ring-drizzle-green" : "ring-gray-300"} rounded-2xl p-3`}>
+        <CalendarIcon className={`shrink-0 h-6 w-6 ${active ? "text-drizzle-green" : "text-gray-300"}`} aria-hidden="true" />
         <label className="font-flow font-bold text-base">
           {time}
         </label>
@@ -21,7 +20,7 @@ export default function TimeLimitCard(props) {
 
   const current = new Date()
   let inRange = true
-  if (startAt && (startAt.getTime() > current.getTime()) ){
+  if (startAt && (startAt.getTime() > current.getTime())) {
     inRange = false
   }
 

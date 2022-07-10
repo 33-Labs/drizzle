@@ -6,6 +6,7 @@ import { SpinnerCircular } from 'spinners-react'
 import { useState, useEffect } from 'react'
 import DropList from '../../components/DropList'
 import { queryDrops } from '../../lib/scripts'
+import Custom404 from '../404'
 
 const convertDrops = (dropMaps) => {
   const dropIDs = Object.keys(dropMaps)
@@ -35,6 +36,10 @@ export default function Account(props) {
       setDrops(convertDrops(data))
     }
   }, [data])
+
+  if (error && error.statusCode === 400) {
+    return <Custom404 title={"Account may not exist"} />
+  }
   
   return (
     <>

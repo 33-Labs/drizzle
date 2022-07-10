@@ -1,4 +1,21 @@
-export default function ManageCard() {
+import { toggleClaimable } from "../lib/transactions"
+import { classNames } from "../lib/utils"
+
+import { useRecoilState } from "recoil"
+import {
+  transactionInProgressState,
+  transactionStatusState
+} from "../lib/atoms"
+
+import { useSWRConfig } from 'swr'
+
+export default function ManageCard(props) {
+  const { dropID, manager, claimStatus, setClaimStatus} = props
+  const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
+  const [, setTransactionStatus] = useRecoilState(transactionStatusState)
+
+  const { mutate } = useSWRConfig()
+
   return (
     <>
     <label className="text-2xl font-bold font-flow">Manage DROP</label>
@@ -9,19 +26,43 @@ export default function ManageCard() {
         <div className="w-full flex justify-between gap-x-3">
           <button
             type="button"
-            className="rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            className={classNames(
+              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              `rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black`
+            )}
+            disabled={transactionInProgress}
+            onClick={async () => {
+              if (dropID) {
+                await toggleClaimable(
+                  dropID,
+                  setTransactionInProgress,
+                  setTransactionStatus
+                )
+
+                mutate(["claimStatusFetcher", dropID, manager, manager])
+              }
+
+            }}
             >
-            Pause
+            {claimStatus.message == "not claimable" ? "Recover" : "Pause"}
           </button>
           <button
             type="button"
-            className="rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            className={classNames(
+              transactionInProgress ?  "bg-yellow-400/60" : "bg-yellow-400 hover:bg-yellow-500",
+              `rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black`
+            )}
+            disabled={transactionInProgress}
             >
             Withdraw Funds 
           </button>
           <button
             type="button"
-            className="rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black bg-red-400 hover:bg-red-500"
+            className={classNames(
+              transactionInProgress ?  "bg-red-400/60" : "bg-red-400 hover:bg-red-500",
+              `rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black`
+            )}
+            disabled={transactionInProgress}
             >
             Delete
           </button>
@@ -40,6 +81,7 @@ export default function ManageCard() {
           <button
             type="button"
             className="rounded-xl h-12 w-32 px-3 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            disabled={transactionInProgress}
             >
             Deposit
           </button>
@@ -63,6 +105,7 @@ export default function ManageCard() {
           <button
             type="button"
             className="rounded-xl mt-4 h-12 w-24 px-3 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            disabled={transactionInProgress}
             >
             Add
           </button>

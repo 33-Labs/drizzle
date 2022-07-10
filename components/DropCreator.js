@@ -86,8 +86,6 @@ export default function DropCreator(props) {
     if (whitelistWithAmountCallback.invalidRecordsCount > 0) {
       return [false, "there are some invalid records"]
     }
-    console.log(whitelistWithAmountCallback.tokenAmount.toString())
-    console.log(tokenBalance.toString())
     if (whitelistWithAmountCallback.tokenAmount.cmp(tokenBalance) != -1) {
       return [false, "insufficient balance"]
     }

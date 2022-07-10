@@ -70,7 +70,8 @@ export default function DropList(props) {
                         {(new Date(parseFloat(drop.createdAt) * 1000)).toLocaleDateString()}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
+                        <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5
+                           ${drop.isClaimable ? "text-green-800 bg-green-100" : "text-red-800 bg-red-100"}`}>
                           {drop.isClaimable ? "TRUE" : "FALSE"}
                         </span>
                       </td>
