@@ -1,20 +1,47 @@
-import { deleteDrop, toggleClaimable, withdrawFunds } from "../lib/transactions"
-import { classNames } from "../lib/utils"
+import { useEffect, useState } from "react"
+import useSWR, { useSWRConfig } from 'swr'
+import Decimal from "decimal.js"
 
 import { useRecoilState } from "recoil"
 import {
+  basicNotificationContentState,
+  showBasicNotificationState,
   transactionInProgressState,
   transactionStatusState
 } from "../lib/atoms"
+import { deleteDrop, depositToDrop, toggleClaimable, withdrawFunds } from "../lib/transactions"
+import { classNames } from "../lib/utils"
+import { queryBalance } from "../lib/scripts"
 
-import { useSWRConfig } from 'swr'
+// tokenInfo in Drizzle
+const balanceFetcher = async (funcName, tokenInfo, account) => {
+  const token = {
+    address: tokenInfo.account,
+    contractName: tokenInfo.contractName,
+    path: {
+      balance: `/public/${tokenInfo.balancePath.identifier}`,
+    }
+  }
+  return await queryBalance(token, account)
+}
 
 export default function ManageCard(props) {
-  const { drop, manager, claimStatus, setClaimStatus } = props
+  const { drop, manager, claimStatus } = props
+  const [balance, setBalance] = useState(new Decimal(0))
+  const [rawDepositAmt, setRawDepositAmt] = useState('')
+  const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
+  const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
-
   const { mutate } = useSWRConfig()
+  
+  const { data: balanceData, error: balanceError} = useSWR(
+    drop && manager ? ["balanceFetcher", drop.tokenInfo, manager] : null, balanceFetcher
+  )
+
+  useEffect(() => {
+    if (balanceData) { setBalance(balanceData)}
+  }, [balanceData])
 
   return (
     <>
@@ -41,7 +68,6 @@ export default function ManageCard(props) {
 
                 mutate(["claimStatusFetcher", drop.dropID, manager, manager])
               }
-
             }}
           >
             {claimStatus.message == "not claimable" ? "Recover" : "Pause"}
@@ -54,9 +80,7 @@ export default function ManageCard(props) {
             )}
             disabled={transactionInProgress}
             onClick={async () => {
-              console.log("YEYE")
               if (drop) {
-                console.log(drop)
                 await withdrawFunds(
                   drop.dropID,
                   drop.tokenInfo.account,
@@ -79,7 +103,6 @@ export default function ManageCard(props) {
             disabled={transactionInProgress}
             onClick={async () => {
               if (drop) {
-                console.log(drop)
                 await deleteDrop(
                   drop.dropID,
                   drop.tokenInfo.account,
@@ -97,18 +120,48 @@ export default function ManageCard(props) {
 
         <div className="mt-4 w-full items-start">
           <label className="w-full text-lg font-bold font-flow">{`Funding DROP (${drop.tokenInfo.symbol})`}</label>
+          <label className="block text-md font-flow leading-6 mt-2 mb-2">Your balance is {balance.toString()} {drop.tokenInfo.symbol}</label> 
         </div>
         <div className="w-full flex justify-between gap-x-3">
           <input
             type="number"
             name="deposit"
             id="deposit"
+            min="0"
             className="rounded-xl focus:ring-drizzle-green focus:border-drizzle-green bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-sm"
+            disabled={transactionInProgress}
+            value={rawDepositAmt}
+            onChange={(event) => { 
+              setRawDepositAmt(event.target.value)
+            }}
           />
           <button
             type="button"
-            className="rounded-xl h-12 w-32 px-3 text-base font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+            className={classNames(
+              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              `rounded-xl h-12 w-32 px-3 text-base font-medium shadow-sm text-black`
+            )}
             disabled={transactionInProgress}
+            onClick={ async () => {
+              setShowBasicNotification(false)
+              if (drop) {
+                try {
+                  const amount = new Decimal(rawDepositAmt)
+                  if (!amount.isPositive() || amount.decimalPlaces() > 8) { throw "Invalid amount. Should be positive with 8 decimal places at most" }
+                  await depositToDrop(
+                    drop.dropID, drop.tokenInfo, amount.toFixed(8),
+                    setTransactionInProgress, setTransactionStatus
+                  )
+                  
+                  setRawDepositAmt('')
+                  mutate(["statsFetcher", drop.dropID, manager])
+                  mutate(["balanceFetcher", drop.tokenInfo, manager])
+                } catch (error) {
+                  setShowBasicNotification(true)
+                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: error}) 
+                }
+              }
+            }}
           >
             Deposit
           </button>
