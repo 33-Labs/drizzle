@@ -35,7 +35,7 @@ export default function DropPresenter(props) {
               {
                 user && (user.addr == host) ? (
                   <ManageCard 
-                    dropID={drop.dropID} 
+                    drop={drop} 
                     manager={host}
                     claimStatus={claimStatus} 
                   />

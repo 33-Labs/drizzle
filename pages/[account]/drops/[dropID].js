@@ -52,10 +52,7 @@ export default function Drop(props) {
     if (statsData) { setStats(statsData) }
   }, [dropData, claimStatusData, statsData])
 
-  if ((dropError && dropError.statusCode === 400) &&
-    (claimStatusError && claimStatusError.statusCode === 400) &&
-    (statsError && statsError.statusCode === 400)
-  ) {
+  if (dropError && dropError.statusCode === 400) {
     return <Custom404 title={"DROP may not exist or deleted"} />
   }
 

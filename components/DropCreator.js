@@ -272,7 +272,7 @@ export default function DropCreator(props) {
           </div>
 
           {timeLockEnabled ?
-            <div className="flex justify-between gap-x-2 gap-y-2 flex-wrap">
+            <div className="mt-2 flex justify-between gap-x-2 gap-y-2 flex-wrap">
               <div className="flex items-center gap-x-2">
                 <label className="inline-block w-12 font-flow font-bold">Start</label>
                 <input
