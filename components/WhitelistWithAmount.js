@@ -23,7 +23,7 @@ export default function WhitelistWithAmount(props) {
 
   return (
     <>
-      <div className="mb-10">
+      <div>
         <label className="block text-2xl font-bold font-flow">
           Recipients & Amounts
         </label>
@@ -102,7 +102,7 @@ export default function WhitelistWithAmount(props) {
 
       {
         validRecords.length > 0 || invalidRecords.length > 0 ? (
-          <div className="mb-10">
+          <div>
             <label className="block text-2xl font-bold font-flow">
               Summary
             </label>
@@ -177,7 +177,7 @@ export default function WhitelistWithAmount(props) {
 
       {
         invalidRecords.length > 0 && (
-          <div className="mb-10">
+          <div>
             <label className="block text-2xl font-bold font-flow">
               Invalid records
             </label>

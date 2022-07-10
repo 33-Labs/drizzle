@@ -25,6 +25,9 @@ if (!drizzleAddress) throw "Missing NEXT_PUBLIC_DRIZZLE_ADDRESS"
 const dropAddress = process.env.NEXT_PUBLIC_DROP_ADDRESS
 if (!dropAddress) throw "Missing NEXT_PUBLIC_DROP_ADDRESS"
 
+const floatAddress = process.env.NEXT_PUBLIC_FLOAT_ADDRESS
+if (!floatAddress) throw "Missing NEXT_PUBLIC_FLOAT_ADDRESS"
+
 const publicConfig = {
   chainEnv,
   accessNodeAPI,
@@ -34,7 +37,8 @@ const publicConfig = {
   fungibleTokenAddress,
   flowTokenAddress,
   drizzleAddress,
-  dropAddress
+  dropAddress,
+  floatAddress
 }
 
 export default publicConfig

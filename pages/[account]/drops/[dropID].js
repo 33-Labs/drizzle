@@ -19,7 +19,6 @@ const dropFetcher = async (funcName, dropID, host) => {
 }
 
 const claimStatusFetcher = async (funcName, dropID, host, claimer) => {
-  console.log(`status  ${funcName} ${dropID} ${host} ${claimer}`)
   return await queryClaimStatus(dropID, host, claimer)
 }
 

@@ -20,6 +20,9 @@ import {
 } from "../lib/atoms"
 import CSVSelector from './CSVSelector'
 import WhitelistWithAmount from './WhitelistWithAmount'
+import EligilityModeSelector from './EligilityModeSelector'
+import FloatPicker from './float/FloatPicker'
+import AmountSelector from './AmountSelector'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -51,6 +54,8 @@ export default function DropCreator(props) {
   const [token, setToken] = useState(null)
   const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
 
+  const [eligilityMode, setEligilityMode] = useState(null)
+  const [amountMode, setAmountMode] = useState(null)
   // For WhitelistWithAmount
   const [whitelistWithAmountCallback, setWhitelistWithAmountCallback] = useState(null)
 
@@ -99,7 +104,7 @@ export default function DropCreator(props) {
       if (valid) {
         setShowBasicNotification(false)
 
-        const {claims, tokenAmount, } = whitelistWithAmountCallback
+        const { claims, tokenAmount, } = whitelistWithAmountCallback
         const _description = description ?? ''
         const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null
         const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
@@ -129,7 +134,7 @@ export default function DropCreator(props) {
           name, _description, banner, url, claims, _startAt,
           _endAt, token, _tokenAmount, setTransactionInProgress, setTransactionStatus
         )
-        
+
         if (res && res.status === 4 && res.statusCode === 0) {
           const createDropEvent = res.events.find((e) => e.data.dropID)
           if (createDropEvent) {
@@ -143,6 +148,55 @@ export default function DropCreator(props) {
     } else {
       fcl.authenticate()
     }
+  }
+
+  const showEligilityModeInputs = (mode) => {
+    if (!mode) { return null }
+    if (mode.key == "WhitelistWithAmount") {
+      return (
+        <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
+          border-4 border-drizzle-green/30 border-dashed">
+          <div>
+            <TokenSelector
+              user={props.user}
+              className="w-full"
+              onTokenSelected={setToken}
+              onBalanceFetched={setTokenBalance}
+            />
+          </div>
+          <WhitelistWithAmount
+            token={token}
+            tokenBalance={tokenBalance}
+            callback={setWhitelistWithAmountCallback}
+          />
+        </div>
+      )
+    }
+
+    if (mode.key == "FLOAT") {
+      return (
+        <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
+          border-4 border-drizzle-green/30 border-dashed">
+          <div>
+            <TokenSelector
+              user={props.user}
+              className="w-full"
+              onTokenSelected={setToken}
+              onBalanceFetched={setTokenBalance}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="block text-2xl font-bold font-flow">
+              Amount
+            </label>
+            <AmountSelector mode={amountMode} setMode={setAmountMode} />
+          </div>
+          <FloatPicker />
+        </div>
+      )
+    }
+
+    return null
   }
 
   return (
@@ -299,36 +353,28 @@ export default function DropCreator(props) {
             </div> : null}
         </div>
 
-        {/** token selector */}
-        <div>
-          <TokenSelector
-            user={props.user}
-            className="w-full"
-            onTokenSelected={setToken}
-            onBalanceFetched={setTokenBalance}
-          />
+        <div className="flex flex-col gap-y-2">
+          <label className="block text-2xl font-bold font-flow">
+            Eligility
+          </label>
+          <EligilityModeSelector mode={eligilityMode} setMode={setEligilityMode} />
         </div>
 
-        <div>
-          <WhitelistWithAmount 
-            token={token} 
-            tokenBalance={tokenBalance} 
-            callback={setWhitelistWithAmountCallback}
-          />
-        </div>
+        {showEligilityModeInputs(eligilityMode)}
 
         {/** create button */}
         <div className="w-full mt-16 flex flex-col gap-y-2 items-center">
           <button
             type="button"
             className={classNames(
-              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || !eligilityMode) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               "w-full h-[60px] text-xl font-semibold rounded-2xl shadow-sm text-black"
             )}
-            disabled={transactionInProgress}
+            disabled={transactionInProgress || !eligilityMode}
             onClick={handleSubmit}
           >
-            {props.user.loggedIn ? "CREATE" : "Connect Wallet"}
+            {props.user.loggedIn ?
+              (eligilityMode ? "CREATE" : "Select a mode") : "Connect Wallet"}
           </button>
         </div>
       </div>

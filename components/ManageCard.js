@@ -128,7 +128,7 @@ export default function ManageCard(props) {
             name="deposit"
             id="deposit"
             min="0"
-            className="rounded-xl focus:ring-drizzle-green focus:border-drizzle-green bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-sm"
+            className="rounded-xl focus:ring-drizzle-green focus:border-drizzle-green bg-drizzle-green/10 grow border-drizzle-green font-flow text-sm"
             disabled={transactionInProgress}
             value={rawDepositAmt}
             onChange={(event) => { 
@@ -139,7 +139,7 @@ export default function ManageCard(props) {
             type="button"
             className={classNames(
               transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
-              `rounded-xl h-12 w-32 px-3 text-base font-medium shadow-sm text-black`
+              `rounded-xl h-12 px-6 text-base font-medium shadow-sm text-black`
             )}
             disabled={transactionInProgress}
             onClick={ async () => {
