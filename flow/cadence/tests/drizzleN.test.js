@@ -124,6 +124,33 @@ describe("DropN", () => {
     expect(error).toBeNull()
   })
 
+  it("DROP owner should be able to withdraw funds in DROP", async () => {
+    await deployContracts()
+    await createValidAirdrop()
+
+    const Alice = await getAccountAddress("Alice")
+    const Dave = await getAccountAddress("Dave")
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const tokenIssuer = Alice
+    const tokenReceiverPath = "fusdReceiver"
+
+    await checkFUSDBalance(Alice, 850.0) 
+
+    const preDropBalance = parseFloat(await getDropVaultBalance(dropID, Alice))
+    expect(preDropBalance).toBe(150.0) 
+
+    const [, error] = await withdrawFunds(dropID, Alice, tokenIssuer, tokenReceiverPath)
+    expect(error).toBeNull()
+
+    const postDropBalance = parseFloat(await getDropVaultBalance(dropID, Alice))
+    expect(postDropBalance).toBe(0) 
+
+    await checkFUSDBalance(Alice, 1000.0) 
+  })
+
   it("DROP owner should be able to add claims", async () => {
     await deployContracts()
     await createValidAirdrop()
@@ -311,6 +338,13 @@ async function addClaims(dropID, host, newClaims) {
   const name = "add_claims"
   const args = [dropID, newClaims]
   return await sendTransaction({ name: name, signers: signers, args: args })
+}
+
+async function withdrawFunds(dropID, host, tokenIssuer, tokenReceiverPath) {
+  const signers = [host]
+  const name = "withdraw_funds"
+  const args = [dropID, tokenIssuer, tokenReceiverPath]
+  return await sendTransaction({ name: name, signers: signers, args: args})
 }
 
 // ---- scripts ----

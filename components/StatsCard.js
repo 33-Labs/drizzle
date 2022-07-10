@@ -17,16 +17,26 @@ export default function StatsCard(props) {
   const [claimed, totalAmount] = parseClaimed((stats && stats.claimed) || {})
   const symbol = stats && stats.tokenSymbol
 
+  let balance = "NaN"
+  let runOut = false
+  if (stats) {
+    let b = new Decimal(stats.dropBalance)
+    balance = b.toString()
+    if (b.isZero()) {
+      runOut = true
+    }
+  }
+
   return (
     <div className="w-full flex flex-col items-center">
       <label className="text-2xl font-bold font-flow">DROP Stats</label>
       <div className="w-full flex flex-col mt-5 mb-5 justify-center gap-y-3 items-stretch
       sm:flex-row sm:gap-x-3">
-        <div className="w-full rounded-2xl border-4 border-drizzle-green flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
+        <div className={`w-full rounded-2xl border-4 ${runOut ? "border-red-400" : "border-drizzle-green"} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]`}>
           <label className="text-base font-medium font-flow">
             Drop Balance
           </label>
-          <label className="text-xl font-bold font-flow">{stats ? (new Decimal(stats.dropBalance)).toString() : "?" } {symbol}</label>
+          <label className="text-xl font-bold font-flow">{balance} {symbol}</label>
         </div>
 
         <div className="w-full rounded-2xl border-4 border-drizzle-green flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">

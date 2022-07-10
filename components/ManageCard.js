@@ -1,4 +1,4 @@
-import { deleteDrop, toggleClaimable } from "../lib/transactions"
+import { deleteDrop, toggleClaimable, withdrawFunds } from "../lib/transactions"
 import { classNames } from "../lib/utils"
 
 import { useRecoilState } from "recoil"
@@ -53,7 +53,21 @@ export default function ManageCard(props) {
               `rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black`
             )}
             disabled={transactionInProgress}
-          >
+            onClick={async () => {
+              console.log("YEYE")
+              if (drop) {
+                console.log(drop)
+                await withdrawFunds(
+                  drop.dropID,
+                  drop.tokenInfo.account,
+                  drop.tokenInfo.receiverPath.identifier,
+                  setTransactionInProgress,
+                  setTransactionStatus
+                )
+
+                mutate(["statsFetcher", drop.dropID, manager])
+              }
+            }}>
             Withdraw Funds
           </button>
           <button
@@ -64,7 +78,6 @@ export default function ManageCard(props) {
             )}
             disabled={transactionInProgress}
             onClick={async () => {
-              console.log("YEYE")
               if (drop) {
                 console.log(drop)
                 await deleteDrop(
