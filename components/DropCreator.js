@@ -100,8 +100,6 @@ export default function DropCreator(props) {
         setShowBasicNotification(false)
 
         const {claims, tokenAmount, } = whitelistWithAmountCallback
-        console.log("claims ", claims)
-        console.log("tokenAmount ", tokenAmount.toString())
         const _description = description ?? ''
         const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null
         const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
@@ -195,6 +193,7 @@ export default function DropCreator(props) {
               type="text"
               name="name"
               id="name"
+              disabled={transactionInProgress}
               required
               className="bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg rounded-2xl
                 focus:ring-drizzle-green-dark focus:border-drizzle-green-dark  placeholder:text-gray-300"
@@ -216,6 +215,7 @@ export default function DropCreator(props) {
               rows={4}
               name="description"
               id="description"
+              disabled={transactionInProgress}
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
                 bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
 
@@ -237,6 +237,7 @@ export default function DropCreator(props) {
               type="url"
               name="url"
               id="url"
+              disabled={transactionInProgress}
               pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
               bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
@@ -253,6 +254,7 @@ export default function DropCreator(props) {
               Time Limit{` (${Timezone})`}
             </label>
             <Switch
+              disabled={transactionInProgress}
               checked={timeLockEnabled}
               onChange={setTimeLockEnabled}
               className={classNames(
@@ -277,6 +279,7 @@ export default function DropCreator(props) {
                 <label className="inline-block w-12 font-flow font-bold">Start</label>
                 <input
                   type="datetime-local"
+                  disabled={transactionInProgress}
                   id="start_at"
                   className="rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
                   onChange={(e) => { setStartAt(new Date(e.target.value)) }}
@@ -287,6 +290,7 @@ export default function DropCreator(props) {
                 <label className="inline-block w-12 font-flow font-bold">End</label>
                 <input
                   type="datetime-local"
+                  disabled={transactionInProgress}
                   id="end_at"
                   className="rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
                   onChange={(e) => { setEndAt(new Date(e.target.value)) }}
