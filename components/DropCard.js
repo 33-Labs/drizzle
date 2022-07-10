@@ -35,7 +35,7 @@ const MemoizeName = React.memo(({ name, url }) => {
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-black text-2xl font-bold font-flow break-words underline decoration-drizzle-green decoration-2">
+            className="text-black text-3xl font-bold font-flow break-words underline decoration-drizzle-green decoration-2">
             {name}
             <span className="inline-flex items-baseline">
               <ExternalLinkIcon className="h-5 w-5 text-drizzle-green" />
@@ -56,7 +56,7 @@ const MemoizeBasicInfo = React.memo(({ host, createdAt }) => {
   return (
     <div className="w-full flex flex-col">
       <label className="w-full font-flow text-sm text-gray-400 break-words">
-        {"created by "}
+        {"Created by "}
         <span>
           <a
             href={`${publicConfig.flowscanURL}/account/${host}`}
@@ -67,7 +67,7 @@ const MemoizeBasicInfo = React.memo(({ host, createdAt }) => {
         </span>
       </label>
       <label className="w-full font-flow text-sm text-gray-400 break-words">
-        {`created at ${createdAt.toLocaleString()}`}
+        {`Created at ${createdAt.toLocaleString()}`}
       </label>
     </div>
   )
@@ -101,7 +101,6 @@ export default function DropCard(props) {
       items-stretch rounded-3xl overflow-hidden grow
       sm:min-w-[320px]
       md:w-[480px]">
-        {/* TODO: replace with new placeholder */}
         <MemoizeBanner banner={props.banner || "/flow-banner.jpg"} />
         <div className="flex flex-col p-8 gap-y-5">
           <MemoizeName name={props.name} url={props.url} />

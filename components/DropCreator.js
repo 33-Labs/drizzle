@@ -174,7 +174,7 @@ export default function DropCreator(props) {
 
       <div className="flex flex-col gap-y-10">
         {/** image uploader */}
-        <div className="flex flex-col gap-y-1">
+        <div className="flex flex-col">
           <label className="block text-2xl font-bold font-flow">
             Banner
           </label>
@@ -230,7 +230,7 @@ export default function DropCreator(props) {
         {/** url */}
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            URL
+            Offical Link
           </label>
           <div className="mt-1">
             <input
@@ -248,7 +248,7 @@ export default function DropCreator(props) {
 
         {/** time limit */}
         <div>
-          <div className="flex justify-between mb-4">
+          <div className="flex justify-between items-center">
             <label className="block text-2xl font-bold font-flow">
               Time Limit{` (${Timezone})`}
             </label>
@@ -314,7 +314,7 @@ export default function DropCreator(props) {
         </div>
 
         {/** create button */}
-        <div className="w-full mt-20 flex flex-col gap-y-2 items-center">
+        <div className="w-full mt-16 flex flex-col gap-y-2 items-center">
           <button
             type="button"
             className={classNames(
@@ -324,7 +324,7 @@ export default function DropCreator(props) {
             disabled={transactionInProgress}
             onClick={handleSubmit}
           >
-            {props.user.loggedIn ? "Create" : "Connect Wallet"}
+            {props.user.loggedIn ? "CREATE" : "Connect Wallet"}
           </button>
         </div>
       </div>

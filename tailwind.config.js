@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'drizzle-green': '#68ee8e',
-        'drizzle-green-dark': '#58d27d',
+        'drizzle-green': '#00d588',
+        'drizzle-green-dark': '#00a368',
         'disabled-gray': '#e2e8f0',
         'disabled-gray-dark': '#cbd5e1'
       },

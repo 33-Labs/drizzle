@@ -72,7 +72,7 @@ export default function Drop(props) {
           host={host}
         /> : 
         <div className="flex h-[200px] mt-10 justify-center">
-          <SpinnerCircular size={50} thickness={180} speed={100} color="#68ee8e" secondaryColor="#e2e8f0" />
+          <SpinnerCircular size={50} thickness={180} speed={100} color="#00d588" secondaryColor="#e2e8f0" />
         </div>
       }
       </div>

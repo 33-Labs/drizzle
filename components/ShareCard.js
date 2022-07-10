@@ -31,7 +31,7 @@ export default function ShareCard(props) {
             value={url}
             size={200}
             bgColor={"#ffffff"}
-            fgColor={"#58d27d"}
+            fgColor={"#00d588"}
             level={"H"}
             includeMargin={false}
             imageSettings={{
