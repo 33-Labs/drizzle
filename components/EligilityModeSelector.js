@@ -1,24 +1,39 @@
 import { RadioGroup } from '@headlessui/react'
 
+export const EligilityModeWhitelistWitAmount = {
+  key: "WhitelistWithAmount",
+  name: 'Whitelist with Amount',
+  intro: 'Distribute specific amount to specific one in whitelist',
+  criteria: () => {
+    return "In whitelist"
+  }
+}
+
+export const EligilityModeFLOAT = {
+  key: "FLOAT",
+  name: 'FLOAT',
+  intro: 'Under construction',
+  criteria: (eventID) => {
+    let event = eventID || "{EventID}"
+    return `Owns FLOAT of event #${event}`
+  }
+}
+
+export const EligilityModeFLOATGroup = {
+  key: "FLOATGroup",
+  name: 'FLOAT Group',
+  intro: 'Under construction',
+  criteria: (groupName, threshold) => {
+    let t = threshold || "1"
+    let g = groupName || "{GroupName}"
+    return `Owns at least ${t} FLOATs in ${g}`
+  }
+}
+
 const modes = [
-  {
-    key: "WhitelistWithAmount",
-    name: 'Whitelist with Amount',
-    intro: 'Distribute specific amount to specific one in whitelist',
-    criteria: "In Whitelist"
-  },
-  {
-    key: "FLOAT",
-    name: 'FLOAT',
-    intro: 'Under construction',
-    criteria: "Owns specific FLOAT"
-  },
-  {
-    key: "FLOATGroup",
-    name: 'FLOAT Group',
-    intro: 'Under construction',
-    criteria: "Owns specific FLOATs"
-  },
+  EligilityModeWhitelistWitAmount,
+  EligilityModeFLOAT,
+  EligilityModeFLOATGroup
 ]
 
 export default function EligilityModeSelector(props) {

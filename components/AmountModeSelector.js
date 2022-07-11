@@ -1,17 +1,18 @@
 import { RadioGroup } from '@headlessui/react'
 
-const modes = [
-  {
-    key: "Random",
-    name: 'Random Amount',
-    intro: 'Distribute specific amount to specific one in whitelist',
-  },
-  {
-    key: "Identical",
-    name: 'Identical Amount',
-    intro: 'Under construction'
-  }
-]
+export const AmountModeRandom = {
+  key: "Random",
+  name: 'Random Amount',
+  intro: 'Distribute specific amount to specific one in whitelist',
+}
+
+export const AmountModeIdentical = {
+  key: "Identical",
+  name: 'Identical Amount',
+  intro: 'Under construction' 
+}
+
+const modes = [AmountModeRandom, AmountModeIdentical]
 
 export default function AmountModeSelector(props) {
   const {mode, setMode} = props

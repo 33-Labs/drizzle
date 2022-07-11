@@ -20,7 +20,7 @@ import {
 } from "../lib/atoms"
 import CSVSelector from './CSVSelector'
 import WhitelistWithAmount from './WhitelistWithAmount'
-import EligilityModeSelector from './EligilityModeSelector'
+import EligilityModeSelector, { EligilityModeWhitelistWitAmount } from './EligilityModeSelector'
 import FloatPicker, { PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
 import AmountSelector from './AmountSelector'
 
@@ -211,7 +211,7 @@ export default function DropCreator(props) {
         <DropCard
           isPreview={true}
           banner={banner}
-          name={name ?? NamePlaceholder}
+          name={(!name || name.length == 0) ? NamePlaceholder : name}
           url={url}
           host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
           createdAt={CreatedAtPlaceholder}
@@ -221,6 +221,7 @@ export default function DropCreator(props) {
           startAt={startAt}
           endAt={endAt}
           amount={AmountPlaceholder}
+          eligilityMode={eligilityMode}
         />
       </div>
 

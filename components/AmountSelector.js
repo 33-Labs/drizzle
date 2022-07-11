@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Decimal from 'decimal.js';
 
 import AmountModeSelector from "./AmountModeSelector";
@@ -7,9 +7,15 @@ export default function AmountSelector(props) {
   const mode = props.mode
   const setMode = props.setMode
   const disabled = props.disabled || false
-  const [entries, setEntries] = useState(null)
-  const [totalAmount, setTotalAmount] = useState(null)
-  const [identicalAmount, setIdenticalAmount] = useState(null)
+  const [entries, setEntries] = useState('')
+  const [totalAmount, setTotalAmount] = useState('')
+  const [identicalAmount, setIdenticalAmount] = useState('')
+
+  useEffect(() => {
+    setEntries('')
+    setTotalAmount('')
+    setIdenticalAmount('')
+  }, [mode])
 
   const showExtraInputs = (mode) => {
     if (!mode) { return null }
@@ -21,8 +27,9 @@ export default function AmountSelector(props) {
             <input
               type="number"
               disabled={disabled}
-              min="1"
               id="entries"
+              min="1"
+              value={entries}
               className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               onChange={(event) => { setEntries(event.target.value)}}
             />
@@ -32,8 +39,9 @@ export default function AmountSelector(props) {
             <input
               type="number"
               disabled={disabled}
-              min="1"
               id="total_amount"
+              min="0"
+              value={totalAmount}
               className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               onChange={(event) => { setTotalAmount(event.target.value)}}
             />
@@ -50,8 +58,9 @@ export default function AmountSelector(props) {
             <input
               type="number"
               disabled={disabled}
-              min="1"
               id="entries"
+              value={entries}
+              min="1"
               className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               onChange={(event) => { setEntries(event.target.value)}}
             />
@@ -61,8 +70,9 @@ export default function AmountSelector(props) {
             <input
               type="number"
               disabled={disabled}
-              min="1"
               id="per_amount"
+              value={identicalAmount}
+              min="0"
               className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               onChange={(event) => { setIdenticalAmount(event.target.value)}}
             />

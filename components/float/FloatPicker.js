@@ -80,6 +80,7 @@ export default function FloatPicker(props) {
   useEffect(() => {
     setFloatEvents([])
     setRawEventStr('')
+    setThreshold('')
   }, [mode])
 
   return (
