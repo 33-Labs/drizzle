@@ -27,6 +27,7 @@ export default function DropList(props) {
 
       {drops.length > 0 ?
         <div className="mt-3 flex flex-col w-full">
+          <div className="px-1 overflow-x-auto">
           <div className="inline-block min-w-full py-2 align-middle">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-2xl">
               <table className="min-w-full divide-y divide-gray-300">
@@ -79,6 +80,7 @@ export default function DropList(props) {
                   ))}
                 </tbody>
               </table>
+            </div>
             </div>
           </div>
         </div> :

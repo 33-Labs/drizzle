@@ -7,7 +7,7 @@ export default function CSVSelector(props) {
       >Sample</a>
       <div className="h-12 max-w-[115px] sm:max-w-[140px] px-3 shadow-sm 
       font-medium text-base text-drizzle-green-dark bg-drizzle-green/50
-      rounded-2xl
+      rounded-2xl overflow-hidden
     hover:bg-drizzle-green-dark hover:text-black"
       >
         <label
@@ -15,7 +15,7 @@ export default function CSVSelector(props) {
           className="w-full inline-block text-center leading-[48px] ">
           Upload CSV
         </label>
-        <input id="csv-selector" className="invisible" type="file"
+        <input id="csv-selector" className="invisible " type="file"
           accept=".csv"
           onChange={props.onChange}
         />

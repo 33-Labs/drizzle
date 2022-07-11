@@ -1,89 +1,88 @@
-import { RadioGroup } from '@headlessui/react'
+import { useState } from 'react'
+import Decimal from 'decimal.js';
 
-const modes = [
-  {
-    key: "Random",
-    name: 'Random Amount',
-    intro: 'Distribute specific amount to specific one in whitelist',
-  },
-  {
-    key: "Identical",
-    name: 'Identical Amount',
-    intro: 'Under construction'
-  }
-]
+import AmountModeSelector from "./AmountModeSelector";
 
 export default function AmountSelector(props) {
-  const {mode, setMode} = props
+  const mode = props.mode
+  const setMode = props.setMode
+  const disabled = props.disabled || false
+  const [entries, setEntries] = useState(null)
+  const [totalAmount, setTotalAmount] = useState(null)
+  const [identicalAmount, setIdenticalAmount] = useState(null)
 
-  return (
-      <div className="mx-auto w-full">
-        <RadioGroup value={mode} onChange={setMode}>
-          <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
-          <div className="grid grid-cols-1 gap-y-3 sm:grid-cols-2 sm:gap-x-4">
-            {modes.map((mode) => (
-              <RadioGroup.Option
-                key={mode.key}
-                value={mode}
-                className={({ active, checked }) =>
-                  `${
-                    active
-                      ? 'ring-2 ring-drizzle-green ring-offset-2'
-                      : 'ring-1 ring-black ring-opacity-5'
-                  }
-                  ${
-                    checked ? 'bg-drizzle-green/80 text-black' : 'bg-white'
-                  }
-
-                  relative flex cursor-pointer rounded-2xl px-5 py-4 shadow-md focus:outline-none`
-                }
-              >
-                {({ active, checked }) => (
-                  <>
-                    <div className="flex w-full items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="text-sm">
-                          <RadioGroup.Label
-                            as="p"
-                            className={`font-semibold font-flow text-lg`}
-                          >
-                            {mode.name}
-                          </RadioGroup.Label>
-                          <RadioGroup.Description
-                            as="span"
-                            className={`inline text-gray-500`}
-                          >
-                            {mode.intro}
-                          </RadioGroup.Description>
-                        </div>
-                      </div>
-                      {checked && (
-                        <div className="shrink-0 text-white">
-                          <CheckIcon className="h-6 w-6" />
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-              </RadioGroup.Option>
-            ))}
+  const showExtraInputs = (mode) => {
+    if (!mode) { return null }
+    if (mode.key === "Random") {
+      return (
+        <div className="w-full flex flex-col gap-y-2 mt-1">
+          <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
+            <label className="block w-[75px] shrink-0 font-flow font-bold">Entries</label>
+            <input
+              type="number"
+              disabled={disabled}
+              min="1"
+              id="entries"
+              className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              onChange={(event) => { setEntries(event.target.value)}}
+            />
           </div>
-        </RadioGroup>
-      </div>
-  )
-}
+          <div className="flex items-center gap-x-2">
+          <label className="block w-[75px] shrink-0 font-flow font-bold">Total Amount</label>
+            <input
+              type="number"
+              disabled={disabled}
+              min="1"
+              id="total_amount"
+              className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              onChange={(event) => { setTotalAmount(event.target.value)}}
+            />
+          </div>
+        </div>
+      )
+    }
+  
+    if (mode.key === "Identical") {
+      return (
+        <div className="w-full flex flex-col gap-y-2 mt-1">
+          <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
+            <label className="block w-[75px] shrink-0 font-flow font-bold">Entries</label>
+            <input
+              type="number"
+              disabled={disabled}
+              min="1"
+              id="entries"
+              className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              onChange={(event) => { setEntries(event.target.value)}}
+            />
+          </div>
+          <div className="flex items-center gap-x-2">
+          <label className="block w-[75px] shrink-0 font-flow font-bold">Amount Per Entry</label>
+            <input
+              type="number"
+              disabled={disabled}
+              min="1"
+              id="per_amount"
+              className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              onChange={(event) => { setIdenticalAmount(event.target.value)}}
+            />
+          </div>
+        </div>
+      )
+    }
+  
+    return null
+  }
 
-function CheckIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" {...props}>
-      <circle cx={12} cy={12} r={12} fill="#fff" opacity="0.2" />
-      <path
-        d="M7 13l3 3 7-7"
-        stroke="#fff"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <div className="flex flex-col gap-y-2">
+      <label className="block text-2xl font-bold font-flow">
+        Amount
+      </label>
+      <AmountModeSelector mode={mode} setMode={setMode} />
+      {
+        showExtraInputs(mode)
+      }
+    </div>
   )
 }

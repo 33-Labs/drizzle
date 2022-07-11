@@ -61,7 +61,7 @@ export default function BasicNotification() {
                   <NotificationIcon type={type}/>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
                     <p className="text-sm font-bold font-flow text-gray-900">{title}</p>
-                    <p className="mt-1 text-sm text-gray-500">{detail}</p>
+                    <p className="mt-1 text-sm text-gray-500 break-words max-h-36 overflow-hidden">{detail}</p>
                   </div>
                   <div className="ml-4 flex-shrink-0 flex">
                     <button

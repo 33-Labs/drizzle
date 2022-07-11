@@ -2,32 +2,23 @@ import { RadioGroup } from '@headlessui/react'
 
 const modes = [
   {
-    key: "WhitelistWithAmount",
-    name: 'Whitelist with Amount',
+    key: "Random",
+    name: 'Random Amount',
     intro: 'Distribute specific amount to specific one in whitelist',
-    criteria: "In Whitelist"
   },
   {
-    key: "FLOAT",
-    name: 'FLOAT',
-    intro: 'Under construction',
-    criteria: "Owns specific FLOAT"
-  },
-  {
-    key: "FLOATGroup",
-    name: 'FLOAT Group',
-    intro: 'Under construction',
-    criteria: "Owns specific FLOATs"
-  },
+    key: "Identical",
+    name: 'Identical Amount',
+    intro: 'Under construction'
+  }
 ]
 
-export default function EligilityModeSelector(props) {
+export default function AmountModeSelector(props) {
   const {mode, setMode} = props
 
   return (
       <div className="mx-auto w-full">
         <RadioGroup value={mode} onChange={setMode}>
-          <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
           <div className="grid grid-cols-1 gap-y-3 sm:grid-cols-2 sm:gap-x-4 auto-rows-fr">
             {modes.map((mode) => (
               <RadioGroup.Option

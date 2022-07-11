@@ -21,7 +21,7 @@ import {
 import CSVSelector from './CSVSelector'
 import WhitelistWithAmount from './WhitelistWithAmount'
 import EligilityModeSelector from './EligilityModeSelector'
-import FloatPicker from './float/FloatPicker'
+import FloatPicker, { PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
 import AmountSelector from './AmountSelector'
 
 const NamePlaceholder = "DROP NAME"
@@ -173,7 +173,11 @@ export default function DropCreator(props) {
       )
     }
 
-    if (mode.key == "FLOAT") {
+    if (mode.key === "FLOAT" || mode.key === "FLOATGroup") {
+      let pickerMode = PickerModeFloat
+      if (mode.key === "FLOATGroup") {
+        pickerMode = PickerModeFloatGroup
+      }
       return (
         <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
           border-4 border-drizzle-green/30 border-dashed">
@@ -185,13 +189,9 @@ export default function DropCreator(props) {
               onBalanceFetched={setTokenBalance}
             />
           </div>
-          <div className="space-y-2">
-            <label className="block text-2xl font-bold font-flow">
-              Amount
-            </label>
-            <AmountSelector mode={amountMode} setMode={setAmountMode} />
-          </div>
-          <FloatPicker />
+
+          <AmountSelector mode={amountMode} setMode={setAmountMode} />
+          <FloatPicker mode={pickerMode} />
         </div>
       )
     }
