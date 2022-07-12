@@ -1,6 +1,7 @@
 import Decimal from "decimal.js"
 import { classNames } from "../lib/utils"
-import { test } from "../lib/transactions"
+import { claim, test } from "../lib/transactions"
+import { useSWRConfig } from 'swr'
 
 import { useRecoilState } from "recoil"
 import {
@@ -23,8 +24,9 @@ const parseClaimStatus = (claimStatus, isPreview) => {
 export default function ClaimCard(props) {
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
+  const { mutate } = useSWRConfig()
 
-  const { isPreview, token, tokenInfo, claimStatus } = props
+  const { isPreview, dropID, host, user, token, tokenInfo, claimStatus } = props
   const amount = isPreview ? new Decimal(42) : new Decimal((claimStatus && claimStatus.amount) || props.amount || 0)
   const symbol = isPreview ? (token && token.symbol) : (tokenInfo && tokenInfo.symbol)
 
@@ -49,27 +51,16 @@ export default function ClaimCard(props) {
           )}
           disabled={isPreview || !(claimStatus && claimStatus.claimable) || transactionInProgress}
           onClick={async () => {
-            await test(
+            if (isPreview || !(claimStatus && claimStatus.claimable) || !dropID) {
+              return
+            }
+
+            await claim(dropID, host, tokenInfo,
               setTransactionInProgress,
-              setTransactionStatus
-            )
-            // if (!isPreview && status.claimable) {
-            //   try {
-            //     const transactionId = await drizzleService.claim(
-            //       dropID, 
-            //       host, 
-            //       token.account,
-            //       token.contractName,
-            //       token.providerPath.identifier,
-            //       token.balancePath.identifier,
-            //       token.receiverPath.identifier
-            //     )
-            //     console.log("txid: " + transactionId)
-            //     await fcl.tx(transactionId).onceSealed()
-            //   } catch (e) {
-            //     console.log(e)
-            //   }
-            // }
+              setTransactionStatus)
+
+            mutate(["claimStatusFetcher", dropID, host, user && user.addr])
+            mutate(["statsFetcher", dropID, host])
           }}
         >
           {title}

@@ -28,6 +28,7 @@ export default function DropPresenter(props) {
                 endAt={drop.endAt ? convertCadenceDateTime(drop.endAt) : null}
                 claimStatus={claimStatus}
                 dropID={drop.dropID}
+                user={user}
               />
             </div>
             <div className="flex flex-col items-center justify-center">

@@ -91,7 +91,7 @@ export default function DropCard(props) {
 
   const isPreview = props.isPreview == true
   // Only created Drop has claimStatus
-  const { token, tokenInfo, claimStatus } = props
+  const { dropID, host, user, token, tokenInfo, claimStatus } = props
 
   return (
     <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8">
@@ -117,8 +117,11 @@ export default function DropCard(props) {
         <ClaimCard
           isPreview={isPreview}
           claimStatus={claimStatus}
+          dropID={dropID}
+          host={host}
           token={token}
           tokenInfo={tokenInfo}
+          user={user}
         />
         {
           props.dropID && props.host ?
