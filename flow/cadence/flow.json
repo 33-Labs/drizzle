@@ -7,22 +7,70 @@
 	},
 	"contracts": {
         "FungibleToken": {
-            "source": "./contracts/FungibleToken.cdc",
+            "source": "./contracts/core/FungibleToken.cdc",
             "aliases": {
                 "testnet": "0x9a0766d93b6608b7"
             }
         },
-        "Drizzle": {
-            "source": "./contracts/Drizzle.cdc",
+        "FlowToken": {
+            "source": "./contracts/core/FlowToken.cdc",
             "aliases": {
-                "testnet": "0x69a2203998669971"
+                "testnet": "0x7e60df042a9c0868"
             }
         },
-        "DropN": {
-            "source": "./contracts/DropN.cdc",
+        "FUSD": {
+            "source": "./contracts/core/FUSD.cdc",
             "aliases": {
-                "testnet": "0x69a2203998669971"
+                "testnet": "0xe223d8a629e49c68"
             }
+        },
+        "FlowStorageFees": {
+            "source": "./contracts/core/FlowStorageFees.cdc",
+            "aliases": {
+                "testnet": "0x8c5303eaa26202d6"
+            } 
+        },
+        "NonFungibleToken": {
+            "source": "./contracts/core/NonFungibleToken.cdc",
+            "aliases": {
+                "testnet": "0x631e88ae7f1d7c20"
+            } 
+        },
+        "MetadataViews": {
+            "source": "./contracts/core/MetadataViews.cdc",
+            "aliases": {
+                "testnet": "0x631e88ae7f1d7c20"
+            } 
+        },
+        "FLOAT": {
+            "source": "./contracts/float/FLOAT.cdc",
+            "aliases": {
+                "testnet": "0x0afe396ebc8eee65"
+            } 
+        },
+        "FLOATVerifiers": {
+            "source": "./contracts/float/FLOATVerifiers.cdc",
+            "aliases": {
+                "testnet": "0x0afe396ebc8eee65"
+            } 
+        },
+        "GrantedAccountAccess": {
+            "source": "./contracts/float/GrantedAccountAccess.cdc",
+            "aliases": {
+                "testnet": "0x0afe396ebc8eee65"
+            } 
+        },
+        "Drizzle": {
+            "source": "./contracts/Drizzle.cdc"
+        },
+        "Cloud": {
+            "source": "./contracts/Cloud.cdc"
+        },
+        "Packets": {
+            "source": "./contracts/Packets.cdc"
+        },
+        "EligibilityReviewers": {
+            "source": "./contracts/EligibilityReviewers.cdc"
         }
     },
 	"networks": {
@@ -44,7 +92,8 @@
         "testnet": {
             "drizzle-deployer": [
                 "Drizzle",
-                "DropN"
+                "Packets",
+                "EligibilityReviewers"
             ]
         }
     }

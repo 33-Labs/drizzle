@@ -34,7 +34,8 @@ pub contract Cloud {
         pub var isPaused: Bool
         pub let claimedRecords: {Address: Drizzle.ClaimRecord}
         pub var claimedAmount: UFix64
-        pub let dropVault: @FungibleToken.Vault
+
+        access(self) let dropVault: @FungibleToken.Vault
 
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct}) {
             let claimer = receiver.owner!.address
@@ -140,7 +141,7 @@ pub contract Cloud {
             )
         }
 
-        pub fun getClaimedRecord(_ account: Address): Drizzle.ClaimRecord? {
+        pub fun getClaimedRecord(account: Address): Drizzle.ClaimRecord? {
             return self.claimedRecords[account]
         }
 
@@ -151,8 +152,6 @@ pub contract Cloud {
         pub fun getDropBalance(): UFix64 {
             return self.dropVault.balance
         }
-
-        // ---- private methods ----
 
         pub fun togglePause(): Bool {
             self.isPaused = !self.isPaused
