@@ -1,5 +1,5 @@
-import FungibleToken from "../contracts/FungibleToken.cdc"
-import FUSD from "../contracts/FUSD.cdc"
+import FungibleToken from "../../contracts/core/FungibleToken.cdc"
+import FUSD from "../../contracts/core/FUSD.cdc"
 
 transaction(amount: UFix64, recipient: Address) {
 

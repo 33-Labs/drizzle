@@ -1,5 +1,5 @@
-import DropN from "../contracts/DropN.cdc"
-import FungibleToken from "../contracts/FungibleToken.cdc"
+import Cloud from "../contracts/Cloud.cdc"
+import FungibleToken from "../contracts/core/FungibleToken.cdc"
 
 transaction(
     dropID: UInt64,
@@ -7,11 +7,11 @@ transaction(
     tokenReceiverPath: String
 ) {
 
-    let dropCollection: &DropN.DropCollection
+    let dropCollection: &Cloud.DropCollection
     let receiver: &{FungibleToken.Receiver}
 
     prepare(acct: AuthAccount) {
-        self.dropCollection = acct.borrow<&DropN.DropCollection>(from: DropN.DropCollectionStoragePath)
+        self.dropCollection = acct.borrow<&Cloud.DropCollection>(from: Cloud.DropCollectionStoragePath)
             ?? panic("Could not borrow dropCollection")
 
         let receiverPath = PublicPath(identifier: tokenReceiverPath)!

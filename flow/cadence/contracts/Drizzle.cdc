@@ -30,7 +30,6 @@ pub contract Drizzle {
     pub struct interface IEligibilityReviewer {
         pub let packet: {IPacket}?
 
-        // pub let banList: {Address: Bool}
         pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Eligibility
     }
 
@@ -83,7 +82,7 @@ pub contract Drizzle {
 
     pub struct ClaimStatus {
         pub let code: ClaimStatusCode
-        pub let claimableAmount: UFix64
+        pub let eligibleAmount: UFix64
         pub let message: String
         pub let extraData: {String: AnyStruct}
 
@@ -94,7 +93,7 @@ pub contract Drizzle {
             extraData: {String: AnyStruct}
         ) {
             self.code = code
-            self.claimableAmount = claimableAmount
+            self.eligibleAmount = claimableAmount
             self.message = message
             self.extraData = extraData
         }
@@ -130,7 +129,6 @@ pub contract Drizzle {
         pub let eligibilityReviewer: {IEligibilityReviewer}
 
         pub var isPaused: Bool
-        pub let claimedRecords: {Address: ClaimRecord}
         // Helper field for use to access the claimed amount easily
         pub var claimedAmount: UFix64
 

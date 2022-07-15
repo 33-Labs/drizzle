@@ -1,7 +1,7 @@
 import Drizzle from "../contracts/Drizzle.cdc"
 import Cloud from "../contracts/Cloud.cdc"
 
-pub fun main(dropID: UInt64, host: Address, claimer: Address): Drizzle.ClaimStatus {
+pub fun main(dropID: UInt64, host: Address, claimer: Address): Drizzle.ClaimRecord? {
     let dropCollection =
         getAccount(host)
         .getCapability(Cloud.DropCollectionPublicPath)
@@ -10,7 +10,6 @@ pub fun main(dropID: UInt64, host: Address, claimer: Address): Drizzle.ClaimStat
 
     let drop = dropCollection.borrowPublicDropRef(dropID: dropID)
         ?? panic("Could not borrow drop")
-
-    return drop.getClaimStatus(account: claimer)
+    
+    return drop.getClaimedRecord(account: claimer)
 }
- 

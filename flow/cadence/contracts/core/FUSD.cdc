@@ -205,3 +205,4 @@ pub contract FUSD: FungibleToken {
         emit TokensInitialized(initialSupply: 0.0)
     }
 }
+ 

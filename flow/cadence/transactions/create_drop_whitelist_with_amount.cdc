@@ -1,36 +1,39 @@
+import FungibleToken from "../contracts/core/FungibleToken.cdc"
 import Drizzle from "../contracts/Drizzle.cdc"
-import DropN from "../contracts/DropN.cdc"
-import FungibleToken from "../contracts/FungibleToken.cdc"
+import Cloud from "../contracts/Cloud.cdc"
+import EligibilityReviewers from "../contracts/EligibilityReviewers.cdc"
 
 transaction(
     name: String,
     description: String,
     image: String?,
     url: String?,
-    claims: {Address: UFix64},
     startAt: UFix64?,
     endAt: UFix64?,
+    // TokenInfo
     tokenIssuer: Address,
     tokenContractName: String,
     tokenSymbol: String,
     tokenProviderPath: String,
     tokenBalancePath: String,
     tokenReceiverPath: String,
+    // Eligibility
+    whitelist: {Address: UFix64},
     tokenAmount: UFix64 
 ) {
-    let dropCollection: &DropN.DropCollection
+    let dropCollection: &Cloud.DropCollection
     let vault: &FungibleToken.Vault
 
     prepare(acct: AuthAccount) {
-        if acct.borrow<&DropN.DropCollection>(from: DropN.DropCollectionStoragePath) == nil {
-            acct.save(<- DropN.createEmptyDropCollection(), to: DropN.DropCollectionStoragePath)
-            acct.link<&DropN.DropCollection{Drizzle.IDropCollectionPublic}>(
-                DropN.DropCollectionPublicPath,
-                target: DropN.DropCollectionStoragePath
+        if acct.borrow<&Cloud.DropCollection>(from: Cloud.DropCollectionStoragePath) == nil {
+            acct.save(<- Cloud.createEmptyDropCollection(), to: Cloud.DropCollectionStoragePath)
+            acct.link<&Cloud.DropCollection{Drizzle.IDropCollectionPublic}>(
+                Cloud.DropCollectionPublicPath,
+                target: Cloud.DropCollectionStoragePath
             )
         }
 
-        self.dropCollection = acct.borrow<&DropN.DropCollection>(from: DropN.DropCollectionStoragePath)
+        self.dropCollection = acct.borrow<&Cloud.DropCollection>(from: Cloud.DropCollectionStoragePath)
             ?? panic("Could not borrow DropCollection from signer")
 
         let providerPath = StoragePath(identifier: tokenProviderPath)!
@@ -49,17 +52,21 @@ transaction(
             receiverPath: tokenReceiverPath
         )
 
+        let reviewer = EligibilityReviewers.WhitelistWithAmount(
+            whitelist: whitelist
+        )
+
         self.dropCollection.createDrop(
             name: name, 
             description: description, 
             host: self.vault.owner!.address, 
             image: image,
             url: url,
-            tokenInfo: tokenInfo,
-            vault: <- dropVault, 
-            claims: claims,
             startAt: startAt,
-            endAt: endAt
+            endAt: endAt,
+            tokenInfo: tokenInfo,
+            eligibilityReviewer: reviewer, 
+            vault: <- dropVault,
         )
     }
 }

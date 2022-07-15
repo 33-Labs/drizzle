@@ -1,20 +1,19 @@
+import FungibleToken from "../contracts/core/FungibleToken.cdc"
+import FUSD from "../contracts/core/FUSD.cdc"
 import Drizzle from "../contracts/Drizzle.cdc"
-import DropN from "../contracts/DropN.cdc"
-import FungibleToken from "../contracts/FungibleToken.cdc"
-import FUSD from "../contracts/FUSD.cdc"
-
+import Cloud from "../contracts/Cloud.cdc"
 
 transaction(dropID: UInt64, host: Address) {
-    let airdrop: &{Drizzle.IDropPublic}
+    let drop: &{Drizzle.IDropPublic}
     let receiver : &FUSD.Vault{FungibleToken.Receiver}
 
     prepare(acct: AuthAccount) {
         let dropCollection = getAccount(host)
-            .getCapability(DropN.DropCollectionPublicPath)
-            .borrow<&DropN.DropCollection{Drizzle.IDropCollectionPublic}>()
+            .getCapability(Cloud.DropCollectionPublicPath)
+            .borrow<&Cloud.DropCollection{Drizzle.IDropCollectionPublic}>()
             ?? panic("Could not borrow the public DropCollection from the host")
         
-        let airdrop = dropCollection.borrowPublicDropRef(dropID: dropID)
+        let drop = dropCollection.borrowPublicDropRef(dropID: dropID)
             ?? panic("Could not borrow the public Drop from the collection")
 
         if (acct.borrow<&FUSD.Vault>(from: /storage/fusdVault) == nil) {
@@ -31,7 +30,7 @@ transaction(dropID: UInt64, host: Address) {
             )
         }
         
-        self.airdrop = airdrop 
+        self.drop = drop 
         self.receiver = acct
             .getCapability(/public/fusdReceiver)
             .borrow<&FUSD.Vault{FungibleToken.Receiver}>()
@@ -39,7 +38,7 @@ transaction(dropID: UInt64, host: Address) {
     }
 
     execute {
-        self.airdrop.claim(receiver: self.receiver, params: {})
+        self.drop.claim(receiver: self.receiver, params: {})
     }
 
 }

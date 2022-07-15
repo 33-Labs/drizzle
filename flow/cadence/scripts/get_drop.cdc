@@ -1,15 +1,15 @@
 import Drizzle from "../contracts/Drizzle.cdc"
-import DropN from "../contracts/DropN.cdc"
+import Cloud from "../contracts/Cloud.cdc"
 
-pub fun main(address: Address, dropID: UInt64): &{Drizzle.IDropPublic} {
+pub fun main(dropID: UInt64, host: Address): &{Drizzle.IDropPublic} {
     let dropCollection =
-        getAccount(address)
-        .getCapability(DropN.DropCollectionPublicPath)
-        .borrow<&DropN.DropCollection{Drizzle.IDropCollectionPublic}>()
+        getAccount(host)
+        .getCapability(Cloud.DropCollectionPublicPath)
+        .borrow<&Cloud.DropCollection{Drizzle.IDropCollectionPublic}>()
         ?? panic("Could not borrow IDropCollectionPublic from address")
 
     let dropRef = dropCollection.borrowPublicDropRef(dropID: dropID)
-        ?? panic("Could not borrow publicDropRef")
+        ?? panic("Could not borrow drop")
 
     return dropRef
 }

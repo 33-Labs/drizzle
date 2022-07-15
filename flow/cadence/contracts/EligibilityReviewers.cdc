@@ -57,16 +57,16 @@ pub contract EligibilityReviewers {
             packet: {Drizzle.IPacket}?,
             group: FLOATGroupData, 
             threshold: UInt64,
-            receivedBefore: UFix64,
         ) {
             pre {
                 packet != nil: "packet is required"
+                threshold > 0: "threshold should greater than 0"
             }
 
             self.packet = packet
             self.group = group
             self.threshold = threshold
-            self.receivedBefore = receivedBefore
+            self.receivedBefore = getCurrentBlock().timestamp
         }
 
         pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Drizzle.Eligibility {
@@ -133,6 +133,8 @@ pub contract EligibilityReviewers {
         ) {
             pre {
                 packet != nil: "Packet is required"
+                threshold > 0: "threshold should greater than 0"
+                events.length > 0: "events should not be empty"
             }
 
             self.packet = packet

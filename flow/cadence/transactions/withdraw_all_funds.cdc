@@ -1,4 +1,4 @@
-import DropN from "../contracts/DropN.cdc"
+import Cloud from "../contracts/Cloud.cdc"
 import FungibleToken from "../contracts/FungibleToken.cdc"
 
 transaction(
@@ -7,11 +7,11 @@ transaction(
     tokenReceiverPath: String
 ) {
 
-    let drop: &DropN.Drop
+    let drop: &Cloud.Drop
     let receiver: &{FungibleToken.Receiver}
 
     prepare(acct: AuthAccount) {
-        let dropCollection = acct.borrow<&DropN.DropCollection>(from: DropN.DropCollectionStoragePath)
+        let dropCollection = acct.borrow<&Cloud.DropCollection>(from: Cloud.DropCollectionStoragePath)
             ?? panic("Could not borrow dropCollection")
         self.drop = dropCollection.borrowDropRef(dropID: dropID)!
 
@@ -21,6 +21,6 @@ transaction(
     }
 
     execute {
-        self.drop.withdrawAll(receiver: self.receiver)
+        self.drop.withdrawAllFunds(receiver: self.receiver)
     }
 }

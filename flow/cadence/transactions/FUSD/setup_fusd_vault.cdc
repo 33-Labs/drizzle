@@ -6,8 +6,8 @@
 // import FungibleToken from 0x9a0766d93b6608b7
 // import FUSD from 0xe223d8a629e49c68
 
-import FungibleToken from "../contracts/FungibleToken.cdc"
-import FUSD from "../contracts/FUSD.cdc"
+import FungibleToken from "../../contracts/core/FungibleToken.cdc"
+import FUSD from "../../contracts/core/FUSD.cdc"
 
 transaction {
     prepare(signer: AuthAccount) {
@@ -35,3 +35,4 @@ transaction {
     )
   }
 }
+ 
