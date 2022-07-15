@@ -16,6 +16,7 @@ import ShareCard from "./ShareCard"
 import ClaimCard from "./ClaimCard"
 import CriteriaCard from "./CriteriaCard"
 import TimeLimitCard from "./TimeLimitCard"
+import TagsCard from "./TagsCard"
 
 const MemoizeBanner = React.memo(({ banner }) => {
   return (
@@ -52,9 +53,14 @@ const MemoizeName = React.memo(({ name, url }) => {
 })
 MemoizeName.displayName = "MemoizeName"
 
-const MemoizeBasicInfo = React.memo(({ host, createdAt }) => {
+const MemoizeBasicInfo = React.memo(({ host, createdAt, tokenInfo, reviewer }) => {
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col -mt-3">
+      {
+        tokenInfo ? 
+        <TagsCard tokenInfo={tokenInfo} reviewer={reviewer} />
+        : null
+      }
       <label className="w-full font-flow text-sm text-gray-400 break-words">
         {"Created by "}
         <span>
@@ -103,6 +109,7 @@ export default function DropCard(props) {
   const startAt = convertCadenceDateTime((drop && drop.startAt) || props.startAt)
   const endAt = convertCadenceDateTime((drop && drop.endAt) || props.endAt)
   const tokenInfo = (drop && drop.tokenInfo) || props.tokenInfo
+  const reviewer = (drop && drop.eligibilityReviewer)
 
   console.log(claimStatus)
 
@@ -116,9 +123,10 @@ export default function DropCard(props) {
       md:w-[480px]">
         <MemoizeBanner banner={banner || "/flow-banner.jpg"} />
         <div className="flex flex-col p-8 gap-y-5">
+
           <MemoizeName name={name} url={url} />
           <MemoizeBasicInfo
-            host={host} createdAt={createdAt}
+            host={host} createdAt={createdAt} tokenInfo={tokenInfo} reviewer={reviewer}
           />
           {(startAt || endAt) ?
             <TimeLimitCard startAt={startAt} endAt={endAt} /> : null}

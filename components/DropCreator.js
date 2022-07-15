@@ -55,7 +55,8 @@ export default function DropCreator(props) {
   const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
 
   const [eligilityMode, setEligilityMode] = useState(null)
-  const [amountMode, setAmountMode] = useState(null)
+  const [packetMode, setPacketMode] = useState(null)
+
   // For WhitelistWithAmount
   const [whitelistWithAmountCallback, setWhitelistWithAmountCallback] = useState(null)
 
@@ -190,7 +191,7 @@ export default function DropCreator(props) {
             />
           </div>
 
-          <AmountSelector mode={amountMode} setMode={setAmountMode} />
+          <AmountSelector mode={packetMode} setMode={setPacketMode} />
           <FloatPicker mode={pickerMode} />
         </div>
       )

@@ -1,4 +1,3 @@
-
 import { CheckCircleIcon } from "@heroicons/react/outline"
 import { EligilityModeWhitelistWitAmount } from "./EligilityModeSelector"
 
