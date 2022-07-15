@@ -9,7 +9,7 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../lib/atoms"
-import { deleteDrop, depositToDrop, toggleClaimable, withdrawFunds } from "../lib/transactions"
+import { deleteDrop, depositToDrop, togglePause, withdrawAllFunds } from "../lib/transactions"
 import { classNames } from "../lib/utils"
 import { queryBalance } from "../lib/scripts"
 
@@ -60,7 +60,7 @@ export default function ManageCard(props) {
             disabled={transactionInProgress}
             onClick={async () => {
               if (drop) {
-                await toggleClaimable(
+                await togglePause(
                   drop.dropID,
                   setTransactionInProgress,
                   setTransactionStatus
@@ -70,7 +70,7 @@ export default function ManageCard(props) {
               }
             }}
           >
-            {claimStatus.message == "not claimable" ? "Recover" : "Pause"}
+            {claimStatus.code.rawValue === "6" ? "Recover" : "Pause"}
           </button>
           <button
             type="button"
@@ -81,7 +81,7 @@ export default function ManageCard(props) {
             disabled={transactionInProgress}
             onClick={async () => {
               if (drop) {
-                await withdrawFunds(
+                await withdrawAllFunds(
                   drop.dropID,
                   drop.tokenInfo.account,
                   drop.tokenInfo.receiverPath.identifier,

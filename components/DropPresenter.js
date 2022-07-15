@@ -4,8 +4,6 @@ import DropCard from './DropCard'
 import ManageCard from './ManageCard'
 import StatsCard from './StatsCard'
 
-import { convertCadenceDateTime } from '../lib/utils'
-
 export default function DropPresenter(props) {
   const {drop, claimStatus, stats, user, host} = props
 

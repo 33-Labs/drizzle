@@ -114,7 +114,7 @@ export default function DropCard(props) {
   console.log(claimStatus)
 
   return (
-    <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8">
+    <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8 bg-white text-black">
       <div className="flex flex-col
       shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]
       ring-1 ring-black ring-opacity-5
@@ -147,7 +147,7 @@ export default function DropCard(props) {
         {
           dropID && host ?
             <ShareCard url={`${publicConfig.appURL}/${host}/drops/${dropID}`} />
-            : <ShareCard url={`${publicConfig.appURL}/new_drop`} />
+            : <ShareCard disabled={true} url={`${publicConfig.appURL}/new_drop`} />
         }
       </div>
     </div>

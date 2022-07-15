@@ -33,7 +33,7 @@ export default function Drop(props) {
   const user = props.user
 
   const [drop, setDrop] = useState(null)
-  const [claimStatus, setClaimStatus] = useState({ message: "not eligible", claimableAmount: null })
+  const [claimStatus, setClaimStatus] = useState(null)
   const [stats, setStats] = useState(null)
 
   const { data: dropData, error: dropError } = useSWR(

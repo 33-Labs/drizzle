@@ -60,10 +60,30 @@
                 "testnet": "0x0afe396ebc8eee65"
             } 
         },
-        "Drizzle": "./contracts/Drizzle.cdc",
-        "Packets": "./contracts/Packets.cdc",
-        "EligibilityReviewers": "./contracts/EligibilityReviewers.cdc",
-        "Cloud": "./contracts/Cloud.cdc"
+        "Drizzle": {
+            "source": "./contracts/Drizzle.cdc",
+            "aliases": {
+                "testnet": "0xbca26f5091cd39ec"
+            }  
+        },
+        "Packets": {
+            "source": "./contracts/Packets.cdc",
+            "aliases": {
+                "testnet": "0xbca26f5091cd39ec"
+            }   
+        },
+        "EligibilityReviewers": {
+            "source": "./contracts/EligibilityReviewers.cdc",
+            "aliases": {
+                "testnet": "0xbca26f5091cd39ec"
+            }
+        },
+        "Cloud": {
+            "source": "./contracts/Cloud.cdc",
+            "aliases": {
+                "testnet": "0xbca26f5091cd39ec"
+            }
+        }
     },
 	"networks": {
 		"emulator": "127.0.0.1:3569",

@@ -19,6 +19,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
+      <div className="bg-white text-black">
       <RecoilRoot>
         <NavigationBar user={user} />
         <Component {...pageProps} user={user} />
@@ -26,6 +27,7 @@ function MyApp({ Component, pageProps }) {
         <TransactionNotification />
         <BasicNotification />
       </RecoilRoot>
+      </div>
     </>
   )
 

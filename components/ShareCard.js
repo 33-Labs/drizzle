@@ -24,6 +24,7 @@ export default function ShareCard(props) {
       ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
       shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] items-center">
         <button
+          disabled={props.disabled === true}
           onClick={downloadQRCode}
         >
           <QRCodeCanvas
