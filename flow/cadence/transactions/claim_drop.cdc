@@ -40,5 +40,4 @@ transaction(dropID: UInt64, host: Address) {
     execute {
         self.drop.claim(receiver: self.receiver, params: {})
     }
-
 }

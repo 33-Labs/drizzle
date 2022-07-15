@@ -11,7 +11,7 @@ import {
 import { test } from "../lib/transactions"
 import Decimal from "decimal.js"
 import { ExternalLinkIcon } from "@heroicons/react/outline"
-import { classNames } from "../lib/utils"
+import { classNames, convertCadenceDateTime } from "../lib/utils"
 import ShareCard from "./ShareCard"
 import ClaimCard from "./ClaimCard"
 import CriteriaCard from "./CriteriaCard"
@@ -20,7 +20,7 @@ import TimeLimitCard from "./TimeLimitCard"
 const MemoizeBanner = React.memo(({ banner }) => {
   return (
     <div className="w-full h-[240px] bg-drizzle-green relative">
-      <Image src={banner} alt="" layout="fill" objectFit="cover" />
+      <Image priority src={banner} alt="" layout="fill" objectFit="cover" />
     </div>
   )
 })
@@ -90,8 +90,21 @@ export default function DropCard(props) {
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
 
   const isPreview = props.isPreview == true
+
   // Only created Drop has claimStatus
-  const { dropID, host, user, token, tokenInfo, claimStatus } = props
+  const { drop, claimStatus, user, token } = props
+  const dropID = (drop && drop.dropID) || props.dropID
+  const name = (drop && drop.name) || props.name
+  const host = (drop && drop.host) || props.host
+  const description = (drop && drop.description) || props.description
+  const url = (drop && drop.url) || props.url
+  const banner = (drop && drop.image) || props.banner
+  const createdAt = convertCadenceDateTime((drop && drop.createdAt) || props.createdAt)
+  const startAt = convertCadenceDateTime((drop && drop.startAt) || props.startAt)
+  const endAt = convertCadenceDateTime((drop && drop.endAt) || props.endAt)
+  const tokenInfo = (drop && drop.tokenInfo) || props.tokenInfo
+
+  console.log(claimStatus)
 
   return (
     <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8">
@@ -101,15 +114,15 @@ export default function DropCard(props) {
       items-stretch rounded-3xl overflow-hidden grow
       sm:min-w-[320px]
       md:w-[480px]">
-        <MemoizeBanner banner={props.banner || "/flow-banner.jpg"} />
+        <MemoizeBanner banner={banner || "/flow-banner.jpg"} />
         <div className="flex flex-col p-8 gap-y-5">
-          <MemoizeName name={props.name} url={props.url} />
+          <MemoizeName name={name} url={url} />
           <MemoizeBasicInfo
-            host={props.host} createdAt={props.createdAt}
+            host={host} createdAt={createdAt}
           />
-          {(props.startAt || props.endAt) ?
-            <TimeLimitCard startAt={props.startAt} endAt={props.endAt} /> : null}
-          <MemoizeDescription description={props.description} />
+          {(startAt || endAt) ?
+            <TimeLimitCard startAt={startAt} endAt={endAt} /> : null}
+          <MemoizeDescription description={description} />
         </div>
       </div>
       <div className="flex flex-col gap-y-8">
@@ -124,8 +137,8 @@ export default function DropCard(props) {
           user={user}
         />
         {
-          props.dropID && props.host ?
-            <ShareCard url={`${publicConfig.appURL}/${props.host}/drops/${props.dropID}`} />
+          dropID && host ?
+            <ShareCard url={`${publicConfig.appURL}/${host}/drops/${dropID}`} />
             : <ShareCard url={`${publicConfig.appURL}/new_drop`} />
         }
       </div>

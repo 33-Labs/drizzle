@@ -17,17 +17,9 @@ export default function DropPresenter(props) {
             <div className="flex justify-center mb-10">
               <DropCard
                 isPreview={false}
-                banner={drop.image}
-                name={drop.name}
-                url={drop.url}
-                host={drop.host}
-                createdAt={convertCadenceDateTime(drop.createdAt)}
-                description={drop.description}
-                tokenInfo={drop.tokenInfo}
-                startAt={drop.startAt ? convertCadenceDateTime(drop.startAt) : null}
-                endAt={drop.endAt ? convertCadenceDateTime(drop.endAt) : null}
+                drop={drop}
+                // startAt={drop.startAt ? convertCadenceDateTime(drop.startAt) : null}
                 claimStatus={claimStatus}
-                dropID={drop.dropID}
                 user={user}
               />
             </div>

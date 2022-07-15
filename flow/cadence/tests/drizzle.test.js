@@ -25,6 +25,7 @@ import {
   createDefaultFUSDDrop_FLOATGroup_Identical,
   createDefaultFUSDDrop_FLOATGroup_Random,
   createDefaultFUSDDrop_FLOATs_Identical,
+  createDefaultFUSDDrop_FLOATs_Random,
   createDefaultEvents,
   toggleCloudPause,
   deleteDrop
@@ -502,9 +503,14 @@ describe("Drop - FLOATs", () => {
     return await new Promise(r => setTimeout(r, 2000));
   })
 
-  it("FLOATs - Should be ok if we create drop with valid params", async () => {
+  it("FLOATs - Should be ok if we create identical drop with valid params", async () => {
     const Alice = await getAccountAddress("Alice")
     await createDefaultFUSDDrop_FLOATs_Identical(Alice)
+  })
+
+  it("FLOATs - Should be ok if we create random drop with valid params", async () => {
+    const Alice = await getAccountAddress("Alice")
+    await createDefaultFUSDDrop_FLOATs_Random(Alice)
   })
 
   it("FLOATs - Should be ok for eligible claimers to claim their reward", async () => {

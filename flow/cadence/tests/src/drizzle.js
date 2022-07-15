@@ -136,6 +136,70 @@ export const createDefaultFUSDDrop_FLOATs_Identical = async (signer, overrides =
   expect(error).toBeNull()
 }
 
+// ===== FLOATs RANDOME =====
+
+export const createDrop_FLOATs_Random = async (signer, params) => {
+  const signers = [signer]
+  const txName = "create_drop_floats_random"
+  return await sendTransaction({ name: txName, signers: signers, args: params})
+}
+
+export const createFUSDDrop_FLOATs_Random = async (signer, params) => {
+  const {
+    initFlowAmount, 
+    initFUSDAmount,
+    name, description, image, url,
+    startAt, endAt,
+    FUSDInfo,
+    eventIDs, eventHosts, capacity, threshold,
+    tokenAmount
+  } = params
+  if (tokenAmount > initFUSDAmount) throw "tokenAmount shoud less than initFUSDAmount"
+
+  await mintFlow(signer, initFlowAmount)
+  await setupFUSDVault(signer)
+
+  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
+  await checkFUSDBalance(signer, initFUSDAmount)
+
+  const args = [
+    name, description, image, url,
+    startAt, endAt,
+    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
+    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
+    eventIDs, eventHosts, capacity, threshold, 
+    tokenAmount 
+  ]
+  return await createDrop_FLOATs_Random(signer, args)
+}
+
+export const createDefaultFUSDDrop_FLOATs_Random = async (signer, overrides = {}) => {
+  const FUSDInfo = await getFUSDInfo()
+  const creator = await getAccountAddress("FLOATCreator")
+  const defaultEventIDs = await FLOAT_getEventIDs(creator)
+  expect(defaultEventIDs.length).toBe(3)
+  const defaultEventHosts = [creator, creator, creator]
+
+  const {eventIDs, eventHosts, image, url, startAt, endAt, capacity, threshold} = overrides
+  const args = {
+    initFlowAmount: 100.0, 
+    initFUSDAmount: 1000.0,
+    name: "TEST", 
+    description: "Test DROP", 
+    image: image || null, url: url || null,
+    startAt: startAt || null, endAt: endAt || null,
+    FUSDInfo: FUSDInfo,
+    eventIDs: eventIDs || defaultEventIDs,
+    eventHosts: eventHosts || defaultEventHosts,
+    capacity: capacity || 2,
+    threshold: threshold || 2,
+    tokenAmount: 150.0
+  }
+
+  const [tx, error] = await createFUSDDrop_FLOATs_Random(signer, args)
+  expect(error).toBeNull()
+}
+
 // ===== FLOAT_GROUP_IDENTICAL =====
 
 export const createDrop_FLOATGroup_Identical = async (signer, params) => {

@@ -8,7 +8,7 @@ import TokenSelector from "./TokenSelector"
 import ImageSelector from './ImageSelector'
 import DropCard from './DropCard'
 
-import { createDrop } from '../lib/transactions'
+import { createDrop_WhitelistWithAmount } from '../lib/transactions'
 import { classNames, filterRecords, getClaimsFromRecords, getTimezone, isValidHttpUrl } from '../lib/utils'
 
 import { useRecoilState } from "recoil"
@@ -130,9 +130,9 @@ export default function DropCreator(props) {
           banner: ${banner}
         `)
 
-        const res = await createDrop(
-          name, _description, banner, url, claims, _startAt,
-          _endAt, token, _tokenAmount, setTransactionInProgress, setTransactionStatus
+        const res = await createDrop_WhitelistWithAmount(
+          name, _description, banner, url, _startAt,
+          _endAt, token, claims, _tokenAmount, setTransactionInProgress, setTransactionStatus
         )
 
         if (res && res.status === 4 && res.statusCode === 0) {
