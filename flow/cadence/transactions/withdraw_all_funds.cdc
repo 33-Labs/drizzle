@@ -1,5 +1,5 @@
 import Cloud from "../contracts/Cloud.cdc"
-import FungibleToken from "../contracts/FungibleToken.cdc"
+import FungibleToken from "../contracts/core/FungibleToken.cdc"
 
 transaction(
     dropID: UInt64,

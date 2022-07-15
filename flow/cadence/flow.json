@@ -60,18 +60,10 @@
                 "testnet": "0x0afe396ebc8eee65"
             } 
         },
-        "Drizzle": {
-            "source": "./contracts/Drizzle.cdc"
-        },
-        "Cloud": {
-            "source": "./contracts/Cloud.cdc"
-        },
-        "Packets": {
-            "source": "./contracts/Packets.cdc"
-        },
-        "EligibilityReviewers": {
-            "source": "./contracts/EligibilityReviewers.cdc"
-        }
+        "Drizzle": "./contracts/Drizzle.cdc",
+        "Packets": "./contracts/Packets.cdc",
+        "EligibilityReviewers": "./contracts/EligibilityReviewers.cdc",
+        "Cloud": "./contracts/Cloud.cdc"
     },
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -89,5 +81,13 @@
         }
 	},
 	"deployments": {
+        "testnet": {
+            "drizzle-deployer": [
+                "Drizzle",
+                "Packets",
+                "EligibilityReviewers",
+                "Cloud" 
+            ]
+        }
     }
 }
