@@ -6,12 +6,14 @@ import Decimal from 'decimal.js'
 
 import DropCard from './drop/DropCard'
 
-import { 
-  createDrop_FLOATs_Identical, 
-  createDrop_FLOATs_Random, 
+import {
+  createDrop_FLOATs_Identical,
+  createDrop_FLOATs_Random,
   createDrop_WhitelistWithAmount,
   createDrop_FLOATGroup_Identical,
-  createDrop_FLOATGroup_Random
+  createDrop_FLOATGroup_Random,
+  createDrop_Whitelist_Identical,
+  createDrop_Whitelist_Random
 } from '../lib/transactions'
 import { classNames, isValidHttpUrl } from '../lib/utils'
 
@@ -22,12 +24,18 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../lib/atoms"
-import EligibilityModeSelector, { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelistWitAmount } from './eligibility/EligibilityModeSelector'
+import EligibilityModeSelector, {
+  EligibilityModeFLOAT,
+  EligibilityModeFLOATGroup,
+  EligibilityModeWhitelistWitAmount,
+  EligibilityModeWhitelist
+} from './eligibility/EligibilityModeSelector'
 import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
 import FloatReviewer from './eligibility/FLOATReviewer'
 import BasicInfoBoard from './creator/BasicInfoBoard'
 import Hints from '../lib/hints'
 import { PacketModeIdentical, PacketModeRandom } from './eligibility/PacketModeSelector'
+import WhitelistReviewer from './eligibility/WhitelistReviewer'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -62,12 +70,15 @@ export default function DropCreator(props) {
   // For WhitelistWithAmountReviewer
   const [whitelistWithAmountReviewerCallback, setWhitelistWithAmountReviewerCallback] = useState(null)
 
+  // For Whitelist
+  const [whitelistReviewerCallback, setWhitelistReviewerCallback] = useState(null)
+
   // For Float
   const [floatEvents, setFloatEvents] = useState([])
   // [{eventID: xxx, eventHost: xxx}]
   const [floatEventPairs, setFloatEventPairs] = useState([])
   // {groupName: xxx, groupHost: xxx}
-  const [floatGroup, setFloatGroup]= useState(null)
+  const [floatGroup, setFloatGroup] = useState(null)
   const [threshold, setThreshold] = useState('')
 
   // For Packet
@@ -110,20 +121,30 @@ export default function DropCreator(props) {
   const checkEligibilityParams = () => {
     if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
       return EligibilityModeFLOATGroup.checkParams(
-        floatEvents, threshold, 
-        packetMode, tokenBalance, capacity, 
+        floatEvents, threshold,
+        packetMode, tokenBalance, capacity,
         { identicalAmount: identicalAmount, totalAmount: totalAmount }
       )
     }
+
     if (eligibilityMode.key === EligibilityModeFLOAT.key) {
       return EligibilityModeFLOAT.checkParams(
-        floatEvents, threshold, 
-        packetMode, tokenBalance, capacity, 
+        floatEvents, threshold,
+        packetMode, tokenBalance, capacity,
         { identicalAmount: identicalAmount, totalAmount: totalAmount }
       )
     }
+
     if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
       return EligibilityModeWhitelistWitAmount.checkParams(whitelistWithAmountReviewerCallback, tokenBalance)
+    }
+
+    if (eligibilityMode.key === EligibilityModeWhitelist.key) {
+      return EligibilityModeWhitelist.checkParams(
+        whitelistReviewerCallback,
+        packetMode, tokenBalance, capacity,
+        { identicalAmount: identicalAmount, totalAmount: totalAmount }
+      )
     }
   }
 
@@ -173,19 +194,44 @@ export default function DropCreator(props) {
         params.name, params.description, params.image, params.url, params.startAt,
         params.endAt, params.token, whitelist, _tokenAmount, setTransactionInProgress, setTransactionStatus
       )
-  
+
       handleCreationResponse(res)
+    } else if (eligibilityMode.key === EligibilityModeWhitelist.key) {
+      const { whitelist, } = whitelistReviewerCallback
+      console.log(whitelist)
+      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ?
+        new Decimal(identicalAmount).toFixed(8).toString() : null
+      let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
+        new Decimal(totalAmount).toFixed(8).toString() : null
+
+      if (packetMode.key === PacketModeIdentical.key) {
+        const res = await createDrop_Whitelist_Identical(
+          params.name, params.description, params.image, params.url, params.startAt,
+          params.endAt, params.token, whitelist, capacity, _identicalAmount,
+          setTransactionInProgress, setTransactionStatus
+        )
+
+        handleCreationResponse(res)
+      } else if (packetMode.key === PacketModeRandom.key) {
+        const res = await createDrop_Whitelist_Random(
+          params.name, params.description, params.image, params.url, params.startAt,
+          params.endAt, params.token, whitelist, capacity, _totalAmount,
+          setTransactionInProgress, setTransactionStatus
+        )
+
+        handleCreationResponse(res)
+      }
     } else if (eligibilityMode.key === EligibilityModeFLOAT.key) {
       console.log("totalAmount: ", totalAmount)
       let eventIDs = [floatEventPairs[0].eventID]
       let eventHosts = [floatEventPairs[0].eventHost]
-      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ? 
+      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ?
         new Decimal(identicalAmount).toFixed(8).toString() : null
       let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
         new Decimal(totalAmount).toFixed(8).toString() : null
       let _threshold = !isNaN(parseFloat(threshold)) ?
         threshold : "1"
-      
+
       console.log("Extra Params: ", {
         eventIDs: eventIDs,
         eventHosts: eventHosts,
@@ -200,7 +246,7 @@ export default function DropCreator(props) {
           params.endAt, params.token, eventIDs, eventHosts, capacity, _identicalAmount,
           _threshold, setTransactionInProgress, setTransactionStatus
         )
-  
+
         handleCreationResponse(res)
       } else if (packetMode.key === PacketModeRandom.key) {
         const res = await createDrop_FLOATs_Random(
@@ -208,17 +254,17 @@ export default function DropCreator(props) {
           params.endAt, params.token, eventIDs, eventHosts, capacity, _threshold, _totalAmount,
           setTransactionInProgress, setTransactionStatus
         )
-  
+
         handleCreationResponse(res)
       }
     } else if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ? 
+      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ?
         new Decimal(identicalAmount).toFixed(8).toString() : null
       let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
         new Decimal(totalAmount).toFixed(8).toString() : null
       let _threshold = !isNaN(parseFloat(threshold)) ?
         threshold : "1"
-      
+
       console.log("Extra Params: ", {
         groupName: floatGroup.groupName,
         groupHost: floatGroup.groupHost,
@@ -233,7 +279,7 @@ export default function DropCreator(props) {
           params.endAt, params.token, floatGroup.groupName, floatGroup.groupHost, capacity, _identicalAmount,
           _threshold, setTransactionInProgress, setTransactionStatus
         )
-  
+
         handleCreationResponse(res)
       } else if (packetMode.key === PacketModeRandom.key) {
         const res = await createDrop_FLOATGroup_Random(
@@ -241,7 +287,7 @@ export default function DropCreator(props) {
           params.endAt, params.token, floatGroup.groupName, floatGroup.groupHost, capacity, _threshold, _totalAmount,
           setTransactionInProgress, setTransactionStatus
         )
-  
+
         handleCreationResponse(res)
       }
     }
@@ -258,7 +304,7 @@ export default function DropCreator(props) {
 
   const showEligibilityModeInputs = (mode) => {
     if (!mode) { return null }
-    if (mode.key == "WhitelistWithAmount") {
+    if (mode.key == EligibilityModeWhitelistWitAmount.key) {
       return (
         <WhitelistWithAmountReviewer
           user={props.user}
@@ -271,7 +317,22 @@ export default function DropCreator(props) {
       )
     }
 
-    if (mode.key === "FLOAT" || mode.key === "FLOATGroup") {
+    if (mode.key === EligibilityModeWhitelist.key) {
+      return (
+        <WhitelistReviewer
+          user={props.user}
+          setToken={setToken}
+          setTokenBalance={setTokenBalance}
+          callback={setWhitelistReviewerCallback}
+          packetMode={packetMode} setPacketMode={setPacketMode}
+          capacity={capacity} setCapacity={setCapacity}
+          identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
+          totalAmount={totalAmount} setTotalAmount={setTotalAmount}
+        />
+      )
+    }
+
+    if (mode.key === EligibilityModeFLOAT.key || mode.key === EligibilityModeFLOATGroup.key) {
       return (
         <FloatReviewer
           user={props.user}
@@ -284,7 +345,7 @@ export default function DropCreator(props) {
           floatMode={mode.detail}
           threshold={threshold} setThreshold={setThreshold}
           floatEvents={floatEvents}
-          setFloatEvents={setFloatEvents} 
+          setFloatEvents={setFloatEvents}
           setFloatEventPairs={setFloatEventPairs}
           setFloatGroup={setFloatGroup}
         />

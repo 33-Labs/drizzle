@@ -1,4 +1,4 @@
-import WhitelistInput from './WhitelistInput'
+import WhitelistWithAmountInput from './WhitelistWithAmountInput'
 import TokenSelector from './TokenSelector'
 
 export default function WhitelistWithAmountReviewer(props) {
@@ -13,7 +13,7 @@ export default function WhitelistWithAmountReviewer(props) {
       onTokenSelected={setToken}
       onBalanceFetched={setTokenBalance}
     />
-    <WhitelistInput
+    <WhitelistWithAmountInput
       token={token}
       tokenBalance={tokenBalance}
       callback={callback}

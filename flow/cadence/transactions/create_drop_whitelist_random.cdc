@@ -21,7 +21,6 @@ transaction(
     // Eligibility
     whitelist: {Address: Bool},
     capacity: UInt32,
-    threshold: UInt64,
     tokenAmount: UFix64 
 ) {
     let dropCollection: &Cloud.DropCollection

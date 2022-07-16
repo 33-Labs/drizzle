@@ -1,5 +1,5 @@
 export default function CSVSelector(props) {
-  const sample = props.sample || "/sample.csv"
+  const sample = props.sample || "/ra_sample.csv"
   return (
     <div className="flex items-center gap-x-2">
       <a href={sample} download

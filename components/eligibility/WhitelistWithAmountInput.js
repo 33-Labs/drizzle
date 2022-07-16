@@ -1,31 +1,33 @@
 import { useState } from 'react'
 import { useRecoilState } from "recoil"
+import Decimal from 'decimal.js'
 
 import {
   basicNotificationContentState,
   showBasicNotificationState,
 } from "../../lib/atoms"
 import CSVSelector from '../toolbox/CSVSelector'
-import { filterAddresses, getWhitelistFromAddresses } from '../../lib/utils'
+import { filterRecords, getWhitelistFromRecords } from '../../lib/utils'
 
-export default function WhitelistInput(props) {
+export default function WhitelistWithAmountInput(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
 
-  const { callback } = props
+  const {token, tokenBalance, callback} = props
 
   const [rawRecordsStr, setRawRecordsStr] = useState('')
   const [validRecords, setValidRecords] = useState([])
   const [invalidRecords, setInvalidRecords] = useState([])
+  const [recordsSum, setRecordsSum] = useState(new Decimal(0))
 
   return (
     <>
       <div>
         <label className="block text-2xl font-bold font-flow">
-          Recipients
+          Recipients & Amounts
         </label>
         <label className="block font-flow text-md leading-6 mt-2 mb-2">
-          For each line, enter one address, Duplicate addresses is not allowed.
+          For each line, enter one address and the token amount, seperate with comma. Duplicate addresses is not allowed.
         </label>
         <div className="mt-1">
           <textarea
@@ -37,14 +39,15 @@ export default function WhitelistInput(props) {
             spellCheck={false}
             value={rawRecordsStr}
             placeholder={
-              "0xf8d6e0586b0a20c7"
+              "0xf8d6e0586b0a20c7,1.6"
             }
             onChange={(event) => {
               if (validRecords.length > 0 || invalidRecords.length > 0) {
                 setValidRecords([])
                 setInvalidRecords([])
+                setRecordsSum(new Decimal(0))
               }
-              setRawRecordsStr(event.target.value)
+              setRawRecordsStr(event.target.value) 
             }}
           />
           <div className="flex mt-4 gap-x-2 justify-between">
@@ -52,18 +55,27 @@ export default function WhitelistInput(props) {
               type="button"
               className="h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
               onClick={() => {
-                if (rawRecordsStr.trim().length == 0) {
+                if (!token) {
                   setShowBasicNotification(true)
-                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "No recipients provided" })
+                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "Token is not selected" })
                   return
                 }
 
-                const [valids, invalids] = filterAddresses(rawRecordsStr.trim())
+                if (rawRecordsStr.trim().length == 0) {
+                  setShowBasicNotification(true)
+                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "No recipients provided" }) 
+                  return
+                }
+
+                const [valids, invalids] = filterRecords(rawRecordsStr.trim())
                 setValidRecords(valids)
                 setInvalidRecords(invalids)
-                const whitelist = getWhitelistFromAddresses(valids)
+                const sum = valids.map((r) => r.amount).reduce((p, c) => p.add(c), new Decimal(0))
+                setRecordsSum(sum)
+                const whitelist = getWhitelistFromRecords(valids)
                 callback({
                   whitelist: whitelist,
+                  tokenAmount: sum,
                   invalidRecordsCount: invalids.length
                 })
               }}
@@ -71,7 +83,6 @@ export default function WhitelistInput(props) {
               Process
             </button>
             <CSVSelector
-              sample={"r_sample.csv"}
               onChange={(event) => {
                 callback(null)
                 const f = event.target.files[0]
@@ -118,6 +129,45 @@ export default function WhitelistInput(props) {
                     </div>
                   </div>
                 </li>
+                <li key="total">
+                  <div className="flex items-center">
+                    <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                      Total Token
+                    </div>
+                    <div className="grow"></div>
+                    <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                      {recordsSum.toString()} {token && token.symbol}
+                    </div>
+                  </div>
+                </li>
+                <li key="balance">
+                  <div className="flex items-center">
+                    <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                      Your Balance
+                    </div>
+                    <div className="grow"></div>
+                    <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                      {tokenBalance.toString()} {token && token.symbol}
+                    </div>
+                  </div>
+                </li>
+                <li key="remaining">
+                  <div className="flex items-center">
+                    <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                      Remaining
+                    </div>
+                    <div className="grow"></div>
+                    {
+                      !(tokenBalance.sub(recordsSum).isNegative())
+                        ? <div className="flex-none w-30 text-md font-flow font-semibold leading-10">
+                          {tokenBalance.sub(recordsSum).toString()} {token && token.symbol}
+                        </div>
+                        : <div className="flex-none w-30 text-md text-rose-500 font-flow font-semibold leading-10">
+                          {tokenBalance.sub(recordsSum).toString()} {token && token.symbol}
+                        </div>
+                    }
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -131,7 +181,7 @@ export default function WhitelistInput(props) {
               Invalid records
             </label>
             <label className="block font-flow text-md leading-8 mt-2">
-              Invalid format or duplicate accounts
+              Invalid format or invalid amount or duplicate accounts
             </label>
             <div className="mt-1">
               <textarea

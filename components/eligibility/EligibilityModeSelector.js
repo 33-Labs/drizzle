@@ -16,7 +16,7 @@ export const EligibilityModeWhitelistWitAmount = {
       return [false, Hints.NeedProcessRA]
     }
     if (whitelistWithAmountReviewerCallback.invalidRecordsCount > 0) {
-      return [false, Hints.HaveInvalidRecords]
+      return [false, Hints.HaveInvalidRARecords]
     }
     if (whitelistWithAmountReviewerCallback.tokenAmount.cmp(tokenBalance) != -1) {
       return [false, Hints.InsufficientBalance]
@@ -24,6 +24,35 @@ export const EligibilityModeWhitelistWitAmount = {
 
     return [true, Hints.Valid]
   }
+}
+
+export const EligibilityModeWhitelist = {
+  key: "Whitelist",
+  name: 'Whitelist',
+  intro: 'Under construction',
+  criteria: () => {
+    return "In whitelist"
+  },
+  checkParams: (
+    whitelistReviewerCallback, packetMode, totalBalance, capacity, amount = {}
+  ) => {
+    try {
+      const [valid, hint] = checkPacketMode(packetMode, totalBalance, capacity, amount)
+      if (!valid) {
+        throw hint
+      }
+      if (!whitelistReviewerCallback) {
+        throw Hints.NeedProcessR
+      }
+      if (whitelistReviewerCallback.invalidRecordsCount > 0) {
+        throw Hints.HaveInvalidRRecords
+      }
+
+      return [true, Hints.Valid]
+    } catch (error) {
+      return [false, error]
+    }
+  } 
 }
 
 export const EligibilityModeFLOAT = {
@@ -97,6 +126,7 @@ export const EligibilityModeFLOATGroup = {
 const modes = [
   EligibilityModeFLOAT,
   EligibilityModeFLOATGroup,
+  EligibilityModeWhitelist,
   EligibilityModeWhitelistWitAmount,
 ]
 

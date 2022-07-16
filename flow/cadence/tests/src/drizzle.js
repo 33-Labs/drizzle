@@ -86,7 +86,7 @@ export const createFUSDDrop_Whitelist_Random = async (signer, params) => {
     name, description, image, url,
     startAt, endAt,
     FUSDInfo,
-    whitelist, capacity, threshold, tokenAmount
+    whitelist, capacity, tokenAmount
   } = params
   if (tokenAmount > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
 
@@ -101,7 +101,7 @@ export const createFUSDDrop_Whitelist_Random = async (signer, params) => {
     startAt, endAt,
     FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
     FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    whitelist, capacity, threshold, tokenAmount 
+    whitelist, capacity, tokenAmount 
   ]
   return await createDrop_Whitelist_Random(signer, args)
 }
@@ -110,7 +110,7 @@ export const createDefaultFUSDDrop_Whitelist_Random = async (signer, overrides =
   const FUSDInfo = await getFUSDInfo()
   const defaultWhitelist = await getDefaultWhitelist()
 
-  const {whitelist, image, url, startAt, endAt, capacity, threshold, tokenAmount} = overrides
+  const {whitelist, image, url, startAt, endAt, capacity, tokenAmount} = overrides
   const args = {
     initFlowAmount: 100.0, 
     initFUSDAmount: 1000.0,
@@ -121,7 +121,6 @@ export const createDefaultFUSDDrop_Whitelist_Random = async (signer, overrides =
     FUSDInfo: FUSDInfo,
     whitelist: whitelist || defaultWhitelist,
     capacity: capacity || 2,
-    threshold: threshold || 2,
     tokenAmount: tokenAmount || 20.0
   }
 
@@ -145,7 +144,7 @@ export const createFUSDDrop_Whitelist_Identical = async (signer, params) => {
     name, description, image, url,
     startAt, endAt,
     FUSDInfo,
-    whitelist, capacity, amountPerPacket, threshold
+    whitelist, capacity, amountPerPacket,
   } = params
   if (capacity * amountPerPacket > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
 
@@ -160,7 +159,7 @@ export const createFUSDDrop_Whitelist_Identical = async (signer, params) => {
     startAt, endAt,
     FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
     FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    whitelist, capacity, amountPerPacket, threshold 
+    whitelist, capacity, amountPerPacket
   ]
   return await createDrop_Whitelist_Identical(signer, args)
 }
@@ -169,7 +168,7 @@ export const createDefaultFUSDDrop_Whitelist_Identical = async (signer, override
   const FUSDInfo = await getFUSDInfo()
   const defaultWhitelist = await getDefaultWhitelist()
 
-  const {whitelist, image, url, startAt, endAt, capacity, amountPerPacket, threshold} = overrides
+  const {whitelist, image, url, startAt, endAt, capacity, amountPerPacket } = overrides
   const args = {
     initFlowAmount: 100.0, 
     initFUSDAmount: 1000.0,
@@ -181,7 +180,6 @@ export const createDefaultFUSDDrop_Whitelist_Identical = async (signer, override
     whitelist: whitelist || defaultWhitelist,
     capacity: capacity || 2,
     amountPerPacket: amountPerPacket || 20.0,
-    threshold: threshold || 2
   }
 
   const [tx, error] = await createFUSDDrop_Whitelist_Identical(signer, args)
