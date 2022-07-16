@@ -17,22 +17,27 @@ export const checkPacketMode = (packetMode, tokenBalance, capacity, amount = {})
   }
 }
 
+const UINT32_MAX = 4294967295
 export const PacketModeRandom = {
   key: "Random",
   name: 'Random Amount',
   intro: 'Distribute specific amount to specific one in whitelist',
   checkParams: (capacity, totalAmount, tokenBalance) => {
+    if (!capacity || isNaN(parseInt(capacity))) throw Hints.InvalidCapacity
+    if (!totalAmount || isNaN(parseFloat(totalAmount))) throw Hints.InvalidTotalAmount
+    if (!tokenBalance) throw Hints.InvalidTokenBalance
+
     const _capacity = new Decimal(capacity)
-    if (!(_capacity.isInteger() && _capacity.isPositive())) {
+    if (!(_capacity.isInteger() && _capacity.isPositive() && _capacity.cmp(UINT32_MAX) == -1)) {
       throw Hints.InvalidCapacity
     }
 
     const _totalAmount = new Decimal(totalAmount)
-    if (!(_totalAmount.isInteger() && _totalAmount.isPositive())) {
+    if (!(_totalAmount.isPositive() && _totalAmount.decimalPlaces() <= 8)) {
       throw Hints.InvalidTotalAmount
     }
 
-    if (_totalAmount.cmp(tokenBalance) == -1) {
+    if (_totalAmount.cmp(tokenBalance) != -1) {
       throw Hints.InsufficientBalance
     }
     return true
@@ -44,17 +49,24 @@ export const PacketModeIdentical = {
   name: 'Identical Amount',
   intro: 'Under construction',
   checkParams: (capacity, identicalAmount, tokenBalance) => {
+    if (!capacity || isNaN(parseInt(capacity))) throw Hints.InvalidCapacity
+    if (!identicalAmount || isNaN(parseFloat(identicalAmount))) throw Hints.InvalidIdenticalAmount
+    if (!tokenBalance) throw Hints.InvalidTokenBalance
+
     const _capacity = new Decimal(capacity)
-    if (!(_capacity.isInteger() && _capacity.isPositive())) {
+    if (!(_capacity.isInteger() && _capacity.isPositive() && _capacity.cmp(UINT32_MAX) == -1)) {
       throw Hints.InvalidCapacity
     } 
 
     const _identicalAmount = new Decimal(identicalAmount)
-    if (!(_identicalAmount.isInteger() && _identicalAmount.isPositive())) {
+    if (!(_identicalAmount.isPositive() && _identicalAmount.decimalPlaces() <= 8)) {
       throw Hints.InvalidIdenticalAmount
     }
 
-    if (_identicalAmount.mul(_capacity).cmp(tokenBalance) == -1) {
+    console.log(_identicalAmount.toString())
+    console.log(_capacity.toString())
+    console.log("tokenBalance: ", tokenBalance.toString())
+    if (_identicalAmount.mul(_capacity).cmp(tokenBalance) != -1) {
       throw Hints.InsufficientBalance
     }
     return true

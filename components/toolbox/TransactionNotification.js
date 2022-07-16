@@ -14,6 +14,7 @@ import {
 } from "../../lib/atoms"
 
 const NotificationContent = ({txStatus}) => {
+  console.log("TxStatus: ", txStatus)
   if (txStatus.status == "Initializing") {
     return (
       <>
@@ -94,7 +95,9 @@ const NotificationContent = ({txStatus}) => {
             ) : null
           }
         </div>
-        <p className="mt-1 text-sm text-gray-500 truncate">{txStatus.error}</p>
+        <p className="mt-1 text-sm text-gray-500 truncate">{
+          typeof txStatus.error === "string" ?  txStatus.error : txStatus.error.message
+        }</p>
       </div>
       </>
     )

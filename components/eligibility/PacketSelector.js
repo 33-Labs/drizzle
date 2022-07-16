@@ -25,7 +25,7 @@ export default function PacketSelector(props) {
       return (
         <div className="w-full flex flex-col gap-y-2 mt-1">
           <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
-            <label className="block w-[75px] shrink-0 font-flow font-bold">Entries</label>
+            <label className="block w-[75px] shrink-0 font-flow font-bold">Capacity</label>
             <input
               type="number"
               disabled={disabled}
@@ -56,7 +56,7 @@ export default function PacketSelector(props) {
       return (
         <div className="w-full flex flex-col gap-y-2 mt-1">
           <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
-            <label className="block w-[75px] shrink-0 font-flow font-bold">Entries</label>
+            <label className="block w-[75px] shrink-0 font-flow font-bold">Capacity</label>
             <input
               type="number"
               disabled={disabled}

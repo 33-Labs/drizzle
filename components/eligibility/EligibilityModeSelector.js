@@ -2,6 +2,7 @@ import { RadioGroup } from '@headlessui/react'
 import Hints from '../../lib/hints'
 import { FloatModeFloatEvent, FloatModeFloatGroup } from '../float/FloatPicker'
 import { checkPacketMode } from './PacketModeSelector'
+import Decimal from 'decimal.js'
 
 export const EligibilityModeWhitelistWitAmount = {
   key: "WhitelistWithAmount",

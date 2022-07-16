@@ -86,10 +86,9 @@ export const createFUSDDrop_FLOATs_Identical = async (signer, params) => {
     name, description, image, url,
     startAt, endAt,
     FUSDInfo,
-    eventIDs, eventHosts, capacity, amountPerPacket, threshold,
-    tokenAmount
+    eventIDs, eventHosts, capacity, amountPerPacket, threshold
   } = params
-  if (tokenAmount > initFUSDAmount) throw "tokenAmount shoud less than initFUSDAmount"
+  if (capacity * amountPerPacket > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
 
   await mintFlow(signer, initFlowAmount)
   await setupFUSDVault(signer)
@@ -102,8 +101,7 @@ export const createFUSDDrop_FLOATs_Identical = async (signer, params) => {
     startAt, endAt,
     FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
     FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    eventIDs, eventHosts, capacity, amountPerPacket, threshold, 
-    tokenAmount 
+    eventIDs, eventHosts, capacity, amountPerPacket, threshold 
   ]
   return await createDrop_FLOATs_Identical(signer, args)
 }
@@ -128,15 +126,14 @@ export const createDefaultFUSDDrop_FLOATs_Identical = async (signer, overrides =
     eventHosts: eventHosts || defaultEventHosts,
     capacity: capacity || 2,
     amountPerPacket: amountPerPacket || 20.0,
-    threshold: threshold || 2,
-    tokenAmount: 150.0
+    threshold: threshold || 2
   }
 
   const [tx, error] = await createFUSDDrop_FLOATs_Identical(signer, args)
   expect(error).toBeNull()
 }
 
-// ===== FLOATs RANDOME =====
+// ===== FLOATs RANDOM =====
 
 export const createDrop_FLOATs_Random = async (signer, params) => {
   const signers = [signer]
@@ -215,10 +212,9 @@ export const createFUSDDrop_FLOATGroup_Identical = async (signer, params) => {
     name, description, image, url,
     startAt, endAt,
     FUSDInfo,
-    floatGroupName, floatGroupHost, capacity, amountPerPacket, threshold,
-    tokenAmount
+    floatGroupName, floatGroupHost, capacity, amountPerPacket, threshold
   } = params
-  if (tokenAmount > initFUSDAmount) throw "tokenAmount shoud less than initFUSDAmount"
+  if (capacity * amountPerPacket > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
 
   await mintFlow(signer, initFlowAmount)
   await setupFUSDVault(signer)
@@ -231,8 +227,7 @@ export const createFUSDDrop_FLOATGroup_Identical = async (signer, params) => {
     startAt, endAt,
     FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
     FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    floatGroupName, floatGroupHost, capacity, amountPerPacket, threshold, 
-    tokenAmount 
+    floatGroupName, floatGroupHost, capacity, amountPerPacket, threshold 
   ]
   return await createDrop_FLOATGroup_Identical(signer, args)
 }
@@ -253,8 +248,7 @@ export const createDefaultFUSDDrop_FLOATGroup_Identical = async (signer, overrid
     floatGroupHost: await getAccountAddress("FLOATCreator"),
     capacity: capacity || 2,
     amountPerPacket: amountPerPacket || 20.0,
-    threshold: threshold || 2,
-    tokenAmount: 150.0
+    threshold: threshold || 2
   }
 
   const [tx, error] = await createFUSDDrop_FLOATGroup_Identical(signer, args)

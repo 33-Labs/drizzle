@@ -4,12 +4,10 @@ import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
 
-import TokenSelector from "./eligibility/TokenSelector"
-import ImageSelector from './toolbox/ImageSelector'
 import DropCard from './drop/DropCard'
 
-import { createDrop_WhitelistWithAmount } from '../lib/transactions'
-import { classNames, filterRecords, getWhitelistFromRecords, getTimezone, isValidHttpUrl } from '../lib/utils'
+import { createDrop_FLOATs_Identical, createDrop_FLOATs_Random, createDrop_WhitelistWithAmount } from '../lib/transactions'
+import { classNames, isValidHttpUrl } from '../lib/utils'
 
 import { useRecoilState } from "recoil"
 import {
@@ -18,11 +16,7 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../lib/atoms"
-import CSVSelector from './toolbox/CSVSelector'
-import WhitelistWithAmount from './eligibility/WhitelistWithAmountReviewer'
 import EligibilityModeSelector, { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelistWitAmount } from './eligibility/EligibilityModeSelector'
-import FloatPicker, { FloatModeFloat, FloatModeFloatEvent, FloatModeFloatGroup, PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
-import PacketSelector from './eligibility/PacketSelector'
 import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
 import FloatReviewer from './eligibility/FLOATReviewer'
 import BasicInfoBoard from './creator/BasicInfoBoard'
@@ -35,8 +29,6 @@ const HostPlaceholder = "0x0042"
 const TokenPlaceholder = { symbol: "FLOW" }
 const AmountPlaceholder = new Decimal(42)
 const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
-const URLPlaceholder = "https://the.link.you.want.to.add"
-const Timezone = getTimezone()
 
 export default function DropCreator(props) {
   const router = useRouter()
@@ -172,13 +164,48 @@ export default function DropCreator(props) {
       })
 
       const res = await createDrop_WhitelistWithAmount(
-        params.name, params.description, params.banner, params.url, params.startAt,
+        params.name, params.description, params.image, params.url, params.startAt,
         params.endAt, params.token, whitelist, _tokenAmount, setTransactionInProgress, setTransactionStatus
       )
   
       handleCreationResponse(res)
     } else if (eligibilityMode.key === EligibilityModeFLOAT.key) {
+      console.log("totalAmount: ", totalAmount)
+      let eventIDs = [floatEventPairs[0].eventID]
+      let eventHosts = [floatEventPairs[0].eventHost]
+      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ? 
+        new Decimal(identicalAmount).toFixed(8).toString() : null
+      let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
+        new Decimal(totalAmount).toFixed(8).toString() : null
+      let _threshold = !isNaN(parseFloat(threshold)) ?
+        threshold : "1"
+      
+      console.log("Extra Params: ", {
+        eventIDs: eventIDs,
+        eventHosts: eventHosts,
+        identicalAmount: _identicalAmount,
+        totalAmount: _totalAmount,
+        threshold: _threshold
+      })
 
+      if (packetMode.key === PacketModeIdentical.key) {
+        const res = await createDrop_FLOATs_Identical(
+          params.name, params.description, params.image, params.url, params.startAt,
+          params.endAt, params.token, eventIDs, eventHosts, capacity, _identicalAmount,
+          _threshold, setTransactionInProgress, setTransactionStatus
+        )
+  
+        handleCreationResponse(res)
+      } else if (packetMode.key === PacketModeRandom.key) {
+        const res = await createDrop_FLOATs_Random(
+          params.name, params.description, params.image, params.url, params.startAt,
+          params.endAt, params.token, eventIDs, eventHosts, capacity, _threshold, _totalAmount,
+          setTransactionInProgress, setTransactionStatus
+        )
+  
+        handleCreationResponse(res)
+      }
+    } else if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
 
     }
 

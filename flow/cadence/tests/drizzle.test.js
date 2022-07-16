@@ -323,7 +323,6 @@ describe("DROP - Management", () => {
     expect(error).toBeNull()
 
     const [, error2] = await getDrop(dropID, Alice, false)
-    console.log(error2)
     expect(error2.message.includes("Could not borrow drop")).toBeTruthy()
 
     await checkFUSDBalance(Alice, 1000.0)

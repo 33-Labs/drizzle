@@ -23,8 +23,7 @@ transaction(
     eventHosts: [Address],
     capacity: UInt32,
     amountPerPacket: UFix64,
-    threshold: UInt64,
-    tokenAmount: UFix64 
+    threshold: UInt64
 ) {
     let dropCollection: &Cloud.DropCollection
     let vault: &FungibleToken.Vault
@@ -48,11 +47,10 @@ transaction(
 
     pre {
         eventIDs.length == eventHosts.length: "eventIDs should have the same length with eventHosts"
-        tokenAmount >= UFix64(capacity) * amountPerPacket: "insufficient tokenAmount"
     }
 
     execute {
-        let dropVault <- self.vault.withdraw(amount: tokenAmount)
+        let dropVault <- self.vault.withdraw(amount: UFix64(capacity) * amountPerPacket)
         let tokenInfo = Drizzle.TokenInfo(
             account: tokenIssuer,
             contractName: tokenContractName,
