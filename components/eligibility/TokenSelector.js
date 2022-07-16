@@ -3,11 +3,11 @@ import Image from "next/image"
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid"
 import { Combobox } from "@headlessui/react"
 
-import { queryBalance } from "../lib/scripts"
+import { queryBalance } from "../../lib/scripts"
 import Decimal from "decimal.js";
 
 import { TokenListProvider, ENV, Strategy } from "flow-native-token-registry";
-import publicConfig from "../publicConfig.js"
+import publicConfig from "../../publicConfig.js"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ")

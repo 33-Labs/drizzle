@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
 
-import TokenSelector from "./TokenSelector"
+import TokenSelector from "./eligibility/TokenSelector"
 import ImageSelector from './ImageSelector'
 import DropCard from './DropCard'
 
@@ -19,7 +19,7 @@ import {
   transactionStatusState
 } from "../lib/atoms"
 import CSVSelector from './CSVSelector'
-import WhitelistWithAmount from './WhitelistWithAmount'
+import WhitelistWithAmount from './eligibility/WhitelistWithAmount'
 import EligilityModeSelector, { EligilityModeWhitelistWitAmount } from './EligilityModeSelector'
 import FloatPicker, { PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
 import PacketSelector from './PacketSelector'
@@ -194,22 +194,14 @@ export default function DropCreator(props) {
     if (!mode) { return null }
     if (mode.key == "WhitelistWithAmount") {
       return (
-        <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
-          border-4 border-drizzle-green/30 border-dashed">
-          <div>
-            <TokenSelector
-              user={props.user}
-              className="w-full"
-              onTokenSelected={setToken}
-              onBalanceFetched={setTokenBalance}
-            />
-          </div>
-          <WhitelistWithAmount
-            token={token}
-            tokenBalance={tokenBalance}
-            callback={setWhitelistWithAmountCallback}
-          />
-        </div>
+        <WhitelistWithAmount
+          user={props.user}
+          token={token}
+          setToken={setToken}
+          tokenBalance={tokenBalance}
+          setTokenBalance={setTokenBalance}
+          callback={setWhitelistWithAmountCallback}
+        />
       )
     }
 

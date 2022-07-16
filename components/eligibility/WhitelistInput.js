@@ -5,16 +5,15 @@ import Decimal from 'decimal.js'
 import {
   basicNotificationContentState,
   showBasicNotificationState,
-} from "../lib/atoms"
-import CSVSelector from './CSVSelector'
-import { classNames, filterRecords, getClaimsFromRecords } from '../lib/utils'
+} from "../../lib/atoms"
+import CSVSelector from '../CSVSelector'
+import { filterRecords, getClaimsFromRecords } from '../../lib/utils'
 
-export default function WhitelistWithAmount(props) {
+export default function WhitelistInput(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
 
-  const token = props.token
-  const tokenBalance = props.tokenBalance
+  const {token, tokenBalance, callback} = props
 
   const [rawRecordsStr, setRawRecordsStr] = useState('')
   const [validRecords, setValidRecords] = useState([])
@@ -74,7 +73,7 @@ export default function WhitelistWithAmount(props) {
                 const sum = valids.map((r) => r.amount).reduce((p, c) => p.add(c), new Decimal(0))
                 setRecordsSum(sum)
                 const claims = getClaimsFromRecords(valids)
-                props.callback({
+                callback({
                   claims: claims,
                   tokenAmount: sum,
                   invalidRecordsCount: invalids.length
@@ -85,7 +84,7 @@ export default function WhitelistWithAmount(props) {
             </button>
             <CSVSelector
               onChange={(event) => {
-                props.callback(null)
+                callback(null)
                 const f = event.target.files[0]
                 const reader = new FileReader()
                 reader.addEventListener('load', (e) => {
