@@ -1,8 +1,8 @@
 import { SpinnerCircular } from 'spinners-react'
 
-import DropCard from './DropCard'
-import ManageCard from './ManageCard'
-import StatsCard from './StatsCard'
+import DropCard from './drop/DropCard'
+import ManageCard from './presenter/ManageCard'
+import StatsCard from './presenter/StatsCard'
 
 export default function DropPresenter(props) {
   const {drop, claimStatus, stats, user, host} = props

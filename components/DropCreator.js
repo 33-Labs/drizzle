@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Switch } from '@headlessui/react'
+
 import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
@@ -25,6 +25,7 @@ import FloatPicker, { FloatModeFloat, FloatModeFloatEvent, FloatModeFloatGroup, 
 import PacketSelector from './eligibility/PacketSelector'
 import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
 import FloatReviewer from './eligibility/FLOATReviewer'
+import BasicInfoBoard from './creator/BasicInfoBoard'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -49,12 +50,12 @@ export default function DropCreator(props) {
   const [url, setURL] = useState(null)
   const [description, setDescription] = useState(null)
 
+  const [token, setToken] = useState(null)
+  const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
+
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startAt, setStartAt] = useState(null)
   const [endAt, setEndAt] = useState(null)
-
-  const [token, setToken] = useState(null)
-  const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
 
   const [eligilityMode, setEligilityMode] = useState(null)
   const [packetMode, setPacketMode] = useState(null)
@@ -275,134 +276,12 @@ export default function DropCreator(props) {
       </div>
 
       <div className="flex flex-col gap-y-10">
-        {/** image uploader */}
-        <div className="flex flex-col">
-          <label className="block text-2xl font-bold font-flow">
-            Banner
-          </label>
-          <label className="block text-md font-flow leading-6 mt-2 mb-2">Image size should be less than 500 KB</label>
-          <ImageSelector imageSelectedCallback={(_banner, _bannerSize) => {
-            setBanner(_banner)
-            setBannerSize(_bannerSize)
-          }} />
-        </div>
-
-        {/** name */}
-        <div className="flex flex-col gap-y-2">
-          <label className="block text-2xl font-bold font-flow">
-            Name
-          </label>
-          <div className="mt-1">
-            <input
-              type="text"
-              name="name"
-              id="name"
-              disabled={transactionInProgress}
-              required
-              className="bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg rounded-2xl
-                focus:ring-drizzle-green-dark focus:border-drizzle-green-dark  placeholder:text-gray-300"
-              placeholder={NamePlaceholder}
-              onChange={(event) => {
-                setName(event.target.value)
-              }}
-            />
-          </div>
-        </div>
-
-        {/** description */}
-        <div className="flex flex-col gap-y-2">
-          <label className="block text-2xl font-bold font-flow">
-            Description
-          </label>
-          <div className="mt-1">
-            <textarea
-              rows={4}
-              name="description"
-              id="description"
-              disabled={transactionInProgress}
-              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
-                bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-
-              defaultValue={''}
-              spellCheck={false}
-              placeholder={DescriptionPlaceholder}
-              onChange={(event) => { setDescription(event.target.value) }}
-            />
-          </div>
-        </div>
-
-        {/** url */}
-        <div className="flex flex-col gap-y-2">
-          <label className="block text-2xl font-bold font-flow">
-            Offical Link
-          </label>
-          <div className="mt-1">
-            <input
-              type="url"
-              name="url"
-              id="url"
-              disabled={transactionInProgress}
-              pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
-              className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
-              bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              placeholder={URLPlaceholder}
-              onChange={(event) => { setURL(event.target.value) }}
-            />
-          </div>
-        </div>
-
-        {/** time limit */}
-        <div>
-          <div className="flex justify-between items-center">
-            <label className="block text-2xl font-bold font-flow">
-              Time Limit{` (${Timezone})`}
-            </label>
-            <Switch
-              disabled={transactionInProgress}
-              checked={timeLockEnabled}
-              onChange={setTimeLockEnabled}
-              className={classNames(
-                timeLockEnabled ? 'bg-drizzle-green' : 'bg-gray-200',
-                'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-drizzle-green'
-              )}
-            >
-              <span className="sr-only">Use setting</span>
-              <span
-                aria-hidden="true"
-                className={classNames(
-                  timeLockEnabled ? 'translate-x-5' : 'translate-x-0',
-                  'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
-                )}
-              />
-            </Switch>
-          </div>
-
-          {timeLockEnabled ?
-            <div className="mt-2 flex justify-between gap-x-2 gap-y-2 flex-wrap">
-              <div className="flex items-center gap-x-2">
-                <label className="inline-block w-12 font-flow font-bold">Start</label>
-                <input
-                  type="datetime-local"
-                  disabled={transactionInProgress}
-                  id="start_at"
-                  className="rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-                  onChange={(e) => { setStartAt(new Date(e.target.value)) }}
-                />
-              </div>
-
-              <div className="flex items-center gap-x-2">
-                <label className="inline-block w-12 font-flow font-bold">End</label>
-                <input
-                  type="datetime-local"
-                  disabled={transactionInProgress}
-                  id="end_at"
-                  className="rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-                  onChange={(e) => { setEndAt(new Date(e.target.value)) }}
-                />
-              </div>
-            </div> : null}
-        </div>
-
+        <BasicInfoBoard 
+          setBanner={setBanner} setBannerSize={setBannerSize}
+          setName={setName} setURL={setURL} setDescription={setDescription}
+          timeLockEnabled={timeLockEnabled} setTimeLockEnabled={setTimeLockEnabled}
+          setStartAt={setStartAt} setEndAt={setEndAt}
+        />
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
             Eligility
