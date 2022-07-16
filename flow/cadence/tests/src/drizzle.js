@@ -71,6 +71,65 @@ export const createDefaultFUSDDrop_WhitelistWithAmount = async (signer, override
   expect(error).toBeNull()
 }
 
+// ===== WHITELIST_RANDOM =====
+
+export const createDrop_Whitelist_Random = async (signer, params) => {
+  const signers = [signer]
+  const txName = "create_drop_whitelist_random"
+  return await sendTransaction({ name: txName, signers: signers, args: params})
+}
+
+export const createFUSDDrop_Whitelist_Random = async (signer, params) => {
+  const {
+    initFlowAmount, 
+    initFUSDAmount,
+    name, description, image, url,
+    startAt, endAt,
+    FUSDInfo,
+    whitelist, capacity, threshold, tokenAmount
+  } = params
+  if (tokenAmount > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
+
+  await mintFlow(signer, initFlowAmount)
+  await setupFUSDVault(signer)
+
+  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
+  await checkFUSDBalance(signer, initFUSDAmount)
+
+  const args = [
+    name, description, image, url,
+    startAt, endAt,
+    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
+    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
+    whitelist, capacity, threshold, tokenAmount 
+  ]
+  return await createDrop_Whitelist_Random(signer, args)
+}
+
+export const createDefaultFUSDDrop_Whitelist_Random = async (signer, overrides = {}) => {
+  const FUSDInfo = await getFUSDInfo()
+  const defaultWhitelist = await getDefaultWhitelist()
+
+  const {whitelist, image, url, startAt, endAt, capacity, threshold, tokenAmount} = overrides
+  const args = {
+    initFlowAmount: 100.0, 
+    initFUSDAmount: 1000.0,
+    name: "TEST", 
+    description: "Test DROP", 
+    image: image || null, url: url || null,
+    startAt: startAt || null, endAt: endAt || null,
+    FUSDInfo: FUSDInfo,
+    whitelist: whitelist || defaultWhitelist,
+    capacity: capacity || 2,
+    threshold: threshold || 2,
+    tokenAmount: tokenAmount || 20.0
+  }
+
+  const [tx, error] = await createFUSDDrop_Whitelist_Random(signer, args)
+  expect(error).toBeNull()
+}
+
+
 // ===== WHITELIST_IDENTICAL =====
 
 export const createDrop_Whitelist_Identical = async (signer, params) => {

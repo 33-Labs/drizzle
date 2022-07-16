@@ -27,6 +27,7 @@ import {
   createDefaultFUSDDrop_FLOATs_Identical,
   createDefaultFUSDDrop_FLOATs_Random,
   createDefaultFUSDDrop_Whitelist_Identical,
+  createDefaultFUSDDrop_Whitelist_Random,
   createDefaultEvents,
   toggleCloudPause,
   deleteDrop
@@ -345,9 +346,14 @@ describe("Drop - Whitelist", () => {
     return await new Promise(r => setTimeout(r, 2000));
   })
 
-  it("Whitelist - Should be ok if we create drop with valid params", async () => {
+  it("Whitelist - Should be ok if we create identical drop with valid params", async () => {
     const Alice = await getAccountAddress("Alice")
     await createDefaultFUSDDrop_Whitelist_Identical(Alice)
+  })
+  
+  it("Whitelist - Should be ok if we create random drop with valid params", async () => {
+    const Alice = await getAccountAddress("Alice")
+    await createDefaultFUSDDrop_Whitelist_Random(Alice)
   })
 
   it("Whitelist - Should be ok for eligible claimers to claim their reward", async () => {
