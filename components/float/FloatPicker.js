@@ -64,7 +64,6 @@ export default function FloatPicker(props) {
   const [transactionInProgress, ] = useRecoilState(transactionInProgressState)
 
   const [rawEventStr, setRawEventStr] = useState('')
-  const [eventList, setEventList] = useState([])
 
   // FLOAT || FLOATGroup
   const mode = props.mode || FloatModeFloatEvent
@@ -72,15 +71,17 @@ export default function FloatPicker(props) {
 
   const {
     threshold, setThreshold,
+    floatEvents,
     setFloatEvents,
-    setFloatGroup
+    setFloatGroup,
+    setFloatEventPairs
   } = props
 
   useEffect(() => {
     setThreshold('')
-    setEventList([])
     setFloatEvents([])
     setFloatGroup(null)
+    setFloatEventPairs([])
     setRawEventStr('')
   }, [mode])
 
@@ -128,8 +129,8 @@ export default function FloatPicker(props) {
                     }
                   }
                   if (events.length > 0) {
-                    setFloatEvents(floatEvents)
-                    setEventList(events)
+                    setFloatEventPairs(floatEvents)
+                    setFloatEvents(events)
                   }
                 } else if (mode.key === "FLOATGroup") {
                   const group = await mode.inputHandler(rawEventStr)
@@ -139,7 +140,7 @@ export default function FloatPicker(props) {
                   if (_events) {
                     events = _events.sort((a, b) => b.eventId - a.eventId)
                     setFloatGroup(group)
-                    setEventList(events)
+                    setFloatEvents(events)
                   }
                 }
 
@@ -155,11 +156,11 @@ export default function FloatPicker(props) {
           Sync
         </button>
       </div>
-      {eventList.length > 0 ?
+      {floatEvents.length > 0 ?
         <div className="w-full mt-2">
-        <FloatEventList events={eventList} /> 
+        <FloatEventList events={floatEvents} /> 
         {
-          eventList.length > 1 ?
+          floatEvents.length > 1 ?
           <div className="w-full flex flex-col gap-y-2 mt-1">
           <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
             <label className="block w-[75px] shrink-0 font-flow font-bold">Threshold</label>
@@ -167,13 +168,13 @@ export default function FloatPicker(props) {
               type="number"
               disabled={disabled}
               min="1"
-              max={eventList.length}
+              max={floatEvents.length}
               value={threshold}
               id="threshold"
               className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               onChange={(event) => { setThreshold(event.target.value)}}
             />
-            <label className="shrink-0 font-float font-bold">of {eventList.length} FLOATs</label>
+            <label className="shrink-0 font-float font-bold">of {floatEvents.length} FLOATs</label>
           </div>
         </div> : null
         }

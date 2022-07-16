@@ -13,7 +13,8 @@ export default function FloatReviewer(props) {
     threshold, setThreshold,
     totalAmount, setTotalAmount,
     floatMode,
-    setFloatEvents, setFloatGroup
+    floatEvents, setFloatEvents, 
+    setFloatGroup, setFloatEventPairs
   } = props
 
   return (
@@ -34,7 +35,8 @@ export default function FloatReviewer(props) {
     <FloatPicker 
       mode={floatMode} 
       threshold={threshold} setThreshold={setThreshold}
-      setFloatEvents={setFloatEvents} setFloatGroup={setFloatGroup}
+      floatEvents={floatEvents} setFloatEvents={setFloatEvents} 
+      setFloatGroup={setFloatGroup} setFloatEventPairs={setFloatEventPairs}
     />
   </div>
   )

@@ -76,7 +76,7 @@ describe("Drop - WhitelistWithAmount", () => {
     return await new Promise(r => setTimeout(r, 2000));
   })
 
-  // If the size of claims is huge(exceed 30000), it is recommanded to use MerkleAirDrop rather than AirDrop
+  // If the size of whitelist is huge(exceed 30000), it is recommanded to use MerkleAirDrop rather than AirDrop
   // [Error: transaction byte size (3991439) exceeds the maximum byte size allowed for a transaction (3000000)]
   it("WhitelistWithAmount - Should be ok if we create drop with valid params", async () => {
     const Alice = await getAccountAddress("Alice")

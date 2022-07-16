@@ -1,5 +1,7 @@
 import { RadioGroup } from '@headlessui/react'
+import Hints from '../../lib/hints'
 import { FloatModeFloatEvent, FloatModeFloatGroup } from '../float/FloatPicker'
+import { checkPacketMode } from './PacketModeSelector'
 
 export const EligibilityModeWhitelistWitAmount = {
   key: "WhitelistWithAmount",
@@ -7,6 +9,19 @@ export const EligibilityModeWhitelistWitAmount = {
   intro: 'Distribute specific amount to specific one in whitelist',
   criteria: () => {
     return "In whitelist"
+  },
+  checkParams: (whitelistWithAmountReviewerCallback, tokenBalance) => {
+    if (!whitelistWithAmountReviewerCallback) {
+      return [false, Hints.NeedProcessRA]
+    }
+    if (whitelistWithAmountReviewerCallback.invalidRecordsCount > 0) {
+      return [false, Hints.HaveInvalidRecords]
+    }
+    if (whitelistWithAmountReviewerCallback.tokenAmount.cmp(tokenBalance) != -1) {
+      return [false, Hints.InsufficientBalance]
+    }
+
+    return [true, Hints.Valid]
   }
 }
 
@@ -18,7 +33,27 @@ export const EligibilityModeFLOAT = {
   criteria: (eventID) => {
     let event = eventID || "{EventID}"
     return `Owns FLOAT of event #${event}`
-  }
+  },
+  checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
+    try {
+      const [valid, hint] = checkPacketMode(packetMode, totalBalance, capacity, amount)
+      if (!valid) {
+        throw hint
+      }
+      if (floatEvents.length != 1) {
+        throw Hints.InvalidFloatEvent
+      }
+      return [true, Hints.Valid]
+    } catch (error) {
+      return [false, error]
+    }
+
+    // NOTE: we only support single Event now
+    // const _threshold = new Decimal(threshold)
+    // if (!(_threshold.isInteger() && _threshold.isPositive() && _threshold.toNumber() <= floatEvents.length)) {
+    //   throw Hints.InvalidThreshold
+    // }
+  } 
 }
 
 export const EligibilityModeFLOATGroup = {
@@ -30,6 +65,26 @@ export const EligibilityModeFLOATGroup = {
     let t = threshold || "1"
     let g = groupName || "{GroupName}"
     return `Owns at least ${t} FLOATs in ${g}`
+  },
+  checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
+    try {
+      const [valid, hint] = checkPacketMode(packetMode, totalBalance, capacity, amount)
+      if (!valid) {
+        throw hint
+      }
+      if (floatEvents.length != 1) {
+        throw Hints.InvalidFloatEvent
+      }
+
+      const _threshold = new Decimal(threshold)
+      if (!(_threshold.isInteger() && _threshold.isPositive() && _threshold.toNumber() <= floatEvents.length)) {
+        throw Hints.InvalidThreshold
+      }
+
+      return [true, Hints.Valid]
+    } catch (error) {
+      return [false, error]
+    }
   }
 }
 

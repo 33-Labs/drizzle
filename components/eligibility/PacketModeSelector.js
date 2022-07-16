@@ -1,18 +1,67 @@
 import { RadioGroup } from '@headlessui/react'
+import Decimal from 'decimal.js'
+import Hints from '../../lib/hints'
 
-export const AmountModeRandom = {
+export const checkPacketMode = (packetMode, tokenBalance, capacity, amount = {}) => {
+  try {
+    const {identicalAmount, totalAmount} = amount
+    if (!packetMode) throw Hints.InvalidPacket
+    if (packetMode.key === PacketModeIdentical.key) {
+      PacketModeIdentical.checkParams(capacity, identicalAmount, tokenBalance)
+    } else if (packetMode.key === PacketModeRandom.key) {
+      PacketModeRandom.checkParams(capacity, totalAmount, tokenBalance)
+    }
+    return [true, Hints.Valid]
+  } catch (error) {
+    return [false, error]
+  }
+}
+
+export const PacketModeRandom = {
   key: "Random",
   name: 'Random Amount',
   intro: 'Distribute specific amount to specific one in whitelist',
+  checkParams: (capacity, totalAmount, tokenBalance) => {
+    const _capacity = new Decimal(capacity)
+    if (!(_capacity.isInteger() && _capacity.isPositive())) {
+      throw Hints.InvalidCapacity
+    }
+
+    const _totalAmount = new Decimal(totalAmount)
+    if (!(_totalAmount.isInteger() && _totalAmount.isPositive())) {
+      throw Hints.InvalidTotalAmount
+    }
+
+    if (_totalAmount.cmp(tokenBalance) == -1) {
+      throw Hints.InsufficientBalance
+    }
+    return true
+  }
 }
 
-export const AmountModeIdentical = {
+export const PacketModeIdentical = {
   key: "Identical",
   name: 'Identical Amount',
-  intro: 'Under construction' 
+  intro: 'Under construction',
+  checkParams: (capacity, identicalAmount, tokenBalance) => {
+    const _capacity = new Decimal(capacity)
+    if (!(_capacity.isInteger() && _capacity.isPositive())) {
+      throw Hints.InvalidCapacity
+    } 
+
+    const _identicalAmount = new Decimal(identicalAmount)
+    if (!(_identicalAmount.isInteger() && _identicalAmount.isPositive())) {
+      throw Hints.InvalidIdenticalAmount
+    }
+
+    if (_identicalAmount.mul(_capacity).cmp(tokenBalance) == -1) {
+      throw Hints.InsufficientBalance
+    }
+    return true
+  }
 }
 
-const modes = [AmountModeRandom, AmountModeIdentical]
+const modes = [PacketModeIdentical, PacketModeRandom]
 
 export default function PacketModeSelector(props) {
   const {mode, setMode} = props

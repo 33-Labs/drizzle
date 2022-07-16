@@ -167,7 +167,7 @@ export default function ManageCard(props) {
           </button>
         </div>
         {/* <div className="mt-4 w-full items-start">
-          <label className="w-full text-lg font-bold font-flow">Add New Claims</label>
+          <label className="w-full text-lg font-bold font-flow">Add New Whitelist</label>
         </div>
         <div className="w-full">
           <textarea

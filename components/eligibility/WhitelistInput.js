@@ -7,7 +7,7 @@ import {
   showBasicNotificationState,
 } from "../../lib/atoms"
 import CSVSelector from '../toolbox/CSVSelector'
-import { filterRecords, getClaimsFromRecords } from '../../lib/utils'
+import { filterRecords, getWhitelistFromRecords } from '../../lib/utils'
 
 export default function WhitelistInput(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
@@ -72,9 +72,9 @@ export default function WhitelistInput(props) {
                 setInvalidRecords(invalids)
                 const sum = valids.map((r) => r.amount).reduce((p, c) => p.add(c), new Decimal(0))
                 setRecordsSum(sum)
-                const claims = getClaimsFromRecords(valids)
+                const whitelist = getWhitelistFromRecords(valids)
                 callback({
-                  claims: claims,
+                  whitelist: whitelist,
                   tokenAmount: sum,
                   invalidRecordsCount: invalids.length
                 })

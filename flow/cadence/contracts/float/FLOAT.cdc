@@ -438,7 +438,7 @@ pub contract FLOAT: NonFungibleToken {
         // A url of where the event took place
         pub let url: String
         // A list of verifiers this FLOAT Event contains.
-        // Will be used every time someone "claims" a FLOAT
+        // Will be used every time someone "whitelist" a FLOAT
         // to see if they pass the requirements
         access(account) let verifiers: {String: [{IVerifier}]}
 

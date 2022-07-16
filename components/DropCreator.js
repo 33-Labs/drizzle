@@ -9,7 +9,7 @@ import ImageSelector from './toolbox/ImageSelector'
 import DropCard from './drop/DropCard'
 
 import { createDrop_WhitelistWithAmount } from '../lib/transactions'
-import { classNames, filterRecords, getClaimsFromRecords, getTimezone, isValidHttpUrl } from '../lib/utils'
+import { classNames, filterRecords, getWhitelistFromRecords, getTimezone, isValidHttpUrl } from '../lib/utils'
 
 import { useRecoilState } from "recoil"
 import {
@@ -20,13 +20,14 @@ import {
 } from "../lib/atoms"
 import CSVSelector from './toolbox/CSVSelector'
 import WhitelistWithAmount from './eligibility/WhitelistWithAmountReviewer'
-import EligibilityModeSelector, { EligibilityModeWhitelistWitAmount } from './eligibility/EligibilityModeSelector'
+import EligibilityModeSelector, { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelistWitAmount } from './eligibility/EligibilityModeSelector'
 import FloatPicker, { FloatModeFloat, FloatModeFloatEvent, FloatModeFloatGroup, PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
 import PacketSelector from './eligibility/PacketSelector'
 import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
 import FloatReviewer from './eligibility/FLOATReviewer'
 import BasicInfoBoard from './creator/BasicInfoBoard'
 import Hints from '../lib/hints'
+import { PacketModeIdentical, PacketModeRandom } from './eligibility/PacketModeSelector'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -64,14 +65,15 @@ export default function DropCreator(props) {
   const [whitelistWithAmountReviewerCallback, setWhitelistWithAmountReviewerCallback] = useState(null)
 
   // For Float
-  // [{eventID: xxx, eventHost: xxx}]
   const [floatEvents, setFloatEvents] = useState([])
+  // [{eventID: xxx, eventHost: xxx}]
+  const [floatEventPairs, setFloatEventPairs] = useState([])
   // {groupName: xxx, groupHost: xxx}
   const [floatGroup, setFloatGroup]= useState(null)
+  const [threshold, setThreshold] = useState('')
 
   // For Packet
   const [packetMode, setPacketMode] = useState(null)
-  const [threshold, setThreshold] = useState('')
   const [capacity, setCapacity] = useState('')
   const [identicalAmount, setIdenticalAmount] = useState('')
   const [totalAmount, setTotalAmount] = useState('')
@@ -108,29 +110,23 @@ export default function DropCreator(props) {
   }
 
   const checkEligibilityParams = () => {
-    if (eligibilityMode.key === "FLOATGroup") {
-      return [true, {}]
+    if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
+      return EligibilityModeFLOATGroup.checkParams(
+        floatEvents, threshold, 
+        packetMode, tokenBalance, capacity, 
+        { identicalAmount: identicalAmount, totalAmount: totalAmount }
+      )
     }
-    if (eligibilityMode.key === "FLOAT") {
-
-      return [true, {}]
+    if (eligibilityMode.key === EligibilityModeFLOAT.key) {
+      return EligibilityModeFLOAT.checkParams(
+        floatEvents, threshold, 
+        packetMode, tokenBalance, capacity, 
+        { identicalAmount: identicalAmount, totalAmount: totalAmount }
+      )
     }
-    if (eligibilityMode.key === "WhitelistWithAmount") {
-      if (!whitelistWithAmountCallback) {
-        return [false, Hints.NeedProcessRA]
-      }
-      if (whitelistWithAmountCallback.invalidRecordsCount > 0) {
-        return [false, Hints.HaveInvalidRecords]
-      }
-      if (whitelistWithAmountCallback.tokenAmount.cmp(tokenBalance) != -1) {
-        return [false, Hints.InsufficientBalance]
-      }
-      return [true, Hints.Valid]
+    if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
+      return EligibilityModeWhitelistWitAmount.checkParams(whitelistWithAmountReviewerCallback, tokenBalance)
     }
-  }
-
-  const checkPacketParams = () => {
-    // if (packetMode)
   }
 
   const handleSubmit = async (event) => {
@@ -156,38 +152,39 @@ export default function DropCreator(props) {
     }
 
     // Basic Params
-    const _description = description ?? ''
-    const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null
-    const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
-    const tokenProviderPath = token.path.vault.replace("/storage/", "")
-    const tokenBalancePath = token.path.balance.replace("/public/", "")
-    const tokenReceiverPath = token.path.receiver.replace("/public/", "")
-    const _tokenAmount = tokenAmount.toFixed(8).toString()
+    const params = {
+      name: name,
+      description: description ?? '',
+      image: banner,
+      url: url,
+      startAt: startAt ? `${startAt.getTime() / 1000}.0` : null,
+      endAt: endAt ? `${endAt.getTime() / 1000}.0` : null,
+      token: token,
+    }
+    console.log("Basic Params: ", params)
 
-    const { claims, tokenAmount, } = whitelistWithAmountCallback
+    if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
+      const { whitelist, tokenAmount, } = whitelistWithAmountReviewerCallback
+      const _tokenAmount = tokenAmount.toFixed(8).toString()
+      console.log("Extra Params: ", {
+        whitelist: whitelist,
+        tokenAmount: _tokenAmount
+      })
 
-    console.log(`
-          name: ${name}\n
-          desc: ${_description}\n
-          url: ${url}\n
-          claims: ${claims}\n
-          startAt: ${_startAt}\n
-          endAt: ${_endAt}\n
-          tokenAddress: ${token.address}\n
-          contractName: ${token.contractName}\n
-          symbol: ${token.symbol}\n
-          tokenProviderPath: ${tokenProviderPath}\n
-          tokenBalancePath: ${tokenBalancePath}\n
-          tokenReceiverPath: ${tokenReceiverPath}\n
-          tokenAmount: ${_tokenAmount}\n
-          banner: ${banner}
-        `)
+      const res = await createDrop_WhitelistWithAmount(
+        params.name, params.description, params.banner, params.url, params.startAt,
+        params.endAt, params.token, whitelist, _tokenAmount, setTransactionInProgress, setTransactionStatus
+      )
+  
+      handleCreationResponse(res)
+    } else if (eligibilityMode.key === EligibilityModeFLOAT.key) {
 
-    const res = await createDrop_WhitelistWithAmount(
-      name, _description, banner, url, _startAt,
-      _endAt, token, claims, _tokenAmount, setTransactionInProgress, setTransactionStatus
-    )
 
+    }
+
+  }
+
+  const handleCreationResponse = (res) => {
     if (res && res.status === 4 && res.statusCode === 0) {
       const createDropEvent = res.events.find((e) => e.data.dropID)
       if (createDropEvent) {
@@ -223,7 +220,10 @@ export default function DropCreator(props) {
           totalAmount={totalAmount} setTotalAmount={setTotalAmount}
           floatMode={mode.detail}
           threshold={threshold} setThreshold={setThreshold}
-          setFloatEvents={setFloatEvents} setFloatGroup={setFloatGroup}
+          floatEvents={floatEvents}
+          setFloatEvents={setFloatEvents} 
+          setFloatEventPairs={setFloatEventPairs}
+          setFloatGroup={setFloatGroup}
         />
       )
     }
