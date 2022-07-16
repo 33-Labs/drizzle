@@ -5,8 +5,8 @@ import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
 
 import TokenSelector from "./eligibility/TokenSelector"
-import ImageSelector from './ImageSelector'
-import DropCard from './DropCard'
+import ImageSelector from './toolbox/ImageSelector'
+import DropCard from './drop/DropCard'
 
 import { createDrop_WhitelistWithAmount } from '../lib/transactions'
 import { classNames, filterRecords, getClaimsFromRecords, getTimezone, isValidHttpUrl } from '../lib/utils'
@@ -18,11 +18,13 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../lib/atoms"
-import CSVSelector from './CSVSelector'
-import WhitelistWithAmount from './eligibility/WhitelistWithAmount'
-import EligilityModeSelector, { EligilityModeWhitelistWitAmount } from './EligilityModeSelector'
-import FloatPicker, { PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
-import PacketSelector from './PacketSelector'
+import CSVSelector from './toolbox/CSVSelector'
+import WhitelistWithAmount from './eligibility/WhitelistWithAmountReviewer'
+import EligilityModeSelector, { EligilityModeWhitelistWitAmount } from './eligibility/EligilityModeSelector'
+import FloatPicker, { FloatModeFloat, FloatModeFloatEvent, FloatModeFloatGroup, PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
+import PacketSelector from './eligibility/PacketSelector'
+import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
+import FloatReviewer from './eligibility/FLOATReviewer'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -57,11 +59,14 @@ export default function DropCreator(props) {
   const [eligilityMode, setEligilityMode] = useState(null)
   const [packetMode, setPacketMode] = useState(null)
 
-  // For WhitelistWithAmount
-  const [whitelistWithAmountCallback, setWhitelistWithAmountCallback] = useState(null)
+  // For WhitelistWithAmountReviewer
+  const [whitelistWithAmountReviewerCallback, setWhitelistWithAmountReviewerCallback] = useState(null)
+
+  // For FloatReviewer
+  const [floatReviewerCallback, setFloatReviewerCallback] = useState(null)
 
   // For Packet
-  const [packetCallback, setPacketCallback] = useState(null)
+  // const [packetCallback, setPacketCallback] = useState(null)
 
   const checkBasicParams = () => {
     if (!name || name.trim() == "") {
@@ -194,38 +199,50 @@ export default function DropCreator(props) {
     if (!mode) { return null }
     if (mode.key == "WhitelistWithAmount") {
       return (
-        <WhitelistWithAmount
+        <WhitelistWithAmountReviewer
           user={props.user}
           token={token}
           setToken={setToken}
           tokenBalance={tokenBalance}
           setTokenBalance={setTokenBalance}
-          callback={setWhitelistWithAmountCallback}
+          callback={setWhitelistWithAmountReviewerCallback}
         />
       )
     }
 
     if (mode.key === "FLOAT" || mode.key === "FLOATGroup") {
-      let pickerMode = PickerModeFloat
+      let floatMode = FloatModeFloatEvent
       if (mode.key === "FLOATGroup") {
-        pickerMode = PickerModeFloatGroup
+        floatMode = FloatModeFloatGroup
       }
-      return (
-        <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
-          border-4 border-drizzle-green/30 border-dashed">
-          <div>
-            <TokenSelector
-              user={props.user}
-              className="w-full"
-              onTokenSelected={setToken}
-              onBalanceFetched={setTokenBalance}
-            />
-          </div>
 
-          <PacketSelector mode={packetMode} setMode={setPacketMode} />
-          <FloatPicker mode={pickerMode} />
-        </div>
+      return (
+        <FloatReviewer 
+          user={props.user}
+          token={token}
+          setToken={setToken}
+          tokenBalance={tokenBalance}
+          setTokenBalance={setTokenBalance}
+          floatMode={floatMode}
+          callback={setFloatReviewerCallback}
+        />
       )
+      // return (
+      //   <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
+      //     border-4 border-drizzle-green/30 border-dashed">
+      //     <div>
+      //       <TokenSelector
+      //         user={props.user}
+      //         className="w-full"
+      //         onTokenSelected={setToken}
+      //         onBalanceFetched={setTokenBalance}
+      //       />
+      //     </div>
+
+      //     <PacketSelector mode={packetMode} setMode={setPacketMode} />
+      //     <FloatPicker mode={pickerMode} />
+      //   </div>
+      // )
     }
 
     return null

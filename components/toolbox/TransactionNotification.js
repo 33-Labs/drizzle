@@ -6,12 +6,12 @@ import {
   InformationCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/outline'
-import publicConfig from '../publicConfig'
+import publicConfig from '../../publicConfig'
 
 import { useRecoilState } from "recoil"
 import {
   transactionInProgressState, transactionStatusState
-} from "../lib/atoms"
+} from "../../lib/atoms"
 
 const NotificationContent = ({txStatus}) => {
   if (txStatus.status == "Initializing") {

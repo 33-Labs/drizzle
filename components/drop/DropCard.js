@@ -1,17 +1,17 @@
 import Image from "next/image"
 import React from 'react'
-import publicConfig from "../publicConfig"
+import publicConfig from "../../publicConfig"
 
 import { useRecoilState } from "recoil"
 import {
   transactionInProgressState,
   transactionStatusState
-} from "../lib/atoms"
+} from "../../lib/atoms"
 
-import { test } from "../lib/transactions"
+import { test } from "../../lib/transactions"
 import Decimal from "decimal.js"
 import { ExternalLinkIcon } from "@heroicons/react/outline"
-import { classNames, convertCadenceDateTime } from "../lib/utils"
+import { classNames, convertCadenceDateTime } from "../../lib/utils"
 import ShareCard from "./ShareCard"
 import ClaimCard from "./ClaimCard"
 import CriteriaCard from "./CriteriaCard"

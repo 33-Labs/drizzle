@@ -11,7 +11,7 @@ import { getFloatEvent, getFloatEventsInGroup } from '../../lib/float-scripts'
 import Decimal from 'decimal.js'
 import FloatEventList from './FloatEventList'
 
-export const PickerModeFloat = {
+export const FloatModeFloatEvent = {
   title: "FLOAT Event",
   description: `Enter event id and event host, concat them with "@". For instance: 98963710@0x257c27ba4951541d`,
   placeholder: "98963710@0x257c27ba4951541d",
@@ -41,7 +41,7 @@ export const PickerModeFloat = {
   }
 }
 
-export const PickerModeFloatGroup = {
+export const FloatModeFloatGroup = {
   title: "FLOAT Group",
   description: `Enter group name and event host, concat them with "@". For instance: Drizzle@0x257c27ba4951541d`,
   placeholder: "Drizzle@0x257c27ba4951541d",

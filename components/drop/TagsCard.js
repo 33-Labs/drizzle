@@ -1,4 +1,4 @@
-import publicConfig from "../publicConfig"
+import publicConfig from "../../publicConfig"
 
 const getReviewerTitle = (reviewer) => {
   if (reviewer.whitelist) {

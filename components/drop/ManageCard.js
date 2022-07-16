@@ -8,10 +8,10 @@ import {
   showBasicNotificationState,
   transactionInProgressState,
   transactionStatusState
-} from "../lib/atoms"
-import { deleteDrop, depositToDrop, togglePause, withdrawAllFunds } from "../lib/transactions"
-import { classNames } from "../lib/utils"
-import { queryBalance } from "../lib/scripts"
+} from "../../lib/atoms"
+import { deleteDrop, depositToDrop, togglePause, withdrawAllFunds } from "../../lib/transactions"
+import { classNames } from "../../lib/utils"
+import { queryBalance } from "../../lib/scripts"
 
 // tokenInfo in Drizzle
 const balanceFetcher = async (funcName, tokenInfo, account) => {

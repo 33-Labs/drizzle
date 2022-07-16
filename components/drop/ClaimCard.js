@@ -1,13 +1,13 @@
 import Decimal from "decimal.js"
-import { classNames } from "../lib/utils"
-import { claim, test } from "../lib/transactions"
+import { classNames } from "../../lib/utils"
+import { claim, test } from "../../lib/transactions"
 import { useSWRConfig } from 'swr'
 
 import { useRecoilState } from "recoil"
 import {
   transactionInProgressState,
   transactionStatusState
-} from "../lib/atoms"
+} from "../../lib/atoms"
 
 // [Emoji, Description, Amount, Title]
 // TODO: need to handle random packet

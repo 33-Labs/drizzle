@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from "@heroicons/react/outline"
-import { EligilityModeWhitelistWitAmount } from "./EligilityModeSelector"
+import { EligilityModeWhitelistWitAmount } from "../eligibility/EligilityModeSelector"
 
 export default function CriteriaCard(props) {
   const isEligible = props.isEligible ?? false

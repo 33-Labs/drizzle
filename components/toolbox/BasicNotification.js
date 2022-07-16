@@ -10,7 +10,7 @@ import { useRecoilState } from "recoil"
 import {
   basicNotificationContentState,
   showBasicNotificationState,
-} from "../lib/atoms"
+} from "../../lib/atoms"
 
 const NotificationIcon = ({type}) => {
   if (type == "exclamation") {

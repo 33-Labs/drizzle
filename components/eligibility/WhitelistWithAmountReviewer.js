@@ -1,7 +1,7 @@
 import WhitelistInput from './WhitelistInput'
 import TokenSelector from './TokenSelector'
 
-export default function WhitelistWithAmount(props) {
+export default function WhitelistWithAmountReviewer(props) {
   const {user, token, setToken, tokenBalance, setTokenBalance, callback} = props
 
   return (

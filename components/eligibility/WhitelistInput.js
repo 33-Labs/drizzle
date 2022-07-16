@@ -6,7 +6,7 @@ import {
   basicNotificationContentState,
   showBasicNotificationState,
 } from "../../lib/atoms"
-import CSVSelector from '../CSVSelector'
+import CSVSelector from '../toolbox/CSVSelector'
 import { filterRecords, getClaimsFromRecords } from '../../lib/utils'
 
 export default function WhitelistInput(props) {
