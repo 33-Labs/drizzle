@@ -1,21 +1,23 @@
 import { useState, useEffect } from 'react'
 import Decimal from 'decimal.js';
 
-import AmountModeSelector from "./AmountModeSelector";
+import PacketModeSelector from "./PacketModeSelector";
 
-export default function AmountSelector(props) {
+export default function PacketSelector(props) {
   const mode = props.mode
   const setMode = props.setMode
   const disabled = props.disabled || false
-  const [entries, setEntries] = useState('')
+  const [capacity, setCapacity] = useState('')
   const [totalAmount, setTotalAmount] = useState('')
   const [identicalAmount, setIdenticalAmount] = useState('')
 
   useEffect(() => {
-    setEntries('')
+    setCapacity('')
     setTotalAmount('')
     setIdenticalAmount('')
   }, [mode])
+
+  console.log(mode)
 
   const showExtraInputs = (mode) => {
     if (!mode) { return null }
@@ -27,11 +29,11 @@ export default function AmountSelector(props) {
             <input
               type="number"
               disabled={disabled}
-              id="entries"
+              id="capacity"
               min="1"
-              value={entries}
+              value={capacity}
               className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              onChange={(event) => { setEntries(event.target.value)}}
+              onChange={(event) => { setCapacity(event.target.value)}}
             />
           </div>
           <div className="flex items-center gap-x-2">
@@ -58,11 +60,11 @@ export default function AmountSelector(props) {
             <input
               type="number"
               disabled={disabled}
-              id="entries"
-              value={entries}
+              id="capacity"
+              value={capacity}
               min="1"
               className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              onChange={(event) => { setEntries(event.target.value)}}
+              onChange={(event) => { setCapacity(event.target.value)}}
             />
           </div>
           <div className="flex items-center gap-x-2">
@@ -89,7 +91,7 @@ export default function AmountSelector(props) {
       <label className="block text-2xl font-bold font-flow">
         Amount
       </label>
-      <AmountModeSelector mode={mode} setMode={setMode} />
+      <PacketModeSelector mode={mode} setMode={setMode} />
       {
         showExtraInputs(mode)
       }

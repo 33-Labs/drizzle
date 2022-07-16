@@ -22,7 +22,7 @@ import CSVSelector from './CSVSelector'
 import WhitelistWithAmount from './WhitelistWithAmount'
 import EligilityModeSelector, { EligilityModeWhitelistWitAmount } from './EligilityModeSelector'
 import FloatPicker, { PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
-import AmountSelector from './AmountSelector'
+import PacketSelector from './PacketSelector'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -60,7 +60,10 @@ export default function DropCreator(props) {
   // For WhitelistWithAmount
   const [whitelistWithAmountCallback, setWhitelistWithAmountCallback] = useState(null)
 
-  const checkParams = () => {
+  // For Packet
+  const [packetCallback, setPacketCallback] = useState(null)
+
+  const checkBasicParams = () => {
     if (!name || name.trim() == "") {
       return [false, "invalid name"]
     }
@@ -99,13 +102,53 @@ export default function DropCreator(props) {
     return [true, null]
   }
 
+  const checkEligibilityParams = () => {
+    if (eligilityMode.key === "FLOATGroup") {
+      return [true, {}]
+    }
+    if (eligilityMode.key === "FLOAT") {
+
+      return [true, {}]
+    }
+    if (eligilityMode.key === "WhitelistWithAmount") {
+      if (!whitelistWithAmountCallback) {
+        return [false, "Please process Recipients & Amounts"]
+      }
+      if (whitelistWithAmountCallback.invalidRecordsCount > 0) {
+        return [false, "There are some invalid records"]
+      }
+      if (whitelistWithAmountCallback.tokenAmount.cmp(tokenBalance) != -1) {
+        return [false, "Insufficient balance"]
+      }
+      return [true, "valid"]
+    }
+  }
+
+  const checkPacketParams = () => {
+    // if (packetMode)
+  }
+
   const handleSubmit = async (event) => {
-    if (props.user && props.user.loggedIn) {
-      const [valid, error] = checkParams()
-      if (valid) {
+    if (!(props.user && props.user.loggedIn)) {
+      fcl.authenticate()
+      return
+    }
+
+    const [isBasicParamsValid, basicError] = checkBasicParams()
+    if (!isBasicParamsValid) {
+      setShowBasicNotification(true)
+      setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: basicError })
+    }
+
+    const [isEligibilityParamsValid, eligibilityError] = checkEligibilityParams()
+    if (!isEligibilityParamsValid) {
+      setShowBasicNotification(true)
+      setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: eligibilityError })
+    }
+
         setShowBasicNotification(false)
 
-        const { claims, tokenAmount, } = whitelistWithAmountCallback
+        // Basic Params
         const _description = description ?? ''
         const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null
         const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
@@ -113,6 +156,9 @@ export default function DropCreator(props) {
         const tokenBalancePath = token.path.balance.replace("/public/", "")
         const tokenReceiverPath = token.path.receiver.replace("/public/", "")
         const _tokenAmount = tokenAmount.toFixed(8).toString()
+
+
+        const { claims, tokenAmount, } = whitelistWithAmountCallback
 
         console.log(`
           name: ${name}\n
@@ -142,13 +188,6 @@ export default function DropCreator(props) {
             router.push(`${props.user && props.user.addr}/drops/${createDropEvent.data.dropID}`)
           }
         }
-      } else {
-        setShowBasicNotification(true)
-        setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: error })
-      }
-    } else {
-      fcl.authenticate()
-    }
   }
 
   const showEligilityModeInputs = (mode) => {
@@ -191,7 +230,7 @@ export default function DropCreator(props) {
             />
           </div>
 
-          <AmountSelector mode={packetMode} setMode={setPacketMode} />
+          <PacketSelector mode={packetMode} setMode={setPacketMode} />
           <FloatPicker mode={pickerMode} />
         </div>
       )

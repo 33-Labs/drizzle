@@ -38,6 +38,7 @@ const modes = [
 
 export default function EligilityModeSelector(props) {
   const {mode, setMode} = props
+  console.log(mode)
 
   return (
       <div className="mx-auto w-full">

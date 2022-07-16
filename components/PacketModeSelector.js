@@ -14,7 +14,7 @@ export const AmountModeIdentical = {
 
 const modes = [AmountModeRandom, AmountModeIdentical]
 
-export default function AmountModeSelector(props) {
+export default function PacketModeSelector(props) {
   const {mode, setMode} = props
 
   return (
