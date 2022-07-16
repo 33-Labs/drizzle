@@ -73,8 +73,13 @@ export const EligibilityModeFLOATGroup = {
       if (!valid) {
         throw hint
       }
-      if (floatEvents.length != 1) {
-        throw Hints.InvalidFloatEvent
+
+      if (floatEvents.length == 0) {
+        throw Hints.EmptyFloatGroup
+      }
+
+      if (!threshold || isNaN(parseInt(threshold))) {
+        throw Hints.InvalidThreshold
       }
 
       const _threshold = new Decimal(threshold)

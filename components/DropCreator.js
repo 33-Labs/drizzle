@@ -6,7 +6,13 @@ import Decimal from 'decimal.js'
 
 import DropCard from './drop/DropCard'
 
-import { createDrop_FLOATs_Identical, createDrop_FLOATs_Random, createDrop_WhitelistWithAmount } from '../lib/transactions'
+import { 
+  createDrop_FLOATs_Identical, 
+  createDrop_FLOATs_Random, 
+  createDrop_WhitelistWithAmount,
+  createDrop_FLOATGroup_Identical,
+  createDrop_FLOATGroup_Random
+} from '../lib/transactions'
 import { classNames, isValidHttpUrl } from '../lib/utils'
 
 import { useRecoilState } from "recoil"
@@ -206,9 +212,39 @@ export default function DropCreator(props) {
         handleCreationResponse(res)
       }
     } else if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
+      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ? 
+        new Decimal(identicalAmount).toFixed(8).toString() : null
+      let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
+        new Decimal(totalAmount).toFixed(8).toString() : null
+      let _threshold = !isNaN(parseFloat(threshold)) ?
+        threshold : "1"
+      
+      console.log("Extra Params: ", {
+        groupName: floatGroup.groupName,
+        groupHost: floatGroup.groupHost,
+        identicalAmount: _identicalAmount,
+        totalAmount: _totalAmount,
+        threshold: _threshold
+      })
 
+      if (packetMode.key === PacketModeIdentical.key) {
+        const res = await createDrop_FLOATGroup_Identical(
+          params.name, params.description, params.image, params.url, params.startAt,
+          params.endAt, params.token, floatGroup.groupName, floatGroup.groupHost, capacity, _identicalAmount,
+          _threshold, setTransactionInProgress, setTransactionStatus
+        )
+  
+        handleCreationResponse(res)
+      } else if (packetMode.key === PacketModeRandom.key) {
+        const res = await createDrop_FLOATGroup_Random(
+          params.name, params.description, params.image, params.url, params.startAt,
+          params.endAt, params.token, floatGroup.groupName, floatGroup.groupHost, capacity, _threshold, _totalAmount,
+          setTransactionInProgress, setTransactionStatus
+        )
+  
+        handleCreationResponse(res)
+      }
     }
-
   }
 
   const handleCreationResponse = (res) => {
