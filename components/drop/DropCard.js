@@ -134,7 +134,7 @@ export default function DropCard(props) {
         </div>
       </div>
       <div className="flex flex-col gap-y-8">
-        <CriteriaCard mode={props.eligilityMode} />
+        <CriteriaCard mode={props.eligibilityMode} />
         <ClaimCard
           isPreview={isPreview}
           claimStatus={claimStatus}

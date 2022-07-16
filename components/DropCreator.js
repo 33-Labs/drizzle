@@ -20,7 +20,7 @@ import {
 } from "../lib/atoms"
 import CSVSelector from './toolbox/CSVSelector'
 import WhitelistWithAmount from './eligibility/WhitelistWithAmountReviewer'
-import EligilityModeSelector, { EligilityModeWhitelistWitAmount } from './eligibility/EligilityModeSelector'
+import EligibilityModeSelector, { EligibilityModeWhitelistWitAmount } from './eligibility/EligibilityModeSelector'
 import FloatPicker, { FloatModeFloat, FloatModeFloatEvent, FloatModeFloatGroup, PickerModeFloat, PickerModeFloatGroup } from './float/FloatPicker'
 import PacketSelector from './eligibility/PacketSelector'
 import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
@@ -58,14 +58,23 @@ export default function DropCreator(props) {
   const [startAt, setStartAt] = useState(null)
   const [endAt, setEndAt] = useState(null)
 
-  const [eligilityMode, setEligilityMode] = useState(null)
-  const [packetMode, setPacketMode] = useState(null)
+  const [eligibilityMode, setEligibilityMode] = useState(null)
 
   // For WhitelistWithAmountReviewer
   const [whitelistWithAmountReviewerCallback, setWhitelistWithAmountReviewerCallback] = useState(null)
 
-  // For FloatReviewer
-  const [floatReviewerCallback, setFloatReviewerCallback] = useState(null)
+  // For Float
+  // [{eventID: xxx, eventHost: xxx}]
+  const [floatEvents, setFloatEvents] = useState([])
+  // {groupName: xxx, groupHost: xxx}
+  const [floatGroup, setFloatGroup]= useState(null)
+
+  // For Packet
+  const [packetMode, setPacketMode] = useState(null)
+  const [threshold, setThreshold] = useState('')
+  const [capacity, setCapacity] = useState('')
+  const [identicalAmount, setIdenticalAmount] = useState('')
+  const [totalAmount, setTotalAmount] = useState('')
 
   // For Packet
   // const [packetCallback, setPacketCallback] = useState(null)
@@ -99,14 +108,14 @@ export default function DropCreator(props) {
   }
 
   const checkEligibilityParams = () => {
-    if (eligilityMode.key === "FLOATGroup") {
+    if (eligibilityMode.key === "FLOATGroup") {
       return [true, {}]
     }
-    if (eligilityMode.key === "FLOAT") {
+    if (eligibilityMode.key === "FLOAT") {
 
       return [true, {}]
     }
-    if (eligilityMode.key === "WhitelistWithAmount") {
+    if (eligibilityMode.key === "WhitelistWithAmount") {
       if (!whitelistWithAmountCallback) {
         return [false, Hints.NeedProcessRA]
       }
@@ -187,7 +196,7 @@ export default function DropCreator(props) {
     }
   }
 
-  const showEligilityModeInputs = (mode) => {
+  const showEligibilityModeInputs = (mode) => {
     if (!mode) { return null }
     if (mode.key == "WhitelistWithAmount") {
       return (
@@ -203,20 +212,18 @@ export default function DropCreator(props) {
     }
 
     if (mode.key === "FLOAT" || mode.key === "FLOATGroup") {
-      let floatMode = FloatModeFloatEvent
-      if (mode.key === "FLOATGroup") {
-        floatMode = FloatModeFloatGroup
-      }
-
       return (
         <FloatReviewer
           user={props.user}
-          token={token}
-          setToken={setToken}
-          tokenBalance={tokenBalance}
-          setTokenBalance={setTokenBalance}
-          floatMode={floatMode}
-          callback={setFloatReviewerCallback}
+          token={token} setToken={setToken}
+          tokenBalance={tokenBalance} setTokenBalance={setTokenBalance}
+          packetMode={packetMode} setPacketMode={setPacketMode}
+          capacity={capacity} setCapacity={setCapacity}
+          identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
+          totalAmount={totalAmount} setTotalAmount={setTotalAmount}
+          floatMode={mode.detail}
+          threshold={threshold} setThreshold={setThreshold}
+          setFloatEvents={setFloatEvents} setFloatGroup={setFloatGroup}
         />
       )
     }
@@ -246,7 +253,7 @@ export default function DropCreator(props) {
           startAt={startAt}
           endAt={endAt}
           amount={AmountPlaceholder}
-          eligilityMode={eligilityMode}
+          eligibilityMode={eligibilityMode}
         />
       </div>
 
@@ -260,26 +267,26 @@ export default function DropCreator(props) {
 
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            Eligility
+            Eligibility
           </label>
-          <EligilityModeSelector mode={eligilityMode} setMode={setEligilityMode} />
+          <EligibilityModeSelector mode={eligibilityMode} setMode={setEligibilityMode} />
         </div>
 
-        {showEligilityModeInputs(eligilityMode)}
+        {showEligibilityModeInputs(eligibilityMode)}
 
         {/** create button */}
         <div className="w-full mt-16 flex flex-col gap-y-2 items-center">
           <button
             type="button"
             className={classNames(
-              (transactionInProgress || !eligilityMode) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || !eligibilityMode) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               "w-full h-[60px] text-xl font-semibold rounded-2xl shadow-sm text-black"
             )}
-            disabled={transactionInProgress || !eligilityMode}
+            disabled={transactionInProgress || !eligibilityMode}
             onClick={handleSubmit}
           >
             {props.user.loggedIn ?
-              (eligilityMode ? "CREATE" : "Select a mode") : "Connect Wallet"}
+              (eligibilityMode ? "CREATE" : "Select a mode") : "Connect Wallet"}
           </button>
         </div>
       </div>

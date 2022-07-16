@@ -1,9 +1,9 @@
 import { CheckCircleIcon } from "@heroicons/react/outline"
-import { EligilityModeWhitelistWitAmount } from "../eligibility/EligilityModeSelector"
+import { EligibilityModeWhitelistWitAmount } from "../eligibility/EligibilityModeSelector"
 
 export default function CriteriaCard(props) {
   const isEligible = props.isEligible ?? false
-  const eligilityMode = props.mode|| EligilityModeWhitelistWitAmount
+  const eligibilityMode = props.mode|| EligibilityModeWhitelistWitAmount
 
   return (
     <div className="p-5 w-full min-w-[240px]
@@ -16,7 +16,7 @@ export default function CriteriaCard(props) {
     `}>
         <CheckCircleIcon className="shrink-0 h-6 w-6 text-drizzle-green" aria-hidden="true" />
         <label className="font-flow font-bold text-base">
-          {eligilityMode.criteria()}
+          {eligibilityMode.criteria()}
         </label>
       </div>
     </div>

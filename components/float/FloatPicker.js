@@ -12,10 +12,11 @@ import Decimal from 'decimal.js'
 import FloatEventList from './FloatEventList'
 
 export const FloatModeFloatEvent = {
+  key: "FLOATEvent",
   title: "FLOAT Event",
   description: `Enter event id and event host, concat them with "@". For instance: 98963710@0x257c27ba4951541d`,
   placeholder: "98963710@0x257c27ba4951541d",
-  inputHandler: async (raw) => {
+  inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
     console.log(result)
     if (result.length != 2) {
@@ -32,20 +33,16 @@ export const FloatModeFloatEvent = {
       throw "Invalid event id"
     } 
 
-    const event = await getFloatEvent(host, id)
-    if (event) {
-      return [event]
-    }
-
-    return []
+    return [{eventID: id, eventHost: host}]
   }
 }
 
 export const FloatModeFloatGroup = {
+  key: "FLOATGroup",
   title: "FLOAT Group",
   description: `Enter group name and event host, concat them with "@". For instance: Drizzle@0x257c27ba4951541d`,
   placeholder: "Drizzle@0x257c27ba4951541d",
-  inputHandler: async (raw) => {
+  inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
     console.log(result)
     if (result.length != 2) {
@@ -57,9 +54,7 @@ export const FloatModeFloatGroup = {
       throw "Invalid address"
     }
 
-    const events = await getFloatEventsInGroup(host, groupName)
-    console.log(events)
-    return events.sort((a, b) => b.eventId - a.eventId)
+    return {groupName: groupName, groupHost: host}
   }
 }
 
@@ -69,18 +64,24 @@ export default function FloatPicker(props) {
   const [transactionInProgress, ] = useRecoilState(transactionInProgressState)
 
   const [rawEventStr, setRawEventStr] = useState('')
-  const [floatEvents, setFloatEvents] = useState([])
-  const [threshold, setThreshold] = useState(1)
-
+  const [eventList, setEventList] = useState([])
 
   // FLOAT || FLOATGroup
-  const mode = props.mode || PickerModeFloat
+  const mode = props.mode || FloatModeFloatEvent
   const disabled = props.disabled || false
 
+  const {
+    threshold, setThreshold,
+    setFloatEvents,
+    setFloatGroup
+  } = props
+
   useEffect(() => {
-    setFloatEvents([])
-    setRawEventStr('')
     setThreshold('')
+    setEventList([])
+    setFloatEvents([])
+    setFloatGroup(null)
+    setRawEventStr('')
   }, [mode])
 
   return (
@@ -114,10 +115,34 @@ export default function FloatPicker(props) {
           disabled={transactionInProgress}
           onClick={async () => {
             setShowBasicNotification(false)
-            if (rawEventStr) {
+            if (rawEventStr && mode) {
               try {
-                const floatEvents = await mode.inputHandler(rawEventStr)
-                setFloatEvents(floatEvents)
+                let events = []
+                if (mode.key === "FLOATEvent") {
+                  const floatEvents = await mode.inputHandler(rawEventStr)
+                  for (let i = 0; i < floatEvents.length; i++) {
+                    let floatEvent = floatEvents[i]
+                    let event = await getFloatEvent(floatEvent.eventHost, floatEvent.eventID)
+                    if (event) {
+                      events.push(event)
+                    }
+                  }
+                  if (events.length > 0) {
+                    setFloatEvents(floatEvents)
+                    setEventList(events)
+                  }
+                } else if (mode.key === "FLOATGroup") {
+                  const group = await mode.inputHandler(rawEventStr)
+                  console.log("group: ", group)
+                  const _events = await getFloatEventsInGroup(group.groupHost, group.groupName)
+                  // console.log(events)
+                  if (_events) {
+                    events = _events.sort((a, b) => b.eventId - a.eventId)
+                    setFloatGroup(group)
+                    setEventList(events)
+                  }
+                }
+
               } catch (error) {
                 console.log("error is ", error)
                 let err = error.message || error
@@ -130,11 +155,11 @@ export default function FloatPicker(props) {
           Sync
         </button>
       </div>
-      {floatEvents.length > 0 ?
+      {eventList.length > 0 ?
         <div className="w-full mt-2">
-        <FloatEventList events={floatEvents} /> 
+        <FloatEventList events={eventList} /> 
         {
-          floatEvents.length > 1 ?
+          eventList.length > 1 ?
           <div className="w-full flex flex-col gap-y-2 mt-1">
           <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
             <label className="block w-[75px] shrink-0 font-flow font-bold">Threshold</label>
@@ -142,12 +167,13 @@ export default function FloatPicker(props) {
               type="number"
               disabled={disabled}
               min="1"
-              max={floatEvents.length}
+              max={eventList.length}
+              value={threshold}
               id="threshold"
               className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               onChange={(event) => { setThreshold(event.target.value)}}
             />
-            <label className="shrink-0 font-float font-bold">of {floatEvents.length} FLOATs</label>
+            <label className="shrink-0 font-float font-bold">of {eventList.length} FLOATs</label>
           </div>
         </div> : null
         }

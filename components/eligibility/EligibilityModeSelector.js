@@ -1,6 +1,7 @@
 import { RadioGroup } from '@headlessui/react'
+import { FloatModeFloatEvent, FloatModeFloatGroup } from '../float/FloatPicker'
 
-export const EligilityModeWhitelistWitAmount = {
+export const EligibilityModeWhitelistWitAmount = {
   key: "WhitelistWithAmount",
   name: 'Whitelist with Amount',
   intro: 'Distribute specific amount to specific one in whitelist',
@@ -9,20 +10,22 @@ export const EligilityModeWhitelistWitAmount = {
   }
 }
 
-export const EligilityModeFLOAT = {
+export const EligibilityModeFLOAT = {
   key: "FLOAT",
   name: 'FLOAT',
   intro: 'Under construction',
+  detail: FloatModeFloatEvent,
   criteria: (eventID) => {
     let event = eventID || "{EventID}"
     return `Owns FLOAT of event #${event}`
   }
 }
 
-export const EligilityModeFLOATGroup = {
+export const EligibilityModeFLOATGroup = {
   key: "FLOATGroup",
   name: 'FLOAT Group',
   intro: 'Under construction',
+  detail: FloatModeFloatGroup,
   criteria: (groupName, threshold) => {
     let t = threshold || "1"
     let g = groupName || "{GroupName}"
@@ -31,12 +34,12 @@ export const EligilityModeFLOATGroup = {
 }
 
 const modes = [
-  EligilityModeWhitelistWitAmount,
-  EligilityModeFLOAT,
-  EligilityModeFLOATGroup
+  EligibilityModeFLOAT,
+  EligibilityModeFLOATGroup,
+  EligibilityModeWhitelistWitAmount,
 ]
 
-export default function EligilityModeSelector(props) {
+export default function EligibilityModeSelector(props) {
   const {mode, setMode} = props
   console.log(mode)
 

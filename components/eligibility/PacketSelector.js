@@ -4,20 +4,20 @@ import Decimal from 'decimal.js';
 import PacketModeSelector from "./PacketModeSelector";
 
 export default function PacketSelector(props) {
-  const mode = props.mode
-  const setMode = props.setMode
+  const {
+    mode, setMode,
+    capacity, setCapacity,
+    identicalAmount, setIdenticalAmount,
+    totalAmount, setTotalAmount
+  } = props
+  console.log(props)
   const disabled = props.disabled || false
-  const [capacity, setCapacity] = useState('')
-  const [totalAmount, setTotalAmount] = useState('')
-  const [identicalAmount, setIdenticalAmount] = useState('')
 
   useEffect(() => {
     setCapacity('')
     setTotalAmount('')
     setIdenticalAmount('')
   }, [mode])
-
-  console.log(mode)
 
   const showExtraInputs = (mode) => {
     if (!mode) { return null }

@@ -1,14 +1,20 @@
+import { useState } from 'react'
 import FloatPicker from '../float/FloatPicker'
 import PacketSelector from './PacketSelector'
 import TokenSelector from './TokenSelector'
 
 export default function FloatReviewer(props) {
-  const { user, token, setToken, 
-    tokenBalance, setTokenBalance, callback,
-    floatMode
+  const { user, 
+    token, setToken, 
+    tokenBalance, setTokenBalance, 
+    packetMode, setPacketMode,
+    capacity, setCapacity, 
+    identicalAmount, setIdenticalAmount,
+    threshold, setThreshold,
+    totalAmount, setTotalAmount,
+    floatMode,
+    setFloatEvents, setFloatGroup
   } = props
-
-  const [packetMode, setPacketMode] = useState(null)
 
   return (
     <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
@@ -19,8 +25,17 @@ export default function FloatReviewer(props) {
       onTokenSelected={setToken}
       onBalanceFetched={setTokenBalance}
     />
-    <PacketSelector mode={packetMode} setMode={setPacketMode} />
-    <FloatPicker mode={floatMode} />
+    <PacketSelector 
+      mode={packetMode} setMode={setPacketMode} 
+      capacity={capacity} setCapacity={setCapacity}
+      identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
+      totalAmount={totalAmount} setTotalAmount={setTotalAmount}
+    />
+    <FloatPicker 
+      mode={floatMode} 
+      threshold={threshold} setThreshold={setThreshold}
+      setFloatEvents={setFloatEvents} setFloatGroup={setFloatGroup}
+    />
   </div>
   )
 }
