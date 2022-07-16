@@ -50,7 +50,7 @@ export const createFUSDDrop_WhitelistWithAmount = async (signer, params) => {
 }
 
 export const createDefaultFUSDDrop_WhitelistWithAmount = async (signer, overrides = {}) => {
-  const defaultWhitelist = await getDefaultWhitelist()
+  const defaultWhitelist = await getDefaultWhitelistWithAmount()
   const FUSDInfo = await getFUSDInfo()
 
   const {whitelist, image, url, startAt, endAt, returnErr} = overrides
@@ -68,6 +68,64 @@ export const createDefaultFUSDDrop_WhitelistWithAmount = async (signer, override
   if (returnErr === true) {
     return error
   }
+  expect(error).toBeNull()
+}
+
+// ===== WHITELIST_IDENTICAL =====
+
+export const createDrop_Whitelist_Identical = async (signer, params) => {
+  const signers = [signer]
+  const txName = "create_drop_whitelist_identical"
+  return await sendTransaction({ name: txName, signers: signers, args: params})
+}
+
+export const createFUSDDrop_Whitelist_Identical = async (signer, params) => {
+  const {
+    initFlowAmount, 
+    initFUSDAmount,
+    name, description, image, url,
+    startAt, endAt,
+    FUSDInfo,
+    whitelist, capacity, amountPerPacket, threshold
+  } = params
+  if (capacity * amountPerPacket > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
+
+  await mintFlow(signer, initFlowAmount)
+  await setupFUSDVault(signer)
+
+  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
+  await checkFUSDBalance(signer, initFUSDAmount)
+
+  const args = [
+    name, description, image, url,
+    startAt, endAt,
+    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
+    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
+    whitelist, capacity, amountPerPacket, threshold 
+  ]
+  return await createDrop_Whitelist_Identical(signer, args)
+}
+
+export const createDefaultFUSDDrop_Whitelist_Identical = async (signer, overrides = {}) => {
+  const FUSDInfo = await getFUSDInfo()
+  const defaultWhitelist = await getDefaultWhitelist()
+
+  const {whitelist, image, url, startAt, endAt, capacity, amountPerPacket, threshold} = overrides
+  const args = {
+    initFlowAmount: 100.0, 
+    initFUSDAmount: 1000.0,
+    name: "TEST", 
+    description: "Test DROP", 
+    image: image || null, url: url || null,
+    startAt: startAt || null, endAt: endAt || null,
+    FUSDInfo: FUSDInfo,
+    whitelist: whitelist || defaultWhitelist,
+    capacity: capacity || 2,
+    amountPerPacket: amountPerPacket || 20.0,
+    threshold: threshold || 2
+  }
+
+  const [tx, error] = await createFUSDDrop_Whitelist_Identical(signer, args)
   expect(error).toBeNull()
 }
 
@@ -326,13 +384,23 @@ export const getFUSDInfo = async () => {
   }
 }
 
-export const getDefaultWhitelist = async () => {
+export const getDefaultWhitelistWithAmount = async () => {
   const Bob = await getAccountAddress("Bob")
   const Carl = await getAccountAddress("Carl")
 
   return {
     [Bob]: "100.0",
     [Carl]: "50.0"
+  }
+}
+
+export const getDefaultWhitelist = async () => {
+  const Bob = await getAccountAddress("Bob")
+  const Carl = await getAccountAddress("Carl")
+
+  return {
+    [Bob]: true,
+    [Carl]: true
   }
 }
 

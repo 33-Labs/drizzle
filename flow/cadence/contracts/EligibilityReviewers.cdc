@@ -47,6 +47,34 @@ pub contract EligibilityReviewers {
         }
     }
 
+    pub struct Whitelist: Drizzle.IEligibilityReviewer {
+        pub let packet: {Drizzle.IPacket}?
+        pub let whitelist: {Address: Bool}
+
+        init(packet: {Drizzle.IPacket}?, whitelist: {Address: Bool}) {
+            self.packet = packet
+            self.whitelist = whitelist
+        }
+
+        pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Drizzle.Eligibility {
+            let claimedCount = params["claimedCount"]! as! UInt32
+            let isAvailable = claimedCount < self.packet!.capacity 
+            let isEligible = self.whitelist[account] == true
+            
+            var amount = 0.0
+            if isAvailable {
+                amount = self.packet!.getAmountInPacket(params: params)
+            }
+
+            return Drizzle.Eligibility(
+                isEligible: isEligible, 
+                isAvailable: isAvailable,
+                eligibleAmount: amount,
+                extraData: {}
+            )
+        }
+    }
+
     pub struct FLOATGroup: Drizzle.IEligibilityReviewer {
         pub let packet: {Drizzle.IPacket}?
         pub let group: FLOATGroupData

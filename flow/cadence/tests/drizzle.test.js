@@ -26,6 +26,7 @@ import {
   createDefaultFUSDDrop_FLOATGroup_Random,
   createDefaultFUSDDrop_FLOATs_Identical,
   createDefaultFUSDDrop_FLOATs_Random,
+  createDefaultFUSDDrop_Whitelist_Identical,
   createDefaultEvents,
   toggleCloudPause,
   deleteDrop
@@ -326,6 +327,81 @@ describe("DROP - Management", () => {
     expect(error2.message.includes("Could not borrow drop")).toBeTruthy()
 
     await checkFUSDBalance(Alice, 1000.0)
+  })
+})
+
+describe("Drop - Whitelist", () => {
+  beforeEach(async () => {
+    const basePath = path.resolve(__dirname, "..")
+    const port = 8080
+    await init(basePath, { port })
+    await emulator.start(port)
+    await new Promise(r => setTimeout(r, 2000));
+    return await deployContracts()
+  })
+
+  afterEach(async () => {
+    await emulator.stop();
+    return await new Promise(r => setTimeout(r, 2000));
+  })
+
+  it("Whitelist - Should be ok if we create drop with valid params", async () => {
+    const Alice = await getAccountAddress("Alice")
+    await createDefaultFUSDDrop_Whitelist_Identical(Alice)
+  })
+
+  it("Whitelist - Should be ok for eligible claimers to claim their reward", async () => {
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+    await createDefaultFUSDDrop_Whitelist_Identical(Alice)
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const drop = await getDrop(dropID, Alice)
+    expect(parseFloat(drop.claimedAmount)).toBe(0.0)
+
+    const preClaimed = await getClaimStatus(dropID, Alice, Bob)
+    // pub enum ClaimStatusCode: UInt8 {
+    //   pub case ok
+    //   pub case ineligible
+    //   pub case unavailable
+    //   pub case claimed
+    //   pub case notStartYet
+    //   pub case ended
+    //   pub case paused
+    //   pub case others
+    // }
+    expect(preClaimed.code.rawValue).toBe(0)
+    const eligibleAmount = parseFloat(preClaimed.eligibleAmount)
+    expect(eligibleAmount).toBe(20.0)
+
+    const [, error] = await claimDrop(dropID, Alice, Bob)
+    expect(error).toBeNull()
+
+    await checkFUSDBalance(Bob, eligibleAmount)
+
+    const postClaimed = await getClaimStatus(dropID, Alice, Bob)
+    expect(postClaimed.code.rawValue).toBe(3)
+
+    const record = await getClaimedRecord(dropID, Alice, Bob)
+    expect(record.address).toBe(Bob)
+    expect(parseFloat(record.amount)).toBe(eligibleAmount)
+
+    const postDrop = await getDrop(dropID, Alice)
+    expect(parseFloat(postDrop.claimedAmount)).toBe(eligibleAmount)
+  })
+
+  it("Whitelist - Should not be ok for claimers to claim if they are not eligible", async () => {
+    const Alice = await getAccountAddress("Alice")
+    const Dave = await getAccountAddress("Dave")
+    await createDefaultFUSDDrop_Whitelist_Identical(Alice)
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const [, error] = await claimDrop(dropID, Alice, Dave)
+    expect(error.includes("not eligible")).toBeTruthy()
   })
 })
 
