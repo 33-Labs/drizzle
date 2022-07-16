@@ -26,6 +26,7 @@ import PacketSelector from './eligibility/PacketSelector'
 import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
 import FloatReviewer from './eligibility/FLOATReviewer'
 import BasicInfoBoard from './creator/BasicInfoBoard'
+import Hints from '../lib/hints'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -71,38 +72,27 @@ export default function DropCreator(props) {
 
   const checkBasicParams = () => {
     if (!name || name.trim() == "") {
-      return [false, "invalid name"]
+      return [false, Hints.InvalidName]
     }
 
     if (url && !isValidHttpUrl(url)) {
-      return [false, "invalid url"]
+      return [false, Hints.InvalidURL]
     }
 
     if (!token) {
-      return [false, "invalid token"]
+      return [false, Hints.InvalidToken]
     }
 
     if (bannerSize > 500000) {
-      return [false, "banner oversize"]
+      return [false, Hints.BannerOversize]
     }
 
     if (endAt && endAt.getTime() < (new Date()).getTime()) {
-      return [false, "drop ended"]
+      return [false, Hints.DropEnded]
     }
 
     if (startAt && endAt && startAt.getTime() >= endAt.getTime()) {
-      return [false, "start time should be less than end time"]
-    }
-
-    // TODO: should be checked only if WhitelistWithAmount be selected
-    if (!whitelistWithAmountCallback) {
-      return [false, "please process claims"]
-    }
-    if (whitelistWithAmountCallback.invalidRecordsCount > 0) {
-      return [false, "there are some invalid records"]
-    }
-    if (whitelistWithAmountCallback.tokenAmount.cmp(tokenBalance) != -1) {
-      return [false, "insufficient balance"]
+      return [false, Hints.InvalidTimeLimit]
     }
 
     return [true, null]
@@ -118,15 +108,15 @@ export default function DropCreator(props) {
     }
     if (eligilityMode.key === "WhitelistWithAmount") {
       if (!whitelistWithAmountCallback) {
-        return [false, "Please process Recipients & Amounts"]
+        return [false, Hints.NeedProcessRA]
       }
       if (whitelistWithAmountCallback.invalidRecordsCount > 0) {
-        return [false, "There are some invalid records"]
+        return [false, Hints.HaveInvalidRecords]
       }
       if (whitelistWithAmountCallback.tokenAmount.cmp(tokenBalance) != -1) {
-        return [false, "Insufficient balance"]
+        return [false, Hints.InsufficientBalance]
       }
-      return [true, "valid"]
+      return [true, Hints.Valid]
     }
   }
 
@@ -140,33 +130,34 @@ export default function DropCreator(props) {
       return
     }
 
+    setShowBasicNotification(false)
+
     const [isBasicParamsValid, basicError] = checkBasicParams()
     if (!isBasicParamsValid) {
       setShowBasicNotification(true)
       setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: basicError })
+      return
     }
 
     const [isEligibilityParamsValid, eligibilityError] = checkEligibilityParams()
     if (!isEligibilityParamsValid) {
       setShowBasicNotification(true)
       setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: eligibilityError })
+      return
     }
 
-        setShowBasicNotification(false)
+    // Basic Params
+    const _description = description ?? ''
+    const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null
+    const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
+    const tokenProviderPath = token.path.vault.replace("/storage/", "")
+    const tokenBalancePath = token.path.balance.replace("/public/", "")
+    const tokenReceiverPath = token.path.receiver.replace("/public/", "")
+    const _tokenAmount = tokenAmount.toFixed(8).toString()
 
-        // Basic Params
-        const _description = description ?? ''
-        const _startAt = startAt ? `${startAt.getTime() / 1000}.0` : null
-        const _endAt = endAt ? `${endAt.getTime() / 1000}.0` : null
-        const tokenProviderPath = token.path.vault.replace("/storage/", "")
-        const tokenBalancePath = token.path.balance.replace("/public/", "")
-        const tokenReceiverPath = token.path.receiver.replace("/public/", "")
-        const _tokenAmount = tokenAmount.toFixed(8).toString()
+    const { claims, tokenAmount, } = whitelistWithAmountCallback
 
-
-        const { claims, tokenAmount, } = whitelistWithAmountCallback
-
-        console.log(`
+    console.log(`
           name: ${name}\n
           desc: ${_description}\n
           url: ${url}\n
@@ -183,17 +174,17 @@ export default function DropCreator(props) {
           banner: ${banner}
         `)
 
-        const res = await createDrop_WhitelistWithAmount(
-          name, _description, banner, url, _startAt,
-          _endAt, token, claims, _tokenAmount, setTransactionInProgress, setTransactionStatus
-        )
+    const res = await createDrop_WhitelistWithAmount(
+      name, _description, banner, url, _startAt,
+      _endAt, token, claims, _tokenAmount, setTransactionInProgress, setTransactionStatus
+    )
 
-        if (res && res.status === 4 && res.statusCode === 0) {
-          const createDropEvent = res.events.find((e) => e.data.dropID)
-          if (createDropEvent) {
-            router.push(`${props.user && props.user.addr}/drops/${createDropEvent.data.dropID}`)
-          }
-        }
+    if (res && res.status === 4 && res.statusCode === 0) {
+      const createDropEvent = res.events.find((e) => e.data.dropID)
+      if (createDropEvent) {
+        router.push(`${props.user && props.user.addr}/drops/${createDropEvent.data.dropID}`)
+      }
+    }
   }
 
   const showEligilityModeInputs = (mode) => {
@@ -218,7 +209,7 @@ export default function DropCreator(props) {
       }
 
       return (
-        <FloatReviewer 
+        <FloatReviewer
           user={props.user}
           token={token}
           setToken={setToken}
@@ -228,22 +219,6 @@ export default function DropCreator(props) {
           callback={setFloatReviewerCallback}
         />
       )
-      // return (
-      //   <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
-      //     border-4 border-drizzle-green/30 border-dashed">
-      //     <div>
-      //       <TokenSelector
-      //         user={props.user}
-      //         className="w-full"
-      //         onTokenSelected={setToken}
-      //         onBalanceFetched={setTokenBalance}
-      //       />
-      //     </div>
-
-      //     <PacketSelector mode={packetMode} setMode={setPacketMode} />
-      //     <FloatPicker mode={pickerMode} />
-      //   </div>
-      // )
     }
 
     return null
@@ -276,12 +251,13 @@ export default function DropCreator(props) {
       </div>
 
       <div className="flex flex-col gap-y-10">
-        <BasicInfoBoard 
+        <BasicInfoBoard
           setBanner={setBanner} setBannerSize={setBannerSize}
           setName={setName} setURL={setURL} setDescription={setDescription}
           timeLockEnabled={timeLockEnabled} setTimeLockEnabled={setTimeLockEnabled}
           setStartAt={setStartAt} setEndAt={setEndAt}
         />
+
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
             Eligility
