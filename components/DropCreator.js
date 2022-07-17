@@ -1,5 +1,4 @@
 import { useState } from 'react'
-
 import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'

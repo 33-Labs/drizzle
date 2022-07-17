@@ -1,57 +1,116 @@
 import Decimal from "decimal.js"
+import { convertCadenceDateTime } from "../../lib/utils"
 
-const parseClaimed = (claimed) => {
-  const list = []
-  let totalAmount = new Decimal(0)
-  for (let [key, value] of Object.entries(claimed)) {
-    const amount = new Decimal(value.amount)
-    totalAmount = totalAmount.add(amount)
-    const record = { account: key, amount: amount.toString() }
-    list.push(record)
+const extractStats = (drop) => {
+  const packet = drop.eligibilityReviewer.packet
+  const symbol = drop.tokenInfo.symbol
+  const claimedCount = Object.keys(drop.claimedRecords).length
+
+  const red = "border-red-400"
+  const green = "border-drizzle-green"
+
+  if (!packet) {
+    const balance = new Decimal(drop.dropVault.balance)
+    return [
+      {
+        title: "DROP Balance",
+        content: `${balance.toString()} ${symbol}`,
+        color: balance.isZero() ? red : green
+      },
+      {
+        title: "Claimed Amount",
+        content: `${new Decimal(drop.claimedAmount).toString()} ${symbol}`,
+        color: green
+      },
+      {
+        title: "Claimed Count",
+        content: `${claimedCount}`,
+        color: green
+      }
+    ]
+  } 
+  
+  // Random
+  if (packet && packet.totalAmount) {
+    const totalAmount = new Decimal(packet.totalAmount)
+    return [
+      {
+        title: "Total Amount",
+        content: `${totalAmount.toString()} ${symbol}`,
+        color: green
+      },
+      {
+        title: `Claimed Amount`,
+        content: `${new Decimal(drop.claimedAmount).toString()} ${symbol}`,
+        color: green
+      },
+      {
+        title: "Claimed Count / Total Capacity",
+        content: `${claimedCount}/${packet.capacity}`,
+        color: claimedCount == packet.capacity ? red : green
+      }
+    ]
   }
-  return [list, totalAmount]
+
+  // Identical 
+  if (packet && packet.amountPerPacket) {
+    return [
+      {
+        title: "Total Amount",
+        content: `${new Decimal(packet.capacity).mul(new Decimal(packet.amountPerPacket)).toString()} ${symbol}`,
+        color: green
+      },
+      {
+        title: `Claimed Amount`,
+        content: `${new Decimal(drop.claimedAmount).toString()} ${symbol}`,
+        color: green
+      },
+      {
+        title: "Claimed Count / Total Capacity",
+        content: `${claimedCount}/${packet.capacity}`,
+        color: claimedCount == packet.capacity ? red : green
+      }
+    ]
+  }
+}
+
+const parseClaimed = (claimedRecords) => {
+  let claimed = []
+  for (let [address, record] of Object.entries(claimedRecords)) {
+    const _record = { 
+      account: address, 
+      amount: new Decimal(record.amount).toString(),
+      rawClaimedAt: parseFloat(record.claimedAt),
+      claimedAt: (new Date(parseFloat(record.claimedAt) * 1000)).toLocaleString()
+    }
+    claimed.push(_record)
+  }
+  return claimed.sort((a, b) => a.rawClaimedAt - b.rawClaimedAt)
 }
 
 export default function StatsCard(props) {
-  const stats = props.stats
-  const [claimed, totalAmount] = parseClaimed((stats && stats.claimed) || {})
-  const symbol = stats && stats.tokenSymbol
+  const {drop} = props
+  const symbol = drop && drop.tokenInfo.symbol
 
-  let balance = "NaN"
-  let runOut = false
-  if (stats) {
-    let b = new Decimal(stats.dropBalance)
-    balance = b.toString()
-    if (b.isZero()) {
-      runOut = true
-    }
-  }
-
+  const claimed = drop ? parseClaimed(drop.claimedRecords) : []
+  const cards = drop ? extractStats(drop) : []
   return (
     <div className="w-full flex flex-col items-center">
       <label className="text-2xl font-bold font-flow">DROP Stats</label>
       <div className="w-full flex flex-col mt-5 mb-5 justify-center gap-y-3 items-stretch
       sm:flex-row sm:gap-x-3">
-        <div className={`w-full rounded-2xl border-4 ${runOut ? "border-red-400" : "border-drizzle-green"} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]`}>
-          <label className="text-base font-medium font-flow">
-            Drop Balance
-          </label>
-          <label className="text-xl font-bold font-flow">{balance} {symbol}</label>
-        </div>
-
-        <div className="w-full rounded-2xl border-4 border-drizzle-green flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
-          <label className="text-base font-medium font-flow">
-            Claimed Amount
-          </label>
-          <label className="text-xl font-bold font-flow">{totalAmount.toString()} {symbol}</label>
-        </div>
-
-        <div className="w-full rounded-2xl border-4 border-drizzle-green flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]">
-          <label className="text-base font-medium font-flow">
-            Claimed Count
-          </label>
-          <label className="text-xl font-bold font-flow">{claimed.length}</label>
-        </div>
+        { cards.length > 0 ?
+          cards.map((card, index) => {
+            return (
+              <div key={index} className={`w-full rounded-2xl border-4 ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]`}>
+              <label className="text-base font-medium font-flow">
+                {card.title}
+              </label>
+              <label className="text-xl font-bold font-flow">{card.content}</label>
+            </div> 
+            )
+          }) : null
+        }
       </div>
 
       {claimed.length > 0 ?
@@ -68,17 +127,28 @@ export default function StatsCard(props) {
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Amount
                       </th>
+                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Claimed At
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {claimed.map((claim) => (
-                      <tr key={claim.account}>
+                    {
+                    claimed.map((claim, index) => (
+                      <tr key={index}>
                         <td className="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6">
-                          <label className="block font-medium text-gray-900 break-words max-w-[200px]">{claim.account}</label>
+                          <label className="block font-medium text-gray-900 break-words max-w-[200px]">
+                            {claim.account}
+                          </label>
                         </td>
                         <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
                           <div className="text-gray-500">
-                            {claim.amount} {symbol}
+                            {new Decimal(claim.amount).toString()} {symbol}
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
+                          <div className="text-gray-500">
+                            {claim.claimedAt}
                           </div>
                         </td>
                       </tr>

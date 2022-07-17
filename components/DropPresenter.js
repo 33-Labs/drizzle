@@ -5,12 +5,12 @@ import ManageCard from './presenter/ManageCard'
 import StatsCard from './presenter/StatsCard'
 
 export default function DropPresenter(props) {
-  const {drop, claimStatus, stats, user, host} = props
+  const {drop, claimStatus, user, host} = props
 
   return (
     <>
       {
-        (drop && claimStatus) ? (
+        (drop) ? (
           <>
             <div className="flex justify-center mb-10">
               <DropCard
@@ -22,9 +22,9 @@ export default function DropPresenter(props) {
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <StatsCard stats={stats} />
+              <StatsCard drop={drop} />
               {
-                user && (user.addr == host) ? (
+                user && user.loggedIn && claimStatus && (user.addr == host) ? (
                   <ManageCard 
                     drop={drop} 
                     manager={host}

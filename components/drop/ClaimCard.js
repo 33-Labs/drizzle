@@ -1,7 +1,8 @@
 import Decimal from "decimal.js"
 import { classNames } from "../../lib/utils"
-import { claim, test } from "../../lib/transactions"
+import { claim } from "../../lib/transactions"
 import { useSWRConfig } from 'swr'
+import * as fcl from "@onflow/fcl"
 
 import { useRecoilState } from "recoil"
 import {
@@ -15,9 +16,13 @@ import {
   // if (reviewer && reviewer.packet && reviewer.packet.totalAmount) {
   //   return ["🎲", "CLAIM TO"]
   // }
-const parseClaimStatus = (claimStatus, tokenSymbol, isPreview, reviewer) => {
+const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, reviewer) => {
   if (isPreview) { return ["👓", "YOU ARE ELIGIBLE FOR", `42 FLOW`, "PREVIEWING"] }
   const isRandomPacket = reviewer && reviewer.packet && reviewer.packet.totalAmount
+  if (!user || !user.loggedIn) {
+    return ["❓", "CONNECT WALLET TO CHECK ELIGIBILITY", null, "Connect Wallet"] 
+  }
+
   if ((!claimStatus) || claimStatus.code.rawValue === "9") { 
     return ["❓", "UNKNOWN STATUS", null, "UNKNOWN"] 
   }
@@ -67,12 +72,12 @@ export default function ClaimCard(props) {
 
   console.log(claimStatus)
   // [Emoji, Description, Amount, Title]
-  const [emoji, description, amountInfo, title] = parseClaimStatus(claimStatus, symbol, isPreview, drop && drop.eligibilityReviewer)
+  const [emoji, description, amountInfo, title] = parseClaimStatus(user, claimStatus, symbol, isPreview, drop && drop.eligibilityReviewer)
 
   return (
     <div>
       <div className="flex flex-col bg-white text-black
-      min-w-[240px] min-h-[240px] justify-center
+      min-w-[240px] sm:max-w-[240px] min-h-[240px] justify-center
   ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden p-5
   shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]
   ">
@@ -88,6 +93,11 @@ export default function ClaimCard(props) {
           )}
           disabled={isPreview || (claimStatus && claimStatus.code.rawValue != "0") || transactionInProgress}
           onClick={async () => {
+            if (!user || !user.loggedIn) {
+              fcl.authenticate()
+              return
+            }
+
             if (isPreview || (claimStatus && claimStatus.code.rawValue != "0") || !drop) {
               return
             }
@@ -97,7 +107,7 @@ export default function ClaimCard(props) {
               setTransactionStatus)
 
             mutate(["claimStatusFetcher", drop.dropID, host, user && user.addr])
-            mutate(["statsFetcher", drop.dropID, host])
+            mutate(["dropFetcher", drop.dropID, host])
           }}
         >
           {title}

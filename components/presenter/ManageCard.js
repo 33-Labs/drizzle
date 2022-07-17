@@ -70,7 +70,7 @@ export default function ManageCard(props) {
               }
             }}
           >
-            {claimStatus.code.rawValue === "6" ? "Recover" : "Pause"}
+            {claimStatus && claimStatus.code.rawValue === "6" ? "Recover" : "Pause"}
           </button>
           <button
             type="button"
@@ -89,7 +89,7 @@ export default function ManageCard(props) {
                   setTransactionStatus
                 )
 
-                mutate(["statsFetcher", drop.dropID, manager])
+                mutate(["dropFetcher", drop.dropID, manager])
               }
             }}>
             Withdraw Funds
@@ -154,7 +154,7 @@ export default function ManageCard(props) {
                   )
                   
                   setRawDepositAmt('')
-                  mutate(["statsFetcher", drop.dropID, manager])
+                  mutate(["dropFetcher", drop.dropID, manager])
                   mutate(["balanceFetcher", drop.tokenInfo, manager])
                 } catch (error) {
                   setShowBasicNotification(true)

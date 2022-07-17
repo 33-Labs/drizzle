@@ -22,10 +22,6 @@ const claimStatusFetcher = async (funcName, dropID, host, claimer) => {
   return await queryClaimStatus(dropID, host, claimer)
 }
 
-const statsFetcher = async (funcName, dropID, host) => {
-  return await queryStats(dropID, host)
-}
-
 export default function Drop(props) {
   const router = useRouter()
   const { account, dropID } = router.query
@@ -34,7 +30,6 @@ export default function Drop(props) {
 
   const [drop, setDrop] = useState(null)
   const [claimStatus, setClaimStatus] = useState(null)
-  const [stats, setStats] = useState(null)
 
   const { data: dropData, error: dropError } = useSWR(
     dropID && host ? ["dropFetcher", dropID, host] : null, dropFetcher)
@@ -42,14 +37,10 @@ export default function Drop(props) {
   const { data: claimStatusData, error: claimStatusError } = useSWR(
     dropID && host && user && user.loggedIn ? ["claimStatusFetcher", dropID, host, user.addr] : null, claimStatusFetcher)
 
-  const { data: statsData, error: statsError } = useSWR(
-    dropID && host ? ["statsFetcher", dropID, host] : null, statsFetcher)
-
   useEffect(() => {
     if (dropData) { setDrop(dropData) }
     if (claimStatusData) { setClaimStatus(claimStatusData) }
-    if (statsData) { setStats(statsData) }
-  }, [dropData, claimStatusData, statsData])
+  }, [dropData, claimStatusData])
 
   if (dropError && dropError.statusCode === 400) {
     return <Custom404 title={"DROP may not exist or deleted"} />
@@ -59,11 +50,10 @@ export default function Drop(props) {
     <>
       <div className="container mx-auto max-w-[880px] min-w-[380px] px-6">
       {
-        (drop && claimStatus) ?
+        drop ?
         <DropPresenter 
           drop={drop}
           claimStatus={claimStatus}
-          stats={stats}
           user={user}
           host={host}
         /> : 
