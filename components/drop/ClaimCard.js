@@ -11,13 +11,20 @@ import {
 
 // [Emoji, Description, Amount, Title]
 // TODO: need to handle random packet
-const parseClaimStatus = (claimStatus, tokenSymbol, isPreview) => {
+  // // Random packet
+  // if (reviewer && reviewer.packet && reviewer.packet.totalAmount) {
+  //   return ["🎲", "CLAIM TO"]
+  // }
+const parseClaimStatus = (claimStatus, tokenSymbol, isPreview, reviewer) => {
   if (isPreview) { return ["👓", "YOU ARE ELIGIBLE FOR", `42 FLOW`, "PREVIEWING"] }
-  console.log(claimStatus)
+  const isRandomPacket = reviewer && reviewer.packet && reviewer.packet.totalAmount
   if ((!claimStatus) || claimStatus.code.rawValue === "9") { 
     return ["❓", "UNKNOWN STATUS", null, "UNKNOWN"] 
   }
   if (claimStatus.code.rawValue === "0") { 
+    if (isRandomPacket) {
+      return ["🎲", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "CLAIM TO REVEAL"]
+    }
     return ["🎉", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "CLAIM"]
   }
   if (claimStatus.code.rawValue === "1") {
@@ -30,12 +37,21 @@ const parseClaimStatus = (claimStatus, tokenSymbol, isPreview) => {
     return ["🎉", "YOU HAVE CLAIMED", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "CLAIMED"]
   }
   if (claimStatus.code.rawValue === "4") {
+    if (isRandomPacket) {
+      return ["ℹ️", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "NOT START"]
+    }
     return ["ℹ️", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "NOT START"]
   }
   if (claimStatus.code.rawValue === "5") {
-    return ["⏹", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "ENDED"]
+    if (isRandomPacket) {
+      return ["⏹", "DROP ENDED", null, "ENDED"]
+    }
+    return ["⏹", "YOU WERE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "ENDED"]
   }
   if (claimStatus.code.rawValue === "6") {
+    if (isRandomPacket) {
+      return ["⏸️", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "PAUSED"]
+    }
     return ["⏸️", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "PAUSED"]
   }
 }
@@ -45,12 +61,13 @@ export default function ClaimCard(props) {
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
   const { mutate } = useSWRConfig()
 
-  const { isPreview, dropID, host, user, token, tokenInfo, claimStatus } = props
+  const { isPreview, drop, host, user, token, tokenInfo, claimStatus } = props
+  console.log("Drop ", drop)
   const symbol = isPreview ? (token && token.symbol) : (tokenInfo && tokenInfo.symbol)
 
   console.log(claimStatus)
   // [Emoji, Description, Amount, Title]
-  const [emoji, description, amountInfo, title] = parseClaimStatus(claimStatus, symbol, isPreview)
+  const [emoji, description, amountInfo, title] = parseClaimStatus(claimStatus, symbol, isPreview, drop && drop.eligibilityReviewer)
 
   return (
     <div>
@@ -71,16 +88,16 @@ export default function ClaimCard(props) {
           )}
           disabled={isPreview || (claimStatus && claimStatus.code.rawValue != "0") || transactionInProgress}
           onClick={async () => {
-            if (isPreview || (claimStatus && claimStatus.code.rawValue != "0") || !dropID) {
+            if (isPreview || (claimStatus && claimStatus.code.rawValue != "0") || !drop) {
               return
             }
 
-            await claim(dropID, host, tokenInfo,
+            await claim(drop.dropID, host, tokenInfo,
               setTransactionInProgress,
               setTransactionStatus)
 
-            mutate(["claimStatusFetcher", dropID, host, user && user.addr])
-            mutate(["statsFetcher", dropID, host])
+            mutate(["claimStatusFetcher", drop.dropID, host, user && user.addr])
+            mutate(["statsFetcher", drop.dropID, host])
           }}
         >
           {title}

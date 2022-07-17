@@ -4,7 +4,7 @@ const parseClaimed = (claimed) => {
   const list = []
   let totalAmount = new Decimal(0)
   for (let [key, value] of Object.entries(claimed)) {
-    const amount = new Decimal(value)
+    const amount = new Decimal(value.amount)
     totalAmount = totalAmount.add(amount)
     const record = { account: key, amount: amount.toString() }
     list.push(record)

@@ -102,10 +102,10 @@ pub contract Cloud {
                 ) 
             }
 
-            if self.claimedRecords[account] != nil {
+            if let record = self.claimedRecords[account] {
                 return Drizzle.ClaimStatus(
                     code: Drizzle.ClaimStatusCode.claimed,
-                    eligibleAmount: eligibility.eligibleAmount,
+                    eligibleAmount: record.amount,
                     message: "claimed",
                     extraData: extraData
                 )

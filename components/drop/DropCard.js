@@ -138,7 +138,7 @@ export default function DropCard(props) {
         <ClaimCard
           isPreview={isPreview}
           claimStatus={claimStatus}
-          dropID={dropID}
+          drop={drop}
           host={host}
           token={token}
           tokenInfo={tokenInfo}
