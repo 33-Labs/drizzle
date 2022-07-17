@@ -1,6 +1,7 @@
 import publicConfig from "../../publicConfig"
 
 const getReviewerTitle = (reviewer) => {
+  // Whitelist or WhitelistWithAmount
   if (reviewer.whitelist) {
     return "Whitelist"
   }
@@ -10,6 +11,12 @@ const getReviewerTitle = (reviewer) => {
   if (reviewer.events) {
     return "FLOAT"
   }
+}
+
+const getPacketMode = (packet) => {
+  if (packet.totalAmount) return "Random"
+  if (packet.amountPerPacket) return "Identical"
+  throw "Unknown packet"
 }
 
 export default function TagsCard(props) {
@@ -29,12 +36,12 @@ export default function TagsCard(props) {
         : null
       }
 
-      {reviewer  ?
+      {reviewer && reviewer.packet ?
         <div
           className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
           data-tip="same amount to all users">
           <label>
-            {"Identical"}
+            {getPacketMode(reviewer.packet)}
           </label>
         </div>
         : null
