@@ -11,16 +11,11 @@ import {
 } from "../../lib/atoms"
 
 // [Emoji, Description, Amount, Title]
-// TODO: need to handle random packet
-  // // Random packet
-  // if (reviewer && reviewer.packet && reviewer.packet.totalAmount) {
-  //   return ["🎲", "CLAIM TO"]
-  // }
 const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, reviewer) => {
   if (isPreview) { return ["👓", "YOU ARE ELIGIBLE FOR", `42 FLOW`, "PREVIEWING"] }
   const isRandomPacket = reviewer && reviewer.packet && reviewer.packet.totalAmount
   if (!user || !user.loggedIn) {
-    return ["❓", "CONNECT WALLET TO CHECK ELIGIBILITY", null, "Connect Wallet"] 
+    return ["👀", "CONNECT WALLET TO CHECK ELIGIBILITY", null, "Connect Wallet"] 
   }
 
   if ((!claimStatus) || claimStatus.code.rawValue === "9") { 

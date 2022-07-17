@@ -11,7 +11,8 @@ module.exports = {
         'drizzle-green': '#00d588',
         'drizzle-green-dark': '#00a368',
         'disabled-gray': '#e2e8f0',
-        'disabled-gray-dark': '#cbd5e1'
+        'disabled-gray-dark': '#cbd5e1',
+        'float-green': '#35d9ba'
       },
       fontFamily: {
         'flow': ['acumin-pro', 'sans-serif'],

@@ -8,10 +8,8 @@ import {
   transactionStatusState
 } from "../../lib/atoms"
 
-import { test } from "../../lib/transactions"
-import Decimal from "decimal.js"
 import { ExternalLinkIcon } from "@heroicons/react/outline"
-import { classNames, convertCadenceDateTime } from "../../lib/utils"
+import { convertCadenceDateTime } from "../../lib/utils"
 import ShareCard from "./ShareCard"
 import ClaimCard from "./ClaimCard"
 import CriteriaCard from "./CriteriaCard"
@@ -134,7 +132,7 @@ export default function DropCard(props) {
         </div>
       </div>
       <div className="flex flex-col gap-y-8">
-        <CriteriaCard mode={props.eligibilityMode} />
+        <CriteriaCard drop={drop} />
         <ClaimCard
           isPreview={isPreview}
           claimStatus={claimStatus}
