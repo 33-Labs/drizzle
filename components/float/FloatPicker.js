@@ -98,7 +98,7 @@ export default function FloatPicker(props) {
           type="text"
           name="deposit"
           id="deposit"
-          className="bg-drizzle-green/10 grow border-drizzle-green font-flow text-lg rounded-2xl
+          className="w-full bg-drizzle-green/10 grow border-drizzle-green font-flow text-lg rounded-2xl
           focus:ring-drizzle-green-dark focus:border-drizzle-green-dark  placeholder:text-gray-300"
           disabled={transactionInProgress}
           value={rawEventStr}
@@ -171,7 +171,7 @@ export default function FloatPicker(props) {
               max={floatEvents.length}
               value={threshold}
               id="threshold"
-              className="grow rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               onChange={(event) => { setThreshold(event.target.value)}}
             />
             <label className="shrink-0 font-float font-bold">of {floatEvents.length} FLOATs</label>

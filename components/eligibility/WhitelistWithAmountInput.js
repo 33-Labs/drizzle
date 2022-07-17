@@ -50,10 +50,10 @@ export default function WhitelistWithAmountInput(props) {
               setRawRecordsStr(event.target.value) 
             }}
           />
-          <div className="flex mt-4 gap-x-2 justify-between">
+          <div className="w-full flex mt-4 gap-x-2 justify-between">
             <button
               type="button"
-              className="h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+              className="h-12 px-6 text-base rounded-2xl font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
               onClick={() => {
                 if (!token) {
                   setShowBasicNotification(true)

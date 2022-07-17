@@ -362,7 +362,7 @@ export default function DropCreator(props) {
       </h1>
 
       {/** preview */}
-      <div className="flex justify-center mb-10">
+      {/* <div className="flex justify-center mb-10">
         <DropCard
           isPreview={true}
           banner={banner}
@@ -378,9 +378,9 @@ export default function DropCreator(props) {
           amount={AmountPlaceholder}
           eligibilityMode={eligibilityMode}
         />
-      </div>
+      </div> */}
 
-      <div className="flex flex-col gap-y-10">
+      <div className="flex flex-col gap-y-10 shadow-drizzle p-4 sm:p-8 rounded-3xl">
         <BasicInfoBoard
           setBanner={setBanner} setBannerSize={setBannerSize}
           setName={setName} setURL={setURL} setDescription={setDescription}
@@ -396,14 +396,15 @@ export default function DropCreator(props) {
         </div>
 
         {showEligibilityModeInputs(eligibilityMode)}
+      </div>
 
-        {/** create button */}
+              {/** create button */}
         <div className="w-full mt-16 flex flex-col gap-y-2 items-center">
           <button
             type="button"
             className={classNames(
               (transactionInProgress || !eligibilityMode) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
-              "w-full h-[60px] text-xl font-semibold rounded-2xl shadow-sm text-black"
+              "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
             )}
             disabled={transactionInProgress || !eligibilityMode}
             onClick={handleSubmit}
@@ -412,7 +413,6 @@ export default function DropCreator(props) {
               (eligibilityMode ? "CREATE" : "Select a mode") : "Connect Wallet"}
           </button>
         </div>
-      </div>
     </>
   )
 }

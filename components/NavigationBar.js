@@ -12,10 +12,12 @@ export default function NavigationBar(props) {
 
   const AuthedState = () => {
     return (
-      <div className="flex gap-x-2 items-center">
+      <div className="shrink truncate flex gap-x-2 items-center">
         <button 
-          className="font-flow text-lg underline decoration-drizzle-green decoration-2"
+          className="shrink truncate font-flow text-lg 
+          underline decoration-drizzle-green decoration-2"
           onClick={() => {
+            console.log("user: ", user)
             if (user) {
               router.push(`/${user.addr}`)
             }
@@ -25,7 +27,7 @@ export default function NavigationBar(props) {
         </button>
         <button
           type="button"
-          className="h-5 w-5"
+          className="h-5 w-5 min-h-[20px] min-w-[20px]"
           onClick={() => {
             fcl.unauthenticate()
             router.push("/")
@@ -44,17 +46,18 @@ export default function NavigationBar(props) {
           className="h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
           onClick={fcl.logIn}
           >
-          Connect Wallet
+            <label className="hidden sm:block">Connect Wallet</label>
+            <label className="block sm:hidden">Connect</label>
         </button>
       </div>
     )
   }
 
   return (
-    <div className="px-6 m-auto max-w-[880px] min-w-[380px] relative gap-x-2 flex items-center justify-between bg-white h-44">
+    <div className="px-6 m-auto max-w-[880px] min-w-[380px] relative gap-x-10 flex items-center justify-between bg-white h-44">
       <div className="flex items-center gap-x-2">
         <Link href="/">
-          <div className="min-w-[30px]">
+          <div className="min-w-[50px]">
             <Image src="/drizzle.png" alt="" width={50} height={50} priority />
           </div>
         </Link>
@@ -67,7 +70,7 @@ export default function NavigationBar(props) {
       </div>
 
 
-      {user.loggedIn
+      {user && user.loggedIn
         ? <AuthedState />
         : <UnauthenticatedState />
       }
