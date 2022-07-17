@@ -1,4 +1,5 @@
-
+import React from 'react'
+import Image from "next/image"
 import { useRecoilState } from "recoil"
 import {
   transactionInProgressState,
@@ -10,11 +11,20 @@ const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
 const URLPlaceholder = "https://the.link.you.want.to.add"
 
+const BasicInfoMemoizeBanner = React.memo(({ banner }) => {
+  return (
+    <div className="w-full rounded-2xl h-[144px] bg-white relative sm:max-w-[460px] ring-1 ring-black ring-opacity-10 overflow-hidden">
+      <Image priority src={banner} alt="" className="rounded-2xl" layout="fill" objectFit="cover" />
+    </div>
+  )
+})
+BasicInfoMemoizeBanner.displayName = "BasicInfoMemozieBanner"
+
 export default function BasicInfoBoard(props) {
   const [transactionInProgress,] = useRecoilState(transactionInProgressState)
 
   const {
-    setBanner, setBannerSize,
+    banner, setBanner, setBannerSize,
     setName, setURL, setDescription,
     timeLockEnabled, setTimeLockEnabled,
     setStartAt, setEndAt
@@ -24,15 +34,18 @@ export default function BasicInfoBoard(props) {
     <>
       <div className="flex flex-col gap-y-10">
         {/** image uploader */}
-        <div className="flex flex-col">
-          <label className="block text-2xl font-bold font-flow">
-            Banner
-          </label>
-          <label className="block text-md font-flow leading-6 mt-2 mb-2">Image size should be less than 500 KB</label>
-          <ImageSelector imageSelectedCallback={(_banner, _bannerSize) => {
-            setBanner(_banner)
-            setBannerSize(_bannerSize)
-          }} />
+        <div className="flex flex-col-reverse gap-y-5 sm:flex-row sm:gap-x-12">
+          <div className="flex flex-col">
+            <label className="block text-2xl font-bold font-flow">
+              Banner
+            </label>
+            <label className="block text-md font-flow leading-6 mt-2 mb-2">Banner size should not be larger than 500 KB</label>
+            <ImageSelector imageSelectedCallback={(_banner, _bannerSize) => {
+              setBanner(_banner)
+              setBannerSize(_bannerSize)
+            }} />
+          </div>
+          <BasicInfoMemoizeBanner banner={banner || "/flow-banner.jpg"} />
         </div>
 
         {/** name */}

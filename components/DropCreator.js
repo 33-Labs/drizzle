@@ -382,7 +382,7 @@ export default function DropCreator(props) {
 
       <div className="flex flex-col gap-y-10 shadow-drizzle p-4 sm:p-8 rounded-3xl">
         <BasicInfoBoard
-          setBanner={setBanner} setBannerSize={setBannerSize}
+          banner={banner} setBanner={setBanner} setBannerSize={setBannerSize}
           setName={setName} setURL={setURL} setDescription={setDescription}
           timeLockEnabled={timeLockEnabled} setTimeLockEnabled={setTimeLockEnabled}
           setStartAt={setStartAt} setEndAt={setEndAt}

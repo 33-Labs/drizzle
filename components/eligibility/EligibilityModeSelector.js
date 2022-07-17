@@ -158,7 +158,7 @@ export default function EligibilityModeSelector(props) {
               >
                 {({ active, checked }) => (
                   <>
-                    <div className="flex w-full items-center justify-between">
+                    <div className="flex w-full items-start justify-between">
                       <div className="flex items-center">
                         <div className="text-sm">
                           <RadioGroup.Label
