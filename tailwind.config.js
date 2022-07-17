@@ -17,6 +17,9 @@ module.exports = {
       fontFamily: {
         'flow': ['acumin-pro', 'sans-serif'],
       },
+      boxShadow: {
+        'drizzle': '0px 5px 25px -5px rgba(0,0,0,0.2)'
+      }
     }
   },
   plugins: [

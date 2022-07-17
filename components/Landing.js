@@ -6,7 +6,7 @@ export default function Landing(props) {
 
   return (
     <div className="mt-10 p-7 sm:p-10
-    shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.2)] rounded-3xl overflow-hidden
+    shadow-drizzle rounded-3xl overflow-hidden
     ring-1 ring-black ring-opacity-5
     bg-[url('/flow-banner.jpg')] bg-cover bg-center">
 

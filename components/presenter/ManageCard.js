@@ -48,7 +48,7 @@ export default function ManageCard(props) {
       <label className="text-2xl font-bold font-flow">Manage DROP</label>
       <div className="w-full mt-5 mb-10 
         overflow-hidden ring-1 ring-black ring-opacity-5 rounded-2xl
-        shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] 
+        shadow-drizzle 
         p-6 flex flex-col gap-y-2 items-center justify-start">
         <div className="w-full flex justify-between gap-x-3">
           <button

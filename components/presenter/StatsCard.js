@@ -28,8 +28,8 @@ const extractStats = (drop) => {
         color: green
       }
     ]
-  } 
-  
+  }
+
   // Random
   if (packet && packet.totalAmount) {
     const totalAmount = new Decimal(packet.totalAmount)
@@ -77,8 +77,8 @@ const extractStats = (drop) => {
 const parseClaimed = (claimedRecords) => {
   let claimed = []
   for (let [address, record] of Object.entries(claimedRecords)) {
-    const _record = { 
-      account: address, 
+    const _record = {
+      account: address,
       amount: new Decimal(record.amount).toString(),
       rawClaimedAt: parseFloat(record.claimedAt),
       claimedAt: (new Date(parseFloat(record.claimedAt) * 1000)).toLocaleString()
@@ -89,7 +89,7 @@ const parseClaimed = (claimedRecords) => {
 }
 
 export default function StatsCard(props) {
-  const {drop} = props
+  const { drop } = props
   const symbol = drop && drop.tokenInfo.symbol
 
   const claimed = drop ? parseClaimed(drop.claimedRecords) : []
@@ -99,15 +99,15 @@ export default function StatsCard(props) {
       <label className="text-2xl font-bold font-flow">DROP Stats</label>
       <div className="w-full flex flex-col mt-5 mb-5 justify-center gap-y-3 items-stretch
       sm:flex-row sm:gap-x-3">
-        { cards.length > 0 ?
+        {cards.length > 0 ?
           cards.map((card, index) => {
             return (
-              <div key={index} className={`w-full rounded-2xl border-4 ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)]`}>
-              <label className="text-base font-medium font-flow">
-                {card.title}
-              </label>
-              <label className="text-xl font-bold font-flow">{card.content}</label>
-            </div> 
+              <div key={index} className={`w-full rounded-2xl border-4 ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-drizzle`}>
+                <label className="text-base font-medium font-flow">
+                  {card.title}
+                </label>
+                <label className="text-xl font-bold font-flow">{card.content}</label>
+              </div>
             )
           }) : null
         }
@@ -134,25 +134,25 @@ export default function StatsCard(props) {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {
-                    claimed.map((claim, index) => (
-                      <tr key={index}>
-                        <td className="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6">
-                          <label className="block font-medium text-gray-900 break-words max-w-[200px]">
-                            {claim.account}
-                          </label>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
-                          <div className="text-gray-500">
-                            {new Decimal(claim.amount).toString()} {symbol}
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
-                          <div className="text-gray-500">
-                            {claim.claimedAt}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                      claimed.map((claim, index) => (
+                        <tr key={index}>
+                          <td className="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6">
+                            <label className="block font-medium text-gray-900 break-words max-w-[200px]">
+                              {claim.account}
+                            </label>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
+                            <div className="text-gray-500">
+                              {new Decimal(claim.amount).toString()} {symbol}
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
+                            <div className="text-gray-500">
+                              {claim.claimedAt}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
