@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { convertCadenceDateTime, getDropStatus, getEligibilityMode, getPacket } from '../lib/utils'
 
 export default function DropList(props) {
   const router = useRouter()
@@ -13,6 +14,10 @@ export default function DropList(props) {
           <h1 className="text-2xl font-bold text-gray-900">My Drops ({drops.length})</h1>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+          <div hidden className="text-green-800 bg-green-100"></div>
+          <div hidden className="text-blue-800 bg-blue-100"></div>
+          <div hidden className="text-red-800 bg-red-100"></div>
+          <div hidden className="text-yellow-800 bg-yellow-100"></div>
           <button
             type="button"
             className="inline-flex items-center rounded-2xl justify-center border border-transparent bg-drizzle-green px-4 py-2 text-sm font-medium text-black shadow-sm hover:bg-drizzle-green-dark focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
@@ -40,15 +45,25 @@ export default function DropList(props) {
                       Token
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Created at
+                      Eligibility
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Claimable
+                      Mode
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      Status
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      Created At
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {drops.map((drop) => (
+                  {drops.map((drop) => {
+                    const status = getDropStatus(drop)
+                    drop.status = status
+                    return drop
+                  }).map((drop) => (
                     <Link key={`${drop.dropID}-link`} href={`${props.user.addr}/drops/${drop.dropID}`}>
                       <tr key={drop.dropID}>
                         <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
@@ -67,13 +82,18 @@ export default function DropList(props) {
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {(new Date(parseFloat(drop.createdAt) * 1000)).toLocaleDateString()}
+                          {getEligibilityMode(drop)}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5
-                           ${drop.isClaimable ? "text-green-800 bg-green-100" : "text-red-800 bg-red-100"}`}>
-                            {drop.isClaimable ? "TRUE" : "FALSE"}
-                          </span>
+                          {getPacket(drop)}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${drop.status.tagColor}`}>
+                          {drop.status.title}
+                          </label>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {convertCadenceDateTime(drop.createdAt).toLocaleString()}
                         </td>
                       </tr>
                     </Link>
