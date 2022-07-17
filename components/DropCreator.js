@@ -86,6 +86,8 @@ export default function DropCreator(props) {
   const [identicalAmount, setIdenticalAmount] = useState('')
   const [totalAmount, setTotalAmount] = useState('')
 
+  const [showPreview, setShowPreview] = useState(false)
+
   // For Packet
   // const [packetCallback, setPacketCallback] = useState(null)
 
@@ -166,6 +168,11 @@ export default function DropCreator(props) {
     if (!isEligibilityParamsValid) {
       setShowBasicNotification(true)
       setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: eligibilityError })
+      return
+    }
+
+    if (!showPreview) {
+      setShowPreview(true)
       return
     }
 
@@ -357,30 +364,37 @@ export default function DropCreator(props) {
   return (
     <>
       {/** title */}
-      <h1 className="font-flow font-semibold text-4xl text-center mb-10">
-        Create DROP
-      </h1>
+      {showPreview ?
+        <h1 className="font-flow font-semibold text-4xl text-center mb-10">
+          Preview
+        </h1> :
+        <h1 className="font-flow font-semibold text-4xl text-center mb-10">
+          Create DROP
+        </h1>
+      }
 
       {/** preview */}
-      {/* <div className="flex justify-center mb-10">
-        <DropCard
-          isPreview={true}
-          banner={banner}
-          name={(!name || name.length == 0) ? NamePlaceholder : name}
-          url={url}
-          host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
-          createdAt={CreatedAtPlaceholder}
-          description={description ?? DescriptionPlaceholder}
-          token={token || TokenPlaceholder}
-          timeLockEnabled={timeLockEnabled}
-          startAt={startAt}
-          endAt={endAt}
-          amount={AmountPlaceholder}
-          eligibilityMode={eligibilityMode}
-        />
-      </div> */}
+      {showPreview ?
+        <div className="flex justify-center mb-10">
+          <DropCard
+            isPreview={true}
+            banner={banner}
+            name={(!name || name.length == 0) ? NamePlaceholder : name}
+            url={url}
+            host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
+            createdAt={CreatedAtPlaceholder}
+            description={description ?? DescriptionPlaceholder}
+            token={token || TokenPlaceholder}
+            timeLockEnabled={timeLockEnabled}
+            startAt={startAt}
+            endAt={endAt}
+            amount={AmountPlaceholder}
+            eligibilityMode={eligibilityMode}
+          />
+        </div> : null
+      }
 
-      <div className="flex flex-col gap-y-10 shadow-drizzle p-4 sm:p-8 rounded-3xl">
+      <div className={`${showPreview ? 'hidden' : ''} flex flex-col gap-y-10 shadow-drizzle p-4 sm:p-8 rounded-3xl`}>
         <BasicInfoBoard
           banner={banner} setBanner={setBanner} setBannerSize={setBannerSize}
           setName={setName} setURL={setURL} setDescription={setDescription}
@@ -398,21 +412,40 @@ export default function DropCreator(props) {
         {showEligibilityModeInputs(eligibilityMode)}
       </div>
 
-              {/** create button */}
-        <div className="w-full mt-16 flex flex-col gap-y-2 items-center">
-          <button
-            type="button"
-            className={classNames(
-              (transactionInProgress || !eligibilityMode) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
-              "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
-            )}
-            disabled={transactionInProgress || !eligibilityMode}
-            onClick={handleSubmit}
-          >
-            {props.user.loggedIn ?
-              (eligibilityMode ? "CREATE" : "Select a mode") : "Connect Wallet"}
-          </button>
-        </div>
+      {/** create button */}
+      <div className="w-full mt-16 flex flex-col gap-y-5 sm:flex-row sm:justify-between sm:gap-x-10 items-center">
+        {showPreview ? 
+        <button
+          type="button"
+          className={classNames(
+            transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+            "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
+          )}
+          disabled={transactionInProgress}
+          onClick={() => {
+            setShowPreview(false)
+          }}
+        >
+          BACK
+        </button> : null
+        }
+        <button
+          type="button"
+          className={classNames(
+            (transactionInProgress || !eligibilityMode) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+            "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
+          )}
+          disabled={transactionInProgress || !eligibilityMode}
+          onClick={() => {
+            handleSubmit()
+          }}
+        >
+          {props.user.loggedIn ?
+            (eligibilityMode ? 
+              (!showPreview ? "PREVIEW" : "CREATE") 
+              : "Select a mode") : "Connect Wallet"}
+        </button>
+      </div>
     </>
   )
 }
