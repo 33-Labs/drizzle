@@ -31,12 +31,12 @@ const extractStats = (drop) => {
 
   // Random
   if (packet && packet.totalAmount) {
-    const totalAmount = new Decimal(packet.totalAmount)
+    const balance = new Decimal(drop.dropVault.balance)
     return [
       {
-        title: "Total Amount",
-        content: `${totalAmount.toString()} ${symbol}`,
-        color: green
+        title: "DROP Balance",
+        content: `${balance.toString()} ${symbol}`,
+        color: balance.isZero() ? red : green
       },
       {
         title: `Claimed Amount`,
@@ -53,11 +53,12 @@ const extractStats = (drop) => {
 
   // Identical 
   if (packet && packet.amountPerPacket) {
+    const balance = new Decimal(drop.dropVault.balance)
     return [
       {
-        title: "Total Amount",
-        content: `${new Decimal(packet.capacity).mul(new Decimal(packet.amountPerPacket)).toString()} ${symbol}`,
-        color: green
+        title: "DROP Balance",
+        content: `${balance.toString()} ${symbol}`,
+        color: balance.isZero() ? red : green
       },
       {
         title: `Claimed Amount`,

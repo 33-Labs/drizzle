@@ -8,7 +8,7 @@ import {
   transactionInProgressState
 } from "../../lib/atoms"
 import CSVSelector from '../toolbox/CSVSelector'
-import { filterRecords, getWhitelistFromRecords } from '../../lib/utils'
+import { classNames, filterRecords, getWhitelistFromRecords } from '../../lib/utils'
 
 export default function WhitelistWithAmountInput(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
