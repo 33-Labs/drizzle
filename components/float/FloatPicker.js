@@ -145,11 +145,13 @@ export default function FloatPicker(props) {
                 }
 
               } catch (error) {
-                console.log("error is ", error)
                 let err = error.message || error
                 setShowBasicNotification(true)
                 setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: err })
               }
+            } else {
+              setShowBasicNotification(true)
+              setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "invalid FLOAT info or mode" })
             }
           }}
         >
