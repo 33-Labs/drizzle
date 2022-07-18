@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import Warning from '../toolbox/Warning';
 
 import PacketModeSelector from "./PacketModeSelector";
 
@@ -23,6 +24,7 @@ export default function PacketSelector(props) {
     if (mode.key === "Random") {
       return (
         <div className="w-full flex flex-col gap-y-2 mt-1">
+          <Warning content={`Someone may get higher reward than expected value by Try & Abort. This mode should only be used for fun!`}/>
           <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
             <label className="block w-[75px] shrink-0 font-flow font-bold">Capacity</label>
             <input

@@ -10,11 +10,12 @@ import { classNames, isValidFlowAddress } from "../../lib/utils"
 import { getFloatEvent, getFloatEventsInGroup } from '../../lib/float-scripts'
 import Decimal from 'decimal.js'
 import FloatEventList from './FloatEventList'
+import Warning from '../toolbox/Warning'
 
 export const FloatModeFloatEvent = {
   key: "FLOATEvent",
   title: "FLOAT Event",
-  description: `Enter event id and event host, concat them with "@". For instance: 98963710@0x257c27ba4951541d`,
+  description: `Enter event id and event host, concat them with "@". For instance: 98963710@0x257c27ba4951541d.`,
   placeholder: "98963710@0x257c27ba4951541d",
   inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
@@ -40,7 +41,7 @@ export const FloatModeFloatEvent = {
 export const FloatModeFloatGroup = {
   key: "FLOATGroup",
   title: "FLOAT Group",
-  description: `Enter group name and event host, concat them with "@". For instance: Drizzle@0x257c27ba4951541d`,
+  description: `Enter group name and event host, concat them with "@". For instance: Drizzle@0x257c27ba4951541d.`,
   placeholder: "Drizzle@0x257c27ba4951541d",
   inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
@@ -90,6 +91,7 @@ export default function FloatPicker(props) {
       <label className="block text-2xl font-bold font-flow">
         {mode.title}
       </label>
+      <Warning content="FLOAT(s) received after the creation of this DROP will not be counted in when checking eligibility." />
       <label className="block font-flow text-md leading-6 mt-2 mb-2">
         {mode.description}
       </label>
@@ -134,7 +136,6 @@ export default function FloatPicker(props) {
                   }
                 } else if (mode.key === "FLOATGroup") {
                   const group = await mode.inputHandler(rawEventStr)
-                  console.log("group: ", group)
                   const _events = await getFloatEventsInGroup(group.groupHost, group.groupName)
                   // console.log(events)
                   if (_events) {

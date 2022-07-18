@@ -31,6 +31,7 @@ pub contract Packets {
             self.totalAmount = totalAmount
         }
 
+        // Naive implementation. Someone may get higher reward than expected value by Try & Abort. This mode should only be used for fun!
         pub fun getAmountInPacket(params: {String: AnyStruct}): UFix64 {
             let claimedCount = params["claimedCount"]! as! UInt32
             let availableCapacity = self.capacity - claimedCount
