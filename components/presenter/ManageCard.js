@@ -118,7 +118,7 @@ export default function ManageCard(props) {
           </button>
         </div>
 
-        <div className="mt-4 w-full items-start">
+        {/* <div className="mt-4 w-full items-start">
           <label className="w-full text-lg font-bold font-flow">{`Funding DROP (${drop.tokenInfo.symbol})`}</label>
           <label className="block text-md font-flow leading-6 mt-2 mb-2">Your balance is {balance.toString()} {drop.tokenInfo.symbol}</label>
         </div>
@@ -165,7 +165,8 @@ export default function ManageCard(props) {
           >
             Deposit
           </button>
-        </div>
+        </div> */}
+
         {/* <div className="mt-4 w-full items-start">
           <label className="w-full text-lg font-bold font-flow">Add New Whitelist</label>
         </div>

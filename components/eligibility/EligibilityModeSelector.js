@@ -7,7 +7,7 @@ import Decimal from 'decimal.js'
 export const EligibilityModeWhitelistWitAmount = {
   key: "WhitelistWithAmount",
   name: 'Whitelist with Amount',
-  intro: 'Distribute specific amount to specific one in whitelist',
+  intro: 'Distribute specific amount to specific account in whitelist',
   criteria: () => {
     return "In whitelist"
   },
@@ -29,7 +29,7 @@ export const EligibilityModeWhitelistWitAmount = {
 export const EligibilityModeWhitelist = {
   key: "Whitelist",
   name: 'Whitelist',
-  intro: 'Under construction',
+  intro: 'Distribute tokens to accounts in whitelist. Seats are limited',
   criteria: () => {
     return "In whitelist"
   },
@@ -58,7 +58,7 @@ export const EligibilityModeWhitelist = {
 export const EligibilityModeFLOAT = {
   key: "FLOAT",
   name: 'FLOAT',
-  intro: 'Under construction',
+  intro: 'Distribute tokens to holders of specific FLOAT. Seats are limited',
   detail: FloatModeFloatEvent,
   criteria: (eventID) => {
     let event = eventID || "{EventID}"
@@ -77,19 +77,13 @@ export const EligibilityModeFLOAT = {
     } catch (error) {
       return [false, error]
     }
-
-    // NOTE: we only support single Event now
-    // const _threshold = new Decimal(threshold)
-    // if (!(_threshold.isInteger() && _threshold.isPositive() && _threshold.toNumber() <= floatEvents.length)) {
-    //   throw Hints.InvalidThreshold
-    // }
   }
 }
 
 export const EligibilityModeFLOATGroup = {
   key: "FLOATGroup",
   name: 'FLOAT Group',
-  intro: 'Under construction',
+  intro: 'Distribute tokens to holders of FLOATs in speicific FLOAT Group. Seats are limited',
   detail: FloatModeFloatGroup,
   criteria: (groupName, threshold) => {
     let t = threshold || "1"

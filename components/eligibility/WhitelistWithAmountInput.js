@@ -5,6 +5,7 @@ import Decimal from 'decimal.js'
 import {
   basicNotificationContentState,
   showBasicNotificationState,
+  transactionInProgressState
 } from "../../lib/atoms"
 import CSVSelector from '../toolbox/CSVSelector'
 import { filterRecords, getWhitelistFromRecords } from '../../lib/utils'
@@ -12,6 +13,7 @@ import { filterRecords, getWhitelistFromRecords } from '../../lib/utils'
 export default function WhitelistWithAmountInput(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
+  const [transactionInProgress] = useRecoilState(transactionInProgressState)
 
   const { token, tokenBalance, callback } = props
 
@@ -53,7 +55,11 @@ export default function WhitelistWithAmountInput(props) {
           <div className="w-full flex mt-4 gap-x-2 justify-between">
             <button
               type="button"
-              className="h-12 px-6 text-base rounded-2xl font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+              className={classNames(
+                transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                "h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-sm text-black"
+              )}
+              disabled={transactionInProgress}
               onClick={() => {
                 if (!token) {
                   setShowBasicNotification(true)

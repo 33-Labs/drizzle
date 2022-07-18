@@ -18,7 +18,6 @@ export default function NavigationBar(props) {
           text-drizzle-green-dark shadow-sm
           bg-drizzle-green/50 rounded-full px-3 py-2 leading-5"
           onClick={() => {
-            console.log("user: ", user)
             if (user) {
               router.push(`/${user.addr}`)
             }

@@ -21,7 +21,7 @@ const UINT32_MAX = 4294967295
 export const PacketModeRandom = {
   key: "Random",
   name: 'Random Amount',
-  intro: 'Distribute specific amount to specific one in whitelist',
+  intro: 'Distribute random amount of tokens to eligible account',
   checkParams: (capacity, totalAmount, tokenBalance) => {
     if (!capacity || isNaN(parseInt(capacity))) throw Hints.InvalidCapacity
     if (!totalAmount || isNaN(parseFloat(totalAmount))) throw Hints.InvalidTotalAmount
@@ -47,7 +47,7 @@ export const PacketModeRandom = {
 export const PacketModeIdentical = {
   key: "Identical",
   name: 'Identical Amount',
-  intro: 'Under construction',
+  intro: 'Distribute identical amount of tokens to eligible account',
   checkParams: (capacity, identicalAmount, tokenBalance) => {
     if (!capacity || isNaN(parseInt(capacity))) throw Hints.InvalidCapacity
     if (!identicalAmount || isNaN(parseFloat(identicalAmount))) throw Hints.InvalidIdenticalAmount

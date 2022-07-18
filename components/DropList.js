@@ -1,9 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { convertCadenceDateTime, getDropStatus, getEligibilityMode, getPacket } from '../lib/utils'
+import { useRecoilState } from "recoil"
+import {
+  transactionInProgressState
+} from "../lib/atoms"
+import { classNames, convertCadenceDateTime, getDropStatus, getEligibilityMode, getPacket } from '../lib/utils'
 
 export default function DropList(props) {
+  const [transactionInProgress] = useRecoilState(transactionInProgressState)
   const router = useRouter()
   const drops = props.drops
 
@@ -20,7 +25,12 @@ export default function DropList(props) {
           <div hidden className="text-yellow-800 bg-yellow-100"></div>
           <button
             type="button"
-            className="inline-flex items-center rounded-2xl justify-center border border-transparent bg-drizzle-green px-4 py-2 text-sm font-medium text-black shadow-sm hover:bg-drizzle-green-dark focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
+            disabled={transactionInProgress}
+            className={
+              classNames(
+                transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                "inline-flex items-center rounded-2xl justify-center border border-transparent px-4 py-2 text-sm font-medium text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
+              )}
             onClick={() => {
               router.push("/create")
             }}

@@ -4,13 +4,15 @@ import { useRecoilState } from "recoil"
 import {
   basicNotificationContentState,
   showBasicNotificationState,
+  transactionInProgressState,
 } from "../../lib/atoms"
 import CSVSelector from '../toolbox/CSVSelector'
-import { filterAddresses, getWhitelistFromAddresses } from '../../lib/utils'
+import { classNames, filterAddresses, getWhitelistFromAddresses } from '../../lib/utils'
 
 export default function WhitelistInput(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
+  const [transactionInProgress] = useRecoilState(transactionInProgressState)
 
   const { callback } = props
 
@@ -50,7 +52,11 @@ export default function WhitelistInput(props) {
           <div className="flex mt-4 gap-x-2 justify-between">
             <button
               type="button"
-              className="h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+              className={classNames(
+                transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                "h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-sm text-black"
+              )}
+              disabled={transactionInProgress}
               onClick={() => {
                 if (rawRecordsStr.trim().length == 0) {
                   setShowBasicNotification(true)

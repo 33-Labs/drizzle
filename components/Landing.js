@@ -1,9 +1,15 @@
 import * as fcl from "@onflow/fcl"
 import Image from "next/image"
 import { useRouter } from 'next/router'
+import { classNames } from "../lib/utils"
+import { useRecoilState } from "recoil"
+import {
+  transactionInProgressState
+} from "../lib/atoms"
 
 export default function Landing(props) {
   const router = useRouter()
+  const [transactionInProgress] = useRecoilState(transactionInProgressState)
 
   return (
     <div className="mt-10 flex gap-y-5 sm:gap-x-5 flex-col-reverse sm:flex-row justify-between items-center">
@@ -24,7 +30,11 @@ export default function Landing(props) {
         </label>
         <button
           type="button"
-          className="h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+          disabled={transactionInProgress}
+          className={classNames(
+            transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+            "h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black"
+          )}
           onClick={() => {
             if (props.user.loggedIn) {
               router.push("/create")
