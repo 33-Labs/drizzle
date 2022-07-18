@@ -1,41 +1,41 @@
 import * as fcl from "@onflow/fcl"
+import Image from "next/image"
 import { useRouter } from 'next/router'
 
 export default function Landing(props) {
   const router = useRouter()
 
   return (
-    <div className="mt-10 p-7 sm:p-10
-    shadow-drizzle rounded-3xl overflow-hidden
-    ring-1 ring-black ring-opacity-5
-    bg-[url('/flow-banner.jpg')] bg-cover bg-center">
-
-      <div className="
-       ring-1 ring-black ring-opacity-5
-       rounded-3xl overflow-hidden
-      w-full p-10 flex flex-col gap-y-14 items-center bg-white/[0.98]">
-        <h1 className="p-3 font-flow font-semibold text-4xl sm:text-5xl text-center">
-          An <span className="underline decoration-drizzle-green decoration-4">Airdrop</span> Tool for Everyone
-        </h1>
-
-        <div className="flex">
-          <button
-            type="button"
-            className="h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
-            onClick={() => {
-              if (props.user.loggedIn) {
-                router.push("/new_drop")
-              } else {
-                fcl.authenticate()
-              }
-            }}
-          >
-            {props.user.loggedIn ? "Create DROP" : "Connect Wallet"}
-          </button>
+    <div className="mt-10 flex gap-y-5 sm:gap-x-5 flex-col-reverse sm:flex-row justify-between items-center">
+      <div className="flex flex-col gap-y-8 items-start">
+        <div className="flex flex-col gap-y-2">
+          <label className={`font-flow text-black font-bold text-5xl sm:text-6xl underline decoration-drizzle-green decoration-3`}>
+            Airdrop,
+          </label>
+          <label className={`font-flow text-black font-bold text-5xl sm:text-6xl`}>never been</label>
+          <label className={`font-flow text-black font-bold text-5xl sm:text-6xl`}>so easy</label>
         </div>
+        <label className={`-mt-5 font-flow text-gray-400 font-medium text-md sm:text-lg`}>
+          DROP to your community in one minute
+        </label>
+        <button
+          type="button"
+          className="h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
+          onClick={() => {
+            if (props.user.loggedIn) {
+              router.push("/new_drop")
+            } else {
+              fcl.authenticate()
+            }
+          }}
+        >
+          {props.user.loggedIn ? "Get Started" : "Connect Wallet"}
+        </button>
       </div>
 
-
+      <div className="w-[350px] h-[350px] sm:w-[400px] sm:h-[400px] relative">
+        <Image src="/landing.png" alt="" layout="responsive" width={400} height={400} objectFit="cover" priority />
+      </div>
     </div>
   )
 }

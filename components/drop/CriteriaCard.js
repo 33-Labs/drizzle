@@ -52,7 +52,7 @@ export default function CriteriaCard(props) {
 
   return (
     <div className="p-5 w-full min-w-[240px]
-    shadow-drizzle
+    shadow-drizzle bg-white
     ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
     sm:max-w-[240px]">
       <div className={`flex flex-col gap-y-2 ring-2 ring-drizzle-green rounded-2xl p-3 `}>

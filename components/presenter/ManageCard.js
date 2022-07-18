@@ -46,7 +46,7 @@ export default function ManageCard(props) {
   return (
     <>
       <label className="text-2xl font-bold font-flow">Manage DROP</label>
-      <div className="w-full mt-5 mb-10 
+      <div className="w-full mt-5 mb-10 bg-white
         overflow-hidden ring-1 ring-black ring-opacity-5 rounded-2xl
         shadow-drizzle 
         p-6 flex flex-col gap-y-2 items-center justify-start">

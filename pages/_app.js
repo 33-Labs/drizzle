@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
-      <div className="bg-white text-black">
+      <div className="bg-white text-black bg-[url('/bg.png')] bg-cover bg-center">
       <RecoilRoot>
         <NavigationBar user={user} />
         <Component {...pageProps} user={user} />

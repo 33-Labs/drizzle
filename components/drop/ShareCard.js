@@ -19,10 +19,9 @@ export default function ShareCard(props) {
   const logo = props.logo || "/favicon.ico"
 
   return (
-    <div>
       <div className="hidden sm:flex flex-col min-w-[240px] aspect-square justify-center
       ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
-      shadow-drizzle items-center">
+      shadow-drizzle items-center bg-white">
         <button
           disabled={props.disabled === true}
           onClick={downloadQRCode}
@@ -43,7 +42,6 @@ export default function ShareCard(props) {
             }}
           />
         </button>
-      </div>
     </div>
   )
 }

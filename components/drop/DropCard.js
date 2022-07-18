@@ -112,9 +112,9 @@ export default function DropCard(props) {
   console.log(claimStatus)
 
   return (
-    <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8 bg-white text-black">
+    <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8 text-black">
       <div className="flex flex-col
-      shadow-drizzle
+      shadow-drizzle bg-white
       ring-1 ring-black ring-opacity-5
       items-stretch rounded-3xl overflow-hidden grow
       sm:min-w-[320px]

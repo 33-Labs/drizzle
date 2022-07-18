@@ -54,7 +54,7 @@ export default function NavigationBar(props) {
   }
 
   return (
-    <div className="px-6 m-auto max-w-[880px] min-w-[380px] relative gap-x-10 flex items-center justify-between bg-white h-44">
+    <div className="px-6 m-auto max-w-[880px] min-w-[380px] relative gap-x-10 flex items-center justify-between bg-transparent h-44">
       <div className="flex items-center gap-x-2">
         <Link href="/">
           <div className="min-w-[50px]">

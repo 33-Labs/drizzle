@@ -394,7 +394,7 @@ export default function DropCreator(props) {
         </div> : null
       }
 
-      <div className={`${showPreview ? 'hidden' : ''} flex flex-col gap-y-10 shadow-drizzle p-4 sm:p-8 rounded-3xl`}>
+      <div className={`${showPreview ? 'hidden' : ''} flex flex-col gap-y-10 shadow-drizzle p-4 sm:p-8 rounded-3xl bg-white`}>
         <BasicInfoBoard
           banner={banner} setBanner={setBanner} setBannerSize={setBannerSize}
           setName={setName} setURL={setURL} setDescription={setDescription}
