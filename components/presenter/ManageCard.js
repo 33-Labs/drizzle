@@ -70,11 +70,11 @@ export default function ManageCard(props) {
                   setTransactionStatus
                 )
 
-                mutate(["claimStatusFetcher", drop.dropID, manager, manager])
+                mutate(["dropFetcher", drop.dropID, manager])
               }
             }}
           >
-            {claimStatus && claimStatus.code.rawValue === "6" ? "Recover" : "Pause"}
+            {drop && drop.isPaused ? "Recover" : "Pause"}
           </button>
           <button
             type="button"
@@ -86,7 +86,7 @@ export default function ManageCard(props) {
             onClick={async () => {
               setShowAlertModal(false)
               setAlertModalContent({
-                content: "Withdraw all funds will make it impossible for the unclaimed eligible users to claim their reward!",
+                content: "Withdraw all funds will make it impossible for the unclaimed eligible users to claim their reward and the DROP will be paused",
                 actionTitle: "Withdraw",
                 action: async () => {
                   if (drop) {

@@ -176,6 +176,7 @@ pub contract Cloud {
         }
 
         pub fun withdrawAllFunds(receiver: &{FungibleToken.Receiver}) {
+            self.isPaused = true
             if self.dropVault.balance > 0.0 {
                 let v <- self.dropVault.withdraw(amount: self.dropVault.balance)
                 receiver.deposit(from: <- v)
