@@ -14,8 +14,9 @@ export default function NavigationBar(props) {
     return (
       <div className="shrink truncate flex gap-x-2 items-center">
         <button
-          className="shrink truncate font-flow text-lg 
-          underline decoration-drizzle-green decoration-2"
+          className="shrink truncate font-flow text-base
+          text-drizzle-green-dark shadow-sm
+          bg-drizzle-green/50 rounded-full px-3 py-2 leading-5"
           onClick={() => {
             console.log("user: ", user)
             if (user) {
@@ -27,12 +28,12 @@ export default function NavigationBar(props) {
         </button>
         <button
           type="button"
-          className="h-5 w-5 min-h-[20px] min-w-[20px]"
+          className="shrink-0 bg-drizzle-green/50 rounded-full p-2"
           onClick={() => {
             fcl.unauthenticate()
             router.push("/")
           }}>
-          <LogoutIcon />
+          <LogoutIcon className="h-5 w-5 text-drizzle-green-dark" />
         </button>
       </div>
     )

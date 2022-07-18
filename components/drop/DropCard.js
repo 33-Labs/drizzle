@@ -129,8 +129,8 @@ export default function DropCard(props) {
         </div>
       </div>
       <div className="flex flex-col gap-y-8">
-        <CriteriaCard 
-          drop={drop} eligibilityMode={eligibilityMode} 
+        <CriteriaCard
+          drop={drop} eligibilityMode={eligibilityMode}
           packetMode={packetMode} floatGroup={floatGroup}
           floatEventPairs={floatEventPairs} threshold={threshold}
         />
@@ -146,7 +146,7 @@ export default function DropCard(props) {
         {
           dropID && host ?
             <ShareCard url={`${publicConfig.appURL}/${host}/drops/${dropID}`} />
-            : <ShareCard disabled={true} url={`${publicConfig.appURL}/new_drop`} />
+            : <ShareCard disabled={true} url={`${publicConfig.appURL}/create`} />
         }
       </div>
     </div>

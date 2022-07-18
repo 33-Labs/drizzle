@@ -3,7 +3,7 @@ export default function Custom404(props) {
   const detail = props.detail || "Please check the URL in the address bar and try again."
   return (
     <>
-      <div className="bg-white min-h-full px-8 py-16 sm:py-24 md:grid md:place-items-center lg:px-8">
+      <div className="min-h-full px-8 py-16 sm:py-24 md:grid md:place-items-center lg:px-8">
         <div className="max-w-max mx-auto">
           <main className="sm:flex">
             <p className="text-3xl font-bold text-red-400 sm:text-4xl">404</p>

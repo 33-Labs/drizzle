@@ -12,7 +12,7 @@ export default function Landing(props) {
           <a href="https://cointelegraph.com/news/what-is-a-crypto-airdrop-and-how-does-it-work"
             target="_blank"
             rel="noopener noreferrer">
-            <label className={`font-flow text-black font-bold text-5xl sm:text-6xl underline decoration-drizzle-green decoration-3`}>
+            <label className={`cursor-pointer font-flow text-black font-bold text-5xl sm:text-6xl underline decoration-drizzle-green decoration-3`}>
               Airdrop,
             </label>
           </a>
@@ -27,7 +27,7 @@ export default function Landing(props) {
           className="h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
           onClick={() => {
             if (props.user.loggedIn) {
-              router.push("/new_drop")
+              router.push("/create")
             } else {
               fcl.authenticate()
             }
