@@ -35,6 +35,8 @@ import BasicInfoBoard from './creator/BasicInfoBoard'
 import Hints from '../lib/hints'
 import { PacketModeIdentical, PacketModeRandom } from './eligibility/PacketModeSelector'
 import WhitelistReviewer from './eligibility/WhitelistReviewer'
+import DropCreatedModal from './creator/DropCreatedModal'
+import publicConfig from '../publicConfig'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -87,6 +89,9 @@ export default function DropCreator(props) {
   const [totalAmount, setTotalAmount] = useState('')
 
   const [showPreview, setShowPreview] = useState(false)
+
+  const [showCreatedModal, setShowCreatedModal] = useState(false)
+  const [newDropURL, setNewDropURL] = useState(null)
 
   // For Packet
   // const [packetCallback, setPacketCallback] = useState(null)
@@ -303,7 +308,9 @@ export default function DropCreator(props) {
     if (res && res.status === 4 && res.statusCode === 0) {
       const createDropEvent = res.events.find((e) => e.data.dropID)
       if (createDropEvent) {
-        router.push(`${props.user && props.user.addr}/drops/${createDropEvent.data.dropID}`)
+        const url = `${publicConfig.appURL}/${props.user && props.user.addr}/drops/${createDropEvent.data.dropID}`
+        setNewDropURL(url)
+        setShowCreatedModal(true)
       }
     }
   }
@@ -450,6 +457,7 @@ export default function DropCreator(props) {
               : "Select a mode") : "Connect Wallet"}
         </button>
       </div>
+      <DropCreatedModal open={showCreatedModal} setOpen={setShowCreatedModal} url={newDropURL} />
     </>
   )
 }

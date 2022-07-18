@@ -1,4 +1,5 @@
 import { QRCodeCanvas } from 'qrcode.react'
+import publicConfig from '../../publicConfig'
 
 const downloadQRCode = () => {
   const canvas = document.getElementById("qr-gen");
@@ -13,15 +14,17 @@ const downloadQRCode = () => {
   document.body.removeChild(downloadLink);
 };
 
-
 export default function ShareCard(props) {
-  const url = props.url
+  const url = props.url || publicConfig.appURL
   const logo = props.logo || "/favicon.ico"
+  const styles = props.styles || `hidden sm:flex flex-col min-w-[240px] aspect-square justify-center
+  ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
+  shadow-drizzle items-center bg-white`
+  const qrCodeSize = props.qrCodeSize || 200
+  const logoSize = props.logoSize || 24
 
   return (
-    <div className="hidden sm:flex flex-col min-w-[240px] aspect-square justify-center
-      ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
-      shadow-drizzle items-center bg-white">
+    <div className={styles}>
       <button
         disabled={props.disabled === true}
         onClick={downloadQRCode}
@@ -29,15 +32,15 @@ export default function ShareCard(props) {
         <QRCodeCanvas
           id="qr-gen"
           value={url}
-          size={200}
+          size={qrCodeSize}
           bgColor={"#ffffff"}
           fgColor={"#00d588"}
           level={"H"}
           includeMargin={false}
           imageSettings={{
             src: logo,
-            height: 24,
-            width: 24,
+            height: logoSize,
+            width: logoSize,
             excavate: true
           }}
         />
