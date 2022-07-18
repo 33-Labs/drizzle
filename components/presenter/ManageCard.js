@@ -4,7 +4,9 @@ import Decimal from "decimal.js"
 
 import { useRecoilState } from "recoil"
 import {
+  alertModalContentState,
   basicNotificationContentState,
+  showAlertModalState,
   showBasicNotificationState,
   transactionInProgressState,
   transactionStatusState
@@ -31,6 +33,8 @@ export default function ManageCard(props) {
   const [rawDepositAmt, setRawDepositAmt] = useState('')
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
+  const [, setShowAlertModal] = useRecoilState(showAlertModalState)
+  const [, setAlertModalContent] = useRecoilState(alertModalContentState)
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
   const { mutate } = useSWRConfig()
@@ -80,17 +84,26 @@ export default function ManageCard(props) {
             )}
             disabled={transactionInProgress}
             onClick={async () => {
-              if (drop) {
-                await withdrawAllFunds(
-                  drop.dropID,
-                  drop.tokenInfo.account,
-                  drop.tokenInfo.receiverPath.identifier,
-                  setTransactionInProgress,
-                  setTransactionStatus
-                )
-
-                mutate(["dropFetcher", drop.dropID, manager])
-              }
+              setShowAlertModal(false)
+              setAlertModalContent({
+                content: "Withdraw all funds will make it impossible for the unclaimed eligible users to claim their reward!",
+                actionTitle: "Withdraw",
+                action: async () => {
+                  if (drop) {
+                    await withdrawAllFunds(
+                      drop.dropID,
+                      drop.tokenInfo.account,
+                      drop.tokenInfo.receiverPath.identifier,
+                      setTransactionInProgress,
+                      setTransactionStatus
+                    )
+    
+                    mutate(["dropFetcher", drop.dropID, manager])
+                  }
+                }
+              })
+              setShowAlertModal(true)
+              return
             }}>
             Withdraw Funds
           </button>
@@ -102,17 +115,25 @@ export default function ManageCard(props) {
             )}
             disabled={transactionInProgress}
             onClick={async () => {
-              if (drop) {
-                await deleteDrop(
-                  drop.dropID,
-                  drop.tokenInfo.account,
-                  drop.tokenInfo.receiverPath.identifier,
-                  setTransactionInProgress,
-                  setTransactionStatus
-                )
-
-                mutate(["dropFetcher", drop.dropID, manager])
-              }
+              setShowAlertModal(false)
+              setAlertModalContent({
+                content: "Delete DROP will send all remaining tokens to your account, and no one can access the DROP again",
+                actionTitle: "Delete",
+                action: async () => {
+                  if (drop) {
+                    await deleteDrop(
+                      drop.dropID,
+                      drop.tokenInfo.account,
+                      drop.tokenInfo.receiverPath.identifier,
+                      setTransactionInProgress,
+                      setTransactionStatus
+                    )
+    
+                    mutate(["dropFetcher", drop.dropID, manager])
+                  }
+                }
+              })
+              setShowAlertModal(true)
             }}>
             Delete
           </button>

@@ -7,7 +7,7 @@ export default function Footer() {
         rel="noopener noreferrer"
         className="font-flow text-sm whitespace-pre"
       >
-        Made by <span className="underline font-bold decoration-drizzle-green decoration-2">33Lab</span> with ❤️
+        Made by <span className="underline font-bold decoration-drizzle-green decoration-2">33Labs</span> with ❤️
       </a>
     </footer>
   )

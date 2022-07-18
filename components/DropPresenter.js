@@ -3,6 +3,7 @@ import { SpinnerCircular } from 'spinners-react'
 import DropCard from './drop/DropCard'
 import ManageCard from './presenter/ManageCard'
 import StatsCard from './presenter/StatsCard'
+import AlertModal from './toolbox/AlertModal'
 
 export default function DropPresenter(props) {
   const { drop, claimStatus, user, host } = props
@@ -39,6 +40,7 @@ export default function DropPresenter(props) {
           <SpinnerCircular size={50} thickness={180} speed={100} color="#00d588" secondaryColor="#e2e8f0" />
         </div>
       }
+      <AlertModal />
     </>
   )
 }
