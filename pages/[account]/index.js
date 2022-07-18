@@ -48,7 +48,7 @@ export default function Account(props) {
           <div className="flex mt-10 h-[200px] justify-center">
             <SpinnerCircular size={50} thickness={180} speed={100} color="#00d588" secondaryColor="#e2e8f0" />
           </div> :
-          <DropList drops={drops} user={props.user} />
+          <DropList drops={drops} user={props.user} pageAccount={account} />
       }
     </div>
     </>

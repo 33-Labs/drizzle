@@ -10,20 +10,28 @@ import { classNames, convertCadenceDateTime, getDropStatus, getEligibilityMode, 
 export default function DropList(props) {
   const [transactionInProgress] = useRecoilState(transactionInProgressState)
   const router = useRouter()
-  const drops = props.drops
+  const {drops, user, pageAccount} = props
+  let isCurrentUser = false
+  if (user && user.addr === pageAccount) {
+    isCurrentUser = true
+  }
 
   return (
     <div className="p-2">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-2xl font-bold text-gray-900">My DROPs ({drops.length})</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {isCurrentUser ?  `My DROPs (${drops.length})` : `DROPs (${drops.length})`}
+          </h1>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <div hidden className="text-green-800 bg-green-100"></div>
           <div hidden className="text-blue-800 bg-blue-100"></div>
           <div hidden className="text-red-800 bg-red-100"></div>
           <div hidden className="text-yellow-800 bg-yellow-100"></div>
-          <button
+          {
+            isCurrentUser ? 
+            <button
             type="button"
             disabled={transactionInProgress}
             className={
@@ -36,7 +44,8 @@ export default function DropList(props) {
             }}
           >
             New
-          </button>
+          </button> : null
+          }
         </div>
       </div>
 
@@ -116,7 +125,7 @@ export default function DropList(props) {
         </div> :
         <div className="flex mb-10 justify-center">
           <label className="leading-[200px] font-flow font-medium text-base text-gray-500">
-            {"You haven't created DROP yet"}
+            {isCurrentUser ?  "You haven't created DROP yet" : "This account haven't created DROP yet"}
           </label>
         </div>}
     </div>

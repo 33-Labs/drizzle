@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
-      <div className="bg-white text-black bg-[url('/bg.png')] bg-cover bg-center">
+      <div className="bg-white text-black bg-[url('/bg.png')] bg-cover bg-center min-h-screen">
         <RecoilRoot>
           <Head>
             <title>drizzle | reward the ones you care</title>

@@ -1,7 +1,7 @@
 export default function Custom500() {
   return (
     <>
-      <div className="min-h-full px-8 py-16 sm:py-24 md:grid md:place-items-center lg:px-8">
+      <div className="min-h-[40vh] px-8 py-16 sm:py-24 md:grid md:place-items-center lg:px-8">
         <div className="max-w-max mx-auto">
           <main className="sm:flex">
             <p className="text-3xl font-bold text-red-400 sm:text-4xl">500</p>
