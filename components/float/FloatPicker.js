@@ -31,9 +31,9 @@ export const FloatModeFloatEvent = {
     const _id = new Decimal(id)
     if (!(_id.isInteger() && _id.isPositive())) {
       throw "Invalid event id"
-    } 
+    }
 
-    return [{eventID: id, eventHost: host}]
+    return [{ eventID: id, eventHost: host }]
   }
 }
 
@@ -54,14 +54,14 @@ export const FloatModeFloatGroup = {
       throw "Invalid address"
     }
 
-    return {groupName: groupName, groupHost: host}
+    return { groupName: groupName, groupHost: host }
   }
 }
 
 export default function FloatPicker(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
-  const [transactionInProgress, ] = useRecoilState(transactionInProgressState)
+  const [transactionInProgress,] = useRecoilState(transactionInProgressState)
 
   const [rawEventStr, setRawEventStr] = useState('')
 
@@ -158,26 +158,26 @@ export default function FloatPicker(props) {
       </div>
       {floatEvents.length > 0 ?
         <div className="w-full mt-2">
-        <FloatEventList events={floatEvents} /> 
-        {
-          floatEvents.length > 1 ?
-          <div className="w-full flex flex-col gap-y-2 mt-1">
-          <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
-            <label className="block w-[75px] shrink-0 font-flow font-bold">Threshold</label>
-            <input
-              type="number"
-              disabled={disabled}
-              min="1"
-              max={floatEvents.length}
-              value={threshold}
-              id="threshold"
-              className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              onChange={(event) => { setThreshold(event.target.value)}}
-            />
-            <label className="shrink-0 font-float font-bold">of {floatEvents.length} FLOATs</label>
-          </div>
-        </div> : null
-        }
+          <FloatEventList events={floatEvents} />
+          {
+            floatEvents.length > 1 ?
+              <div className="w-full flex flex-col gap-y-2 mt-1">
+                <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
+                  <label className="block w-[75px] shrink-0 font-flow font-bold">Threshold</label>
+                  <input
+                    type="number"
+                    disabled={disabled}
+                    min="1"
+                    max={floatEvents.length}
+                    value={threshold}
+                    id="threshold"
+                    className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                    onChange={(event) => { setThreshold(event.target.value) }}
+                  />
+                  <label className="shrink-0 font-float font-bold">of {floatEvents.length} FLOATs</label>
+                </div>
+              </div> : null
+          }
         </div>
         : null
       }

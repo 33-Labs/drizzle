@@ -414,20 +414,20 @@ export default function DropCreator(props) {
 
       {/** create button */}
       <div className="w-full mt-16 flex flex-col gap-y-5 sm:flex-row sm:justify-between sm:gap-x-10 items-center">
-        {showPreview ? 
-        <button
-          type="button"
-          className={classNames(
-            transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
-            "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
-          )}
-          disabled={transactionInProgress}
-          onClick={() => {
-            setShowPreview(false)
-          }}
-        >
-          BACK
-        </button> : null
+        {showPreview ?
+          <button
+            type="button"
+            className={classNames(
+              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
+            )}
+            disabled={transactionInProgress}
+            onClick={() => {
+              setShowPreview(false)
+            }}
+          >
+            BACK
+          </button> : null
         }
         <button
           type="button"
@@ -441,8 +441,8 @@ export default function DropCreator(props) {
           }}
         >
           {props.user.loggedIn ?
-            (eligibilityMode ? 
-              (!showPreview ? "PREVIEW" : "CREATE") 
+            (eligibilityMode ?
+              (!showPreview ? "PREVIEW" : "CREATE")
               : "Select a mode") : "Connect Wallet"}
         </button>
       </div>

@@ -5,7 +5,7 @@ import ManageCard from './presenter/ManageCard'
 import StatsCard from './presenter/StatsCard'
 
 export default function DropPresenter(props) {
-  const {drop, claimStatus, user, host} = props
+  const { drop, claimStatus, user, host } = props
 
   return (
     <>
@@ -25,10 +25,10 @@ export default function DropPresenter(props) {
               <StatsCard drop={drop} />
               {
                 user && user.loggedIn && claimStatus && (user.addr == host) ? (
-                  <ManageCard 
-                    drop={drop} 
+                  <ManageCard
+                    drop={drop}
                     manager={host}
-                    claimStatus={claimStatus} 
+                    claimStatus={claimStatus}
                   />
                 ) : null
               }

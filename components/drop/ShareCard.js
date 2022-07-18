@@ -19,29 +19,29 @@ export default function ShareCard(props) {
   const logo = props.logo || "/favicon.ico"
 
   return (
-      <div className="hidden sm:flex flex-col min-w-[240px] aspect-square justify-center
+    <div className="hidden sm:flex flex-col min-w-[240px] aspect-square justify-center
       ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
       shadow-drizzle items-center bg-white">
-        <button
-          disabled={props.disabled === true}
-          onClick={downloadQRCode}
-        >
-          <QRCodeCanvas
-            id="qr-gen"
-            value={url}
-            size={200}
-            bgColor={"#ffffff"}
-            fgColor={"#00d588"}
-            level={"H"}
-            includeMargin={false}
-            imageSettings={{
-              src: logo,
-              height: 24,
-              width: 24,
-              excavate: true
-            }}
-          />
-        </button>
+      <button
+        disabled={props.disabled === true}
+        onClick={downloadQRCode}
+      >
+        <QRCodeCanvas
+          id="qr-gen"
+          value={url}
+          size={200}
+          bgColor={"#ffffff"}
+          fgColor={"#00d588"}
+          level={"H"}
+          includeMargin={false}
+          imageSettings={{
+            src: logo,
+            height: 24,
+            width: 24,
+            excavate: true
+          }}
+        />
+      </button>
     </div>
   )
 }

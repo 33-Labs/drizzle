@@ -9,9 +9,13 @@ export default function Landing(props) {
     <div className="mt-10 flex gap-y-5 sm:gap-x-5 flex-col-reverse sm:flex-row justify-between items-center">
       <div className="flex flex-col gap-y-8 items-start">
         <div className="flex flex-col gap-y-2">
-          <label className={`font-flow text-black font-bold text-5xl sm:text-6xl underline decoration-drizzle-green decoration-3`}>
-            Airdrop,
-          </label>
+          <a href="https://cointelegraph.com/news/what-is-a-crypto-airdrop-and-how-does-it-work"
+            target="_blank"
+            rel="noopener noreferrer">
+            <label className={`font-flow text-black font-bold text-5xl sm:text-6xl underline decoration-drizzle-green decoration-3`}>
+              Airdrop,
+            </label>
+          </a>
           <label className={`font-flow text-black font-bold text-5xl sm:text-6xl`}>never been</label>
           <label className={`font-flow text-black font-bold text-5xl sm:text-6xl`}>so easy</label>
         </div>

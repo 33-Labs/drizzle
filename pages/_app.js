@@ -12,7 +12,7 @@ import TransactionNotification from '../components/toolbox/TransactionNotificati
 import BasicNotification from '../components/toolbox/BasicNotification'
 
 function MyApp({ Component, pageProps }) {
-  const [user, setUser] = useState({loggedIn: null})
+  const [user, setUser] = useState({ loggedIn: null })
   const router = useRouter()
   console.log(router.pathname)
   useEffect(() => fcl.currentUser.subscribe(setUser), [])
@@ -20,13 +20,17 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <div className="bg-white text-black bg-[url('/bg.png')] bg-cover bg-center">
-      <RecoilRoot>
-        <NavigationBar user={user} />
-        <Component {...pageProps} user={user} />
-        <Footer />
-        <TransactionNotification />
-        <BasicNotification />
-      </RecoilRoot>
+        <RecoilRoot>
+          <Head>
+            <title>drizzle | reward the ones you care</title>
+            <meta property="og:title" content="drizzle | airdrop tool" key="title" />
+          </Head>
+          <NavigationBar user={user} />
+          <Component {...pageProps} user={user} />
+          <Footer />
+          <TransactionNotification />
+          <BasicNotification />
+        </RecoilRoot>
       </div>
     </>
   )

@@ -13,7 +13,7 @@ export default function NavigationBar(props) {
   const AuthedState = () => {
     return (
       <div className="shrink truncate flex gap-x-2 items-center">
-        <button 
+        <button
           className="shrink truncate font-flow text-lg 
           underline decoration-drizzle-green decoration-2"
           onClick={() => {
@@ -32,12 +32,12 @@ export default function NavigationBar(props) {
             fcl.unauthenticate()
             router.push("/")
           }}>
-            <LogoutIcon />
+          <LogoutIcon />
         </button>
       </div>
     )
   }
-  
+
   const UnauthenticatedState = () => {
     return (
       <div>
@@ -45,9 +45,9 @@ export default function NavigationBar(props) {
           type="button"
           className="h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
           onClick={fcl.logIn}
-          >
-            <label className="hidden sm:block">Connect Wallet</label>
-            <label className="block sm:hidden">Connect</label>
+        >
+          <label className="hidden sm:block">Connect Wallet</label>
+          <label className="block sm:hidden">Connect</label>
         </button>
       </div>
     )

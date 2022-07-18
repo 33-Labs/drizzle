@@ -55,9 +55,9 @@ const MemoizeBasicInfo = React.memo(({ host, createdAt, tokenInfo, reviewer }) =
   return (
     <div className="w-full flex flex-col -mt-3">
       {
-        tokenInfo ? 
-        <TagsCard tokenInfo={tokenInfo} reviewer={reviewer} />
-        : null
+        tokenInfo ?
+          <TagsCard tokenInfo={tokenInfo} reviewer={reviewer} />
+          : null
       }
       <label className="w-full font-flow text-sm text-gray-400 break-words">
         {"Created by "}

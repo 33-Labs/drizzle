@@ -24,7 +24,6 @@ export default function BasicInfoBoard(props) {
   const [transactionInProgress,] = useRecoilState(transactionInProgressState)
 
   const {
-    hiden,
     banner, setBanner, setBannerSize,
     setName, setURL, setDescription,
     timeLockEnabled, setTimeLockEnabled,
@@ -33,7 +32,7 @@ export default function BasicInfoBoard(props) {
 
   return (
     <>
-      <div className={`${hiden ? 'hiden' : ''} flex flex-col gap-y-10`}>
+      <div className="flex flex-col gap-y-10">
         {/** image uploader */}
         <div className="flex flex-col-reverse gap-y-5 sm:flex-row sm:gap-x-12">
           <div className="flex flex-col">

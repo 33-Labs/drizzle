@@ -32,11 +32,11 @@ export default function PacketSelector(props) {
               min="1"
               value={capacity}
               className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              onChange={(event) => { setCapacity(event.target.value)}}
+              onChange={(event) => { setCapacity(event.target.value) }}
             />
           </div>
           <div className="flex items-center gap-x-2">
-          <label className="block w-[75px] shrink-0 font-flow font-bold">Total Amount</label>
+            <label className="block w-[75px] shrink-0 font-flow font-bold">Total Amount</label>
             <input
               type="number"
               disabled={disabled}
@@ -44,13 +44,13 @@ export default function PacketSelector(props) {
               min="0"
               value={totalAmount}
               className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              onChange={(event) => { setTotalAmount(event.target.value)}}
+              onChange={(event) => { setTotalAmount(event.target.value) }}
             />
           </div>
         </div>
       )
     }
-  
+
     if (mode.key === "Identical") {
       return (
         <div className="flex flex-col gap-y-2 mt-1">
@@ -63,11 +63,11 @@ export default function PacketSelector(props) {
               value={capacity}
               min="1"
               className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              onChange={(event) => { setCapacity(event.target.value)}}
+              onChange={(event) => { setCapacity(event.target.value) }}
             />
           </div>
           <div className="flex items-center gap-x-2">
-          <label className="block w-[75px] shrink-0 font-flow font-bold">Amount Per Entry</label>
+            <label className="block w-[75px] shrink-0 font-flow font-bold">Amount Per Entry</label>
             <input
               type="number"
               disabled={disabled}
@@ -75,13 +75,13 @@ export default function PacketSelector(props) {
               value={identicalAmount}
               min="0"
               className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-              onChange={(event) => { setIdenticalAmount(event.target.value)}}
+              onChange={(event) => { setIdenticalAmount(event.target.value) }}
             />
           </div>
         </div>
       )
     }
-  
+
     return null
   }
 

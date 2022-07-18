@@ -1,5 +1,4 @@
 import Decimal from "decimal.js"
-import { convertCadenceDateTime } from "../../lib/utils"
 
 const extractStats = (drop) => {
   const packet = drop.eligibilityReviewer.packet

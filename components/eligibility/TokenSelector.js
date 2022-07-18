@@ -38,9 +38,9 @@ export default function TokenSelector(props) {
     query === ""
       ? tokens
       : tokens.filter((token) => {
-          const content = `${token.name} (${token.symbol})`
-          return content.toLowerCase().includes(query.toLowerCase())
-        })
+        const content = `${token.name} (${token.symbol})`
+        return content.toLowerCase().includes(query.toLowerCase())
+      })
 
   return (
     <Combobox as="div" className={props.className} value={props.user && props.user.loggedIn && selectedToken} onChange={async (token) => {
@@ -52,13 +52,13 @@ export default function TokenSelector(props) {
             props.onBalanceFetched(balance)
           }
         })
-  
+
         setSelectedToken(token)
         props.onTokenSelected(token)
       }
     }}>
       <Combobox.Label className="block text-2xl font-flow font-bold">Token</Combobox.Label>
-      {props.user && props.user.loggedIn ? (selectedToken 
+      {props.user && props.user.loggedIn ? (selectedToken
         ? <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Your balance is {balance.toString()} {selectedToken.symbol}</Combobox.Label>
         : <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Select the token to transfer</Combobox.Label>
       ) : <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Connect wallet to select token</Combobox.Label>

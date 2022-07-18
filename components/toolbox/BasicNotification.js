@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { Transition } from '@headlessui/react'
-import { 
+import {
   InformationCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/outline'
@@ -12,13 +12,13 @@ import {
   showBasicNotificationState,
 } from "../../lib/atoms"
 
-const NotificationIcon = ({type}) => {
+const NotificationIcon = ({ type }) => {
   if (type == "exclamation") {
     return (
       <div className="flex-shrink-0">
         <ExclamationCircleIcon className="h-6 w-6 text-red-500" aria-hidden="true" />
       </div>
-    ) 
+    )
   }
 
   return (
@@ -28,11 +28,11 @@ const NotificationIcon = ({type}) => {
   )
 }
 
-NotificationIcon.displayName= "NotificationIcon"
+NotificationIcon.displayName = "NotificationIcon"
 
 export default function BasicNotification() {
   const [showBasicNotification, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
-  const [basicNotificationContent, ] = useRecoilState(basicNotificationContentState)
+  const [basicNotificationContent,] = useRecoilState(basicNotificationContentState)
   const type = basicNotificationContent && basicNotificationContent.type
   const title = basicNotificationContent && basicNotificationContent.title
   const detail = basicNotificationContent && basicNotificationContent.detail
@@ -58,7 +58,7 @@ export default function BasicNotification() {
             <div className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
               <div className="p-4">
                 <div className="flex items-start">
-                  <NotificationIcon type={type}/>
+                  <NotificationIcon type={type} />
                   <div className="ml-3 w-0 flex-1 pt-0.5">
                     <p className="text-sm font-bold font-flow text-gray-900">{title}</p>
                     <p className="mt-1 text-sm text-gray-500 break-words max-h-36 overflow-hidden">{detail}</p>

@@ -34,13 +34,13 @@ export default function ManageCard(props) {
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
   const { mutate } = useSWRConfig()
-  
-  const { data: balanceData, error: balanceError} = useSWR(
+
+  const { data: balanceData, error: balanceError } = useSWR(
     drop && manager ? ["balanceFetcher", drop.tokenInfo, manager] : null, balanceFetcher
   )
 
   useEffect(() => {
-    if (balanceData) { setBalance(balanceData)}
+    if (balanceData) { setBalance(balanceData) }
   }, [balanceData])
 
   return (
@@ -120,7 +120,7 @@ export default function ManageCard(props) {
 
         <div className="mt-4 w-full items-start">
           <label className="w-full text-lg font-bold font-flow">{`Funding DROP (${drop.tokenInfo.symbol})`}</label>
-          <label className="block text-md font-flow leading-6 mt-2 mb-2">Your balance is {balance.toString()} {drop.tokenInfo.symbol}</label> 
+          <label className="block text-md font-flow leading-6 mt-2 mb-2">Your balance is {balance.toString()} {drop.tokenInfo.symbol}</label>
         </div>
         <div className="w-full flex justify-between gap-x-3">
           <input
@@ -131,7 +131,7 @@ export default function ManageCard(props) {
             className="rounded-xl focus:ring-drizzle-green focus:border-drizzle-green bg-drizzle-green/10 grow border-drizzle-green font-flow text-sm"
             disabled={transactionInProgress}
             value={rawDepositAmt}
-            onChange={(event) => { 
+            onChange={(event) => {
               setRawDepositAmt(event.target.value)
             }}
           />
@@ -142,7 +142,7 @@ export default function ManageCard(props) {
               `rounded-xl h-12 px-6 text-base font-medium shadow-sm text-black`
             )}
             disabled={transactionInProgress}
-            onClick={ async () => {
+            onClick={async () => {
               setShowBasicNotification(false)
               if (drop) {
                 try {
@@ -152,13 +152,13 @@ export default function ManageCard(props) {
                     drop.dropID, drop.tokenInfo, amount.toFixed(8),
                     setTransactionInProgress, setTransactionStatus
                   )
-                  
+
                   setRawDepositAmt('')
                   mutate(["dropFetcher", drop.dropID, manager])
                   mutate(["balanceFetcher", drop.tokenInfo, manager])
                 } catch (error) {
                   setShowBasicNotification(true)
-                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: error}) 
+                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: error })
                 }
               }
             }}

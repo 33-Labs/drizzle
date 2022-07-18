@@ -1,6 +1,4 @@
 import { useRouter } from 'next/router'
-import Head from 'next/head'
-
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { SpinnerCircular } from 'spinners-react'

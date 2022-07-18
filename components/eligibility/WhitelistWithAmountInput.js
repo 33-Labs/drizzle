@@ -13,7 +13,7 @@ export default function WhitelistWithAmountInput(props) {
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
 
-  const {token, tokenBalance, callback} = props
+  const { token, tokenBalance, callback } = props
 
   const [rawRecordsStr, setRawRecordsStr] = useState('')
   const [validRecords, setValidRecords] = useState([])
@@ -47,7 +47,7 @@ export default function WhitelistWithAmountInput(props) {
                 setInvalidRecords([])
                 setRecordsSum(new Decimal(0))
               }
-              setRawRecordsStr(event.target.value) 
+              setRawRecordsStr(event.target.value)
             }}
           />
           <div className="w-full flex mt-4 gap-x-2 justify-between">
@@ -63,7 +63,7 @@ export default function WhitelistWithAmountInput(props) {
 
                 if (rawRecordsStr.trim().length == 0) {
                   setShowBasicNotification(true)
-                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "No recipients provided" }) 
+                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "No recipients provided" })
                   return
                 }
 
