@@ -1,4 +1,6 @@
 import publicConfig from "../../publicConfig"
+import { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelist, EligibilityModeWhitelistWitAmount } from "../eligibility/EligibilityModeSelector"
+import { PacketModeIdentical, PacketModeRandom } from "../eligibility/PacketModeSelector"
 
 const getReviewerTitle = (reviewer) => {
   // Whitelist or WhitelistWithAmount
@@ -13,47 +15,102 @@ const getReviewerTitle = (reviewer) => {
   }
 }
 
+const getReviewerTitlePreview = (eligibilityMode) => {
+  // Whitelist or WhitelistWithAmount
+  if (eligibilityMode.key === EligibilityModeWhitelist.key ||
+    eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
+    return "Whitelist"
+  }
+  if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
+    return "FLOAT Group"
+  }
+  if (eligibilityMode.key === EligibilityModeFLOAT.key) {
+    return "FLOAT"
+  }
+}
+
 const getPacketMode = (packet) => {
   if (packet.totalAmount) return "Random"
   if (packet.amountPerPacket) return "Identical"
-  throw "Unknown packet"
+  return null
+}
+
+const getPacketPreview = (packetMode) => {
+  if (packetMode.key === PacketModeIdentical.key) { return "Identical"}
+  if (packetMode.key === PacketModeRandom.key) { return "Random" }
+  return null
+}
+
+const getEligibilityTag = (reviewer, eligibilityMode) => {
+  if (reviewer) {
+    return (
+      <div
+      className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm"
+      data-tip="same amount to all users">
+      <label>
+        {getReviewerTitle(reviewer)}
+      </label>
+    </div>
+    )
+  }
+  if (eligibilityMode) {
+    return (
+      <div
+      className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm"
+      data-tip="same amount to all users">
+      <label>
+        {getReviewerTitlePreview(eligibilityMode)}
+      </label>
+    </div> 
+    )
+  }
+  return null
+}
+
+const getPacketTag = (reviewer, packetMode) => {
+  if (reviewer && reviewer.packet) {
+    return (
+      <div
+      className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
+      data-tip="same amount to all users">
+      <label>
+        {getPacketMode(reviewer.packet)}
+      </label>
+    </div>
+    ) 
+  }
+
+  if (packetMode) {
+    return (
+      <div
+      className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
+      data-tip="same amount to all users">
+      <label>
+        {getPacketPreview(packetMode)}
+      </label>
+    </div> 
+    )
+  }
+  return null
 }
 
 export default function TagsCard(props) {
-  const { tokenInfo, reviewer } = props
-  console.log(reviewer)
+  const { token, tokenInfo, reviewer, eligibilityMode, packetMode } = props
+  console.log(token)
+  const symbol = tokenInfo ? tokenInfo.symbol : (token ? token.symbol : null)
+  const identifer = tokenInfo ? tokenInfo.tokenIdentifier : (token ? `A.${token.address}.${token.contractName}` : null)
 
   return (
     <div className={`flex gap-x-1 mb-2`}>
-      {reviewer ?
-        <div
-          className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm"
-          data-tip="same amount to all users">
-          <label>
-            {getReviewerTitle(reviewer)}
-          </label>
-        </div>
-        : null
-      }
-
-      {reviewer && reviewer.packet ?
-        <div
-          className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
-          data-tip="same amount to all users">
-          <label>
-            {getPacketMode(reviewer.packet)}
-          </label>
-        </div>
-        : null
-      }
-
+      {getEligibilityTag(reviewer, eligibilityMode)}
+      {getPacketTag(reviewer, packetMode)}
       <a
-        href={`${publicConfig.flowscanURL}/contract/${tokenInfo.tokenIdentifier}`}
+        href={`${publicConfig.flowscanURL}/contract/${identifer}`}
         target="_blank"
         rel="noopener noreferrer"
         className="px-2 bg-drizzle-green rounded-full font-flow font-medium text-sm"
       >
-        <label>{tokenInfo.symbol}</label>
+        <label>{symbol}</label>
       </a>
     </div>
   )

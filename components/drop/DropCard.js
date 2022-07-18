@@ -51,14 +51,10 @@ const MemoizeName = React.memo(({ name, url }) => {
 })
 MemoizeName.displayName = "MemoizeName"
 
-const MemoizeBasicInfo = React.memo(({ host, createdAt, tokenInfo, reviewer }) => {
+const MemoizeBasicInfo = React.memo(({ host, createdAt, token, tokenInfo, reviewer, eligibilityMode, packetMode }) => {
   return (
     <div className="w-full flex flex-col -mt-3">
-      {
-        tokenInfo ?
-          <TagsCard tokenInfo={tokenInfo} reviewer={reviewer} />
-          : null
-      }
+      <TagsCard token={token} tokenInfo={tokenInfo} reviewer={reviewer} eligibilityMode={eligibilityMode} packetMode={packetMode} />
       <label className="w-full font-flow text-sm text-gray-400 break-words">
         {"Created by "}
         <span>
@@ -96,7 +92,8 @@ export default function DropCard(props) {
   const isPreview = props.isPreview == true
 
   // Only created Drop has claimStatus
-  const { drop, claimStatus, user, token } = props
+  const { drop, claimStatus, user, token,
+    eligibilityMode, packetMode, floatGroup, floatEventPairs, threshold } = props
   const dropID = (drop && drop.dropID) || props.dropID
   const name = (drop && drop.name) || props.name
   const host = (drop && drop.host) || props.host
@@ -121,10 +118,10 @@ export default function DropCard(props) {
       md:w-[480px]">
         <MemoizeBanner banner={banner || "/flow-banner.jpg"} />
         <div className="flex flex-col p-8 gap-y-5">
-
           <MemoizeName name={name} url={url} />
           <MemoizeBasicInfo
-            host={host} createdAt={createdAt} tokenInfo={tokenInfo} reviewer={reviewer}
+            host={host} createdAt={createdAt} token={token} tokenInfo={tokenInfo} reviewer={reviewer}
+            eligibilityMode={eligibilityMode} packetMode={packetMode}
           />
           {(startAt || endAt) ?
             <TimeLimitCard startAt={startAt} endAt={endAt} /> : null}
@@ -132,7 +129,11 @@ export default function DropCard(props) {
         </div>
       </div>
       <div className="flex flex-col gap-y-8">
-        <CriteriaCard drop={drop} />
+        <CriteriaCard 
+          drop={drop} eligibilityMode={eligibilityMode} 
+          packetMode={packetMode} floatGroup={floatGroup}
+          floatEventPairs={floatEventPairs} threshold={threshold}
+        />
         <ClaimCard
           isPreview={isPreview}
           claimStatus={claimStatus}

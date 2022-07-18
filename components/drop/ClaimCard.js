@@ -12,7 +12,7 @@ import {
 
 // [Emoji, Description, Amount, Title]
 const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, reviewer) => {
-  if (isPreview) { return ["👓", "YOU ARE ELIGIBLE FOR", `42 FLOW`, "PREVIEWING"] }
+  if (isPreview) { return ["🎉", "YOU ARE ELIGIBLE FOR", `42 FLOW`, "PREVIEWING"] }
   const isRandomPacket = reviewer && reviewer.packet && reviewer.packet.totalAmount
   if (!user || !user.loggedIn) {
     return ["👀", "CONNECT WALLET TO CHECK ELIGIBILITY", null, "Connect Wallet"]

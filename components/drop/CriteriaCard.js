@@ -1,5 +1,6 @@
 import { convertCadenceDateTime } from "../../lib/utils"
 import publicConfig from "../../publicConfig"
+import { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelist, EligibilityModeWhitelistWitAmount } from "../eligibility/EligibilityModeSelector"
 
 const getCriteriaLabel = (drop) => {
   if (!drop || !drop.eligibilityReviewer) return null
@@ -47,8 +48,59 @@ const getCriteriaLabel = (drop) => {
   }
 }
 
+const getCriteriaLabelPreview = (
+  eligibilityMode, packetMode, floatGroup, floatEventPairs, threshold
+) => {
+  if (!eligibilityMode || !packetMode ) return null
+  // WhitelistWithAmount & Whitelist
+  if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key ||
+    eligibilityMode.key === EligibilityModeWhitelist.key) {
+    return (
+      <label className="w-full font-flow font-medium text-sm break-words">
+        In the whitelist of this DROP
+      </label>
+    )
+  }
+
+  if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
+    return (
+      <label className="w-full font-flow font-medium text-sm break-words">
+        Owns <span className="font-bold text-drizzle-green">{threshold} </span>
+        FLOAT(s) in Group&nbsp;<span className="font-bold">
+          <a
+            href={`${publicConfig.floatURL}/${floatGroup.groupHost}/group/${floatGroup.groupName}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-drizzle-green">
+            {floatGroup.groupName}
+          </a>
+        </span>&nbsp;before <span className="font-bold text-drizzle-green">{new Date().toLocaleString()}</span>
+      </label>
+    )
+  }
+
+  if (eligibilityMode.key === EligibilityModeFLOAT.key) {
+    const eventID = floatEventPairs[0].eventID
+    const eventHost = floatEventPairs[0].eventHost
+    return (
+      <label className="w-full font-flow font-medium text-sm break-words">
+        Owns FLOAT of Event&nbsp;<span className="font-bold text-drizzle-green">
+          <a
+            href={`${publicConfig.floatURL}/${eventHost}/event/${eventID}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-drizzle-green">
+            {eventID}
+          </a>
+        </span>&nbsp;before <span className="font-bold text-drizzle-green">{new Date().toLocaleString()}</span>
+      </label>
+    )
+  }
+}
+
 export default function CriteriaCard(props) {
-  const drop = props.drop
+  const {drop, eligibilityMode, packetMode, floatGroup, floatEventPairs, threshold} = props
+  console.log(floatEventPairs)
 
   return (
     <div className="p-5 w-full min-w-[240px]
@@ -57,7 +109,9 @@ export default function CriteriaCard(props) {
     sm:max-w-[240px]">
       <div className={`flex flex-col gap-y-2 ring-2 ring-drizzle-green rounded-2xl p-3 `}>
         <label className="text-center font-flow font-semibold">WHO IS ELIGIBLE?</label>
-        {getCriteriaLabel(drop)}
+        {drop ?  getCriteriaLabel(drop)
+        : getCriteriaLabelPreview(eligibilityMode, packetMode, floatGroup, floatEventPairs, threshold)
+        }
       </div>
     </div>
   )

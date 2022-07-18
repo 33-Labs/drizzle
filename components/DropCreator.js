@@ -390,6 +390,10 @@ export default function DropCreator(props) {
             endAt={endAt}
             amount={AmountPlaceholder}
             eligibilityMode={eligibilityMode}
+            packetMode={packetMode}
+            floatGroup={floatGroup}
+            floatEventPairs = {floatEventPairs}
+            threshold={threshold}
           />
         </div> : null
       }
