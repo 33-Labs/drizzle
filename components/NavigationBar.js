@@ -5,10 +5,33 @@ import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import config from "../flow/config.js"
 import { LogoutIcon } from "@heroicons/react/outline"
+import publicConfig from "../publicConfig.js"
+import { useEffect } from "react"
+
+import { useRecoilState } from "recoil"
+import { 
+  showBasicNotificationState, 
+  basicNotificationContentState 
+} from "../lib/atoms.js"
 
 export default function NavigationBar(props) {
   const user = props.user
   const router = useRouter()
+  const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
+  const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
+
+  useEffect(() => {
+    window.addEventListener("message", async (d) => {
+      if ((d.data.type === "FCL:VIEW:RESPONSE" && d.data.status === "APPROVED" && d.data.data.network !== publicConfig.chainEnv) 
+        || (d.data.type === "LILICO:NETWORK" && d.data.network != publicConfig.chainEnv)) {
+          setShowBasicNotification(true)
+          setBasicNotificationContent({ type: "exclamation", title: "WRONG NETWORK", detail: null })
+          await new Promise(r => setTimeout(r, 2))
+          fcl.unauthenticate()
+      }
+    })
+  }, [])
+
 
   const AuthedState = () => {
     return (
