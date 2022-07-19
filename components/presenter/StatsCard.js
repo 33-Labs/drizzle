@@ -1,4 +1,5 @@
 import Decimal from "decimal.js"
+import publicConfig from "../../publicConfig"
 
 const extractStats = (drop) => {
   const packet = drop.eligibilityReviewer.packet
@@ -137,9 +138,14 @@ export default function StatsCard(props) {
                       claimed.map((claim, index) => (
                         <tr key={index}>
                           <td className="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6">
-                            <label className="block font-medium text-gray-900 break-words max-w-[200px]">
+                            <a
+                              href={`${publicConfig.flowscanURL}/account/${claim.account}`}
+                              className="block font-medium text-gray-900 break-words max-w-[200px]"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
                               {claim.account}
-                            </label>
+                            </a>
                           </td>
                           <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
                             <div className="text-gray-500">
