@@ -19,7 +19,6 @@ export const FloatModeFloatEvent = {
   placeholder: "98963710@0x257c27ba4951541d",
   inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
-    console.log(result)
     if (result.length != 2) {
       throw "Invalid pair"
     }
@@ -45,7 +44,6 @@ export const FloatModeFloatGroup = {
   placeholder: "Drizzle@0x257c27ba4951541d",
   inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
-    console.log(result)
     if (result.length != 2) {
       throw "Invalid pair"
     }
@@ -137,7 +135,6 @@ export default function FloatPicker(props) {
                 } else if (mode.key === "FLOATGroup") {
                   const group = await mode.inputHandler(rawEventStr)
                   const _events = await getFloatEventsInGroup(group.groupHost, group.groupName)
-                  // console.log(events)
                   if (_events) {
                     events = _events.sort((a, b) => b.eventId - a.eventId)
                     setFloatGroup(group)

@@ -63,9 +63,6 @@ export const PacketModeIdentical = {
       throw Hints.InvalidIdenticalAmount
     }
 
-    console.log(_identicalAmount.toString())
-    console.log(_capacity.toString())
-    console.log("tokenBalance: ", tokenBalance.toString())
     if (_identicalAmount.mul(_capacity).cmp(tokenBalance) != -1) {
       throw Hints.InsufficientBalance
     }

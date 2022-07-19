@@ -106,8 +106,6 @@ export default function DropCard(props) {
   const tokenInfo = (drop && drop.tokenInfo) || props.tokenInfo
   const reviewer = (drop && drop.eligibilityReviewer)
 
-  console.log(claimStatus)
-
   return (
     <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8 text-black">
       <div className="flex flex-col

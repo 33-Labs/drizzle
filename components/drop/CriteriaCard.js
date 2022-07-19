@@ -100,7 +100,6 @@ const getCriteriaLabelPreview = (
 
 export default function CriteriaCard(props) {
   const {drop, eligibilityMode, packetMode, floatGroup, floatEventPairs, threshold} = props
-  console.log(floatEventPairs)
 
   return (
     <div className="p-5 w-full min-w-[240px]

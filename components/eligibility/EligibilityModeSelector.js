@@ -126,7 +126,6 @@ const modes = [
 
 export default function EligibilityModeSelector(props) {
   const { mode, setMode } = props
-  console.log(mode)
 
   return (
     <div className="mx-auto w-full">

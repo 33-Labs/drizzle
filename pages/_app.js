@@ -14,7 +14,6 @@ import BasicNotification from '../components/toolbox/BasicNotification'
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState({ loggedIn: null })
   const router = useRouter()
-  console.log(router.pathname)
   useEffect(() => fcl.currentUser.subscribe(setUser), [])
 
   return (

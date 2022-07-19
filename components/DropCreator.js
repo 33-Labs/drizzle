@@ -191,15 +191,10 @@ export default function DropCreator(props) {
       endAt: endAt ? `${endAt.getTime() / 1000}.0` : null,
       token: token,
     }
-    console.log("Basic Params: ", params)
 
     if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
       const { whitelist, tokenAmount, } = whitelistWithAmountReviewerCallback
       const _tokenAmount = tokenAmount.toFixed(8).toString()
-      console.log("Extra Params: ", {
-        whitelist: whitelist,
-        tokenAmount: _tokenAmount
-      })
 
       const res = await createDrop_WhitelistWithAmount(
         params.name, params.description, params.image, params.url, params.startAt,
@@ -209,7 +204,6 @@ export default function DropCreator(props) {
       handleCreationResponse(res)
     } else if (eligibilityMode.key === EligibilityModeWhitelist.key) {
       const { whitelist, } = whitelistReviewerCallback
-      console.log(whitelist)
       let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ?
         new Decimal(identicalAmount).toFixed(8).toString() : null
       let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
@@ -233,7 +227,6 @@ export default function DropCreator(props) {
         handleCreationResponse(res)
       }
     } else if (eligibilityMode.key === EligibilityModeFLOAT.key) {
-      console.log("totalAmount: ", totalAmount)
       let eventIDs = [floatEventPairs[0].eventID]
       let eventHosts = [floatEventPairs[0].eventHost]
       let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ?
@@ -242,14 +235,6 @@ export default function DropCreator(props) {
         new Decimal(totalAmount).toFixed(8).toString() : null
       let _threshold = !isNaN(parseFloat(threshold)) ?
         threshold : "1"
-
-      console.log("Extra Params: ", {
-        eventIDs: eventIDs,
-        eventHosts: eventHosts,
-        identicalAmount: _identicalAmount,
-        totalAmount: _totalAmount,
-        threshold: _threshold
-      })
 
       if (packetMode.key === PacketModeIdentical.key) {
         const res = await createDrop_FLOATs_Identical(
@@ -275,14 +260,6 @@ export default function DropCreator(props) {
         new Decimal(totalAmount).toFixed(8).toString() : null
       let _threshold = !isNaN(parseFloat(threshold)) ?
         threshold : "1"
-
-      console.log("Extra Params: ", {
-        groupName: floatGroup.groupName,
-        groupHost: floatGroup.groupHost,
-        identicalAmount: _identicalAmount,
-        totalAmount: _totalAmount,
-        threshold: _threshold
-      })
 
       if (packetMode.key === PacketModeIdentical.key) {
         const res = await createDrop_FLOATGroup_Identical(

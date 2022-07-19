@@ -10,7 +10,6 @@ export default function PacketSelector(props) {
     identicalAmount, setIdenticalAmount,
     totalAmount, setTotalAmount
   } = props
-  console.log(props)
   const disabled = props.disabled || false
 
   useEffect(() => {

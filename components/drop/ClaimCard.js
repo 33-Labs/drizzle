@@ -62,10 +62,8 @@ export default function ClaimCard(props) {
   const { mutate } = useSWRConfig()
 
   const { isPreview, drop, host, user, token, tokenInfo, claimStatus } = props
-  console.log("Drop ", drop)
   const symbol = isPreview ? (token && token.symbol) : (tokenInfo && tokenInfo.symbol)
 
-  console.log(claimStatus)
   // [Emoji, Description, Amount, Title]
   const [emoji, description, amountInfo, title] = parseClaimStatus(user, claimStatus, symbol, isPreview, drop && drop.eligibilityReviewer)
 

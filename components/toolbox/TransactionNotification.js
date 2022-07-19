@@ -14,7 +14,6 @@ import {
 } from "../../lib/atoms"
 
 const NotificationContent = ({ txStatus }) => {
-  console.log("TxStatus: ", txStatus)
   if (txStatus.status == "Initializing") {
     return (
       <>
