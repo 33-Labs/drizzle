@@ -30,7 +30,7 @@ export default function NavigationBar(props) {
           fcl.unauthenticate()
       }
     })
-  }, [])
+  }, [setShowBasicNotification, setBasicNotificationContent])
 
 
   const AuthedState = () => {
