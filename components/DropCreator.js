@@ -30,7 +30,7 @@ import EligibilityModeSelector, {
   EligibilityModeWhitelist
 } from './eligibility/EligibilityModeSelector'
 import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
-import FloatReviewer from './eligibility/FLOATReviewer'
+import FloatReviewer from './eligibility/FloatReviewer'
 import BasicInfoBoard from './creator/BasicInfoBoard'
 import Hints from '../lib/hints'
 import { PacketModeIdentical, PacketModeRandom } from './eligibility/PacketModeSelector'
