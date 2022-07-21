@@ -1,5 +1,65 @@
 import Decimal from "decimal.js"
 import publicConfig from "../../publicConfig"
+import { PacketModeRandom } from "../eligibility/PacketModeSelector"
+
+const extractStatsPreview = (packetMode, 
+  randomTotalAmount, 
+  identicalAmount,
+  totalTokenAmount,
+  capacity, symbol) => {
+  const red = "border-red-400"
+  const green = "border-drizzle-green"
+
+  if (!packetMode) {
+    const balance = new Decimal(totalTokenAmount)
+    return [
+      {
+        title: "DROP Balance",
+        content: `${balance.toString()} ${symbol}`,
+        color: balance.isZero() ? red : green
+      },
+      {
+        title: "Claimed Amount",
+        content: `0 ${symbol}`,
+        color: green
+      },
+      {
+        title: "Claimed Count",
+        content: `0`,
+        color: green
+      }
+    ]
+  }
+
+  if (packetMode) {
+    let balance 
+    if (packetMode.key === PacketModeRandom.key) {
+      balance = new Decimal(randomTotalAmount)
+    } else {
+      balance = new Decimal(identicalAmount).mul(new Decimal(capacity))
+    }
+     
+    return [
+      {
+        title: "DROP Balance",
+        content: `${balance.toString()} ${symbol}`,
+        color: balance.isZero() ? red : green
+      },
+      {
+        title: `Claimed Amount`,
+        content: `0 ${symbol}`,
+        color: green
+      },
+      {
+        title: "Claimed Count / Total Capacity",
+        content: `0 / ${capacity}`,
+        color: green
+      }
+    ]
+  }
+
+  return []
+}
 
 const extractStats = (drop) => {
   const packet = drop.eligibilityReviewer.packet
@@ -46,7 +106,7 @@ const extractStats = (drop) => {
       },
       {
         title: "Claimed Count / Total Capacity",
-        content: `${claimedCount}/${packet.capacity}`,
+        content: `${claimedCount} / ${packet.capacity}`,
         color: claimedCount == packet.capacity ? red : green
       }
     ]
@@ -68,7 +128,7 @@ const extractStats = (drop) => {
       },
       {
         title: "Claimed Count / Total Capacity",
-        content: `${claimedCount}/${packet.capacity}`,
+        content: `${claimedCount} / ${packet.capacity}`,
         color: claimedCount == packet.capacity ? red : green
       }
     ]
@@ -90,11 +150,16 @@ const parseClaimed = (claimedRecords) => {
 }
 
 export default function StatsCard(props) {
-  const { drop } = props
-  const symbol = drop && drop.tokenInfo.symbol
+  // isPreview/token for Preview, drop for real data
+  const { isPreview, token, packetMode, 
+    randomTotalAmount, identicalAmount, totalTokenAmount,
+    capacity, drop } = props
+  console.log(props)
+  const symbol = (drop && drop.tokenInfo.symbol) || (isPreview && token && token.symbol)
 
   const claimed = drop ? parseClaimed(drop.claimedRecords) : []
-  const cards = drop ? extractStats(drop) : []
+  const cards = drop ? extractStats(drop) : 
+    extractStatsPreview(packetMode, randomTotalAmount, identicalAmount, totalTokenAmount, capacity, symbol)
   return (
     <div className="w-full flex flex-col items-center">
       <label className="text-2xl font-bold font-flow">DROP Stats</label>

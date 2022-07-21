@@ -33,7 +33,7 @@ export const PacketModeRandom = {
     }
 
     const _totalAmount = new Decimal(totalAmount)
-    if (!(_totalAmount.isPositive() && _totalAmount.decimalPlaces() <= 8)) {
+    if (!(_totalAmount.isPositive() && !_totalAmount.isZero() && _totalAmount.decimalPlaces() <= 8)) {
       throw Hints.InvalidTotalAmount
     }
 
@@ -59,7 +59,7 @@ export const PacketModeIdentical = {
     }
 
     const _identicalAmount = new Decimal(identicalAmount)
-    if (!(_identicalAmount.isPositive() && _identicalAmount.decimalPlaces() <= 8)) {
+    if (!(_identicalAmount.isPositive() && !_identicalAmount.isZero() && _identicalAmount.decimalPlaces() <= 8)) {
       throw Hints.InvalidIdenticalAmount
     }
 

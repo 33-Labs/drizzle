@@ -3,6 +3,7 @@ import Hints from '../../lib/hints'
 import { FloatModeFloatEvent, FloatModeFloatGroup } from '../float/FloatPicker'
 import { checkPacketMode } from './PacketModeSelector'
 import Decimal from 'decimal.js'
+import { useEffect } from 'react'
 
 export const EligibilityModeWhitelistWitAmount = {
   key: "WhitelistWithAmount",
@@ -20,6 +21,10 @@ export const EligibilityModeWhitelistWitAmount = {
     }
     if (whitelistWithAmountReviewerCallback.tokenAmount.cmp(tokenBalance) != -1) {
       return [false, Hints.InsufficientBalance]
+    }
+    if (whitelistWithAmountReviewerCallback.tokenAmount.isZero() || 
+      whitelistWithAmountReviewerCallback.tokenAmount.isNegative()) {
+        return [false, Hints.InvalidTokenAmount]
     }
 
     return [true, Hints.Valid]
@@ -125,7 +130,11 @@ const modes = [
 ]
 
 export default function EligibilityModeSelector(props) {
-  const { mode, setMode } = props
+  const { mode, setMode, setPacketMode } = props
+
+  useEffect(() => {
+    setPacketMode(null)
+  }, [mode])
 
   return (
     <div className="mx-auto w-full">

@@ -37,6 +37,7 @@ import { PacketModeIdentical, PacketModeRandom } from './eligibility/PacketModeS
 import WhitelistReviewer from './eligibility/WhitelistReviewer'
 import DropCreatedModal from './creator/DropCreatedModal'
 import publicConfig from '../publicConfig'
+import StatsCard from './presenter/StatsCard'
 
 const NamePlaceholder = "DROP NAME"
 const DescriptionPlaceholder = "Detail information about this drop"
@@ -85,7 +86,10 @@ export default function DropCreator(props) {
   // For Packet
   const [packetMode, setPacketMode] = useState(null)
   const [capacity, setCapacity] = useState('')
+
+  // For Identical
   const [identicalAmount, setIdenticalAmount] = useState('')
+  // For Random
   const [totalAmount, setTotalAmount] = useState('')
 
   const [showPreview, setShowPreview] = useState(false)
@@ -359,6 +363,7 @@ export default function DropCreator(props) {
 
       {/** preview */}
       {showPreview ?
+      <>
         <div className="flex justify-center mb-10">
           <DropCard
             isPreview={true}
@@ -379,7 +384,18 @@ export default function DropCreator(props) {
             floatEventPairs = {floatEventPairs}
             threshold={threshold}
           />
-        </div> : null
+        </div> 
+        <div className="flex flex-col items-center justify-center">
+          <StatsCard isPreview={true} token={token} 
+            packetMode={packetMode} 
+            randomTotalAmount={totalAmount}
+            identicalAmount={identicalAmount} 
+            totalTokenAmount={whitelistWithAmountReviewerCallback && whitelistWithAmountReviewerCallback.tokenAmount}
+            capacity={capacity}
+          />
+        </div>
+        </>
+        : null
       }
 
       <div className={`${showPreview ? 'hidden' : ''} flex flex-col gap-y-10 shadow-drizzle p-4 sm:p-8 rounded-3xl bg-white`}>
@@ -394,7 +410,7 @@ export default function DropCreator(props) {
           <label className="block text-2xl font-bold font-flow">
             Eligibility
           </label>
-          <EligibilityModeSelector mode={eligibilityMode} setMode={setEligibilityMode} />
+          <EligibilityModeSelector mode={eligibilityMode} setMode={setEligibilityMode} setPacketMode={setPacketMode} />
         </div>
 
         {showEligibilityModeInputs(eligibilityMode)}
