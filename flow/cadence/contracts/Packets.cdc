@@ -1,5 +1,7 @@
 import Drizzle from "./Drizzle.cdc"
 
+// In Drizzle, we use Packet to define the fund dispatcher
+// A Packet should conform IPacket in Drizzle.cdc
 pub contract Packets {
 
     pub struct IdenticalPacket: Drizzle.IPacket {
@@ -20,6 +22,8 @@ pub contract Packets {
         }
     }
 
+    // To simplify user interaction, the implementation of this mode is a bit naive, 
+    // someone might get a higher reward by using "Try & Abort", so please use it just for fun.
     pub struct RandomPacket: Drizzle.IPacket {
         pub let capacity: UInt32
         pub let totalAmount: UFix64
@@ -31,7 +35,6 @@ pub contract Packets {
             self.totalAmount = totalAmount
         }
 
-        // Naive implementation. Someone may get higher reward than expected value by Try & Abort. This mode should only be used for fun!
         pub fun getAmountInPacket(params: {String: AnyStruct}): UFix64 {
             let claimedCount = params["claimedCount"]! as! UInt32
             let availableCapacity = self.capacity - claimedCount

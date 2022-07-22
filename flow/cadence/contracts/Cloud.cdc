@@ -1,3 +1,7 @@
+// Made by Lanford33
+
+// Cloud.cdc defines the FungibleToken DROP and the collections of it.
+
 import Drizzle from "./Drizzle.cdc"
 import FungibleToken from "./core/FungibleToken.cdc"
 import Packets from "./Packets.cdc"
@@ -67,7 +71,8 @@ pub contract Cloud {
         }
 
         // NOTE: The order of these judgement does matter
-        // NOTE: For Random Packet, the eligibleAmount is determined in `claim`
+        // NOTE: For Random Packet, the eligibleAmount is determined in `claim`, the amount
+        // got in getClaimStatus is not the final amount.
         pub fun getClaimStatus(account: Address): Drizzle.ClaimStatus {
             let eligibility = self.eligibilityReviewer.checkEligibility(
                 account: account, 
@@ -167,6 +172,9 @@ pub contract Cloud {
             return self.isPaused
         }
 
+        // deposit more token into the DROP.
+        // If the whitelist of a DROP is allowed to extend, we need
+        // this function to make sure the claimers can have enough funds to withdraw.
         pub fun deposit(from: @FungibleToken.Vault) {
             pre {
                 from.balance > 0.0: "deposit empty vault"
@@ -175,6 +183,7 @@ pub contract Cloud {
             self.dropVault.deposit(from: <- from)
         }
 
+        // withdraw all funds in the DROP's vault.
         pub fun withdrawAllFunds(receiver: &{FungibleToken.Receiver}) {
             self.isPaused = true
             if self.dropVault.balance > 0.0 {
@@ -249,6 +258,7 @@ pub contract Cloud {
 
     pub resource Admin: ICloudPauser {
         // Use to pause the creation of new DROP
+        // If we want to migrate the contracts, we can make sure no more DROP in old contracts be created.
         pub fun toggleContractPause(): Bool {
             Cloud.isPaused = !Cloud.isPaused
             return Cloud.isPaused

@@ -1,18 +1,34 @@
+// Made by Lanford33
+
+// We aim to create a tool for users to create airdrop easily. Drizzle is the name of this tool, and we call
+// a airdrop created by using Drizzle as DROP.
+
+// Drizzle.cdc defines the interfaces and some enumerations/structs used in this tool.
+
 import FungibleToken from "./core/FungibleToken.cdc"
 
 pub contract Drizzle {
 
     pub event ContractInitialized()
 
+    // In Drizzle, we use Packet to define the fund dispatcher
+    // A Packet should conform IPacket
     pub struct interface IPacket {
+        // capacity defines the available seats in a DROP
         pub let capacity: UInt32
+        // getAmountInPacket defines how much reward can a claimer get in this DROP
         pub fun getAmountInPacket(params: {String: AnyStruct}): UFix64
     }
 
+    // Eligibility is a struct used to describe the eligibility of an account
     pub struct Eligibility {
+        // The account is eligible or not
         pub let isEligible: Bool
+        // The DROP have available seats or not
         pub let isAvailable: Bool
+        // How much the account can claim
         pub let eligibleAmount: UFix64
+        // extra information
         pub let extraData: {String: AnyStruct}
 
         init(
@@ -27,12 +43,18 @@ pub contract Drizzle {
         }
     }
 
+    // In Drizzle, EligibilityReviewer determines an account is eligible or not
+    // EligibilityReviewer should conform IEligibilityReviewer
     pub struct interface IEligibilityReviewer {
+        // Packet is optional here. For special mode like WhitelistWithAmount, the eligible amount of an account
+        // is defined by the whitelist, so Packet is not required.
         pub let packet: {IPacket}?
 
+        // All EligibilityReviewer should have this function to check the eiligibity of an account.
         pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Eligibility
     }
 
+    // TokenInfo stores the information of the FungibleToken of a DROP
     pub struct TokenInfo {
         pub let tokenIdentifier: String
         pub let providerIdentifier: String
@@ -80,6 +102,7 @@ pub contract Drizzle {
         pub case others
     }
 
+    // The claim status of an account
     pub struct ClaimStatus {
         pub let code: ClaimStatusCode
         pub let eligibleAmount: UFix64
@@ -99,6 +122,7 @@ pub contract Drizzle {
         }
     }
 
+    // We will add a ClaimRecord to claimedRecords after an account claiming it's reward
     pub struct ClaimRecord {
         pub let address: Address
         pub let amount: UFix64
@@ -113,7 +137,10 @@ pub contract Drizzle {
         }
     }
 
+    // The airdrop created in Drizzle is called DROP.
+    // IDropPublic defined the public fields and functions of a DROP
     pub resource interface IDropPublic {
+        // unique ID of this DROP.
         pub let dropID: UInt64
         pub let name: String
         pub let description: String
@@ -129,10 +156,9 @@ pub contract Drizzle {
         pub let eligibilityReviewer: {IEligibilityReviewer}
 
         pub var isPaused: Bool
-        // Helper field for use to access the claimed amount easily
+        // Helper field for use to access the claimed amount of DROP easily
         pub var claimedAmount: UFix64
 
-        // For users to claim token
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct})
         pub fun getClaimStatus(account: Address): ClaimStatus
         pub fun getClaimedRecord(account: Address): ClaimRecord?

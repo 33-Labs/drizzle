@@ -3,6 +3,9 @@ import Drizzle from "./Drizzle.cdc"
 import Packets from "./Packets.cdc"
 import FLOAT from "./float/FLOAT.cdc"
 
+// In Drizzle, EligibilityReviewer determines an account is eligible or not
+// EligibilityReviewer should conform IEligibilityReviewer in Drizzle.cdc
+
 pub contract EligibilityReviewers {
 
     pub struct FLOATEventData {
@@ -51,7 +54,7 @@ pub contract EligibilityReviewers {
         pub let packet: {Drizzle.IPacket}?
         pub let whitelist: {Address: Bool}
 
-        init(packet: {Drizzle.IPacket}?, whitelist: {Address: Bool}) {
+        init(packet: {Drizzle.IPacket}, whitelist: {Address: Bool}) {
             self.packet = packet
             self.whitelist = whitelist
         }
@@ -82,18 +85,19 @@ pub contract EligibilityReviewers {
         pub let receivedBefore: UFix64
 
         init(
-            packet: {Drizzle.IPacket}?,
+            packet: {Drizzle.IPacket},
             group: FLOATGroupData, 
             threshold: UInt64,
         ) {
             pre {
-                packet != nil: "packet is required"
                 threshold > 0: "threshold should greater than 0"
             }
 
             self.packet = packet
             self.group = group
             self.threshold = threshold
+            // The FLOAT should be received before this DROP be created
+            // or the users can transfer their FLOATs and claim again
             self.receivedBefore = getCurrentBlock().timestamp
         }
 
@@ -155,19 +159,20 @@ pub contract EligibilityReviewers {
         pub let receivedBefore: UFix64
 
         init(
-            packet: {Drizzle.IPacket}?,
+            packet: {Drizzle.IPacket},
             events: [FLOATEventData],
             threshold: UInt64
         ) {
             pre {
-                packet != nil: "Packet is required"
-                threshold > 0: "threshold should greater than 0"
-                events.length > 0: "events should not be empty"
+                threshold > 0: "Threshold should greater than 0"
+                events.length > 0: "Events should not be empty"
             }
 
             self.packet = packet
             self.events = events 
             self.threshold = threshold
+            // The FLOAT should be received before this DROP be created
+            // or the users can transfer their FLOATs and claim again
             self.receivedBefore = getCurrentBlock().timestamp
         }
 
@@ -192,7 +197,7 @@ pub contract EligibilityReviewers {
             let floatCollection = getAccount(account)
                 .getCapability(FLOAT.FLOATCollectionPublicPath)
                 .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
-                ?? panic("Could not borrow the Collection from the account.")
+                ?? panic("Could not borrow the FLOAT Collection from the account.")
 
             var validCount: UInt64 = 0
             for _event in self.events {
