@@ -21,7 +21,7 @@ export default function ImageSelector(props) {
         className="w-full inline-block text-center leading-[48px] ">
         Choose Image
       </label>
-      <input id="image-selector" className="invisible" type="file"
+      <input id="image-selector" className="hidden w-full" type="file"
         accept="image/png, image/jpeg"
         onChange={(e) => { handleImageChosen(e.target.files[0]) }}
       />
