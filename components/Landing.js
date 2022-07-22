@@ -3,9 +3,11 @@ import Image from "next/image"
 import { useRouter } from 'next/router'
 import { classNames } from "../lib/utils"
 import { useRecoilState } from "recoil"
+import Link from "next/link"
 import {
   transactionInProgressState
 } from "../lib/atoms"
+import publicConfig from "../publicConfig"
 
 export default function Landing(props) {
   const router = useRouter()
@@ -26,9 +28,17 @@ export default function Landing(props) {
             <label className={`font-flow text-black font-bold text-5xl sm:text-6xl`}>never been</label>
             <label className={`font-flow text-black font-bold text-5xl sm:text-6xl`}>so easy</label>
           </div>
-          <label className={`-mt-5 font-flow text-gray-400 font-medium text-md sm:text-lg`}>
-            DROP to your community in one minute
-          </label>
+          <div className="flex flex-col">
+            <label className={`-mt-5 font-flow text-gray-400 font-medium text-md`}>
+              DROP to your community in one minute!
+            </label>
+            <Link href="/about">
+              <label className={`cursor-pointer font-flow text-drizzle-green font-medium text-md underline decoration-drizzle-green decoration-3`}>
+                Want to know more?
+              </label>
+            </Link>
+          </div>
+
           <button
             type="button"
             disabled={transactionInProgress}
@@ -53,9 +63,13 @@ export default function Landing(props) {
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <div className="flex items-center rounded-full bg-drizzle-green/50 px-3 py-1 text-xs sm:text-sm text-drizzle-green-dark">
-          <Image src="/float_logo.png" alt="" layout="intrinsic" width={20} height={20} objectFit="cover" priority />&nbsp;FLOAT is now supported for eligibility checking
-        </div>
+        <a href={publicConfig.floatURL}
+          target="_blank"
+          rel="noopener noreferrer">
+          <div className="flex items-center rounded-full bg-drizzle-green/50 px-3 py-1 text-xs sm:text-sm text-drizzle-green-dark">
+            <Image src="/float_logo.png" alt="" layout="intrinsic" width={20} height={20} objectFit="cover" priority />&nbsp;FLOAT is now supported for eligibility checking
+          </div>
+        </a>
       </div>
     </div>
   )
