@@ -47,7 +47,7 @@ export default function About(props) {
 
       <div className="flex">
         <div className="w-5 shrink-0">&#8226;</div>
-        <p className={p}><span className="font-bold">Random:</span> The claimers will get a random amount of reward (the range should be from 0.00000001 to (2.0 * the available amount / the available capacity - 0.00000001)). To simplify user interaction, the implementation of this mode is a bit naive and someone might get a higher reward by using “Try & Abort”, so please use it for fun only.</p>
+        <p className={p}><span className="font-bold">Random:</span> The claimers will get a random amount of reward (the range should be from 0.00000001 to (2.0 * available amount / available capacity - 0.00000001)).  To simplify user interaction, a somewhat naive implementation is applied here, and someone might get a higher reward by using “Try & Abort”, so please use it for fun only.</p>
       </div>
 
       <p className={p}>Besides, we have a “Whitelist With Amount” mode, with which you can set a specific reward amount to each account on the whitelist manually.</p>
