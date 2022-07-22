@@ -59,7 +59,7 @@ export default function Landing(props) {
         </div>
 
         <div className="w-[350px] h-[350px] sm:w-[400px] sm:h-[400px] relative">
-          <Image src="/landing.png" alt="" layout="responsive" width={400} height={400} objectFit="cover" priority />
+          <Image src="/landing.png" alt="" layout="responsive" width={400} height={400} objectFit="cover" priority={true} />
         </div>
       </div>
       <div className="flex flex-col items-center">
@@ -67,7 +67,7 @@ export default function Landing(props) {
           target="_blank"
           rel="noopener noreferrer">
           <div className="flex items-center rounded-full bg-drizzle-green/50 px-3 py-1 text-xs sm:text-sm text-drizzle-green-dark">
-            <Image src="/float_logo.png" alt="" layout="intrinsic" width={20} height={20} objectFit="cover" priority />&nbsp;Eligibility checking with FLOAT is now available!
+            <Image src="/float_logo.png" alt="" layout="intrinsic" width={20} height={20} objectFit="cover" priority={true} />&nbsp;Eligibility checking with FLOAT is now available!
           </div>
         </a>
       </div>

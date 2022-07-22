@@ -14,7 +14,7 @@ const URLPlaceholder = "https://the.link.you.want.to.add"
 const BasicInfoMemoizeBanner = React.memo(({ banner }) => {
   return (
     <div className="w-full rounded-2xl h-[144px] bg-white relative sm:max-w-[460px] ring-1 ring-black ring-opacity-10 overflow-hidden">
-      <Image priority src={banner} alt="" className="rounded-2xl" layout="fill" objectFit="cover" />
+      <Image priority={true} src={banner} alt="" className="rounded-2xl" layout="fill" objectFit="cover" />
     </div>
   )
 })
