@@ -172,6 +172,7 @@ export default function FloatPicker(props) {
                     value={threshold}
                     id="threshold"
                     className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                    onWheel={(e) => e.target.blur()}
                     onChange={(event) => { setThreshold(event.target.value) }}
                   />
                   <label className="shrink-0 font-float font-bold">of {floatEvents.length} FLOATs</label>

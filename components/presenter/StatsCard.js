@@ -154,7 +154,6 @@ export default function StatsCard(props) {
   const { isPreview, token, packetMode, 
     randomTotalAmount, identicalAmount, totalTokenAmount,
     capacity, drop } = props
-  console.log(props)
   const symbol = (drop && drop.tokenInfo.symbol) || (isPreview && token && token.symbol)
 
   const claimed = drop ? parseClaimed(drop.claimedRecords) : []

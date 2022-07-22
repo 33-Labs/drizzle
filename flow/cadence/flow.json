@@ -63,25 +63,25 @@
         "Drizzle": {
             "source": "./contracts/Drizzle.cdc",
             "aliases": {
-                "testnet": "0xbca26f5091cd39ec"
+                "testnet": "0x2432e062f9f14295"
             }  
         },
         "Packets": {
             "source": "./contracts/Packets.cdc",
             "aliases": {
-                "testnet": "0xbca26f5091cd39ec"
+                "testnet": "0x2432e062f9f14295"
             }   
         },
         "EligibilityReviewers": {
             "source": "./contracts/EligibilityReviewers.cdc",
             "aliases": {
-                "testnet": "0xbca26f5091cd39ec"
+                "testnet": "0x2432e062f9f14295"
             }
         },
         "Cloud": {
             "source": "./contracts/Cloud.cdc",
             "aliases": {
-                "testnet": "0xbca26f5091cd39ec"
+                "testnet": "0x2432e062f9f14295"
             }
         }
     },

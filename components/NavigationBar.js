@@ -9,9 +9,9 @@ import publicConfig from "../publicConfig.js"
 import { useEffect } from "react"
 
 import { useRecoilState } from "recoil"
-import { 
-  showBasicNotificationState, 
-  basicNotificationContentState 
+import {
+  showBasicNotificationState,
+  basicNotificationContentState
 } from "../lib/atoms.js"
 
 export default function NavigationBar(props) {
@@ -22,14 +22,12 @@ export default function NavigationBar(props) {
 
   useEffect(() => {
     window.addEventListener("message", async (d) => {
-      if ((d.data.type === "FCL:VIEW:RESPONSE" && d.data.status === "APPROVED" && (d.data.data.network && d.data.data.network !== publicConfig.chainEnv)) 
+      if ((d.data.type === "FCL:VIEW:RESPONSE" && d.data.status === "APPROVED" && (d.data.data.network && d.data.data.network !== publicConfig.chainEnv))
         || (d.data.type === "LILICO:NETWORK" && typeof d.data.network === "string" && d.data.network != publicConfig.chainEnv)) {
-          console.log(d.data.data)
-          console.log(d.data.data.network)
-          setShowBasicNotification(true)
-          setBasicNotificationContent({ type: "exclamation", title: "WRONG NETWORK", detail: null })
-          await new Promise(r => setTimeout(r, 2))
-          fcl.unauthenticate()
+        setShowBasicNotification(true)
+        setBasicNotificationContent({ type: "exclamation", title: "WRONG NETWORK", detail: null })
+        await new Promise(r => setTimeout(r, 2))
+        fcl.unauthenticate()
       }
     })
   }, [])
@@ -79,10 +77,10 @@ export default function NavigationBar(props) {
   }
 
   return (
-    <div className="px-6 m-auto max-w-[880px] min-w-[380px] relative gap-x-10 flex items-center justify-between bg-transparent h-44">
+    <div className="px-6 m-auto max-w-[880px] min-w-[380px] relative gap-x-8 flex items-center justify-between bg-transparent h-44">
       <div className="flex items-center gap-x-2">
         <Link href="/">
-          <div className="min-w-[50px]">
+          <div className="min-w-[40px]">
             <Image src="/drizzle.png" alt="" width={50} height={50} priority />
           </div>
         </Link>
@@ -92,6 +90,16 @@ export default function NavigationBar(props) {
             drizzle
           </label>
         </Link>
+        {publicConfig.chainEnv === "testnet" ?
+          <>
+            <label className="hidden sm:block px-1 text-center font-flow text-drizzle-green font-medium text-xs border border-1 border-drizzle-green">
+              TESTNET
+            </label>
+            <label className="block sm:hidden px-1 text-center font-flow text-drizzle-green font-medium text-xs border border-1 border-drizzle-green">
+              T
+            </label>
+          </> : null
+        }
       </div>
 
 

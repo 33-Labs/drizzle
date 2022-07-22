@@ -29,10 +29,10 @@ transaction(
     prepare(acct: AuthAccount) {
         if acct.borrow<&Cloud.DropCollection>(from: Cloud.DropCollectionStoragePath) == nil {
             acct.save(<- Cloud.createEmptyDropCollection(), to: Cloud.DropCollectionStoragePath)
-            acct.link<&Cloud.DropCollection{Drizzle.IDropCollectionPublic}>(
+            let cap = acct.link<&Cloud.DropCollection{Drizzle.IDropCollectionPublic}>(
                 Cloud.DropCollectionPublicPath,
                 target: Cloud.DropCollectionStoragePath
-            )
+            ) ?? panic("Could not link DropCollection to PublicPath")
         }
 
         self.dropCollection = acct.borrow<&Cloud.DropCollection>(from: Cloud.DropCollectionStoragePath)

@@ -152,6 +152,7 @@ export default function ManageCard(props) {
             className="rounded-xl focus:ring-drizzle-green focus:border-drizzle-green bg-drizzle-green/10 grow border-drizzle-green font-flow text-sm"
             disabled={transactionInProgress}
             value={rawDepositAmt}
+            onWheel={(e) => e.target.blur()}
             onChange={(event) => {
               setRawDepositAmt(event.target.value)
             }}

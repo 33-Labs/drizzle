@@ -33,6 +33,7 @@ export default function PacketSelector(props) {
               min="1"
               value={capacity}
               className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              onWheel={(e) => e.target.blur()}
               onChange={(event) => { setCapacity(event.target.value) }}
             />
           </div>
@@ -45,6 +46,7 @@ export default function PacketSelector(props) {
               min="0"
               value={totalAmount}
               className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              onWheel={(e) => e.target.blur()}
               onChange={(event) => { setTotalAmount(event.target.value) }}
             />
           </div>
@@ -64,6 +66,7 @@ export default function PacketSelector(props) {
               value={capacity}
               min="1"
               className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              onWheel={(e) => e.target.blur()}
               onChange={(event) => { setCapacity(event.target.value) }}
             />
           </div>
@@ -76,6 +79,7 @@ export default function PacketSelector(props) {
               value={identicalAmount}
               min="0"
               className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              onWheel={(e) => e.target.blur()}
               onChange={(event) => { setIdenticalAmount(event.target.value) }}
             />
           </div>
