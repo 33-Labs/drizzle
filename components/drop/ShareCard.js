@@ -8,7 +8,7 @@ const downloadQRCode = () => {
     .replace("image/png", "image/octet-stream");
   let downloadLink = document.createElement("a");
   downloadLink.href = pngUrl;
-  downloadLink.download = `drop.png`;
+  downloadLink.download = `DROP.png`;
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
