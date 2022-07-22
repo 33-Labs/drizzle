@@ -27,7 +27,7 @@ export default function WhitelistInput(props) {
           Recipients
         </label>
         <label className="block font-flow text-md leading-6 mt-2 mb-2">
-          For each line, enter one address, Duplicate addresses is not allowed.
+          For each line, enter one address. Duplicate addresses are not allowed.
         </label>
         <div className="mt-1">
           <textarea

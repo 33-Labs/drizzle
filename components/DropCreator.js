@@ -40,7 +40,7 @@ import publicConfig from '../publicConfig'
 import StatsCard from './presenter/StatsCard'
 
 const NamePlaceholder = "DROP NAME"
-const DescriptionPlaceholder = "Detail information about this drop"
+const DescriptionPlaceholder = "Detailed information about this DROP"
 const HostPlaceholder = "0x0042"
 const TokenPlaceholder = { symbol: "FLOW" }
 const AmountPlaceholder = new Decimal(42)

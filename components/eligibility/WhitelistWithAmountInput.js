@@ -29,7 +29,7 @@ export default function WhitelistWithAmountInput(props) {
           Recipients & Amounts
         </label>
         <label className="block font-flow text-md leading-6 mt-2 mb-2">
-          For each line, enter one address and the token amount, seperate with comma. Duplicate addresses is not allowed.
+          For each line, enter one address and the token amount, seperate with comma. Duplicate addresses are not allowed.
         </label>
         <div className="mt-1">
           <textarea

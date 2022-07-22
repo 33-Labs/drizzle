@@ -9,7 +9,7 @@ const getCriteriaLabel = (drop) => {
   if (reviewer.whitelist) {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        In the whitelist of this DROP
+        On the whitelist of this DROP
       </label>
     )
   }
@@ -57,7 +57,7 @@ const getCriteriaLabelPreview = (
     eligibilityMode.key === EligibilityModeWhitelist.key) {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        In the whitelist of this DROP
+        On the whitelist of this DROP
       </label>
     )
   }

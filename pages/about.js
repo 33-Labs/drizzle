@@ -36,7 +36,7 @@ export default function About(props) {
 
       <div className="flex">
         <div className="w-5 shrink-0">&#8226;</div>
-        <p className={p}>And, you can set a capacity to your DROP, which means the DROP is quota-limited.</p>
+        <p className={p}>And, you can set a capacity to your DROP, which means the DROP is seats-limited.</p>
       </div>
 
       <p className={p}>For setting the amount of reward, you have two choices as well:</p>

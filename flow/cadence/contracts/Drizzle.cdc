@@ -14,7 +14,7 @@ pub contract Drizzle {
     // In Drizzle, we use Packet to define the fund dispatcher
     // A Packet should conform IPacket
     pub struct interface IPacket {
-        // capacity defines the available seats in a DROP
+        // capacity defines the available quota in a DROP
         pub let capacity: UInt32
         // getAmountInPacket defines how much reward can a claimer get in this DROP
         pub fun getAmountInPacket(params: {String: AnyStruct}): UFix64

@@ -8,7 +8,7 @@ import TimeLimitPicker from './TimeLimitPicker'
 import ImageSelector from '../toolbox/ImageSelector'
 
 const NamePlaceholder = "DROP NAME"
-const DescriptionPlaceholder = "Detail information about this drop"
+const DescriptionPlaceholder = "Detailed information about this DROP"
 const URLPlaceholder = "https://the.link.you.want.to.add"
 
 const BasicInfoMemoizeBanner = React.memo(({ banner }) => {
@@ -95,7 +95,7 @@ export default function BasicInfoBoard(props) {
         {/** url */}
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            Offical Link
+            Official Link
           </label>
           <div className="mt-1">
             <input

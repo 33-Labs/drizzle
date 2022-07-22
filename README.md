@@ -11,7 +11,7 @@ With drizzle, you can decide who is eligible for your rewards by using our diffe
 - FLOAT Event. You can limit the eligibility to people who own FLOATs of specific FLOAT Event at the time of the DROP being created.
 - FLOAT Group. You can also limit the eligibility to people who own FLOATs in a FLOAT Group. You can set a threshold to the number of FLOATs the users should have.
 - Whitelist. You can upload a whitelist. Only accounts on the whitelist are eligible for rewards.
-- And, you can set a capacity to your DROP, which means the DROP is quota-limited.
+- And, you can set a capacity to your DROP, which means the DROP is seats-limited.
 
 For setting the amount of reward, you have two choices as well:
 

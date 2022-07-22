@@ -8,7 +8,7 @@ import { useEffect } from 'react'
 export const EligibilityModeWhitelistWitAmount = {
   key: "WhitelistWithAmount",
   name: 'Whitelist with Amount',
-  intro: 'Distribute specific amount to specific account in whitelist',
+  intro: 'Distribute specific amount to specific account on whitelist',
   criteria: () => {
     return "In whitelist"
   },
@@ -34,7 +34,7 @@ export const EligibilityModeWhitelistWitAmount = {
 export const EligibilityModeWhitelist = {
   key: "Whitelist",
   name: 'Whitelist',
-  intro: 'Distribute tokens to accounts in whitelist. Seats are limited',
+  intro: 'Distribute tokens to accounts on whitelist. FCFS',
   criteria: () => {
     return "In whitelist"
   },
@@ -63,7 +63,7 @@ export const EligibilityModeWhitelist = {
 export const EligibilityModeFLOAT = {
   key: "FLOAT",
   name: 'FLOAT',
-  intro: 'Distribute tokens to holders of specific FLOAT. Seats are limited',
+  intro: 'Distribute tokens to holders of specific FLOAT. FCFS',
   detail: FloatModeFloatEvent,
   criteria: (eventID) => {
     let event = eventID || "{EventID}"
@@ -88,7 +88,7 @@ export const EligibilityModeFLOAT = {
 export const EligibilityModeFLOATGroup = {
   key: "FLOATGroup",
   name: 'FLOAT Group',
-  intro: 'Distribute tokens to holders of FLOATs in speicific FLOAT Group. Seats are limited',
+  intro: 'Distribute tokens to holders of FLOATs in speicific FLOAT Group. FCFS',
   detail: FloatModeFloatGroup,
   criteria: (groupName, threshold) => {
     let t = threshold || "1"
