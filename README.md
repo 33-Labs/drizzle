@@ -1,34 +1,31 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Well, What’s Drizzle?
 
-## Getting Started
+Drizzle is an Airdrop Tool #onFlow! Anyone can use it to create an airdrop (FT only now) in a minute!
 
-First, run the development server:
+## How to use Drizzle?
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Create a DROP, share the link to your community, that’s all!
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+With drizzle, you can decide who is eligible for your rewards by using our different modes.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- FLOAT Event. You can limit the eligibility to people who own FLOATs of specific FLOAT Event at the time of the DROP being created.
+- FLOAT Group. You can also limit the eligibility to people who own FLOATs in a FLOAT Group. You can set a threshold to the number of FLOATs the users should have.
+- Whitelist. You can upload a whitelist. Only accounts on the whitelist are eligible for rewards.
+- And, you can set a capacity to your DROP, which means the DROP is quota-limited.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+For setting the amount of reward, you have two choices as well:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- Identical: All claimers will get identical amount of reward.
+- Random: The claimers will get a random amount of reward (the range should be from 0.00000001 to (2.0 * the available amount / the available capacity - 0.00000001)). To simplify user interaction, the implementation of this mode is a bit naive and someone might get a higher reward by using “Try & Abort”, so please use it for fun only.
 
-## Learn More
+Besides, we have a “Whitelist With Amount” mode, with which you can set a specific reward amount to each account on the whitelist manually.
 
-To learn more about Next.js, take a look at the following resources:
+## Roadmap
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+More features are to be added soon. (NFT airdrop to be the next one!)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## ONE MORE THING?
 
-## Deploy on Vercel
+If you have any suggestion, feel free to contact us (open an issue on our [GitHub](https://github.com/33-Labs/drizzle)) !
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+And…If you need a batch transfer tool #onFlow, please try [bayou](https://bayou.vercel.app/)!
