@@ -28,4 +28,4 @@ More features are to be added soon. (NFT airdrop to be the next one!)
 
 If you have any suggestion, feel free to contact us (open an issue on our [GitHub](https://github.com/33-Labs/drizzle)) !
 
-And…If you need a batch transfer tool #onFlow, please try [bayou](https://bayou.vercel.app/)!
+And…If you need a batch transfer tool #onFlow, please try [bayou](https://bayou33.app/)!
