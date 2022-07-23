@@ -83,7 +83,7 @@ export default function DropList(props) {
                       drop.status = status
                       return drop
                     }).map((drop) => (
-                      <Link key={`${drop.dropID}-link`} href={`${props.user.addr}/drops/${drop.dropID}`}>
+                      <Link key={`${drop.dropID}-link`} href={`${drop.host}/drops/${drop.dropID}`}>
                         <tr key={drop.dropID}>
                           <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
                             <div className="flex items-center">
