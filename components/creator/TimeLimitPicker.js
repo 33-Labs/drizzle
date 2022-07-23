@@ -49,7 +49,6 @@ export default function TimeLimitPicker(props) {
               type="datetime-local"
               disabled={transactionInProgress}
               id="start_at"
-              defaultValue={""}
               className="rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300 min-w-[220px]"
               onChange={(e) => { setStartAt(new Date(e.target.value)) }}
             />
@@ -61,7 +60,6 @@ export default function TimeLimitPicker(props) {
               type="datetime-local"
               disabled={transactionInProgress}
               id="end_at"
-              defaultValue={""}
               className="rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300 min-w-[220px]"
               onChange={(e) => { setEndAt(new Date(e.target.value)) }}
             />
