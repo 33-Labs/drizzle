@@ -30,8 +30,8 @@ export default function TimeLimitCard(props) {
 
   return (
     <div className="w-full flex flex-col gap-y-2">
-      {startAt ? <TimeCard title="Start" time={startAt.toLocaleString()} active={inRange} /> : null}
-      {endAt ? <TimeCard title="End" time={endAt.toLocaleString()} active={inRange} /> : null}
+      {startAt && isFinite(startAt) ? <TimeCard title="Start" time={startAt.toLocaleString()} active={inRange} /> : null}
+      {endAt && isFinite(endAt) ? <TimeCard title="End" time={endAt.toLocaleString()} active={inRange} /> : null}
     </div>
   )
 }

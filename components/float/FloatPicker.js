@@ -11,25 +11,34 @@ import { getFloatEvent, getFloatEventsInGroup } from '../../lib/float-scripts'
 import Decimal from 'decimal.js'
 import FloatEventList from './FloatEventList'
 import Warning from '../toolbox/Warning'
+import publicConfig from '../../publicConfig'
 
 export const FloatModeFloatEvent = {
   key: "FLOATEvent",
   title: "FLOAT Event",
-  description: `Enter event id and event host, concat them with "@". For instance: 98963710@0x257c27ba4951541d.`,
+  description: `Enter the url of the FLOAT Event. Or enter event id and event host, concat them with "@". For instance: 98963710@0x257c27ba4951541d.`,
   placeholder: "98963710@0x257c27ba4951541d",
   inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
+    let host = ''
+    let id = '0'
     if (result.length != 2) {
-      throw "Invalid pair"
+      const urlParseResult = raw.trim().replace(`${publicConfig.floatURL}/`, "").replaceAll("/", "").split('event')
+      if (urlParseResult.length != 2) {
+        throw "Invalid pair"
+      }
+
+      [host, id] = urlParseResult
+    } else {
+      [id, host] = result
     }
 
-    const [id, host] = result
     if (!isValidFlowAddress(host)) {
       throw "Invalid address"
     }
 
     const _id = new Decimal(id)
-    if (!(_id.isInteger() && _id.isPositive())) {
+    if (!(_id.isInteger() && _id.isPositive() && !_id.isZero())) {
       throw "Invalid event id"
     }
 
@@ -40,17 +49,29 @@ export const FloatModeFloatEvent = {
 export const FloatModeFloatGroup = {
   key: "FLOATGroup",
   title: "FLOAT Group",
-  description: `Enter group name and event host, concat them with "@". For instance: Drizzle@0x257c27ba4951541d.`,
+  description: `Enter the url of the FLOAT Group. Or enter group name and event host, concat them with "@". For instance: Drizzle@0x257c27ba4951541d.`,
   placeholder: "Drizzle@0x257c27ba4951541d",
   inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
+    let host = ''
+    let groupName = ''
     if (result.length != 2) {
-      throw "Invalid pair"
+      const urlParseResult = raw.trim().replace(`${publicConfig.floatURL}/`, "").replaceAll("/", "").split('group')
+      if (urlParseResult.length != 2) {
+        throw "Invalid pair"
+      }
+
+      [host, groupName] = urlParseResult
+    } else {
+      [groupName, host] = result
     }
 
-    const [groupName, host] = result
     if (!isValidFlowAddress(host)) {
       throw "Invalid address"
+    }
+
+    if (groupName && groupName == '') {
+      throw "Invalid groupName"
     }
 
     return { groupName: groupName, groupHost: host }

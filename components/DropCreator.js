@@ -117,11 +117,11 @@ export default function DropCreator(props) {
       return [false, Hints.BannerOversize]
     }
 
-    if (endAt && endAt.getTime() < (new Date()).getTime()) {
+    if (endAt && isFinite(endAt) && endAt.getTime() < (new Date()).getTime()) {
       return [false, Hints.DropEnded]
     }
 
-    if (startAt && endAt && startAt.getTime() >= endAt.getTime()) {
+    if (startAt && isFinite(startAt) && endAt && startAt.getTime() >= endAt.getTime()) {
       return [false, Hints.InvalidTimeLimit]
     }
 
@@ -191,8 +191,8 @@ export default function DropCreator(props) {
       description: description ?? '',
       image: banner,
       url: url,
-      startAt: startAt ? `${startAt.getTime() / 1000}.0` : null,
-      endAt: endAt ? `${endAt.getTime() / 1000}.0` : null,
+      startAt: startAt && isFinite(startAt) ? `${startAt.getTime() / 1000}.0` : null,
+      endAt: endAt && isFinite(endAt) ? `${endAt.getTime() / 1000}.0` : null,
       token: token,
     }
 

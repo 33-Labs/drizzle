@@ -38,9 +38,9 @@ const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, reviewer) =
   }
   if (claimStatus.code.rawValue === "4") {
     if (isRandomPacket) {
-      return ["🔜", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "NOT START"]
+      return ["🕙", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "NOT START"]
     }
-    return ["🔜", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "NOT START"]
+    return ["🕙", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "NOT START"]
   }
   if (claimStatus.code.rawValue === "5") {
     if (isRandomPacket) {
