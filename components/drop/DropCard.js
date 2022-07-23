@@ -59,7 +59,7 @@ const MemoizeBasicInfo = React.memo(({ host, createdAt, token, tokenInfo, review
         {"Created by "}
         <span>
           <a
-            href={`${publicConfig.flowscanURL}/account/${host}`}
+            href={`${publicConfig.appURL}/${host}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-black underline decoration-drizzle-green decoration-2">{host}
