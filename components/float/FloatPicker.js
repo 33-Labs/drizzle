@@ -23,7 +23,8 @@ export const FloatModeFloatEvent = {
     let host = ''
     let id = '0'
     if (result.length != 2) {
-      const urlParseResult = raw.trim().replace(`${publicConfig.floatURL}/`, "").replaceAll("/", "").split('event')
+      const urlParseResult = decodeURI(raw.trim()).replace(`${publicConfig.floatURL}/`, "").replaceAll("/", "").split('event')
+      console.log(urlParseResult)
       if (urlParseResult.length != 2) {
         throw "Invalid pair"
       }
@@ -49,14 +50,14 @@ export const FloatModeFloatEvent = {
 export const FloatModeFloatGroup = {
   key: "FLOATGroup",
   title: "FLOAT Group",
-  description: `Enter the url of the FLOAT Group. Or enter group name and event host, concat them with "@". For instance: Drizzle@0x257c27ba4951541d.`,
+  description: `Enter the url of the FLOAT Group. Or enter group name and group creator, concat them with "@". For instance: Drizzle@0x257c27ba4951541d.`,
   placeholder: "Drizzle@0x257c27ba4951541d",
   inputHandler: (raw) => {
     const result = raw.trim().replace("#", "").split("@")
     let host = ''
     let groupName = ''
     if (result.length != 2) {
-      const urlParseResult = raw.trim().replace(`${publicConfig.floatURL}/`, "").replaceAll("/", "").split('group')
+      const urlParseResult = decodeURI(raw.trim()).replace(`${publicConfig.floatURL}/`, "").replaceAll("/", "").split('group')
       if (urlParseResult.length != 2) {
         throw "Invalid pair"
       }

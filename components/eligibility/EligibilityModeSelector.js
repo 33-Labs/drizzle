@@ -67,7 +67,7 @@ export const EligibilityModeFLOAT = {
   detail: FloatModeFloatEvent,
   criteria: (eventID) => {
     let event = eventID || "{EventID}"
-    return `Owns FLOAT of event #${event}`
+    return `Own FLOAT of event #${event}`
   },
   checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
     try {
@@ -93,7 +93,7 @@ export const EligibilityModeFLOATGroup = {
   criteria: (groupName, threshold) => {
     let t = threshold || "1"
     let g = groupName || "{GroupName}"
-    return `Owns at least ${t} FLOATs in ${g}`
+    return `Own at least ${t} FLOATs in ${g}`
   },
   checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
     try {

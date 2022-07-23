@@ -17,7 +17,7 @@ const getCriteriaLabel = (drop) => {
   if (reviewer.group) {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        Owns <span className="font-bold text-drizzle-green">{reviewer.threshold} </span>
+        Own <span className="font-bold text-drizzle-green">{reviewer.threshold} </span>
         FLOAT(s) in Group&nbsp;<span className="font-bold">
           <a
             href={`${publicConfig.floatURL}/${reviewer.group.host}/group/${reviewer.group.name}`}
@@ -34,7 +34,7 @@ const getCriteriaLabel = (drop) => {
   if (reviewer.events) {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        Owns FLOAT of Event&nbsp;<span className="font-bold text-drizzle-green">
+        Own FLOAT of Event&nbsp;<span className="font-bold text-drizzle-green">
           <a
             href={`${publicConfig.floatURL}/${reviewer.events[0].host}/event/${reviewer.events[0].eventID}`}
             target="_blank"
@@ -67,7 +67,7 @@ const getCriteriaLabelPreview = (
   if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        Owns <span className="font-bold text-drizzle-green">{threshold} </span>
+        Own <span className="font-bold text-drizzle-green">{threshold} </span>
         FLOAT(s) in Group&nbsp;<span className="font-bold">
           <a
             href={`${publicConfig.floatURL}/${floatGroup.groupHost}/group/${floatGroup.groupName}`}
@@ -86,7 +86,7 @@ const getCriteriaLabelPreview = (
     const eventHost = floatEventPairs[0].eventHost
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        Owns FLOAT of Event&nbsp;<span className="font-bold text-drizzle-green">
+        Own FLOAT of Event&nbsp;<span className="font-bold text-drizzle-green">
           <a
             href={`${publicConfig.floatURL}/${eventHost}/event/${eventID}`}
             target="_blank"

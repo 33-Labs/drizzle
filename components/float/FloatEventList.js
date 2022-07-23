@@ -32,7 +32,7 @@ export default function FloatEventList(props) {
                       <tr key={event.eventId}>
                         <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
                           <div className="flex items-center">
-                            <div className="h-10 w-10 flex-shrink-0 relative bg-[url('/float.png')] bg-center bg-cover rounded-xl">
+                            <div className="h-10 w-10 flex-shrink-0 relative rounded-xl">
                               <Image className="rounded-xl" src={event.image == "" ? "/float.png" : `https://ipfs.io/ipfs/${event.image}`} alt="" layout="fill" objectFit="cover" />
                             </div>
                             <div className="ml-4">

@@ -74,7 +74,7 @@ export default function ManageCard(props) {
               }
             }}
           >
-            {drop && drop.isPaused ? "Recover" : "Pause"}
+            {drop && drop.isPaused ? "Unpause" : "Pause"}
           </button>
           <button
             type="button"
@@ -86,7 +86,7 @@ export default function ManageCard(props) {
             onClick={async () => {
               setShowAlertModal(false)
               setAlertModalContent({
-                content: "Withdraw all funds will make it impossible for the unclaimed eligible users to claim their reward and the DROP will be paused",
+                content: "If you withdraw the funds, the rest of the eligible users will not be able to claim their rewards and the DROP will be paused",
                 actionTitle: "Withdraw",
                 action: async () => {
                   if (drop) {
@@ -117,7 +117,7 @@ export default function ManageCard(props) {
             onClick={async () => {
               setShowAlertModal(false)
               setAlertModalContent({
-                content: "Delete DROP will send all remaining tokens to your account, and no one can access the DROP again",
+                content: "Delete DROP will send all remaining tokens back to your account, and no one can access the DROP again",
                 actionTitle: "Delete",
                 action: async () => {
                   if (drop) {
