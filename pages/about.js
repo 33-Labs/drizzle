@@ -1,11 +1,4 @@
-const BulletP = ({ content }) => {
-  return (
-    <div className="flex">
-      <div className="w-5 shrink-0">&#8226;</div>
-      <p className="leading-7 font-flow text-black text-base font-medium">{content}</p>
-    </div>
-  )
-}
+import publicConfig from "../publicConfig"
 
 export default function About(props) {
   const h1 = "font-flow text-black font-bold text-2xl"
@@ -21,12 +14,24 @@ export default function About(props) {
 
       <div className="flex">
         <div className="w-5 shrink-0">&#8226;</div>
-        <p className={p}><span className="font-bold">FLOAT Event.</span> You can limit the eligibility to people who own FLOATs of specific FLOAT Event at the time of the DROP being created.</p>
+        <p className={p}>
+        <a href={publicConfig.floatURL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-black underline font-bold decoration-drizzle-green decoration-2">
+            FLOAT Event.
+        </a> You can limit the eligibility to people who own FLOATs of specific FLOAT Event at the time of the DROP being created.</p>
       </div>
 
       <div className="flex">
         <div className="w-5 shrink-0">&#8226;</div>
-        <p className={p}><span className="font-bold">FLOAT Group.</span> You can also limit the eligibility to people who own FLOATs in a FLOAT Group. You can set a threshold to the number of FLOATs the users should have.</p>
+        <p className={p}>
+        <a href={publicConfig.floatURL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-black underline font-bold decoration-drizzle-green decoration-2">
+            FLOAT Group.
+        </a> You can also limit the eligibility to people who own FLOATs in a FLOAT Group. You can set a threshold to the number of FLOATs the users should have.</p>
       </div>
 
       <div className="flex">
@@ -56,19 +61,19 @@ export default function About(props) {
       <p className={p}>More features are to be added soon. (NFT airdrop to be the next one!)</p>
       <br></br>
       <h1 className={h1}>One More Thing?</h1>
-      <p className={p}>If you have any suggestion, feel free to contact us (open an issue on our
+      <p className={p}>If you have any suggestion, feel free to contact us (open an issue on our&nbsp;
         <a href="https://github.com/33-Labs/drizzle"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-bold text-drizzle-green">
-          &nbsp;Github
+          className="text-black underline font-bold decoration-drizzle-green decoration-2">
+          Github
         </a>) !</p>
-      <p className={p}>And…If you need a batch transfer tool <span className="text-drizzle-green">#onFlow</span>, please try
+      <p className={p}>And…If you need a batch transfer tool <span className="text-drizzle-green">#onFlow</span>, please try&nbsp;
         <a href="https://bayou33.app/"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-bold text-drizzle-green">
-          &nbsp;bayou
+          className="text-black underline font-bold decoration-drizzle-green decoration-2">
+          bayou
         </a>
         !</p>
     </div>
