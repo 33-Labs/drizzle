@@ -33,7 +33,7 @@ export default function Drop(props) {
     dropID && host ? ["dropFetcher", dropID, host] : null, dropFetcher)
 
   const { data: claimStatusData, error: claimStatusError } = useSWR(
-    dropID && host && user && user.loggedIn ? ["claimStatusFetcher", dropID, host, user.addr] : null, claimStatusFetcher)
+    dropID && host && user && user.loggedIn ? ["claimStatusFetcher", dropID, host, user.addr] : null, claimStatusFetcher, { refreshInterval: 5000 })
 
   useEffect(() => {
     if (dropData) { setDrop(dropData) }
