@@ -61,7 +61,7 @@ export default function ClaimCard(props) {
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
   const { mutate } = useSWRConfig()
 
-  const { isPreview, drop, host, user, token, tokenInfo, claimStatus } = props
+  const { isPreview, drop, host, user, token, tokenInfo, claimStatus, setShowClaimedModal, setClaimedAmountInfo } = props
   const symbol = isPreview ? (token && token.symbol) : (tokenInfo && tokenInfo.symbol)
 
   // [Emoji, Description, Amount, Title]
@@ -95,9 +95,18 @@ export default function ClaimCard(props) {
               return
             }
 
-            await claim(drop.dropID, host, tokenInfo,
+            const res = await claim(drop.dropID, host, tokenInfo,
               setTransactionInProgress,
               setTransactionStatus)
+
+            if (res && res.status === 4 && res.statusCode === 0) {
+              const claimedEvent = res.events.find((e) => e.type.includes("DropClaimed"))
+              if (claimedEvent && claimedEvent.data.amount) {
+                const claimedAmountInfo = `${new Decimal(claimedEvent.data.amount).toString()} ${symbol}`
+                setClaimedAmountInfo(claimedAmountInfo)
+                setShowClaimedModal(true)
+              }
+            } 
 
             mutate(["claimStatusFetcher", drop.dropID, host, user && user.addr])
             mutate(["dropFetcher", drop.dropID, host])

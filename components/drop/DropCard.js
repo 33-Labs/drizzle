@@ -90,6 +90,8 @@ export default function DropCard(props) {
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
 
   const isPreview = props.isPreview == true
+  const setShowClaimedModal = props.setShowClaimedModal
+  const setClaimedAmountInfo = props.setClaimedAmountInfo
 
   // Only created Drop has claimStatus
   const { drop, claimStatus, user, token,
@@ -140,6 +142,8 @@ export default function DropCard(props) {
           token={token}
           tokenInfo={tokenInfo}
           user={user}
+          setShowClaimedModal={setShowClaimedModal}
+          setClaimedAmountInfo={setClaimedAmountInfo}
         />
         {
           dropID && host ?

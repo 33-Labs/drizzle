@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { SpinnerCircular } from 'spinners-react'
+import ClaimedModal from './creator/ClaimedModal'
 
 import DropCard from './drop/DropCard'
 import ManageCard from './presenter/ManageCard'
@@ -7,6 +9,8 @@ import AlertModal from './toolbox/AlertModal'
 
 export default function DropPresenter(props) {
   const { drop, claimStatus, user, host } = props
+  const [showClaimedModal, setShowClaimedModal] = useState(false)
+  const [claimedAmountInfo, setClaimedAmountInfo] = useState('')
 
   return (
     <>
@@ -20,6 +24,8 @@ export default function DropPresenter(props) {
                 // startAt={drop.startAt ? convertCadenceDateTime(drop.startAt) : null}
                 claimStatus={claimStatus}
                 user={user}
+                setShowClaimedModal={setShowClaimedModal}
+                setClaimedAmountInfo={setClaimedAmountInfo}
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -41,6 +47,7 @@ export default function DropPresenter(props) {
         </div>
       }
       <AlertModal />
+      <ClaimedModal open={showClaimedModal} setOpen={setShowClaimedModal} claimedAmountInfo={claimedAmountInfo} />
     </>
   )
 }

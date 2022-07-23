@@ -1,11 +1,10 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useRouter } from 'next/router'
-import ShareCard from '../drop/ShareCard'
 
-export default function DropCreatedModal(props) {
+export default function ClaimedModal(props) {
   const router = useRouter()
-  const { open, setOpen, url } = props
+  const { open, setOpen, claimedAmountInfo } = props
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -37,19 +36,12 @@ export default function DropCreatedModal(props) {
                 <div>
                   <label className="block w-full h-[80px] text-center text-[60px]">🎉</label>
                   <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-2xl leading-6 font-semibold text-gray-900">
-                      DROP Created Successfully!
+                    <Dialog.Title as="h3" className="text-2xl leading-10 font-semibold text-gray-900">
+                      {`${claimedAmountInfo}`}
                     </Dialog.Title>
-                    <div className="flex flex-col items-center justify-center gap-y-4 mt-2">
-                      <p className="text-sm text-gray-500">
-                        Share DROP to your community now!
-                      </p>
-                      <ShareCard 
-                      styles={`flex flex-col min-w-[200px] aspect-square justify-center
-                      ring-1 ring-black ring-opacity-5 rounded-3xl overflow-hidden
-                      shadow-[0px_5px_25px_-5px_rgba(0,0,0,0.1)] items-center`}
-                      qrCodeSize={160} logoSize={16} url={url} />
-                    </div>
+                    <Dialog.Title as="h3" className="text-xl leading-10 font-semibold text-gray-900">
+                      {`Claimed Successfully!`}
+                    </Dialog.Title>
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-6">
@@ -58,12 +50,9 @@ export default function DropCreatedModal(props) {
                     className="inline-flex justify-center w-full rounded-2xl border border-transparent shadow-sm px-4 py-2 bg-drizzle-green text-base font-semibold hover:bg-drizzle-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-drizzle-green sm:text-sm"
                     onClick={() => {
                       setOpen(false)
-                      if (url) {
-                        router.push(url)
-                      }
                     }}
                   >
-                    Go To DROP Page
+                    HOORAY!
                   </button>
                 </div>
               </Dialog.Panel>
