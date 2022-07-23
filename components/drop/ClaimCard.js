@@ -91,7 +91,7 @@ export default function ClaimCard(props) {
               return
             }
 
-            if (isPreview || (claimStatus && claimStatus.code.rawValue != "0") || !drop) {
+            if (isPreview || !claimStatus || (claimStatus && claimStatus.code.rawValue != "0") || !drop) {
               return
             }
 
