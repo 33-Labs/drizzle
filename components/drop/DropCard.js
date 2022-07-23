@@ -115,7 +115,7 @@ export default function DropCard(props) {
       sm:min-w-[320px]
       md:w-[480px]">
         <MemoizeBanner banner={banner || "/flow-banner.jpg"} />
-        <div className="flex flex-col p-8 gap-y-5">
+        <div className="flex flex-col p-5 sm:p-8 gap-y-5">
           <MemoizeName name={name} url={url} />
           <MemoizeBasicInfo
             host={host} createdAt={createdAt} token={token} tokenInfo={tokenInfo} reviewer={reviewer}
