@@ -51,7 +51,7 @@ const getCriteriaLabel = (drop) => {
 const getCriteriaLabelPreview = (
   eligibilityMode, packetMode, floatGroup, floatEventPairs, threshold
 ) => {
-  if (!eligibilityMode || !packetMode ) return null
+  if (!eligibilityMode) return null
   // WhitelistWithAmount & Whitelist
   if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key ||
     eligibilityMode.key === EligibilityModeWhitelist.key) {
@@ -61,6 +61,8 @@ const getCriteriaLabelPreview = (
       </label>
     )
   }
+
+  if (!packetMode) return null
 
   if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
     return (

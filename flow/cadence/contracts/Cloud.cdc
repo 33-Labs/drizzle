@@ -98,15 +98,6 @@ pub contract Cloud {
                 )
             }
 
-            if !eligibility.isAvailable {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.unavailable,
-                    eligibleAmount: eligibility.eligibleAmount,
-                    message: "no longer available",
-                    extraData: extraData
-                ) 
-            }
-
             if let record = self.claimedRecords[account] {
                 return Drizzle.ClaimStatus(
                     code: Drizzle.ClaimStatusCode.claimed,
@@ -114,6 +105,15 @@ pub contract Cloud {
                     message: "claimed",
                     extraData: extraData
                 )
+            }
+
+            if !eligibility.isAvailable {
+                return Drizzle.ClaimStatus(
+                    code: Drizzle.ClaimStatusCode.unavailable,
+                    eligibleAmount: eligibility.eligibleAmount,
+                    message: "no longer available",
+                    extraData: extraData
+                ) 
             }
 
             if let startAt = self.startAt {
