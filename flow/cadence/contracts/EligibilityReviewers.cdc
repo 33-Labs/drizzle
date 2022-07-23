@@ -131,13 +131,16 @@ pub contract EligibilityReviewers {
             let floatCollection = getAccount(account)
                 .getCapability(FLOAT.FLOATCollectionPublicPath)
                 .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
-                ?? panic("Could not borrow the Collection from the account.")
+
+            if floatCollection == nil {
+                return false
+            } 
 
             var validCount: UInt64 = 0
             for eventID in eventIDs {
-                let ownedIDs = floatCollection.ownedIdsFromEvent(eventId: eventID)
+                let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: eventID)
                 for ownedEventID in ownedIDs {
-                    if let float = floatCollection.borrowFLOAT(id: ownedEventID) {
+                    if let float = floatCollection!.borrowFLOAT(id: ownedEventID) {
                         if float.dateReceived <= self.receivedBefore {
                             validCount = validCount + 1
                             if validCount >= self.threshold {
@@ -197,13 +200,16 @@ pub contract EligibilityReviewers {
             let floatCollection = getAccount(account)
                 .getCapability(FLOAT.FLOATCollectionPublicPath)
                 .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
-                ?? panic("Could not borrow the FLOAT Collection from the account.")
+
+            if floatCollection == nil {
+                return false
+            }
 
             var validCount: UInt64 = 0
             for _event in self.events {
-                let ownedIDs = floatCollection.ownedIdsFromEvent(eventId: _event.eventID)
+                let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: _event.eventID)
                 for ownedEventID in ownedIDs {
-                    if let float = floatCollection.borrowFLOAT(id: ownedEventID) {
+                    if let float = floatCollection!.borrowFLOAT(id: ownedEventID) {
                         if float.dateReceived <= self.receivedBefore {
                             validCount = validCount + 1
                             if validCount >= self.threshold {
