@@ -4,9 +4,14 @@ export default function Footer() {
   return (
     <footer className="m-auto mt-60 max-w-[880px] min-w-[360px] flex flex-1 justify-center items-center py-8 border-t border-solid box-border">
       <div className="flex flex-col gap-y-2 items-center">
-        <div className="min-w-[20px]">
-          <Image src="/github.png" alt="" width={20} height={20} priority />
-        </div>
+        <a href="https://github.com/33-Labs/drizzle"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div className="min-w-[20px]">
+            <Image src="/github.png" alt="" width={20} height={20} priority />
+          </div>
+        </a>
         <a
           href="https://github.com/33-Labs"
           target="_blank"
