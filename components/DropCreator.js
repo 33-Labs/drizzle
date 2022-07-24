@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
@@ -14,7 +14,7 @@ import {
   createDrop_Whitelist_Identical,
   createDrop_Whitelist_Random
 } from '../lib/transactions'
-import { classNames, isValidHttpUrl } from '../lib/utils'
+import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidHttpUrl } from '../lib/utils'
 
 import { useRecoilState } from "recoil"
 import {
@@ -48,6 +48,8 @@ const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
 
 export default function DropCreator(props) {
   const router = useRouter()
+  const { float, float_group } = router.query
+
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
@@ -97,8 +99,23 @@ export default function DropCreator(props) {
   const [showCreatedModal, setShowCreatedModal] = useState(false)
   const [newDropURL, setNewDropURL] = useState(null)
 
-  // For Packet
-  // const [packetCallback, setPacketCallback] = useState(null)
+  useEffect(() => {
+    if (float && float.trim() != '') {
+      try {
+        const eventPairs = floatEventInputHandler(float)
+        setFloatEventPairs(eventPairs)
+        setEligibilityMode(EligibilityModeFLOAT)
+      } catch (e) {}
+    }
+
+    if (float_group && float_group.trim() != '') {
+      try {
+        const group = floatGroupInputHandler(float_group)
+        setFloatGroup(group)
+        setEligibilityMode(EligibilityModeFLOATGroup)
+      } catch (e) {} 
+    }
+  }, [float, float_group])
 
   const checkBasicParams = () => {
     if (!name || name.trim() == "") {
@@ -338,6 +355,7 @@ export default function DropCreator(props) {
           totalAmount={totalAmount} setTotalAmount={setTotalAmount}
           floatMode={mode.detail}
           threshold={threshold} setThreshold={setThreshold}
+          rawFloatInput={float || float_group}
           floatEvents={floatEvents}
           setFloatEvents={setFloatEvents}
           setFloatEventPairs={setFloatEventPairs}

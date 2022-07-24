@@ -32,7 +32,6 @@ export default function NavigationBar(props) {
     })
   }, [])
 
-
   const AuthedState = () => {
     return (
       <div className="shrink truncate flex gap-x-2 items-center">

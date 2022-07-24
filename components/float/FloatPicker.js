@@ -6,7 +6,7 @@ import {
   showBasicNotificationState,
   transactionInProgressState,
 } from "../../lib/atoms"
-import { classNames, isValidFlowAddress } from "../../lib/utils"
+import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidFlowAddress } from "../../lib/utils"
 import { getFloatEvent, getFloatEventsInGroup } from '../../lib/float-scripts'
 import Decimal from 'decimal.js'
 import FloatEventList from './FloatEventList'
@@ -18,33 +18,7 @@ export const FloatModeFloatEvent = {
   title: "FLOAT Event",
   description: `Enter the url of the FLOAT Event. Or enter event id and event host, concat them with "@". For instance: 98963710@0x257c27ba4951541d.`,
   placeholder: "98963710@0x257c27ba4951541d",
-  inputHandler: (raw) => {
-    const result = raw.trim().replace("#", "").split("@")
-    let host = ''
-    let id = '0'
-    if (result.length != 2) {
-      const urlParseResult = decodeURI(raw.trim()).replace(`${publicConfig.floatURL}/`, "").replaceAll("/", "").split('event')
-      console.log(urlParseResult)
-      if (urlParseResult.length != 2) {
-        throw "Invalid pair"
-      }
-
-      [host, id] = urlParseResult
-    } else {
-      [id, host] = result
-    }
-
-    if (!isValidFlowAddress(host)) {
-      throw "Invalid address"
-    }
-
-    const _id = new Decimal(id)
-    if (!(_id.isInteger() && _id.isPositive() && !_id.isZero())) {
-      throw "Invalid event id"
-    }
-
-    return [{ eventID: id, eventHost: host }]
-  }
+  inputHandler: floatEventInputHandler
 }
 
 export const FloatModeFloatGroup = {
@@ -52,31 +26,7 @@ export const FloatModeFloatGroup = {
   title: "FLOAT Group",
   description: `Enter the url of the FLOAT Group. Or enter group name and group creator, concat them with "@". For instance: Drizzle@0x257c27ba4951541d.`,
   placeholder: "Drizzle@0x257c27ba4951541d",
-  inputHandler: (raw) => {
-    const result = raw.trim().replace("#", "").split("@")
-    let host = ''
-    let groupName = ''
-    if (result.length != 2) {
-      const urlParseResult = decodeURI(raw.trim()).replace(`${publicConfig.floatURL}/`, "").replaceAll("/", "").split('group')
-      if (urlParseResult.length != 2) {
-        throw "Invalid pair"
-      }
-
-      [host, groupName] = urlParseResult
-    } else {
-      [groupName, host] = result
-    }
-
-    if (!isValidFlowAddress(host)) {
-      throw "Invalid address"
-    }
-
-    if (groupName && groupName == '') {
-      throw "Invalid groupName"
-    }
-
-    return { groupName: groupName, groupHost: host }
-  }
+  inputHandler: floatGroupInputHandler
 }
 
 export default function FloatPicker(props) {
@@ -92,6 +42,7 @@ export default function FloatPicker(props) {
 
   const {
     threshold, setThreshold,
+    rawFloatInput,
     floatEvents,
     setFloatEvents,
     setFloatGroup,
@@ -106,6 +57,12 @@ export default function FloatPicker(props) {
     setRawEventStr('')
   }, [mode])
 
+  useEffect(() => {
+    if (rawFloatInput) {
+      setRawEventStr(rawFloatInput)
+    }
+  }, [rawFloatInput])
+
   return (
     <div className="space-y-2">
       <label className="block text-2xl font-bold font-flow">
@@ -118,8 +75,8 @@ export default function FloatPicker(props) {
       <div className="w-full flex justify-between gap-x-2 sm:gap-x-3">
         <input
           type="text"
-          name="deposit"
-          id="deposit"
+          name="floatPicker"
+          id="floatPicker"
           className="w-full bg-drizzle-green/10 grow border-drizzle-green font-flow text-lg rounded-2xl
           focus:ring-drizzle-green-dark focus:border-drizzle-green-dark  placeholder:text-gray-300"
           disabled={transactionInProgress}
