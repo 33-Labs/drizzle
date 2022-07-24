@@ -5,22 +5,28 @@ import {
   transactionInProgressState
 } from "../../lib/atoms"
 import { classNames, getTimezone } from '../../lib/utils';
+import { useEffect, useState } from "react";
 
 const Timezone = getTimezone()
 
 export default function TimeLimitPicker(props) {
   const [transactionInProgress,] = useRecoilState(transactionInProgressState)
+  const [timezone, setTimezone] = useState(null)
 
   const {
     timeLockEnabled, setTimeLockEnabled,
     setStartAt, setEndAt
   } = props
 
+  useEffect(() => {
+    setTimezone(Timezone)
+  }, [timezone])
+
   return (
     <div>
       <div className="flex justify-between items-center">
         <label className="block text-2xl font-bold font-flow">
-          Time Limit{` (${Timezone})`}
+          Time Limit{timezone ? ` (${timezone})` : ''}
         </label>
         <Switch
           disabled={transactionInProgress}
