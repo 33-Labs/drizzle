@@ -5,7 +5,7 @@ export default function About(props) {
   const p = "leading-7 font-flow text-black text-base font-medium"
   return (
     <div className="container mx-auto max-w-[880px] min-w-[380px] px-6">
-      <h1 className={h1}>Well, What’s Drizzle?</h1>
+      <h1 className={h1}>Well, what’s Drizzle?</h1>
       <p className={p}>Drizzle is an Airdrop Tool <span className="text-drizzle-green">#onFlow</span>! Anyone can use it to create an airdrop (FungibleToken only now) in a minute!</p>
       <br></br>
       <h1 className={h1}>How to use Drizzle?</h1>
