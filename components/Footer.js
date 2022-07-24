@@ -13,6 +13,14 @@ export default function Footer() {
             <Image src="/github.png" alt="" width={20} height={20} priority />
           </div>
         </a>
+        <a href="https://lanford33.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="min-w-[20px]">
+              <Image src="/33.png" alt="" width={20} height={20} priority />
+            </div>
+          </a>
         <a href="https://bayou33.app"
           target="_blank"
           rel="noopener noreferrer"
