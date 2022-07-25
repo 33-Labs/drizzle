@@ -30,9 +30,11 @@ pub contract EligibilityVerifiers {
 
     pub struct Whitelist: Drizzle.IEligibilityVerifier {
         pub let whitelist: {Address: AnyStruct}
+        pub let type: String
 
         init(whitelist: {Address: AnyStruct}) {
             self.whitelist = whitelist
+            self.type = "Whitelist"
         }
 
         pub fun verify(account: Address, params: {String: AnyStruct}): Drizzle.VerifyResult {
@@ -45,12 +47,13 @@ pub contract EligibilityVerifiers {
 
     pub struct FLOATGroup: Drizzle.IEligibilityVerifier {
         pub let group: FLOATGroupData
-        pub let threshold: UInt64
+        pub let threshold: UInt32
         pub let receivedBefore: UFix64
+        pub let type: String
 
         init(
             group: FLOATGroupData, 
-            threshold: UInt64,
+            threshold: UInt32,
         ) {
             pre {
                 threshold > 0: "threshold should greater than 0"
@@ -61,6 +64,7 @@ pub contract EligibilityVerifiers {
             // The FLOAT should be received before this DROP be created
             // or the users can transfer their FLOATs and claim again
             self.receivedBefore = getCurrentBlock().timestamp
+            self.type = "FLOATGroup"
         }
 
         pub fun verify(account: Address, params: {String: AnyStruct}): Drizzle.VerifyResult {
@@ -81,7 +85,7 @@ pub contract EligibilityVerifiers {
                 return Drizzle.VerifyResult(isEligible: false, extraData: {})
             } 
 
-            var validCount: UInt64 = 0
+            var validCount: UInt32 = 0
             for eventID in eventIDs {
                 let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: eventID)
                 for ownedEventID in ownedIDs {
@@ -101,12 +105,13 @@ pub contract EligibilityVerifiers {
 
     pub struct FLOATs: Drizzle.IEligibilityVerifier {
         pub let events: [FLOATEventData]
-        pub let threshold: UInt64
+        pub let threshold: UInt32
         pub let receivedBefore: UFix64
+        pub let type: String
 
         init(
             events: [FLOATEventData],
-            threshold: UInt64
+            threshold: UInt32
         ) {
             pre {
                 threshold > 0: "Threshold should greater than 0"
@@ -118,6 +123,7 @@ pub contract EligibilityVerifiers {
             // The FLOAT should be received before this DROP be created
             // or the users can transfer their FLOATs and claim again
             self.receivedBefore = getCurrentBlock().timestamp
+            self.type = "FLOATs"
         }
 
         pub fun verify(account: Address, params: {String: AnyStruct}): Drizzle.VerifyResult {
@@ -129,7 +135,7 @@ pub contract EligibilityVerifiers {
                 return Drizzle.VerifyResult(isEligible: false, extraData: {})
             }
 
-            var validCount: UInt64 = 0
+            var validCount: UInt32 = 0
             for _event in self.events {
                 let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: _event.eventID)
                 for ownedEventID in ownedIDs {

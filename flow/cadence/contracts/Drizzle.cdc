@@ -16,6 +16,7 @@ pub contract Drizzle {
     pub struct interface IDistributor {
         // capacity defines the available quota in a DROP
         pub let capacity: UInt32
+        pub let type: String
 
         pub fun isAvailable(params: {String: AnyStruct}): Bool
         // getEligibleAmount defines how much reward can a claimer get in this DROP
@@ -63,6 +64,8 @@ pub contract Drizzle {
     // // In Drizzle, EligibilityReviewer determines an account is eligible or not
     // // EligibilityReviewer should conform IEligibilityReviewer
     pub struct interface IEligibilityVerifier {
+        pub let type: String
+
         pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResult
     }
 

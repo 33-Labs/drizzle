@@ -28,11 +28,11 @@ if (!drizzleAddress) throw "Missing NEXT_PUBLIC_DRIZZLE_ADDRESS"
 const cloudAddress = process.env.NEXT_PUBLIC_CLOUD_ADDRESS
 if (!cloudAddress) throw "Missing NEXT_PUBLIC_CLOUD_ADDRESS"
 
-const eligibilityReviewersAddress = process.env.NEXT_PUBLIC_ELIGIBILITY_REVIEWERS_ADDRESS
-if (!eligibilityReviewersAddress) throw "Missing NEXT_PUBLIC_ELIGIBILITY_REVIEWERS_ADDRESS"
+const eligibilityVerifiersAddress = process.env.NEXT_PUBLIC_ELIGIBILITY_VERIFIERS_ADDRESS
+if (!eligibilityVerifiersAddress) throw "Missing NEXT_PUBLIC_ELIGIBILITY_VERIFIERS_ADDRESS"
 
-const packetsAddress = process.env.NEXT_PUBLIC_PACKETS_ADDRESS
-if (!packetsAddress) throw "Missing NEXT_PUBLIC_PACKETS_ADDRESS"
+const distributorsAddress = process.env.NEXT_PUBLIC_DISTRIBUTORS_ADDRESS
+if (!distributorsAddress) throw "Missing NEXT_PUBLIC_DISTRIBUTORS_ADDRESS"
 
 const floatAddress = process.env.NEXT_PUBLIC_FLOAT_ADDRESS
 if (!floatAddress) throw "Missing NEXT_PUBLIC_FLOAT_ADDRESS"
@@ -47,8 +47,8 @@ const publicConfig = {
   flowTokenAddress,
   drizzleAddress,
   cloudAddress,
-  eligibilityReviewersAddress,
-  packetsAddress,
+  eligibilityVerifiersAddress,
+  distributorsAddress,
   floatAddress,
   floatURL
 }

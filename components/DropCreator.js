@@ -12,11 +12,12 @@ import {
   createDrop_FLOATGroup_Identical,
   createDrop_FLOATGroup_Random,
   createDrop_Whitelist_Identical,
-  createDrop_Whitelist_Random
+  createDrop_Whitelist_Random,
+  createDrop
 } from '../lib/transactions'
 import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidHttpUrl } from '../lib/utils'
 
-import { useRecoilState } from "recoil"
+import { constSelector, useRecoilState } from "recoil"
 import {
   basicNotificationContentState,
   showBasicNotificationState,
@@ -202,7 +203,6 @@ export default function DropCreator(props) {
       return
     }
 
-    // Basic Params
     const params = {
       name: name,
       description: description ?? '',
@@ -211,95 +211,73 @@ export default function DropCreator(props) {
       startAt: startAt && isFinite(startAt) ? `${startAt.getTime() / 1000}.0` : null,
       endAt: endAt && isFinite(endAt) ? `${endAt.getTime() / 1000}.0` : null,
       token: token,
+      withExclusiveWhitelist: false,
+      exclusiveWhitelist: [],
+      whitelistTokenAmount: null,
+      withWhitelist: false,
+      whitelist: [],
+      withIdenticalDistributor: false,
+      capacity: null,
+      amountPerEntry: null,
+      withRandomDistributor: false,
+      totalRandomAmount: null,
+      withFloats: false,
+      threshold: null,
+      eventIDs: [],
+      eventHosts: [],
+      withFloatGroup: false,
+      floatGroupName: null,
+      floatGroupHost: null
     }
 
     if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
       const { whitelist, tokenAmount, } = whitelistWithAmountReviewerCallback
       const _tokenAmount = tokenAmount.toFixed(8).toString()
+      params.withExclusiveWhitelist = true
+      params.exclusiveWhitelist = whitelist
+      params.whitelistTokenAmount = _tokenAmount
 
-      const res = await createDrop_WhitelistWithAmount(
-        params.name, params.description, params.image, params.url, params.startAt,
-        params.endAt, params.token, whitelist, _tokenAmount, setTransactionInProgress, setTransactionStatus
-      )
-
-      handleCreationResponse(res)
     } else if (eligibilityMode.key === EligibilityModeWhitelist.key) {
       const { whitelist, } = whitelistReviewerCallback
-      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ?
-        new Decimal(identicalAmount).toFixed(8).toString() : null
-      let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
-        new Decimal(totalAmount).toFixed(8).toString() : null
+      params.withWhitelist = true
+      params.whitelist = whitelist
 
-      if (packetMode.key === PacketModeIdentical.key) {
-        const res = await createDrop_Whitelist_Identical(
-          params.name, params.description, params.image, params.url, params.startAt,
-          params.endAt, params.token, whitelist, capacity, _identicalAmount,
-          setTransactionInProgress, setTransactionStatus
-        )
-
-        handleCreationResponse(res)
-      } else if (packetMode.key === PacketModeRandom.key) {
-        const res = await createDrop_Whitelist_Random(
-          params.name, params.description, params.image, params.url, params.startAt,
-          params.endAt, params.token, whitelist, capacity, _totalAmount,
-          setTransactionInProgress, setTransactionStatus
-        )
-
-        handleCreationResponse(res)
-      }
     } else if (eligibilityMode.key === EligibilityModeFLOAT.key) {
+      // Only support 1 event now
       let eventIDs = [floatEventPairs[0].eventID]
       let eventHosts = [floatEventPairs[0].eventHost]
-      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ?
-        new Decimal(identicalAmount).toFixed(8).toString() : null
-      let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
-        new Decimal(totalAmount).toFixed(8).toString() : null
-      let _threshold = !isNaN(parseFloat(threshold)) ?
-        threshold : "1"
 
-      if (packetMode.key === PacketModeIdentical.key) {
-        const res = await createDrop_FLOATs_Identical(
-          params.name, params.description, params.image, params.url, params.startAt,
-          params.endAt, params.token, eventIDs, eventHosts, capacity, _identicalAmount,
-          _threshold, setTransactionInProgress, setTransactionStatus
-        )
+      params.withFloats = true
+      params.threshold = eventIDs.length
+      params.eventIDs = eventIDs
+      params.eventHosts = eventHosts
 
-        handleCreationResponse(res)
-      } else if (packetMode.key === PacketModeRandom.key) {
-        const res = await createDrop_FLOATs_Random(
-          params.name, params.description, params.image, params.url, params.startAt,
-          params.endAt, params.token, eventIDs, eventHosts, capacity, _threshold, _totalAmount,
-          setTransactionInProgress, setTransactionStatus
-        )
-
-        handleCreationResponse(res)
-      }
     } else if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-      let _identicalAmount = !isNaN(parseFloat(identicalAmount)) ?
-        new Decimal(identicalAmount).toFixed(8).toString() : null
-      let _totalAmount = !isNaN(parseFloat(totalAmount)) ?
-        new Decimal(totalAmount).toFixed(8).toString() : null
-      let _threshold = !isNaN(parseFloat(threshold)) ?
-        threshold : "1"
-
-      if (packetMode.key === PacketModeIdentical.key) {
-        const res = await createDrop_FLOATGroup_Identical(
-          params.name, params.description, params.image, params.url, params.startAt,
-          params.endAt, params.token, floatGroup.groupName, floatGroup.groupHost, capacity, _identicalAmount,
-          _threshold, setTransactionInProgress, setTransactionStatus
-        )
-
-        handleCreationResponse(res)
-      } else if (packetMode.key === PacketModeRandom.key) {
-        const res = await createDrop_FLOATGroup_Random(
-          params.name, params.description, params.image, params.url, params.startAt,
-          params.endAt, params.token, floatGroup.groupName, floatGroup.groupHost, capacity, _threshold, _totalAmount,
-          setTransactionInProgress, setTransactionStatus
-        )
-
-        handleCreationResponse(res)
-      }
+      params.withFloatGroup = true
+      params.threshold = threshold
+      params.floatGroupName = floatGroup.groupName
+      params.floatGroupHost = floatGroup.groupHost
     }
+
+    if (packetMode.key === PacketModeIdentical.key) {
+      let _identicalAmount = new Decimal(identicalAmount).toFixed(8).toString()
+      params.withIdenticalDistributor = true
+      params.capacity = capacity
+      params.amountPerEntry = _identicalAmount
+
+    } else if (packetMode.key === PacketModeRandom.key) {
+      let totalRandomAmount = new Decimal(totalAmount).toFixed(8).toString()
+      params.withRandomDistributor = true
+      params.capacity = capacity
+      params.totalRandomAmount = totalRandomAmount
+    }
+
+    const args = Object.values(params)
+    console.log(params)
+    const res = await createDrop(...args,
+      setTransactionInProgress, setTransactionStatus
+    )
+    handleCreationResponse(res)
   }
 
   const handleCreationResponse = (res) => {

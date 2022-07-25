@@ -68,6 +68,7 @@ export const EligibilityModeFLOAT = {
       if (floatEvents.length != 1) {
         throw Hints.InvalidFloatEvent
       }
+      // threshold should be 1 now
       return [true, Hints.Valid]
     } catch (error) {
       return [false, error]
@@ -96,7 +97,7 @@ export const EligibilityModeFLOATGroup = {
       }
 
       const _threshold = new Decimal(threshold)
-      if (!(_threshold.isInteger() && _threshold.isPositive() && _threshold.toNumber() <= floatEvents.length)) {
+      if (!(_threshold.isInteger() && _threshold.isPositive() && !_threshold.isZero() && _threshold.toNumber() <= floatEvents.length)) {
         throw Hints.InvalidThreshold
       }
 

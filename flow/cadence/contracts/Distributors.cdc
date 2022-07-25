@@ -7,6 +7,7 @@ pub contract Distributors {
     pub struct Exclusive: Drizzle.IDistributor {
         pub let capacity: UInt32
         pub let distributeList: {Address: UFix64}
+        pub let type: String
 
         init(distributeList: {Address: UFix64}) {
             pre {
@@ -14,6 +15,7 @@ pub contract Distributors {
             }
             self.capacity = UInt32.max
             self.distributeList = distributeList
+            self.type = "Exclusive"
         }
 
         pub fun isAvailable(params: {String: AnyStruct}): Bool {
@@ -35,6 +37,7 @@ pub contract Distributors {
     pub struct Identical: Drizzle.IDistributor {
         pub let capacity: UInt32
         pub let amountPerEntry: UFix64
+        pub let type: String
 
         init(capacity: UInt32, amountPerEntry: UFix64) {
             pre {
@@ -42,6 +45,7 @@ pub contract Distributors {
             }
             self.capacity = capacity
             self.amountPerEntry = amountPerEntry
+            self.type = "Identical"
         }
 
         pub fun isAvailable(params: {String: AnyStruct}): Bool {
@@ -61,12 +65,14 @@ pub contract Distributors {
     pub struct Random: Drizzle.IDistributor {
         pub let capacity: UInt32
         pub let totalAmount: UFix64
+        pub let type: String
 
         init(capacity: UInt32, totalAmount: UFix64) {
             assert(totalAmount >= UFix64(capacity) * 0.001, message: "amount is too small")
 
             self.capacity = capacity
             self.totalAmount = totalAmount
+            self.type = "Random"
         }
 
         pub fun isAvailable(params: {String: AnyStruct}): Bool {

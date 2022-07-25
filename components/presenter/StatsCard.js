@@ -62,14 +62,15 @@ const extractStatsPreview = (packetMode,
 }
 
 const extractStats = (drop) => {
-  const packet = drop.eligibilityReviewer.packet
+  console.log(drop)
+  const distributor = drop.distributor
   const symbol = drop.tokenInfo.symbol
   const claimedCount = Object.keys(drop.claimedRecords).length
 
   const red = "border-red-400"
   const green = "border-drizzle-green"
 
-  if (!packet) {
+  if (distributor) {
     const balance = new Decimal(drop.dropVault.balance)
     return [
       {

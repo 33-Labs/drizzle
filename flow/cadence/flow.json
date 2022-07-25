@@ -63,25 +63,25 @@
         "Drizzle": {
             "source": "./contracts/Drizzle.cdc",
             "aliases": {
-                "testnet": "0x91c0d5719248ed76"
+                "testnet": "0x88fc7eed84d145e3"
             }  
         },
         "Distributors": {
             "source": "./contracts/Distributors.cdc",
             "aliases": {
-                "testnet": "0x91c0d5719248ed76"
-            }   
+                "testnet": "0x88fc7eed84d145e3"
+            }
         },
         "EligibilityVerifiers": {
             "source": "./contracts/EligibilityVerifiers.cdc",
             "aliases": {
-                "testnet": "0x91c0d5719248ed76"
+                "testnet": "0x88fc7eed84d145e3"
             }
         },
         "Cloud": {
             "source": "./contracts/Cloud.cdc",
             "aliases": {
-                "testnet": "0x91c0d5719248ed76"
+                "testnet": "0x88fc7eed84d145e3"
             }
         }
     },

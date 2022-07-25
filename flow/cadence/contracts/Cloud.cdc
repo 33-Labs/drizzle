@@ -43,6 +43,7 @@ pub contract Cloud {
         pub var isEnded: Bool
         pub let claimedRecords: {Address: Drizzle.ClaimRecord}
         pub var claimedAmount: UFix64
+        pub let extraData: {String: AnyStruct}
 
         access(self) let dropVault: @FungibleToken.Vault
 
@@ -287,6 +288,7 @@ pub contract Cloud {
             verifyMode: Drizzle.EligibilityVerifyMode,
             verifiers: {String: [{Drizzle.IEligibilityVerifier}]},
             vault: @FungibleToken.Vault,
+            extraData: {String: AnyStruct}
         ) {
             pre {
                 name.length > 0: "invalid name"
@@ -328,6 +330,7 @@ pub contract Cloud {
             self.claimedAmount = 0.0
 
             self.dropVault <- vault
+            self.extraData = extraData
 
             Cloud.totalDrops = Cloud.totalDrops + 1
             emit DropCreated(
@@ -377,7 +380,8 @@ pub contract Cloud {
             distributor: {Drizzle.IDistributor},
             verifyMode: Drizzle.EligibilityVerifyMode,
             verifiers: [{Drizzle.IEligibilityVerifier}],
-            vault: @FungibleToken.Vault
+            vault: @FungibleToken.Vault,
+            extraData: {String: AnyStruct}
         ): UInt64 {
             pre {
                 verifiers.length == 1: "Currently only 1 verifier supported"
@@ -408,6 +412,7 @@ pub contract Cloud {
                 verifyMode: verifyMode,
                 verifiers: typedVerifiers,
                 vault: <- vault,
+                extraData: extraData
             )
 
             let dropID = drop.dropID

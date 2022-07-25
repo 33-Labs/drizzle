@@ -35,7 +35,7 @@ transaction(
     totalRandomAmount: UFix64?,
 
     withFloats: Bool,
-    threshold: UInt64?,
+    threshold: UInt32?,
     eventIDs: [UInt64],
     eventHosts: [Address],
 
@@ -141,7 +141,8 @@ transaction(
             distributor: distributor!,
             verifyMode: Drizzle.EligibilityVerifyMode.all,
             verifiers: [verifier!], 
-            vault: <- self.vault.withdraw(amount: amount)
+            vault: <- self.vault.withdraw(amount: amount),
+            extraData: {}
         )
     }
 }
