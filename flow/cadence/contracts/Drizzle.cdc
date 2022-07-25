@@ -12,12 +12,14 @@ pub contract Drizzle {
     pub event ContractInitialized()
 
     // In Drizzle, we use Packet to define the fund dispatcher
-    // A Packet should conform IPacket
-    pub struct interface IPacket {
+    // A Packet should conform IDistributor
+    pub struct interface IDistributor {
         // capacity defines the available quota in a DROP
         pub let capacity: UInt32
-        // getAmountInPacket defines how much reward can a claimer get in this DROP
-        pub fun getAmountInPacket(params: {String: AnyStruct}): UFix64
+
+        pub fun isAvailable(params: {String: AnyStruct}): Bool
+        // getEligibleAmount defines how much reward can a claimer get in this DROP
+        pub fun getEligibleAmount(params: {String: AnyStruct}): UFix64
     }
 
     // Eligibility is a struct used to describe the eligibility of an account
@@ -43,15 +45,25 @@ pub contract Drizzle {
         }
     }
 
-    // In Drizzle, EligibilityReviewer determines an account is eligible or not
-    // EligibilityReviewer should conform IEligibilityReviewer
-    pub struct interface IEligibilityReviewer {
-        // Packet is optional here. For special mode like WhitelistWithAmount, the eligible amount of an account
-        // is defined by the whitelist, so Packet is not required.
-        pub let packet: {IPacket}?
+    pub enum EligibilityVerifyMode: UInt8 {
+        pub case oneOf
+        pub case all
+    }
 
-        // All EligibilityReviewer should have this function to check the eiligibity of an account.
-        pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Eligibility
+    pub struct VerifyResult {
+        pub let isEligible: Bool
+        pub let extraData: {String: AnyStruct}
+
+        init(isEligible: Bool, extraData: {String: AnyStruct}) {
+            self.isEligible = isEligible
+            self.extraData = extraData
+        }
+    }
+
+    // // In Drizzle, EligibilityReviewer determines an account is eligible or not
+    // // EligibilityReviewer should conform IEligibilityReviewer
+    pub struct interface IEligibilityVerifier {
+        pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResult
     }
 
     // TokenInfo stores the information of the FungibleToken of a DROP
@@ -153,17 +165,21 @@ pub contract Drizzle {
         pub let endAt: UFix64?
 
         pub let tokenInfo: TokenInfo
-        pub let eligibilityReviewer: {IEligibilityReviewer}
+        pub let distributor: {IDistributor}
+        // pub let verifiers: [{IEligibilityVerifier}]
+        pub let verifyMode: EligibilityVerifyMode
 
         pub var isPaused: Bool
+        pub var isEnded: Bool
         // Helper field for use to access the claimed amount of DROP easily
         pub var claimedAmount: UFix64
 
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct})
-        pub fun getClaimStatus(account: Address): ClaimStatus
+        pub fun getClaimStatus(account: Address, params: {String: AnyStruct}): ClaimStatus
         pub fun getClaimedRecord(account: Address): ClaimRecord?
         pub fun getClaimedRecords(): {Address: ClaimRecord}
         pub fun getDropBalance(): UFix64
+        pub fun getVerifiers(): {String: [{IEligibilityVerifier}]}
     }
 
     pub resource interface IDropCollectionPublic {
