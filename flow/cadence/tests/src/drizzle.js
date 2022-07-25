@@ -14,419 +14,76 @@ import {
   FLOAT_createEvent
 } from "./float"
 
-// ===== WHITELIST_WITH_AMOUNT =====
-
-export const createDrop_WhitelistWithAmount = async (signer, params) => {
+export const createDrop = async (signer, params) => {
   const signers = [signer]
-  const txName = "create_drop_whitelist_with_amount"
+  const txName = "create_drop"
+  console.log(params)
   return await sendTransaction({ name: txName, signers: signers, args: params})
 }
 
-export const createFUSDDrop_WhitelistWithAmount = async (signer, params) => {
-  const {
-    initFlowAmount, 
-    initFUSDAmount,
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo,
-    whitelist, tokenAmount
-  } = params
-  if (tokenAmount > initFUSDAmount) throw "tokenAmount shoud less than initFUSDAmount"
-
-  await mintFlow(signer, initFlowAmount)
-  await setupFUSDVault(signer)
-
-  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
-  await checkFUSDBalance(signer, initFUSDAmount)
-
-  const args = [
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
-    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    whitelist, tokenAmount 
-  ]
-  return await createDrop_WhitelistWithAmount(signer, args)
-}
-
-export const createDefaultFUSDDrop_WhitelistWithAmount = async (signer, overrides = {}) => {
-  const defaultWhitelist = await getDefaultWhitelistWithAmount()
+export const createFUSDDrop = async (signer, overrides = {}) => {
   const FUSDInfo = await getFUSDInfo()
 
-  const {whitelist, image, url, startAt, endAt, returnErr} = overrides
+  const defaultExclusiveWhitelist = await getDefaultWhitelistWithAmount()
+  const defaultWhitelist = await getDefaultWhitelist()
+
+
+
+  const {initFlowAmount, initFUSDAmount, 
+    image, url, startAt, endAt, 
+    withExclusiveWhitelist, exclusiveWhitelist, whitelistTokenAmount,
+    withWhitelist, whitelist,
+    withIdenticalDistributor, capacity, amountPerEntry,
+    withRandomDistributor, totalRandomAmount,
+    withFloats, threshold, eventIDs, eventHosts,
+    withFloatGroup, floatGroupName, floatGroupHost,
+    returnErr} = overrides
+
+  const needFloats = withFloats || withFloatGroup
+  const creator = await getAccountAddress("FLOATCreator")
+  const defaultEventIDs = needFloats ? await FLOAT_getEventIDs(creator) : []
+  const defaultEventHosts = needFloats ? [creator, creator, creator] : []
+
+  const defaultFloatGroupName = "GTEST"
+  const defaultFloatGroupHost = creator
+  
   const args = {
-    initFlowAmount: 100.0, 
-    initFUSDAmount: 1000.0,
     name: "TEST", 
     description: "Test DROP", 
     image: image || null, url: url || null,
     startAt: startAt || null, endAt: endAt || null,
-    FUSDInfo: FUSDInfo,
-    whitelist: whitelist || defaultWhitelist, tokenAmount: 150.0
+    tokenIssuer: FUSDInfo.tokenIssuer, 
+    tokenContractName: FUSDInfo.tokenContractName, 
+    tokenSymbol: FUSDInfo.tokenSymbol,
+    tokenProviderPath: FUSDInfo.tokenProviderPath, 
+    tokenBalancePath: FUSDInfo.tokenBalancePath, 
+    tokenReceiverPath: FUSDInfo.tokenReceiverPath,
+
+    withExclusiveWhitelist: withExclusiveWhitelist || false,
+    exclusiveWhitelist: exclusiveWhitelist || defaultExclusiveWhitelist, 
+    whitelistTokenAmount: whitelistTokenAmount || 150.0,
+    withWhitelist: withWhitelist || false, whitelist: whitelist || defaultWhitelist,
+    withIdenticalDistributor: withIdenticalDistributor || false, capacity: capacity || 2, amountPerEntry: amountPerEntry || 20.0,
+    withRandomDistributor: withRandomDistributor || false, totalRandomAmount: totalRandomAmount || 150.0,
+    withFloats: withFloats || false, threshold: threshold || 2, eventIDs: eventIDs || defaultEventIDs, eventHosts: eventHosts || defaultEventHosts,
+    withFloatGroup: withFloatGroup || false, floatGroupName: floatGroupName || defaultFloatGroupName, floatGroupHost: floatGroupHost || defaultFloatGroupHost
   }
-  const [tx, error] = await createFUSDDrop_WhitelistWithAmount(signer, args)
+
+  const flowAmount = initFlowAmount ?? 100.0
+  const fusdAmount = initFUSDAmount ?? 1000.0
+
+  await mintFlow(signer, flowAmount)
+  await setupFUSDVault(signer)
+
+  await mintFUSD(await getAccountAddress("Deployer"), fusdAmount, signer)
+  await checkFUSDBalance(signer, fusdAmount)
+
+  const [tx, error] = await createDrop(signer, Object.values(args))
+  console.log(error)
+  console.log(tx)
   if (returnErr === true) {
     return error
   }
-  expect(error).toBeNull()
-}
-
-// ===== WHITELIST_RANDOM =====
-
-export const createDrop_Whitelist_Random = async (signer, params) => {
-  const signers = [signer]
-  const txName = "create_drop_whitelist_random"
-  return await sendTransaction({ name: txName, signers: signers, args: params})
-}
-
-export const createFUSDDrop_Whitelist_Random = async (signer, params) => {
-  const {
-    initFlowAmount, 
-    initFUSDAmount,
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo,
-    whitelist, capacity, tokenAmount
-  } = params
-  if (tokenAmount > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
-
-  await mintFlow(signer, initFlowAmount)
-  await setupFUSDVault(signer)
-
-  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
-  await checkFUSDBalance(signer, initFUSDAmount)
-
-  const args = [
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
-    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    whitelist, capacity, tokenAmount 
-  ]
-  return await createDrop_Whitelist_Random(signer, args)
-}
-
-export const createDefaultFUSDDrop_Whitelist_Random = async (signer, overrides = {}) => {
-  const FUSDInfo = await getFUSDInfo()
-  const defaultWhitelist = await getDefaultWhitelist()
-
-  const {whitelist, image, url, startAt, endAt, capacity, tokenAmount} = overrides
-  const args = {
-    initFlowAmount: 100.0, 
-    initFUSDAmount: 1000.0,
-    name: "TEST", 
-    description: "Test DROP", 
-    image: image || null, url: url || null,
-    startAt: startAt || null, endAt: endAt || null,
-    FUSDInfo: FUSDInfo,
-    whitelist: whitelist || defaultWhitelist,
-    capacity: capacity || 2,
-    tokenAmount: tokenAmount || 20.0
-  }
-
-  const [tx, error] = await createFUSDDrop_Whitelist_Random(signer, args)
-  expect(error).toBeNull()
-}
-
-
-// ===== WHITELIST_IDENTICAL =====
-
-export const createDrop_Whitelist_Identical = async (signer, params) => {
-  const signers = [signer]
-  const txName = "create_drop_whitelist_identical"
-  return await sendTransaction({ name: txName, signers: signers, args: params})
-}
-
-export const createFUSDDrop_Whitelist_Identical = async (signer, params) => {
-  const {
-    initFlowAmount, 
-    initFUSDAmount,
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo,
-    whitelist, capacity, amountPerPacket,
-  } = params
-  if (capacity * amountPerPacket > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
-
-  await mintFlow(signer, initFlowAmount)
-  await setupFUSDVault(signer)
-
-  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
-  await checkFUSDBalance(signer, initFUSDAmount)
-
-  const args = [
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
-    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    whitelist, capacity, amountPerPacket
-  ]
-  return await createDrop_Whitelist_Identical(signer, args)
-}
-
-export const createDefaultFUSDDrop_Whitelist_Identical = async (signer, overrides = {}) => {
-  const FUSDInfo = await getFUSDInfo()
-  const defaultWhitelist = await getDefaultWhitelist()
-
-  const {whitelist, image, url, startAt, endAt, capacity, amountPerPacket } = overrides
-  const args = {
-    initFlowAmount: 100.0, 
-    initFUSDAmount: 1000.0,
-    name: "TEST", 
-    description: "Test DROP", 
-    image: image || null, url: url || null,
-    startAt: startAt || null, endAt: endAt || null,
-    FUSDInfo: FUSDInfo,
-    whitelist: whitelist || defaultWhitelist,
-    capacity: capacity || 2,
-    amountPerPacket: amountPerPacket || 20.0,
-  }
-
-  const [tx, error] = await createFUSDDrop_Whitelist_Identical(signer, args)
-  expect(error).toBeNull()
-}
-
-// ===== FLOATS_IDENTICAL =====
-
-export const createDrop_FLOATs_Identical = async (signer, params) => {
-  const signers = [signer]
-  const txName = "create_drop_floats_identical"
-  return await sendTransaction({ name: txName, signers: signers, args: params})
-}
-
-export const createFUSDDrop_FLOATs_Identical = async (signer, params) => {
-  const {
-    initFlowAmount, 
-    initFUSDAmount,
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo,
-    eventIDs, eventHosts, capacity, amountPerPacket, threshold
-  } = params
-  if (capacity * amountPerPacket > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
-
-  await mintFlow(signer, initFlowAmount)
-  await setupFUSDVault(signer)
-
-  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
-  await checkFUSDBalance(signer, initFUSDAmount)
-
-  const args = [
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
-    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    eventIDs, eventHosts, capacity, amountPerPacket, threshold 
-  ]
-  return await createDrop_FLOATs_Identical(signer, args)
-}
-
-export const createDefaultFUSDDrop_FLOATs_Identical = async (signer, overrides = {}) => {
-  const FUSDInfo = await getFUSDInfo()
-  const creator = await getAccountAddress("FLOATCreator")
-  const defaultEventIDs = await FLOAT_getEventIDs(creator)
-  expect(defaultEventIDs.length).toBe(3)
-  const defaultEventHosts = [creator, creator, creator]
-
-  const {eventIDs, eventHosts, image, url, startAt, endAt, capacity, amountPerPacket, threshold} = overrides
-  const args = {
-    initFlowAmount: 100.0, 
-    initFUSDAmount: 1000.0,
-    name: "TEST", 
-    description: "Test DROP", 
-    image: image || null, url: url || null,
-    startAt: startAt || null, endAt: endAt || null,
-    FUSDInfo: FUSDInfo,
-    eventIDs: eventIDs || defaultEventIDs,
-    eventHosts: eventHosts || defaultEventHosts,
-    capacity: capacity || 2,
-    amountPerPacket: amountPerPacket || 20.0,
-    threshold: threshold || 2
-  }
-
-  const [tx, error] = await createFUSDDrop_FLOATs_Identical(signer, args)
-  expect(error).toBeNull()
-}
-
-// ===== FLOATs RANDOM =====
-
-export const createDrop_FLOATs_Random = async (signer, params) => {
-  const signers = [signer]
-  const txName = "create_drop_floats_random"
-  return await sendTransaction({ name: txName, signers: signers, args: params})
-}
-
-export const createFUSDDrop_FLOATs_Random = async (signer, params) => {
-  const {
-    initFlowAmount, 
-    initFUSDAmount,
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo,
-    eventIDs, eventHosts, capacity, threshold,
-    tokenAmount
-  } = params
-  if (tokenAmount > initFUSDAmount) throw "tokenAmount shoud less than initFUSDAmount"
-
-  await mintFlow(signer, initFlowAmount)
-  await setupFUSDVault(signer)
-
-  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
-  await checkFUSDBalance(signer, initFUSDAmount)
-
-  const args = [
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
-    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    eventIDs, eventHosts, capacity, threshold, 
-    tokenAmount 
-  ]
-  return await createDrop_FLOATs_Random(signer, args)
-}
-
-export const createDefaultFUSDDrop_FLOATs_Random = async (signer, overrides = {}) => {
-  const FUSDInfo = await getFUSDInfo()
-  const creator = await getAccountAddress("FLOATCreator")
-  const defaultEventIDs = await FLOAT_getEventIDs(creator)
-  expect(defaultEventIDs.length).toBe(3)
-  const defaultEventHosts = [creator, creator, creator]
-
-  const {eventIDs, eventHosts, image, url, startAt, endAt, capacity, threshold} = overrides
-  const args = {
-    initFlowAmount: 100.0, 
-    initFUSDAmount: 1000.0,
-    name: "TEST", 
-    description: "Test DROP", 
-    image: image || null, url: url || null,
-    startAt: startAt || null, endAt: endAt || null,
-    FUSDInfo: FUSDInfo,
-    eventIDs: eventIDs || defaultEventIDs,
-    eventHosts: eventHosts || defaultEventHosts,
-    capacity: capacity || 2,
-    threshold: threshold || 2,
-    tokenAmount: 150.0
-  }
-
-  const [tx, error] = await createFUSDDrop_FLOATs_Random(signer, args)
-  expect(error).toBeNull()
-}
-
-// ===== FLOAT_GROUP_IDENTICAL =====
-
-export const createDrop_FLOATGroup_Identical = async (signer, params) => {
-  const signers = [signer]
-  const txName = "create_drop_float_group_identical"
-  return await sendTransaction({ name: txName, signers: signers, args: params}) 
-}
-
-export const createFUSDDrop_FLOATGroup_Identical = async (signer, params) => {
-  const {
-    initFlowAmount, 
-    initFUSDAmount,
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo,
-    floatGroupName, floatGroupHost, capacity, amountPerPacket, threshold
-  } = params
-  if (capacity * amountPerPacket > initFUSDAmount) throw "DROP tokenAmount shoud less than initFUSDAmount"
-
-  await mintFlow(signer, initFlowAmount)
-  await setupFUSDVault(signer)
-
-  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
-  await checkFUSDBalance(signer, initFUSDAmount)
-
-  const args = [
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
-    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    floatGroupName, floatGroupHost, capacity, amountPerPacket, threshold 
-  ]
-  return await createDrop_FLOATGroup_Identical(signer, args)
-}
-
-export const createDefaultFUSDDrop_FLOATGroup_Identical = async (signer, overrides = {}) => {
-  const FUSDInfo = await getFUSDInfo()
-
-  const {groupName, image, url, startAt, endAt, capacity, amountPerPacket, threshold} = overrides
-  const args = {
-    initFlowAmount: 100.0, 
-    initFUSDAmount: 1000.0,
-    name: "TEST", 
-    description: "Test DROP", 
-    image: image || null, url: url || null,
-    startAt: startAt || null, endAt: endAt || null,
-    FUSDInfo: FUSDInfo,
-    floatGroupName: groupName || "GTEST",
-    floatGroupHost: await getAccountAddress("FLOATCreator"),
-    capacity: capacity || 2,
-    amountPerPacket: amountPerPacket || 20.0,
-    threshold: threshold || 2
-  }
-
-  const [tx, error] = await createFUSDDrop_FLOATGroup_Identical(signer, args)
-  expect(error).toBeNull()
-}
-
-// ===== FLOAT_GROUP_RANDOM =====
-
-export const createDrop_FLOATGroup_Random = async (signer, params) => {
-  const signers = [signer]
-  const txName = "create_drop_float_group_random"
-  return await sendTransaction({ name: txName, signers: signers, args: params}) 
-}
-
-export const createFUSDDrop_FLOATGroup_Random = async (signer, params) => {
-  const {
-    initFlowAmount, 
-    initFUSDAmount,
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo,
-    floatGroupName, floatGroupHost, capacity, threshold,
-    tokenAmount
-  } = params
-  if (tokenAmount > initFUSDAmount) throw "tokenAmount shoud less than initFUSDAmount"
-
-  await mintFlow(signer, initFlowAmount)
-  await setupFUSDVault(signer)
-
-  await mintFUSD(await getAccountAddress("Deployer"), initFUSDAmount, signer)
-  await checkFUSDBalance(signer, initFUSDAmount)
-
-  const args = [
-    name, description, image, url,
-    startAt, endAt,
-    FUSDInfo.tokenIssuer, FUSDInfo.tokenContractName, FUSDInfo.tokenSymbol,
-    FUSDInfo.tokenProviderPath, FUSDInfo.tokenBalancePath, FUSDInfo.tokenReceiverPath,
-    floatGroupName, floatGroupHost, capacity, threshold, 
-    tokenAmount 
-  ]
-  return await createDrop_FLOATGroup_Random(signer, args)
-}
-
-export const createDefaultFUSDDrop_FLOATGroup_Random = async (signer, overrides = {}) => {
-  const FUSDInfo = await getFUSDInfo()
-
-  const {groupName, image, url, startAt, endAt, capacity, threshold} = overrides
-  const args = {
-    initFlowAmount: 100.0, 
-    initFUSDAmount: 1000.0,
-    name: "TEST", 
-    description: "Test DROP", 
-    image: image || null, url: url || null,
-    startAt: startAt || null, endAt: endAt || null,
-    FUSDInfo: FUSDInfo,
-    floatGroupName: groupName || "GTEST",
-    floatGroupHost: await getAccountAddress("FLOATCreator"),
-    capacity: capacity || 2,
-    threshold: threshold || 2,
-    tokenAmount: 150.0
-  }
-
-  const [tx, error] = await createFUSDDrop_FLOATGroup_Random(signer, args)
   expect(error).toBeNull()
 }
 
