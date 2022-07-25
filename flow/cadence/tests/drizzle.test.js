@@ -24,7 +24,8 @@ import {
   createDefaultEvents,
   toggleCloudPause,
   deleteDrop,
-  createFUSDDrop
+  createFUSDDrop,
+  endDrop
 } from "./src/drizzle";
 import {
   FLOAT_claim,
@@ -35,6 +36,7 @@ import {
 } from "./src/float";
 
 import Decimal from "decimal.js"
+import { assert } from "console";
 
 jest.setTimeout(1000000)
 
@@ -323,6 +325,35 @@ describe("DROP - Management", () => {
     expect(error2.message.includes("Could not borrow drop")).toBeTruthy()
 
     await checkFUSDBalance(Alice, 1000.0)
+  })
+
+  it("Management - DROP owner should be able to end a DROP and get funds back", async () => {
+    const Alice = await getAccountAddress("Alice")
+    await createFUSDDrop(Alice, { withExclusiveWhitelist: true })
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const FUSDInfo = await getFUSDInfo()
+
+    await checkFUSDBalance(Alice, 850.0)
+
+    const preDropBalance = parseFloat(await getDropBalance(dropID, Alice))
+    expect(preDropBalance).toBe(150.0)
+
+    const [, error] = await endDrop(dropID, Alice, FUSDInfo.tokenIssuer, FUSDInfo.tokenReceiverPath)
+    expect(error).toBeNull()
+
+    const [drop, error2] = await getDrop(dropID, Alice, false)
+    expect(error2).toBeNull()
+
+    expect(drop.isEnded).toBeTruthy()
+    expect(drop.isPaused).toBeTruthy()
+    await checkFUSDBalance(Alice, 1000.0)
+
+    const Bob = await getAccountAddress("Bob")
+    const [, error3] = await claimDrop(dropID, Alice, Bob)
+    expect(error3.includes("DROP has ended")).toBeTruthy()
   })
 })
 

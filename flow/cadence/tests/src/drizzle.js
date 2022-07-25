@@ -27,8 +27,6 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
   const defaultExclusiveWhitelist = await getDefaultWhitelistWithAmount()
   const defaultWhitelist = await getDefaultWhitelist()
 
-
-
   const {initFlowAmount, initFUSDAmount, 
     image, url, startAt, endAt, 
     withExclusiveWhitelist, exclusiveWhitelist, whitelistTokenAmount,
@@ -154,13 +152,19 @@ export const withdrawAllFunds = async (dropID, host, tokenIssuer, tokenReceiverP
   return await sendTransaction({ name: name, signers: signers, args: args})
 }
 
+export const endDrop = async (dropID, host, tokenIssuer, tokenReceiverPath) => {
+  const signers = [host]
+  const name = "end_drop"
+  const args = [dropID, tokenIssuer, tokenReceiverPath]
+  return await sendTransaction({ name: name, signers: signers, args: args})
+}
+
 export const deleteDrop = async (dropID, signer, tokenIssuer, tokenReceiverPath) => {
   const signers = [signer]
   const name = "delete_drop"
   const args = [dropID, tokenIssuer, tokenReceiverPath]
   return await sendTransaction({ name: name, signers: signers, args: args})
 }
-
 
 export const togglePause = async (dropID, host) => {
   const signers = [host]
