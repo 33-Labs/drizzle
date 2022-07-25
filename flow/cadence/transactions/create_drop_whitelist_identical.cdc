@@ -1,8 +1,8 @@
 import FungibleToken from "../contracts/core/FungibleToken.cdc"
 import Drizzle from "../contracts/Drizzle.cdc"
 import Cloud from "../contracts/Cloud.cdc"
-import EligibilityReviewers from "../contracts/EligibilityReviewers.cdc"
-import Packets from "../contracts/Packets.cdc"
+import EligibilityVerifiers from "../contracts/EligibilityVerifiers.cdc"
+import Distributors from "../contracts/Distributors.cdc"
 
 transaction(
     name: String,
@@ -21,7 +21,7 @@ transaction(
     // Eligibility
     whitelist: {Address: Bool},
     capacity: UInt32,
-    amountPerPacket: UFix64
+    amountPerEntry: UFix64
 ) {
     let dropCollection: &Cloud.DropCollection
     let vault: &FungibleToken.Vault
@@ -44,7 +44,7 @@ transaction(
     }
 
     execute {
-        let dropVault <- self.vault.withdraw(amount: UFix64(capacity) * amountPerPacket)
+        let dropVault <- self.vault.withdraw(amount: UFix64(capacity) * amountPerEntry)
         let tokenInfo = Drizzle.TokenInfo(
             account: tokenIssuer,
             contractName: tokenContractName,
@@ -54,13 +54,12 @@ transaction(
             receiverPath: tokenReceiverPath
         )
 
-        let packet = Packets.IdenticalPacket(
+        let distributor = Distributors.Identical(
             capacity: capacity,
-            amountPerPacket: amountPerPacket
+            amountPerEntry: amountPerEntry
         )
 
-        let reviewer = EligibilityReviewers.Whitelist(
-            packet: packet,
+        let verifier = EligibilityVerifiers.Whitelist(
             whitelist: whitelist
         )
 
@@ -73,8 +72,10 @@ transaction(
             startAt: startAt,
             endAt: endAt,
             tokenInfo: tokenInfo,
-            eligibilityReviewer: reviewer, 
-            vault: <- dropVault,
+            distributor: distributor,
+            verifyMode: Drizzle.EligibilityVerifyMode.all,
+            verifiers: [verifier], 
+            vault: <- dropVault
         )
     }
 }

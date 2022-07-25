@@ -9,6 +9,9 @@ pub contract Distributors {
         pub let distributeList: {Address: UFix64}
 
         init(distributeList: {Address: UFix64}) {
+            pre {
+                distributeList.keys.length > 0: "empty distributeList"
+            }
             self.capacity = UInt32.max
             self.distributeList = distributeList
         }
@@ -31,24 +34,25 @@ pub contract Distributors {
 
     pub struct Identical: Drizzle.IDistributor {
         pub let capacity: UInt32
-        pub let amountPerPacket: UFix64
+        pub let amountPerEntry: UFix64
 
-        init(capacity: UInt32, amountPerPacket: UFix64) {
+        init(capacity: UInt32, amountPerEntry: UFix64) {
+            pre {
+                amountPerEntry > 0.0: "invalid amount"
+            }
             self.capacity = capacity
-            self.amountPerPacket = amountPerPacket
+            self.amountPerEntry = amountPerEntry
         }
 
         pub fun isAvailable(params: {String: AnyStruct}): Bool {
             let claimedCount = params["claimedCount"]! as! UInt32
             let availableCapacity = self.capacity - claimedCount 
-            return availableCapacity >= 0
+            return availableCapacity > 0
         }
 
         pub fun getEligibleAmount(params: {String: AnyStruct}): UFix64 {
-            if !self.isAvailable(params: params) {
-                return 0.0
-            }
-            return self.amountPerPacket
+            assert(self.isAvailable(params: params), message: "no longer available")
+            return self.amountPerEntry
         }
     }
 
@@ -59,7 +63,7 @@ pub contract Distributors {
         pub let totalAmount: UFix64
 
         init(capacity: UInt32, totalAmount: UFix64) {
-            assert(totalAmount >= UFix64(capacity) * 0.001, message: "Packet amount is too small")
+            assert(totalAmount >= UFix64(capacity) * 0.001, message: "amount is too small")
 
             self.capacity = capacity
             self.totalAmount = totalAmount

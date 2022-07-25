@@ -52,11 +52,7 @@ pub contract Cloud {
             }
 
             let claimer = receiver.owner!.address
-            let claimStatus = self.getClaimStatus(account: claimer, params: {
-                "claimedCount": UInt32(self.claimedRecords.keys.length),
-                "claimedAmount": self.claimedAmount,
-                "claimer": claimer
-            })
+            let claimStatus = self.getClaimStatus(account: claimer, params: params)
 
             assert(claimStatus.code == Drizzle.ClaimStatusCode.ok, message: claimStatus.message)
 
@@ -96,10 +92,19 @@ pub contract Cloud {
                 )
             }
 
-            let eligibility = self.checkEligibility(
-                account: account, 
-                params: params
-            )
+            let args: {String: AnyStruct} = {
+                "claimedCount": UInt32(self.claimedRecords.keys.length),
+                "claimedAmount": self.claimedAmount,
+                "claimer": account
+            }
+
+            for key in params.keys {
+                if !args.containsKey(key) {
+                    args[key] = params[key]
+                }
+            }
+
+            let eligibility = self.checkEligibility(account: account, params: args)
 
             if self.distributor.isInstance(Type<Distributors.Random>()) {
                 extraData["note"] = "for RandomPacket, the actual eligibleAmount is determined in `claim`"
@@ -375,6 +380,7 @@ pub contract Cloud {
             vault: @FungibleToken.Vault
         ): UInt64 {
             pre {
+                verifiers.length == 1: "Currently only 1 verifier supported"
                 !Cloud.isPaused: "Cloud contract is paused!"
             }
 

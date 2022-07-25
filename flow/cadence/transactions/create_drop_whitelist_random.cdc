@@ -1,8 +1,8 @@
 import FungibleToken from "../contracts/core/FungibleToken.cdc"
 import Drizzle from "../contracts/Drizzle.cdc"
 import Cloud from "../contracts/Cloud.cdc"
-import EligibilityReviewers from "../contracts/EligibilityReviewers.cdc"
-import Packets from "../contracts/Packets.cdc"
+import EligibilityVerifiers from "../contracts/EligibilityVerifiers.cdc"
+import Distributors from "../contracts/Distributors.cdc"
 
 transaction(
     name: String,
@@ -54,13 +54,12 @@ transaction(
             receiverPath: tokenReceiverPath
         )
 
-        let packet = Packets.RandomPacket(
+        let distributor = Distributors.Random(
             capacity: capacity,
             totalAmount: tokenAmount
         )
 
-        let reviewer = EligibilityReviewers.Whitelist(
-            packet: packet,
+        let verifier = EligibilityVerifiers.Whitelist(
             whitelist: whitelist,
         )
 
@@ -73,8 +72,10 @@ transaction(
             startAt: startAt,
             endAt: endAt,
             tokenInfo: tokenInfo,
-            eligibilityReviewer: reviewer, 
-            vault: <- dropVault,
+            distributor: distributor,
+            verifyMode: Drizzle.EligibilityVerifyMode.all,
+            verifiers: [verifier], 
+            vault: <- dropVault
         )
     }
 }

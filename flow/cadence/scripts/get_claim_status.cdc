@@ -11,6 +11,6 @@ pub fun main(dropID: UInt64, host: Address, claimer: Address): Drizzle.ClaimStat
     let drop = dropCollection.borrowPublicDropRef(dropID: dropID)
         ?? panic("Could not borrow drop")
 
-    return drop.getClaimStatus(account: claimer)
+    return drop.getClaimStatus(account: claimer, params: {})
 }
  

@@ -411,7 +411,7 @@ describe("Drop - Whitelist", () => {
   })
 })
 
-describe("FLOAT", () => {
+describe("EC - FLOAT", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
@@ -477,7 +477,7 @@ describe("Drop - FLOATGroup", () => {
 
     const drop = await getDrop(dropID, Alice)
     expect(parseFloat(drop.claimedAmount)).toBe(0.0)
-    expect(threshold).toBe(drop.eligibilityReviewer.threshold)
+    expect(threshold).toBe(Object.values(drop.verifiers)[0][0].threshold)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
     // pub enum ClaimStatusCode: UInt8 {
@@ -529,7 +529,7 @@ describe("Drop - FLOATGroup", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const drop = await getDrop(dropID, Alice)
-    expect(drop.eligibilityReviewer.threshold).toBe(2)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(2)
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("not eligible")).toBeTruthy()
@@ -546,7 +546,7 @@ describe("Drop - FLOATGroup", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const drop = await getDrop(dropID, Alice)
-    const threshold = drop.eligibilityReviewer.threshold
+    const threshold = Object.values(drop.verifiers)[0][0].threshold
     expect(threshold).toBe(2)
 
     const FLOATCreator = await getAccountAddress("FLOATCreator")
@@ -617,7 +617,7 @@ describe("Drop - FLOATs", () => {
 
     const drop = await getDrop(dropID, Alice)
     expect(parseFloat(drop.claimedAmount)).toBe(0.0)
-    expect(threshold).toBe(drop.eligibilityReviewer.threshold)
+    expect(threshold).toBe(Object.values(drop.verifiers)[0][0].threshold)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
     // pub enum ClaimStatusCode: UInt8 {
@@ -669,7 +669,7 @@ describe("Drop - FLOATs", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const drop = await getDrop(dropID, Alice)
-    expect(drop.eligibilityReviewer.threshold).toBe(2)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(2)
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("not eligible")).toBeTruthy()
@@ -686,7 +686,7 @@ describe("Drop - FLOATs", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const drop = await getDrop(dropID, Alice)
-    const threshold = drop.eligibilityReviewer.threshold
+    const threshold = Object.values(drop.verifiers)[0][0].threshold
     expect(threshold).toBe(2)
 
     const FLOATCreator = await getAccountAddress("FLOATCreator")
@@ -811,7 +811,7 @@ describe("Drop - Identical Packet", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const drop = await getDrop(dropID, Alice)
-    expect(drop.eligibilityReviewer.threshold).toBe(threshold)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
 
     const [, errorBob] = await claimDrop(dropID, Alice, Bob)
     expect(errorBob).toBeNull()
@@ -819,7 +819,7 @@ describe("Drop - Identical Packet", () => {
     const [, errorCarl] = await claimDrop(dropID, Alice, Carl)
     expect(errorCarl).toBeNull()
 
-    const [, errorDave] = await claimDrop(dropID, Alice, Dave)
+    const [result, errorDave] = await claimDrop(dropID, Alice, Dave)
     expect(errorDave.includes("no longer available")).toBeTruthy()
   })
 })
@@ -922,7 +922,7 @@ describe("Drop - Random Packet", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const drop = await getDrop(dropID, Alice)
-    expect(drop.eligibilityReviewer.threshold).toBe(threshold)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
 
     const [, errorBob] = await claimDrop(dropID, Alice, Bob)
     expect(errorBob).toBeNull()
@@ -957,7 +957,7 @@ describe("Drop - Random Packet", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const drop = await getDrop(dropID, Alice)
-    expect(drop.eligibilityReviewer.threshold).toBe(threshold)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
 
     const claimStatus = await getClaimStatus(dropID, Alice, Bob)
     expect(claimStatus.extraData.note.includes("for RandomPacket")).toBeTruthy()

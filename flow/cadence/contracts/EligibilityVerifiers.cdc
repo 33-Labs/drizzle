@@ -29,15 +29,15 @@ pub contract EligibilityVerifiers {
     }
 
     pub struct Whitelist: Drizzle.IEligibilityVerifier {
-        pub let whitelist: {Address: Bool}
+        pub let whitelist: {Address: AnyStruct}
 
-        init(whitelist: {Address: Bool}) {
+        init(whitelist: {Address: AnyStruct}) {
             self.whitelist = whitelist
         }
 
         pub fun verify(account: Address, params: {String: AnyStruct}): Drizzle.VerifyResult {
             return Drizzle.VerifyResult(
-                isEligible: self.whitelist[account] == true,
+                isEligible: self.whitelist[account] != nil,
                 extraData: {}
             )
         }

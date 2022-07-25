@@ -1,8 +1,8 @@
 import FungibleToken from "../contracts/core/FungibleToken.cdc"
 import Drizzle from "../contracts/Drizzle.cdc"
 import Cloud from "../contracts/Cloud.cdc"
-import EligibilityReviewers from "../contracts/EligibilityReviewers.cdc"
-import Packets from "../contracts/Packets.cdc"
+import EligibilityVerifiers from "../contracts/EligibilityVerifiers.cdc"
+import Distributors from "../contracts/Distributors.cdc"
 
 transaction(
     name: String,
@@ -22,7 +22,7 @@ transaction(
     eventIDs: [UInt64],
     eventHosts: [Address],
     capacity: UInt32,
-    amountPerPacket: UFix64,
+    amountPerEntry: UFix64,
     threshold: UInt64
 ) {
     let dropCollection: &Cloud.DropCollection
@@ -50,7 +50,7 @@ transaction(
     }
 
     execute {
-        let dropVault <- self.vault.withdraw(amount: UFix64(capacity) * amountPerPacket)
+        let dropVault <- self.vault.withdraw(amount: UFix64(capacity) * amountPerEntry)
         let tokenInfo = Drizzle.TokenInfo(
             account: tokenIssuer,
             contractName: tokenContractName,
@@ -60,21 +60,20 @@ transaction(
             receiverPath: tokenReceiverPath
         )
 
-        let packet = Packets.IdenticalPacket(
+        let distributor = Distributors.Identical(
             capacity: capacity,
-            amountPerPacket: amountPerPacket
+            amountPerEntry: amountPerEntry
         )
 
-        let events: [EligibilityReviewers.FLOATEventData] = []
+        let events: [EligibilityVerifiers.FLOATEventData] = []
         var counter = 0
         while counter < eventIDs.length {
-            let event = EligibilityReviewers.FLOATEventData(host: eventHosts[counter], eventID: eventIDs[counter])
+            let event = EligibilityVerifiers.FLOATEventData(host: eventHosts[counter], eventID: eventIDs[counter])
             events.append(event)
             counter = counter + 1
         }
 
-        let reviewer = EligibilityReviewers.FLOATs(
-            packet: packet,
+        let verifier = EligibilityVerifiers.FLOATs(
             events: events,
             threshold: threshold
         )
@@ -88,8 +87,10 @@ transaction(
             startAt: startAt,
             endAt: endAt,
             tokenInfo: tokenInfo,
-            eligibilityReviewer: reviewer, 
-            vault: <- dropVault,
+            distributor: distributor,
+            verifyMode: Drizzle.EligibilityVerifyMode.all,
+            verifiers: [verifier], 
+            vault: <- dropVault
         )
     }
 }
