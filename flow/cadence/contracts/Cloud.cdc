@@ -49,12 +49,12 @@ pub contract Cloud {
 
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct}) {
             let availability = self.checkAvailability(params: params)
-            assert(availability.status == Drizzle.AvailabilityStatus.ok, message: "unavailable")
+            assert(availability.status == Drizzle.AvailabilityStatus.ok, message: availability.getStatus())
 
             let claimer = receiver.owner!.address
             let eligibility = self.checkEligibility(account: claimer, params: params)
 
-            assert(eligibility.status == Drizzle.EligibilityStatus.eligible, message: "unclaimable")
+            assert(eligibility.status == Drizzle.EligibilityStatus.eligible, message: eligibility.getStatus())
 
             let claimRecord = Drizzle.ClaimRecord(
                 address: claimer,

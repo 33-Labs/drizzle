@@ -43,6 +43,18 @@ pub contract Drizzle {
             self.eligibleAmount = eligibleAmount
             self.extraData = extraData
         }
+
+        pub fun getStatus(): String {
+            switch self.status {
+            case EligibilityStatus.eligible: 
+                return "eligible"
+            case EligibilityStatus.notEligible:
+                return "not eligible"
+            case EligibilityStatus.hasClaimed:
+                return "has claimed" 
+            }
+            panic("invalid status")
+        }
     }
 
     pub enum EligibilityVerifyMode: UInt8 {
@@ -136,6 +148,24 @@ pub contract Drizzle {
         init(status: AvailabilityStatus, extraData: {String: AnyStruct}) {
             self.status = status
             self.extraData = extraData
+        }
+
+        pub fun getStatus(): String {
+            switch self.status {
+            case AvailabilityStatus.ok:
+                return "ok"
+            case AvailabilityStatus.ended:
+                return "ended"
+            case AvailabilityStatus.notStartYet:
+                return "not start yet"
+            case AvailabilityStatus.expired:
+                return "expired"
+            case AvailabilityStatus.noCapacity:
+                return "no capacity"
+            case AvailabilityStatus.paused:
+                return "paused"
+            }
+            panic("invalid status")
         }
     }
 

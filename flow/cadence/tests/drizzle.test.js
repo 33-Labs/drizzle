@@ -94,18 +94,9 @@ describe("Drop - WhitelistWithAmount", () => {
     expect(parseFloat(drop.claimedAmount)).toBe(0.0)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    // pub enum ClaimStatusCode: UInt8 {
-    //   pub case ok
-    //   pub case ineligible
-    //   pub case unavailable
-    //   pub case claimed
-    //   pub case notStartYet
-    //   pub case ended
-    //   pub case paused
-    //   pub case others
-    // }
-    expect(preClaimed.code.rawValue).toBe(0)
-    const eligibleAmount = parseFloat(preClaimed.eligibleAmount)
+    expect(preClaimed.availability.status.rawValue).toBe(0)
+    expect(preClaimed.eligibility.status.rawValue).toBe(0)
+    const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)
     expect(eligibleAmount).toBe(100.0)
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
@@ -120,7 +111,8 @@ describe("Drop - WhitelistWithAmount", () => {
     expect(dropBalance).toBe(150.0 - eligibleAmount)
 
     const postClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(postClaimed.code.rawValue).toBe(3)
+    expect(postClaimed.availability.status.rawValue).toBe(0)
+    expect(postClaimed.eligibility.status.rawValue).toBe(2)
 
     const record = await getClaimedRecord(dropID, Alice, Bob)
     expect(record.address).toBe(Bob)
@@ -186,7 +178,7 @@ describe("DROP - Time Limit", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
-    expect(error.includes("ended")).toBeTruthy()
+    expect(error.includes("expired")).toBeTruthy()
   })
 
   it("Time Limit - Should be ok to claim the drop within the time window", async () => {
@@ -353,7 +345,7 @@ describe("DROP - Management", () => {
 
     const Bob = await getAccountAddress("Bob")
     const [, error3] = await claimDrop(dropID, Alice, Bob)
-    expect(error3.includes("DROP has ended")).toBeTruthy()
+    expect(error3.includes("ended")).toBeTruthy()
   })
 })
 
@@ -403,18 +395,10 @@ describe("Drop - Whitelist", () => {
     expect(parseFloat(drop.claimedAmount)).toBe(0.0)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    // pub enum ClaimStatusCode: UInt8 {
-    //   pub case ok
-    //   pub case ineligible
-    //   pub case unavailable
-    //   pub case claimed
-    //   pub case notStartYet
-    //   pub case ended
-    //   pub case paused
-    //   pub case others
-    // }
-    expect(preClaimed.code.rawValue).toBe(0)
-    const eligibleAmount = parseFloat(preClaimed.eligibleAmount)
+    console.log(preClaimed)
+    expect(preClaimed.availability.status.rawValue).toBe(0)
+    expect(preClaimed.eligibility.status.rawValue).toBe(0)
+    const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)
     expect(eligibleAmount).toBe(20.0)
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
@@ -423,7 +407,8 @@ describe("Drop - Whitelist", () => {
     await checkFUSDBalance(Bob, eligibleAmount)
 
     const postClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(postClaimed.code.rawValue).toBe(3)
+    expect(postClaimed.availability.status.rawValue).toBe(0)
+    expect(postClaimed.eligibility.status.rawValue).toBe(2)
 
     const record = await getClaimedRecord(dropID, Alice, Bob)
     expect(record.address).toBe(Bob)
@@ -515,18 +500,9 @@ describe("Drop - FLOATGroup", () => {
     expect(threshold).toBe(Object.values(drop.verifiers)[0][0].threshold)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    // pub enum ClaimStatusCode: UInt8 {
-    //   pub case ok
-    //   pub case ineligible
-    //   pub case unavailable
-    //   pub case claimed
-    //   pub case notStartYet
-    //   pub case ended
-    //   pub case paused
-    //   pub case others
-    // }
-    expect(preClaimed.code.rawValue).toBe(0)
-    const eligibleAmount = parseFloat(preClaimed.eligibleAmount)
+    expect(preClaimed.availability.status.rawValue).toBe(0)
+    expect(preClaimed.eligibility.status.rawValue).toBe(0)
+    const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)
     expect(eligibleAmount).toBe(20.0)
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
@@ -535,7 +511,8 @@ describe("Drop - FLOATGroup", () => {
     await checkFUSDBalance(Bob, eligibleAmount)
 
     const postClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(postClaimed.code.rawValue).toBe(3)
+    expect(postClaimed.availability.status.rawValue).toBe(0)
+    expect(postClaimed.eligibility.status.rawValue).toBe(2)
 
     const record = await getClaimedRecord(dropID, Alice, Bob)
     expect(record.address).toBe(Bob)
@@ -655,18 +632,9 @@ describe("Drop - FLOATs", () => {
     expect(threshold).toBe(Object.values(drop.verifiers)[0][0].threshold)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    // pub enum ClaimStatusCode: UInt8 {
-    //   pub case ok
-    //   pub case ineligible
-    //   pub case unavailable
-    //   pub case claimed
-    //   pub case notStartYet
-    //   pub case ended
-    //   pub case paused
-    //   pub case others
-    // }
-    expect(preClaimed.code.rawValue).toBe(0)
-    const eligibleAmount = parseFloat(preClaimed.eligibleAmount)
+    expect(preClaimed.availability.status.rawValue).toBe(0)
+    expect(preClaimed.eligibility.status.rawValue).toBe(0)
+    const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)
     expect(eligibleAmount).toBe(20.0)
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
@@ -675,7 +643,8 @@ describe("Drop - FLOATs", () => {
     await checkFUSDBalance(Bob, eligibleAmount)
 
     const postClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(postClaimed.code.rawValue).toBe(3)
+    expect(postClaimed.availability.status.rawValue).toBe(0)
+    expect(postClaimed.eligibility.status.rawValue).toBe(2)
 
     const record = await getClaimedRecord(dropID, Alice, Bob)
     expect(record.address).toBe(Bob)
@@ -789,18 +758,21 @@ describe("Drop - Identical Packet", () => {
     const dropID = parseInt(Object.keys(drops)[0])
 
     const preClaimedBob = await getClaimStatus(dropID, Alice, Bob)
-    expect(preClaimedBob.code.rawValue).toBe(0)
-    const eligibleAmountBob = parseFloat(preClaimedBob.eligibleAmount)
+    expect(preClaimedBob.availability.status.rawValue).toBe(0)
+    expect(preClaimedBob.eligibility.status.rawValue).toBe(0)
+    const eligibleAmountBob = parseFloat(preClaimedBob.eligibility.eligibleAmount)
     expect(eligibleAmountBob).toBe(20.0)
 
     const preClaimedCarl = await getClaimStatus(dropID, Alice, Carl)
-    expect(preClaimedCarl.code.rawValue).toBe(0)
-    const eligibleAmountCarl = parseFloat(preClaimedCarl.eligibleAmount)
+    expect(preClaimedCarl.availability.status.rawValue).toBe(0)
+    expect(preClaimedCarl.eligibility.status.rawValue).toBe(0)
+    const eligibleAmountCarl = parseFloat(preClaimedCarl.eligibility.eligibleAmount)
     expect(eligibleAmountCarl).toBe(eligibleAmountBob)
 
     const preClaimedDave = await getClaimStatus(dropID, Alice, Dave)
-    expect(preClaimedDave.code.rawValue).toBe(0)
-    const eligibleAmountDave = parseFloat(preClaimedDave.eligibleAmount)
+    expect(preClaimedDave.availability.status.rawValue).toBe(0)
+    expect(preClaimedDave.eligibility.status.rawValue).toBe(0)
+    const eligibleAmountDave = parseFloat(preClaimedDave.eligibility.eligibleAmount)
     expect(eligibleAmountDave).toBe(eligibleAmountBob)
 
     const [, errorBob] = await claimDrop(dropID, Alice, Bob)
@@ -855,7 +827,7 @@ describe("Drop - Identical Packet", () => {
     expect(errorCarl).toBeNull()
 
     const [result, errorDave] = await claimDrop(dropID, Alice, Dave)
-    expect(errorDave.includes("no longer available")).toBeTruthy()
+    expect(errorDave.includes("no capacity")).toBeTruthy()
   })
 })
 
@@ -966,35 +938,6 @@ describe("Drop - Random Packet", () => {
     expect(errorCarl).toBeNull()
 
     const [, errorDave] = await claimDrop(dropID, Alice, Dave)
-    expect(errorDave.includes("no longer available")).toBeTruthy()
-  })
-
-  it("Random Packet - Should have note in ClaimStatus", async () => {
-    const FLOATCreator = await getAccountAddress("FLOATCreator")
-    // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
-
-    const threshold = 2
-    const Bob = await getAccountAddress("Bob")
-    for (let i = 0; i < threshold; i++) {
-      const event = events[i]
-      await FLOAT_claim(Bob, event.eventId, FLOATCreator)
-    }
-
-    const floatIDsOfBob = await FLOAT_getFLOATIDs(Bob)
-    expect(floatIDsOfBob.length).toBe(threshold)
-
-    const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withRandomDistributor: true })
-
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-
-    const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
-
-    const claimStatus = await getClaimStatus(dropID, Alice, Bob)
-    expect(claimStatus.extraData.note.includes("for RandomPacket")).toBeTruthy()
+    expect(errorDave.includes("no capacity")).toBeTruthy()
   })
 })

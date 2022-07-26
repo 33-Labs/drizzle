@@ -10,50 +10,100 @@ import {
   transactionStatusState
 } from "../../lib/atoms"
 
+const isClaimable = (claimStatus) => {
+  if (claimStatus && 
+    claimStatus.eligibility.status.rawValue === "0" && 
+    claimStatus.availability.status.rawValue === "0") {
+    return true
+  }
+  return false
+}
+
 // [Emoji, Description, Amount, Title]
 const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, distributor) => {
-  if (isPreview) { return ["🎉", "YOU ARE ELIGIBLE FOR", `42 FLOW`, "PREVIEWING"] }
-  const isRandomDistributor = distributor.type === "Random"
+  const elements = {
+    emoji: "🎉", description: "YOU ARE ELIGIBLE FOR", amount: `42 FLOW`, title: "PREVIEWING"
+  }
+  if (isPreview) { return elements }
+
   if (!user || !user.loggedIn) {
-    return ["👀", "CONNECT WALLET TO CHECK ELIGIBILITY", null, "Connect Wallet"]
+    elements.emoji = "👀"
+    elements.description = "CONNECT WALLET TO CHECK ELIGIBILITY"
+    elements.amount = null
+    elements.title = "Connect Wallet"
+    return elements
   }
 
-  if ((!claimStatus) || claimStatus.code.rawValue === "9") {
-    return ["❓", "UNKNOWN STATUS", null, "UNKNOWN"]
+  console.log("claimStatus: ", claimStatus)
+
+  if (!claimStatus) {
+    elements.emoji = "❓"
+    elements.description = "UNKNOWN STATUS"
+    elements.amount = null
+    elements.title = "UNKNOWN"
+    return elements
   }
-  if (claimStatus.code.rawValue === "0") {
+
+  const isRandomDistributor = distributor.type === "Random"
+
+  let eStatus = claimStatus.eligibility.status.rawValue
+  let amount = `${new Decimal(claimStatus.eligibility.eligibleAmount).toString()} ${tokenSymbol}`
+  if (eStatus === "0") {
+    elements.description = "YOU ARE ELIGIBLE FOR"
+    elements.title = "CLAIM"
     if (isRandomDistributor) {
-      return ["🎲", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "CLAIM TO REVEAL"]
+      elements.emoji = "🎲"
+      elements.amount = `❓ ${tokenSymbol}`
+    } else {
+      elements.emoji = "🎉"
+      elements.amount = amount
     }
-    return ["🎉", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "CLAIM"]
+  } else if (eStatus === "1") {
+    elements.emoji = "🙉"
+    elements.description = "YOU ARE NOT ELIGIBLE"
+    elements.title = "NOT ELIGIBLE"
+    elements.amount = null
+  } else if (eStatus === "2") {
+    elements.emoji = "🎉"
+    elements.description = "YOU HAVE CLAIMED"
+    elements.title = "CLAIMED"
+    elements.amount = amount
   }
-  if (claimStatus.code.rawValue === "1") {
-    return ["🙉", "YOU ARE NOT ELIGIBLE", null, "NOT ELIGIBLE"]
-  }
-  if (claimStatus.code.rawValue === "2") {
-    return ["⛔️", "NO LONGER AVAILABLE", null, "UNAVAILABLE"]
-  }
-  if (claimStatus.code.rawValue === "3") {
-    return ["🎉", "YOU HAVE CLAIMED", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "CLAIMED"]
-  }
-  if (claimStatus.code.rawValue === "4") {
-    if (isRandomDistributor) {
-      return ["🕙", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "NOT START"]
+
+  // availability
+  let aStatus = claimStatus.availability.status.rawValue
+  if (aStatus === "1") {
+    // ended expired and no capacity
+    elements.emoji = "⛔️"
+    elements.title = "ENDED"
+    if (eStatus != "2") {
+      elements.description = "NO LONGER AVAILABLE"
+      elements.amount = null
     }
-    return ["🕙", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "NOT START"]
-  }
-  if (claimStatus.code.rawValue === "5") {
-    if (isRandomDistributor) {
-      return ["⛔️", "DROP ENDED", null, "ENDED"]
+  } else if (aStatus === "3") {
+    elements.emoji = "⛔️"
+    elements.title = "EXPIRED"
+    if (eStatus != "2") {
+      elements.description = "NO LONGER AVAILABLE"
+      elements.amount = null
     }
-    return ["⛔️", "YOU WERE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "ENDED"]
-  }
-  if (claimStatus.code.rawValue === "6") {
-    if (isRandomDistributor) {
-      return ["⏸️", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "PAUSED"]
+  } else if (aStatus === "4") {
+    elements.emoji = "⛔️"
+    elements.title = "NO CAPACITY"
+    if (eStatus != "2") {
+      elements.description = "NO LONGER AVAILABLE"
+      elements.amount = null
     }
-    return ["⏸️", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "PAUSED"]
+  } else if (aStatus === "2") {
+    elements.emoji = "🕙"
+    elements.title = "NOT START YET"
+  } else if (aStatus === "5") {
+    elements.emoji = "⏸️"
+    elements.title = "PAUSED"
   }
+
+  console.log(elements)
+  return elements
 }
 
 export default function ClaimCard(props) {
@@ -65,7 +115,7 @@ export default function ClaimCard(props) {
   const symbol = isPreview ? (token && token.symbol) : (tokenInfo && tokenInfo.symbol)
 
   // [Emoji, Description, Amount, Title]
-  const [emoji, description, amountInfo, title] = parseClaimStatus(user, claimStatus, symbol, isPreview, drop && drop.distributor)
+  const {emoji, description, amount, title} = parseClaimStatus(user, claimStatus, symbol, isPreview, drop && drop.distributor)
 
   return (
     <div>
@@ -76,22 +126,22 @@ export default function ClaimCard(props) {
   ">
         <label className="block w-full text-center text-[60px]">{emoji}</label>
         <label className="block w-full mt-5 text-center text-lg font-bold font-flow">{description}</label>
-        <label className="block w-full text-center mt-1 text-2xl font-bold font-flow">{amountInfo}</label>
+        <label className="block w-full text-center mt-1 text-2xl font-bold font-flow">{amount}</label>
         <button
           type="button"
           className={classNames(
-            (isPreview || (claimStatus && claimStatus.code.rawValue != "0")) ? "bg-disabled-gray" :
+            (isPreview || !isClaimable(claimStatus)) ? "bg-disabled-gray" :
               (transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark"),
             `mt-5 h-[48px] text-base font-medium shadow-sm text-black rounded-2xl`
           )}
-          disabled={isPreview || (claimStatus && claimStatus.code.rawValue != "0") || transactionInProgress}
+          disabled={isPreview || !isClaimable(claimStatus) || transactionInProgress}
           onClick={async () => {
             if (!user || !user.loggedIn) {
               fcl.authenticate()
               return
             }
 
-            if (isPreview || !claimStatus || (claimStatus && claimStatus.code.rawValue != "0") || !drop) {
+            if (isPreview || !isClaimable(claimStatus) || !drop) {
               return
             }
 
