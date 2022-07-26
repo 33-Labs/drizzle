@@ -48,26 +48,22 @@ pub contract Cloud {
         access(self) let dropVault: @FungibleToken.Vault
 
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct}) {
-            pre {
-                !self.isEnded: "DROP has ended"
-            }
+            let availability = self.checkAvailability(params: params)
+            assert(availability.status == Drizzle.AvailabilityStatus.ok, message: "unavailable")
 
             let claimer = receiver.owner!.address
-            let claimStatus = self.getClaimStatus(account: claimer, params: params)
+            let eligibility = self.checkEligibility(account: claimer, params: params)
 
-            assert(claimStatus.code == Drizzle.ClaimStatusCode.ok, message: claimStatus.message)
+            assert(eligibility.status == Drizzle.EligibilityStatus.eligible, message: "unclaimable")
 
             let claimRecord = Drizzle.ClaimRecord(
                 address: claimer,
-                amount: claimStatus.eligibleAmount,
+                amount: eligibility.eligibleAmount,
                 extraData: {}
             )
 
             self.claimedRecords.insert(key: claimRecord.address, claimRecord)
             self.claimedAmount = self.claimedAmount + claimRecord.amount
-
-            let v <- self.dropVault.withdraw(amount: claimRecord.amount)
-            receiver.deposit(from: <- v)
 
             emit DropClaimed(
                 dropID: self.dropID,
@@ -77,103 +73,105 @@ pub contract Cloud {
                 tokenIdentifier: self.tokenInfo.tokenIdentifier,
                 amount: claimRecord.amount
             )
+
+            let v <- self.dropVault.withdraw(amount: claimRecord.amount)
+            receiver.deposit(from: <- v)
         }
 
-        // NOTE: The order of these judgement does matter
-        // NOTE: For Random Distributor, the eligibleAmount is determined in `claim`, the amount
-        // got in getClaimStatus is not the final amount.
-        pub fun getClaimStatus(account: Address, params: {String: AnyStruct}): Drizzle.ClaimStatus {
-            let extraData: {String: AnyStruct} = {}
+        pub fun checkAvailability(params: {String: AnyStruct}): Drizzle.Availability {
             if self.isEnded {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.ended,
-                    eligibleAmount: 0.0,
-                    message: "ended",
-                    extraData: extraData
+                return Drizzle.Availability(
+                    status: Drizzle.AvailabilityStatus.ended,
+                    extraData: {}
                 )
-            }
-
-            let args: {String: AnyStruct} = {
-                "claimedCount": UInt32(self.claimedRecords.keys.length),
-                "claimedAmount": self.claimedAmount,
-                "claimer": account
-            }
-
-            for key in params.keys {
-                if !args.containsKey(key) {
-                    args[key] = params[key]
-                }
-            }
-
-            let eligibility = self.checkEligibility(account: account, params: args)
-
-            if self.distributor.isInstance(Type<Distributors.Random>()) {
-                extraData["note"] = "for RandomPacket, the actual eligibleAmount is determined in `claim`"
-            }
-
-            if !eligibility.isEligible {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.ineligible,
-                    eligibleAmount: 0.0,
-                    message: "not eligible",
-                    extraData: extraData
-                )
-            }
-
-            if let record = self.claimedRecords[account] {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.claimed,
-                    eligibleAmount: record.amount,
-                    message: "claimed",
-                    extraData: extraData
-                )
-            }
-
-            if !eligibility.isAvailable {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.unavailable,
-                    eligibleAmount: eligibility.eligibleAmount,
-                    message: "no longer available",
-                    extraData: extraData
-                ) 
             }
 
             if let startAt = self.startAt {
                 if getCurrentBlock().timestamp < startAt {
-                    return Drizzle.ClaimStatus(
-                        code: Drizzle.ClaimStatusCode.notStartYet,
-                        eligibleAmount: eligibility.eligibleAmount,
-                        message: "not start yet",
-                        extraData: extraData
+                    return Drizzle.Availability(
+                        status: Drizzle.AvailabilityStatus.notStartYet,
+                        extraData: {}
                     )
                 }
             }
 
             if let endAt = self.endAt {
                 if getCurrentBlock().timestamp > endAt {
-                    return Drizzle.ClaimStatus(
-                        code: Drizzle.ClaimStatusCode.ended,
-                        eligibleAmount: eligibility.eligibleAmount,
-                        message: "ended",
-                        extraData: extraData
+                    return Drizzle.Availability(
+                        status: Drizzle.AvailabilityStatus.expired,
+                        extraData: {}
                     )
                 }
             }
 
-            if self.isPaused {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.paused,
-                    eligibleAmount: eligibility.eligibleAmount,
-                    message: "paused",
-                    extraData: extraData
+            let newParams: {String: AnyStruct} = self.combinedParams(params: params)
+            if !self.distributor.isAvailable(params: newParams) {
+                return Drizzle.Availability(
+                    status: Drizzle.AvailabilityStatus.noCapacity,
+                    extraData: {}
                 )
             }
 
-            return Drizzle.ClaimStatus(
-                code: Drizzle.ClaimStatusCode.ok,
-                eligibleAmount: eligibility.eligibleAmount,
-                message: "",
-                extraData: extraData
+            if self.isPaused {
+                return Drizzle.Availability(
+                    status: Drizzle.AvailabilityStatus.paused,
+                    extraData: {}
+                ) 
+            }
+
+            return Drizzle.Availability(
+                status: Drizzle.AvailabilityStatus.ok,
+                extraData: {}
+            ) 
+        }
+
+        pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Drizzle.Eligibility {
+            if let record = self.claimedRecords[account] {
+                return Drizzle.Eligibility(
+                    status: Drizzle.EligibilityStatus.hasClaimed,
+                    eligibleAmount: record.amount,
+                    extraData: {}
+                )
+            } 
+
+            params.insert(key: "claimer", account)
+            let newParams: {String: AnyStruct} = self.combinedParams(params: params)
+            var isEligible = false
+            if self.verifyMode == Drizzle.EligibilityVerifyMode.oneOf {
+                for identifier in self.verifiers.keys {
+                    let verifiers = (&self.verifiers[identifier] as &[{Drizzle.IEligibilityVerifier}]?)!
+                    for verifier in verifiers.concat([]) {
+                        if verifier.verify(account: account, params: newParams).isEligible {
+                            isEligible = true
+                            break
+                        }
+                    }
+                    if isEligible {
+                        break
+                    }
+                }
+            } else if self.verifyMode == Drizzle.EligibilityVerifyMode.all {
+                isEligible = true
+                for identifier in self.verifiers.keys {
+                    let verifiers = (&self.verifiers[identifier] as &[{Drizzle.IEligibilityVerifier}]?)!
+                    for verifier in verifiers.concat([]) {
+                        if !verifier.verify(account: account, params: newParams).isEligible {
+                            isEligible = false
+                            break
+                        }
+                    }
+                    if !isEligible {
+                        break
+                    }
+                }
+            }
+
+            let eligibleAmount = self.distributor.getEligibleAmount(params: newParams)
+
+            return Drizzle.Eligibility(
+                isEligible: isEligible ? Drizzle.EligibilityStatus.eligible : Drizzle.EligibilityStatus.notEligible,
+                eligibleAmount: eligibleAmount,
+                extraData: {}
             )
         }
 
@@ -230,49 +228,18 @@ pub contract Cloud {
             self.isEnded = true
         }
 
-        pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Drizzle.Eligibility {
-            var isEligible = false
-            if self.verifyMode == Drizzle.EligibilityVerifyMode.oneOf {
-                for identifier in self.verifiers.keys {
-                    let verifiers = (&self.verifiers[identifier] as &[{Drizzle.IEligibilityVerifier}]?)!
-                    for verifier in verifiers.concat([]) {
-                        if verifier.verify(account: account, params: params).isEligible {
-                            isEligible = true
-                            break
-                        }
-                    }
-                    if isEligible {
-                        break
-                    }
-                }
-            } else if self.verifyMode == Drizzle.EligibilityVerifyMode.all {
-                isEligible = true
-                for identifier in self.verifiers.keys {
-                    let verifiers = (&self.verifiers[identifier] as &[{Drizzle.IEligibilityVerifier}]?)!
-                    for verifier in verifiers.concat([]) {
-                        if !verifier.verify(account: account, params: params).isEligible {
-                            isEligible = false
-                            break
-                        }
-                    }
-                    if !isEligible {
-                        break
-                    }
-                }
+        access(self) fun combinedParams(params: {String: AnyStruct}): {String: AnyStruct} {
+            let combined: {String: AnyStruct} = {
+                "claimedCount": UInt32(self.claimedRecords.keys.length),
+                "claimedAmount": self.claimedAmount
             }
 
-            let isAvailable = self.distributor.isAvailable(params: params)
-            var eligibleAmount = 0.0
-            if isAvailable {
-                eligibleAmount = self.distributor.getEligibleAmount(params: params)
+            for key in params.keys {
+                if !combined.containsKey(key) {
+                    combined[key] = params[key]
+                }
             }
-
-            return Drizzle.Eligibility(
-                isEligible: isEligible,
-                isAvailable: isAvailable,
-                eligibleAmount: eligibleAmount,
-                extraData: {}
-            )
+            return combined
         }
 
         init(

@@ -18,17 +18,12 @@ pub contract Distributors {
             self.type = "Exclusive"
         }
 
+        // always available
         pub fun isAvailable(params: {String: AnyStruct}): Bool {
-            let claimedCount = params["claimedCount"]! as! UInt32
-            let availableCapacity = self.capacity - claimedCount 
-            return availableCapacity >= 0
+            return true
         }
 
         pub fun getEligibleAmount(params: {String: AnyStruct}): UFix64 {
-            if !self.isAvailable(params: params) {
-                return 0.0
-            }
-
             let claimer = params["claimer"]! as! Address
             return self.distributeList[claimer] ?? 0.0
         }

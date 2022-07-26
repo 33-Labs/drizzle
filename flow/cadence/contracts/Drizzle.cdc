@@ -23,24 +23,23 @@ pub contract Drizzle {
         pub fun getEligibleAmount(params: {String: AnyStruct}): UFix64
     }
 
+    pub enum EligibilityStatus: UInt8 {
+        pub case eligible
+        pub case notEligible
+        pub case hasClaimed
+    }
+
     // Eligibility is a struct used to describe the eligibility of an account
     pub struct Eligibility {
-        // The account is eligible or not
-        pub let isEligible: Bool
-        // The DROP have available seats or not
-        pub let isAvailable: Bool
-        // How much the account can claim
+        pub let status: EligibilityStatus
         pub let eligibleAmount: UFix64
-        // extra information
         pub let extraData: {String: AnyStruct}
 
         init(
-            isEligible: Bool, 
-            isAvailable: Bool,
+            status: EligibilityStatus, 
             eligibleAmount: UFix64,
             extraData: {String: AnyStruct}) {
-            self.isEligible = isEligible
-            self.isAvailable = isAvailable
+            self.status = status
             self.eligibleAmount = eligibleAmount
             self.extraData = extraData
         }
@@ -106,37 +105,6 @@ pub contract Drizzle {
         }
     }
 
-    pub enum ClaimStatusCode: UInt8 {
-        pub case ok
-        pub case ineligible
-        pub case unavailable
-        pub case claimed
-        pub case notStartYet
-        pub case ended
-        pub case paused
-        pub case others
-    }
-
-    // The claim status of an account
-    pub struct ClaimStatus {
-        pub let code: ClaimStatusCode
-        pub let eligibleAmount: UFix64
-        pub let message: String
-        pub let extraData: {String: AnyStruct}
-
-        init(
-            code: ClaimStatusCode,
-            claimableAmount: UFix64,
-            message: String,
-            extraData: {String: AnyStruct}
-        ) {
-            self.code = code
-            self.eligibleAmount = claimableAmount
-            self.message = message
-            self.extraData = extraData
-        }
-    }
-
     // We will add a ClaimRecord to claimedRecords after an account claiming it's reward
     pub struct ClaimRecord {
         pub let address: Address
@@ -149,6 +117,25 @@ pub contract Drizzle {
             self.amount = amount
             self.extraData = extraData
             self.claimedAt = getCurrentBlock().timestamp
+        }
+    }
+
+    pub enum AvailabilityStatus: UInt8 {
+        pub case ok
+        pub case ended
+        pub case notStartYet
+        pub case expired
+        pub case noCapacity
+        pub case paused
+    }
+
+    pub struct Availability {
+        pub let status: AvailabilityStatus
+        pub let extraData: {String: AnyStruct}
+
+        init(status: AvailabilityStatus, extraData: {String: AnyStruct}) {
+            self.status = status
+            self.extraData = extraData
         }
     }
 
@@ -178,7 +165,9 @@ pub contract Drizzle {
         pub var claimedAmount: UFix64
 
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct})
-        pub fun getClaimStatus(account: Address, params: {String: AnyStruct}): ClaimStatus
+        pub fun checkAvailability(params: {String: AnyStruct}): Availability
+        pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Eligibility
+
         pub fun getClaimedRecord(account: Address): ClaimRecord?
         pub fun getClaimedRecords(): {Address: ClaimRecord}
         pub fun getDropBalance(): UFix64

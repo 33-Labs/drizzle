@@ -1,7 +1,20 @@
 import Drizzle from "../contracts/Drizzle.cdc"
 import Cloud from "../contracts/Cloud.cdc"
 
-pub fun main(dropID: UInt64, host: Address, claimer: Address): Drizzle.ClaimStatus {
+pub struct ClaimStatus {
+    pub let availability: Drizzle.Availability
+    pub let eligibility: Drizzle.Eligibility
+
+    init(
+        availability: Drizzle.Availability,
+        eligibility: Drizzle.Eligibility
+    ) {
+        self.availability = availability
+        self.eligibility = eligibility
+    }
+}
+
+pub fun main(dropID: UInt64, host: Address, claimer: Address): ClaimStatus {
     let dropCollection =
         getAccount(host)
         .getCapability(Cloud.DropCollectionPublicPath)
@@ -11,6 +24,12 @@ pub fun main(dropID: UInt64, host: Address, claimer: Address): Drizzle.ClaimStat
     let drop = dropCollection.borrowPublicDropRef(dropID: dropID)
         ?? panic("Could not borrow drop")
 
-    return drop.getClaimStatus(account: claimer, params: {})
+    let availability = drop.checkAvailability(params: {})
+    let eligibility = drop.checkEligibility(account: claimer, params: {})
+
+    return ClaimStatus(
+        availability: availability,
+        eligibility: eligibility
+    )
 }
  
