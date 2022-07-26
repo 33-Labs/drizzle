@@ -395,7 +395,6 @@ describe("Drop - Whitelist", () => {
     expect(parseFloat(drop.claimedAmount)).toBe(0.0)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    console.log(preClaimed)
     expect(preClaimed.availability.status.rawValue).toBe(0)
     expect(preClaimed.eligibility.status.rawValue).toBe(0)
     const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)

@@ -19,9 +19,9 @@ export const EligibilityModeWhitelistWitAmount = {
     if (whitelistWithAmountReviewerCallback.tokenAmount.cmp(tokenBalance) != -1) {
       return [false, Hints.InsufficientBalance]
     }
-    if (whitelistWithAmountReviewerCallback.tokenAmount.isZero() || 
+    if (whitelistWithAmountReviewerCallback.tokenAmount.isZero() ||
       whitelistWithAmountReviewerCallback.tokenAmount.isNegative()) {
-        return [false, Hints.InvalidTokenAmount]
+      return [false, Hints.InvalidTokenAmount]
     }
 
     return [true, Hints.Valid]

@@ -3,7 +3,6 @@ import publicConfig from "../../publicConfig"
 import { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelist, EligibilityModeWhitelistWitAmount } from "../eligibility/EligibilityModeSelector"
 
 const getCriteriaLabel = (drop) => {
-  console.log(drop)
   if (!drop || Object.keys(drop.verifiers) <= 0) return null
   // NOTE Only 1 verifier is supported now
   const verifier = Object.values(drop.verifiers)[0][0]
