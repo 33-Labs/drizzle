@@ -3,10 +3,12 @@ import publicConfig from "../../publicConfig"
 import { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelist, EligibilityModeWhitelistWitAmount } from "../eligibility/EligibilityModeSelector"
 
 const getCriteriaLabel = (drop) => {
-  if (!drop || !drop.eligibilityReviewer) return null
-  const reviewer = drop.eligibilityReviewer
+  console.log(drop)
+  if (!drop || Object.keys(drop.verifiers) <= 0) return null
+  // NOTE Only 1 verifier is supported now
+  const verifier = Object.values(drop.verifiers)[0][0]
   // WhitelistWithAmount & Whitelist
-  if (reviewer.whitelist) {
+  if (verifier.type === "Whitelist") {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
         On the whitelist of this DROP
@@ -14,35 +16,35 @@ const getCriteriaLabel = (drop) => {
     )
   }
 
-  if (reviewer.group) {
+  if (verifier.type === "FLOATGroup") {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        Own <span className="font-bold text-drizzle-green">{reviewer.threshold} </span>
+        Own <span className="font-bold text-drizzle-green">{verifier.threshold} </span>
         FLOAT(s) in Group&nbsp;<span className="font-bold">
           <a
-            href={`${publicConfig.floatURL}/${reviewer.group.host}/group/${reviewer.group.name}`}
+            href={`${publicConfig.floatURL}/${verifier.group.host}/group/${verifier.group.name}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-drizzle-green">
-            {reviewer.group.name}
+            {verifier.group.name}
           </a>
-        </span>&nbsp;before <span className="font-bold text-drizzle-green">{convertCadenceDateTime(reviewer.receivedBefore).toLocaleString()}</span>
+        </span>&nbsp;before <span className="font-bold text-drizzle-green">{convertCadenceDateTime(verifier.receivedBefore).toLocaleString()}</span>
       </label>
     )
   }
 
-  if (reviewer.events) {
+  if (verifier.type === "FLOATs") {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
         Own FLOAT of Event&nbsp;<span className="font-bold text-drizzle-green">
           <a
-            href={`${publicConfig.floatURL}/${reviewer.events[0].host}/event/${reviewer.events[0].eventID}`}
+            href={`${publicConfig.floatURL}/${verifier.events[0].host}/event/${verifier.events[0].eventID}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-drizzle-green">
-            {reviewer.events[0].eventID}
+            {verifier.events[0].eventID}
           </a>
-        </span>&nbsp;before <span className="font-bold text-drizzle-green">{convertCadenceDateTime(reviewer.receivedBefore).toLocaleString()}</span>
+        </span>&nbsp;before <span className="font-bold text-drizzle-green">{convertCadenceDateTime(verifier.receivedBefore).toLocaleString()}</span>
       </label>
     )
   }

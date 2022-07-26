@@ -11,9 +11,9 @@ import {
 } from "../../lib/atoms"
 
 // [Emoji, Description, Amount, Title]
-const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, reviewer) => {
+const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, distributor) => {
   if (isPreview) { return ["🎉", "YOU ARE ELIGIBLE FOR", `42 FLOW`, "PREVIEWING"] }
-  const isRandomPacket = reviewer && reviewer.packet && reviewer.packet.totalAmount
+  const isRandomDistributor = distributor.type === "Random"
   if (!user || !user.loggedIn) {
     return ["👀", "CONNECT WALLET TO CHECK ELIGIBILITY", null, "Connect Wallet"]
   }
@@ -22,7 +22,7 @@ const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, reviewer) =
     return ["❓", "UNKNOWN STATUS", null, "UNKNOWN"]
   }
   if (claimStatus.code.rawValue === "0") {
-    if (isRandomPacket) {
+    if (isRandomDistributor) {
       return ["🎲", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "CLAIM TO REVEAL"]
     }
     return ["🎉", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "CLAIM"]
@@ -37,19 +37,19 @@ const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, reviewer) =
     return ["🎉", "YOU HAVE CLAIMED", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "CLAIMED"]
   }
   if (claimStatus.code.rawValue === "4") {
-    if (isRandomPacket) {
+    if (isRandomDistributor) {
       return ["🕙", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "NOT START"]
     }
     return ["🕙", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "NOT START"]
   }
   if (claimStatus.code.rawValue === "5") {
-    if (isRandomPacket) {
+    if (isRandomDistributor) {
       return ["⛔️", "DROP ENDED", null, "ENDED"]
     }
     return ["⛔️", "YOU WERE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "ENDED"]
   }
   if (claimStatus.code.rawValue === "6") {
-    if (isRandomPacket) {
+    if (isRandomDistributor) {
       return ["⏸️", "YOU ARE ELIGIBLE FOR", `❓ ${tokenSymbol}`, "PAUSED"]
     }
     return ["⏸️", "YOU ARE ELIGIBLE FOR", `${new Decimal(claimStatus.eligibleAmount).toString()} ${tokenSymbol}`, "PAUSED"]
@@ -65,7 +65,7 @@ export default function ClaimCard(props) {
   const symbol = isPreview ? (token && token.symbol) : (tokenInfo && tokenInfo.symbol)
 
   // [Emoji, Description, Amount, Title]
-  const [emoji, description, amountInfo, title] = parseClaimStatus(user, claimStatus, symbol, isPreview, drop && drop.eligibilityReviewer)
+  const [emoji, description, amountInfo, title] = parseClaimStatus(user, claimStatus, symbol, isPreview, drop && drop.distributor)
 
   return (
     <div>

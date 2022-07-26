@@ -62,7 +62,6 @@ const extractStatsPreview = (packetMode,
 }
 
 const extractStats = (drop) => {
-  console.log(drop)
   const distributor = drop.distributor
   const symbol = drop.tokenInfo.symbol
   const claimedCount = Object.keys(drop.claimedRecords).length
@@ -70,7 +69,7 @@ const extractStats = (drop) => {
   const red = "border-red-400"
   const green = "border-drizzle-green"
 
-  if (distributor) {
+  if (distributor.type === "Exclusive") {
     const balance = new Decimal(drop.dropVault.balance)
     return [
       {
@@ -92,7 +91,7 @@ const extractStats = (drop) => {
   }
 
   // Random
-  if (packet && packet.totalAmount) {
+  if (distributor.type === "Random") {
     const balance = new Decimal(drop.dropVault.balance)
     return [
       {
@@ -107,14 +106,14 @@ const extractStats = (drop) => {
       },
       {
         title: "Claimed Count / Total Capacity",
-        content: `${claimedCount} / ${packet.capacity}`,
-        color: claimedCount == packet.capacity ? red : green
+        content: `${claimedCount} / ${distributor.capacity}`,
+        color: claimedCount == distributor.capacity ? red : green
       }
     ]
   }
 
   // Identical 
-  if (packet && packet.amountPerPacket) {
+  if (distributor.type === "Identical") {
     const balance = new Decimal(drop.dropVault.balance)
     return [
       {
@@ -129,8 +128,8 @@ const extractStats = (drop) => {
       },
       {
         title: "Claimed Count / Total Capacity",
-        content: `${claimedCount} / ${packet.capacity}`,
-        color: claimedCount == packet.capacity ? red : green
+        content: `${claimedCount} / ${distributor.capacity}`,
+        color: claimedCount == distributor.capacity ? red : green
       }
     ]
   }

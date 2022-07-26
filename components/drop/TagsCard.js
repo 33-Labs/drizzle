@@ -1,19 +1,7 @@
+import { getDistributorType, getVerifierType } from "../../lib/utils"
 import publicConfig from "../../publicConfig"
 import { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelist, EligibilityModeWhitelistWitAmount } from "../eligibility/EligibilityModeSelector"
 import { PacketModeIdentical, PacketModeRandom } from "../eligibility/PacketModeSelector"
-
-const getReviewerTitle = (reviewer) => {
-  // Whitelist or WhitelistWithAmount
-  if (reviewer.whitelist) {
-    return "Whitelist"
-  }
-  if (reviewer.group) {
-    return "FLOAT Group"
-  }
-  if (reviewer.events) {
-    return "FLOAT"
-  }
-}
 
 const getReviewerTitlePreview = (eligibilityMode) => {
   // Whitelist or WhitelistWithAmount
@@ -29,26 +17,20 @@ const getReviewerTitlePreview = (eligibilityMode) => {
   }
 }
 
-const getPacketMode = (packet) => {
-  if (packet.totalAmount) return "Random"
-  if (packet.amountPerPacket) return "Identical"
-  return null
-}
-
 const getPacketPreview = (packetMode) => {
+  if (!packetMode) { return "Exclusive" }
   if (packetMode.key === PacketModeIdentical.key) { return "Identical" }
   if (packetMode.key === PacketModeRandom.key) { return "Random" }
-  return null
 }
 
-const getEligibilityTag = (reviewer, eligibilityMode) => {
-  if (reviewer) {
+const getEligibilityTag = (drop, eligibilityMode) => {
+  if (drop) {
     return (
       <div
         className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm"
         data-tip="same amount to all users">
         <label>
-          {getReviewerTitle(reviewer)}
+          {getVerifierType(drop)}
         </label>
       </div>
     )
@@ -67,42 +49,39 @@ const getEligibilityTag = (reviewer, eligibilityMode) => {
   return null
 }
 
-const getPacketTag = (reviewer, packetMode) => {
-  if (reviewer && reviewer.packet) {
+const getPacketTag = (drop, packetMode) => {
+  if (drop) {
     return (
       <div
         className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
         data-tip="same amount to all users">
         <label>
-          {getPacketMode(reviewer.packet)}
+          {getDistributorType(drop)}
         </label>
       </div>
     )
   }
 
-  if (packetMode) {
-    return (
-      <div
-        className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
-        data-tip="same amount to all users">
-        <label>
-          {getPacketPreview(packetMode)}
-        </label>
-      </div>
-    )
-  }
-  return null
+  return (
+    <div
+      className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
+      data-tip="same amount to all users">
+      <label>
+        {getPacketPreview(packetMode)}
+      </label>
+    </div>
+  )
 }
 
 export default function TagsCard(props) {
-  const { token, tokenInfo, reviewer, eligibilityMode, packetMode } = props
-  const symbol = tokenInfo ? tokenInfo.symbol : (token ? token.symbol : null)
-  const identifer = tokenInfo ? tokenInfo.tokenIdentifier : (token ? `A.${token.address}.${token.contractName}` : null)
+  const { token, eligibilityMode, packetMode, drop } = props
+  const symbol = drop ? drop.tokenInfo.symbol : (token ? token.symbol : null)
+  const identifer = drop ? drop.tokenInfo.tokenIdentifier : (token ? `A.${token.address}.${token.contractName}` : null)
 
   return (
     <div className={`flex gap-x-1 mb-2`}>
-      {getEligibilityTag(reviewer, eligibilityMode)}
-      {getPacketTag(reviewer, packetMode)}
+      {getEligibilityTag(drop, eligibilityMode)}
+      {getPacketTag(drop, packetMode)}
       <a
         href={`${publicConfig.flowscanURL}/contract/${identifer}`}
         target="_blank"

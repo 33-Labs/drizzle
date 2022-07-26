@@ -70,6 +70,7 @@ export default function ManageCard(props) {
                   setTransactionStatus
                 )
 
+                mutate(["claimStatusFetcher", drop.dropID, manager, manager])
                 mutate(["dropFetcher", drop.dropID, manager])
               }
             }}
@@ -98,6 +99,7 @@ export default function ManageCard(props) {
                       setTransactionStatus
                     )
     
+                    mutate(["claimStatusFetcher", drop.dropID, manager, manager])
                     mutate(["dropFetcher", drop.dropID, manager])
                   }
                 }

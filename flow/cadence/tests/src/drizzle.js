@@ -17,7 +17,6 @@ import {
 export const createDrop = async (signer, params) => {
   const signers = [signer]
   const txName = "create_drop"
-  console.log(params)
   return await sendTransaction({ name: txName, signers: signers, args: params})
 }
 
@@ -77,8 +76,6 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
   await checkFUSDBalance(signer, fusdAmount)
 
   const [tx, error] = await createDrop(signer, Object.values(args))
-  console.log(error)
-  console.log(tx)
   if (returnErr === true) {
     return error
   }

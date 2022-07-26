@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil"
 import {
   transactionInProgressState
 } from "../lib/atoms"
-import { classNames, convertCadenceDateTime, getDropStatus, getEligibilityMode, getPacket } from '../lib/utils'
+import { classNames, convertCadenceDateTime, getDistributorType, getDropStatus, getVerifierType } from '../lib/utils'
 
 export default function DropList(props) {
   const [transactionInProgress] = useRecoilState(transactionInProgressState)
@@ -101,10 +101,10 @@ export default function DropList(props) {
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {getEligibilityMode(drop)}
+                            {getVerifierType(drop)}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {getPacket(drop)}
+                            {getDistributorType(drop)}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${drop.status.tagColor}`}>

@@ -248,7 +248,7 @@ export default function DropCreator(props) {
       let eventHosts = [floatEventPairs[0].eventHost]
 
       params.withFloats = true
-      params.threshold = eventIDs.length
+      params.threshold = `${eventIDs.length}`
       params.eventIDs = eventIDs
       params.eventHosts = eventHosts
 
@@ -259,13 +259,13 @@ export default function DropCreator(props) {
       params.floatGroupHost = floatGroup.groupHost
     }
 
-    if (packetMode.key === PacketModeIdentical.key) {
+    if (packetMode && packetMode.key === PacketModeIdentical.key) {
       let _identicalAmount = new Decimal(identicalAmount).toFixed(8).toString()
       params.withIdenticalDistributor = true
       params.capacity = capacity
       params.amountPerEntry = _identicalAmount
 
-    } else if (packetMode.key === PacketModeRandom.key) {
+    } else if (packetMode && packetMode.key === PacketModeRandom.key) {
       let totalRandomAmount = new Decimal(totalAmount).toFixed(8).toString()
       params.withRandomDistributor = true
       params.capacity = capacity
@@ -273,7 +273,6 @@ export default function DropCreator(props) {
     }
 
     const args = Object.values(params)
-    console.log(params)
     const res = await createDrop(...args,
       setTransactionInProgress, setTransactionStatus
     )
