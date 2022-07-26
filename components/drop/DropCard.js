@@ -51,10 +51,10 @@ const MemoizeName = React.memo(({ name, url }) => {
 })
 MemoizeName.displayName = "MemoizeName"
 
-const MemoizeBasicInfo = React.memo(({ host, createdAt, token, tokenInfo, reviewer, eligibilityMode, packetMode }) => {
+const MemoizeBasicInfo = React.memo(({ host, createdAt, token, eligibilityMode, packetMode, drop }) => {
   return (
     <div className="w-full flex flex-col -mt-3">
-      <TagsCard token={token} tokenInfo={tokenInfo} reviewer={reviewer} eligibilityMode={eligibilityMode} packetMode={packetMode} />
+      <TagsCard token={token} eligibilityMode={eligibilityMode} packetMode={packetMode} drop={drop} />
       <label className="w-full font-flow text-sm text-gray-400 break-words">
         {"Created by "}
         <span>
@@ -106,7 +106,6 @@ export default function DropCard(props) {
   const startAt = convertCadenceDateTime((drop && drop.startAt) || props.startAt)
   const endAt = convertCadenceDateTime((drop && drop.endAt) || props.endAt)
   const tokenInfo = (drop && drop.tokenInfo) || props.tokenInfo
-  const reviewer = (drop && drop.eligibilityReviewer)
 
   return (
     <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8 text-black">
@@ -120,8 +119,7 @@ export default function DropCard(props) {
         <div className="flex flex-col p-5 sm:p-8 gap-y-5">
           <MemoizeName name={name} url={url} />
           <MemoizeBasicInfo
-            host={host} createdAt={createdAt} token={token} tokenInfo={tokenInfo} reviewer={reviewer}
-            eligibilityMode={eligibilityMode} packetMode={packetMode}
+            host={host} createdAt={createdAt} token={token} eligibilityMode={eligibilityMode} packetMode={packetMode} drop={drop}
           />
           {(startAt || endAt) ?
             <TimeLimitCard startAt={startAt} endAt={endAt} /> : null}

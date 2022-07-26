@@ -28,7 +28,7 @@ export const PacketModeRandom = {
     if (!tokenBalance) throw Hints.InvalidTokenBalance
 
     const _capacity = new Decimal(capacity)
-    if (!(_capacity.isInteger() && _capacity.isPositive() && _capacity.cmp(UINT32_MAX) == -1)) {
+    if (!(_capacity.isInteger() && _capacity.isPositive() &&!_capacity.isZero() && _capacity.cmp(UINT32_MAX) == -1)) {
       throw Hints.InvalidCapacity
     }
 
@@ -54,7 +54,7 @@ export const PacketModeIdentical = {
     if (!tokenBalance) throw Hints.InvalidTokenBalance
 
     const _capacity = new Decimal(capacity)
-    if (!(_capacity.isInteger() && _capacity.isPositive() && _capacity.cmp(UINT32_MAX) == -1)) {
+    if (!(_capacity.isInteger() && _capacity.isPositive() &&!_capacity.isZero() && _capacity.cmp(UINT32_MAX) == -1)) {
       throw Hints.InvalidCapacity
     }
 

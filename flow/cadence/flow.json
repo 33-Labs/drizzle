@@ -63,25 +63,25 @@
         "Drizzle": {
             "source": "./contracts/Drizzle.cdc",
             "aliases": {
-                "testnet": "0x2432e062f9f14295"
+                "testnet": "0xfa6367bca1cf8766"
             }  
         },
-        "Packets": {
-            "source": "./contracts/Packets.cdc",
+        "Distributors": {
+            "source": "./contracts/Distributors.cdc",
             "aliases": {
-                "testnet": "0x2432e062f9f14295"
-            }   
+                "testnet": "0xfa6367bca1cf8766"
+            }
         },
-        "EligibilityReviewers": {
-            "source": "./contracts/EligibilityReviewers.cdc",
+        "EligibilityVerifiers": {
+            "source": "./contracts/EligibilityVerifiers.cdc",
             "aliases": {
-                "testnet": "0x2432e062f9f14295"
+                "testnet": "0xfa6367bca1cf8766"
             }
         },
         "Cloud": {
             "source": "./contracts/Cloud.cdc",
             "aliases": {
-                "testnet": "0x2432e062f9f14295"
+                "testnet": "0xfa6367bca1cf8766"
             }
         }
     },
@@ -104,8 +104,8 @@
         "testnet": {
             "drizzle-deployer": [
                 "Drizzle",
-                "Packets",
-                "EligibilityReviewers",
+                "Distributors",
+                "EligibilityVerifiers",
                 "Cloud" 
             ]
         }

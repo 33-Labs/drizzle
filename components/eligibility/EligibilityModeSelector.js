@@ -9,9 +9,6 @@ export const EligibilityModeWhitelistWitAmount = {
   key: "WhitelistWithAmount",
   name: 'Whitelist with Amount',
   intro: 'Distribute specific amount to specific account on whitelist',
-  criteria: () => {
-    return "In whitelist"
-  },
   checkParams: (whitelistWithAmountReviewerCallback, tokenBalance) => {
     if (!whitelistWithAmountReviewerCallback) {
       return [false, Hints.NeedProcessRA]
@@ -35,9 +32,6 @@ export const EligibilityModeWhitelist = {
   key: "Whitelist",
   name: 'Whitelist',
   intro: 'Distribute tokens to accounts on whitelist. FCFS',
-  criteria: () => {
-    return "In whitelist"
-  },
   checkParams: (
     whitelistReviewerCallback, packetMode, totalBalance, capacity, amount = {}
   ) => {
@@ -65,10 +59,6 @@ export const EligibilityModeFLOAT = {
   name: 'FLOAT',
   intro: 'Distribute tokens to holders of specific FLOAT. FCFS',
   detail: FloatModeFloatEvent,
-  criteria: (eventID) => {
-    let event = eventID || "{EventID}"
-    return `Own FLOAT of event #${event}`
-  },
   checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
     try {
       const [valid, hint] = checkPacketMode(packetMode, totalBalance, capacity, amount)
@@ -78,6 +68,7 @@ export const EligibilityModeFLOAT = {
       if (floatEvents.length != 1) {
         throw Hints.InvalidFloatEvent
       }
+      // threshold should be 1 now
       return [true, Hints.Valid]
     } catch (error) {
       return [false, error]
@@ -90,11 +81,6 @@ export const EligibilityModeFLOATGroup = {
   name: 'FLOAT Group',
   intro: 'Distribute tokens to holders of FLOATs in speicific FLOAT Group. FCFS',
   detail: FloatModeFloatGroup,
-  criteria: (groupName, threshold) => {
-    let t = threshold || "1"
-    let g = groupName || "{GroupName}"
-    return `Own at least ${t} FLOATs in ${g}`
-  },
   checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
     try {
       const [valid, hint] = checkPacketMode(packetMode, totalBalance, capacity, amount)
@@ -111,7 +97,7 @@ export const EligibilityModeFLOATGroup = {
       }
 
       const _threshold = new Decimal(threshold)
-      if (!(_threshold.isInteger() && _threshold.isPositive() && _threshold.toNumber() <= floatEvents.length)) {
+      if (!(_threshold.isInteger() && _threshold.isPositive() && !_threshold.isZero() && _threshold.toNumber() <= floatEvents.length)) {
         throw Hints.InvalidThreshold
       }
 

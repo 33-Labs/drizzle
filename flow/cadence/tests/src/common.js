@@ -4,11 +4,13 @@ import {
   sendTransaction,
   executeScript,
   shallPass,
-  shallResolve
+  shallResolve,
+  mintFlow
 } from "flow-js-testing"
 
 export const deployCoreContracts = async (deployer) => {
   const Deployer = deployer || await getAccountAddress("Deployer")
+  await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "core/NonFungibleToken")
   await deployByName(Deployer, "core/MetadataViews")
   await deployByName(Deployer, "core/FUSD")
@@ -16,6 +18,7 @@ export const deployCoreContracts = async (deployer) => {
 
 export const deployFLOATContracts = async (deployer) => {
   const Deployer = deployer || await getAccountAddress("Deployer")
+  await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "float/GrantedAccountAccess")
   await deployByName(Deployer, "float/FLOAT")
   await deployByName(Deployer, "float/FLOATVerifiers")
@@ -23,9 +26,10 @@ export const deployFLOATContracts = async (deployer) => {
 
 export const deployDrizzleContracts = async (deployer) => {
   const Deployer = deployer || await getAccountAddress("Deployer")
+  await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "Drizzle")
-  await deployByName(Deployer, "Packets")
-  await deployByName(Deployer, "EligibilityReviewers")
+  await deployByName(Deployer, "Distributors")
+  await deployByName(Deployer, "EligibilityVerifiers")
   await deployByName(Deployer, "Cloud")
 }
 

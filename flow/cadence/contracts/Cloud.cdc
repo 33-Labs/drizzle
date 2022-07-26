@@ -4,7 +4,7 @@
 
 import Drizzle from "./Drizzle.cdc"
 import FungibleToken from "./core/FungibleToken.cdc"
-import Packets from "./Packets.cdc"
+import Distributors from "./Distributors.cdc"
 
 pub contract Cloud {
     pub let CloudAdminStoragePath: StoragePath
@@ -34,31 +34,36 @@ pub contract Cloud {
         pub let endAt: UFix64?
 
         pub let tokenInfo: Drizzle.TokenInfo
-        pub let eligibilityReviewer: {Drizzle.IEligibilityReviewer}
+
+        pub let distributor: {Drizzle.IDistributor}
+        pub let verifiers: {String: [{Drizzle.IEligibilityVerifier}]}
+        pub let verifyMode: Drizzle.EligibilityVerifyMode
 
         pub var isPaused: Bool
+        pub var isEnded: Bool
         pub let claimedRecords: {Address: Drizzle.ClaimRecord}
         pub var claimedAmount: UFix64
+        pub let extraData: {String: AnyStruct}
 
         access(self) let dropVault: @FungibleToken.Vault
 
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct}) {
-            let claimer = receiver.owner!.address
-            let claimStatus = self.getClaimStatus(account: claimer)
+            let availability = self.checkAvailability(params: params)
+            assert(availability.status == Drizzle.AvailabilityStatus.ok, message: availability.getStatus())
 
-            assert(claimStatus.code == Drizzle.ClaimStatusCode.ok, message: claimStatus.message)
+            let claimer = receiver.owner!.address
+            let eligibility = self.checkEligibility(account: claimer, params: params)
+
+            assert(eligibility.status == Drizzle.EligibilityStatus.eligible, message: eligibility.getStatus())
 
             let claimRecord = Drizzle.ClaimRecord(
                 address: claimer,
-                amount: claimStatus.eligibleAmount,
+                amount: eligibility.eligibleAmount,
                 extraData: {}
             )
 
             self.claimedRecords.insert(key: claimRecord.address, claimRecord)
             self.claimedAmount = self.claimedAmount + claimRecord.amount
-
-            let v <- self.dropVault.withdraw(amount: claimRecord.amount)
-            receiver.deposit(from: <- v)
 
             emit DropClaimed(
                 dropID: self.dropID,
@@ -68,90 +73,105 @@ pub contract Cloud {
                 tokenIdentifier: self.tokenInfo.tokenIdentifier,
                 amount: claimRecord.amount
             )
+
+            let v <- self.dropVault.withdraw(amount: claimRecord.amount)
+            receiver.deposit(from: <- v)
         }
 
-        // NOTE: The order of these judgement does matter
-        // NOTE: For Random Packet, the eligibleAmount is determined in `claim`, the amount
-        // got in getClaimStatus is not the final amount.
-        pub fun getClaimStatus(account: Address): Drizzle.ClaimStatus {
-            let eligibility = self.eligibilityReviewer.checkEligibility(
-                account: account, 
-                params: {
-                    "claimedCount": UInt32(self.claimedRecords.keys.length),
-                    "claimedAmount": self.claimedAmount
-                }
-            )
-
-            let extraData: {String: AnyStruct} = {}
-            if let packet = self.eligibilityReviewer.packet {
-                if packet.isInstance(Type<Packets.RandomPacket>()) {
-                    extraData["note"] = "for RandomPacket, the actual eligibleAmount is determined in `claim`"
-                }
-            }
-
-            if !eligibility.isEligible {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.ineligible,
-                    eligibleAmount: 0.0,
-                    message: "not eligible",
-                    extraData: extraData
+        pub fun checkAvailability(params: {String: AnyStruct}): Drizzle.Availability {
+            if self.isEnded {
+                return Drizzle.Availability(
+                    status: Drizzle.AvailabilityStatus.ended,
+                    extraData: {}
                 )
-            }
-
-            if let record = self.claimedRecords[account] {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.claimed,
-                    eligibleAmount: record.amount,
-                    message: "claimed",
-                    extraData: extraData
-                )
-            }
-
-            if !eligibility.isAvailable {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.unavailable,
-                    eligibleAmount: eligibility.eligibleAmount,
-                    message: "no longer available",
-                    extraData: extraData
-                ) 
             }
 
             if let startAt = self.startAt {
                 if getCurrentBlock().timestamp < startAt {
-                    return Drizzle.ClaimStatus(
-                        code: Drizzle.ClaimStatusCode.notStartYet,
-                        eligibleAmount: eligibility.eligibleAmount,
-                        message: "not start yet",
-                        extraData: extraData
+                    return Drizzle.Availability(
+                        status: Drizzle.AvailabilityStatus.notStartYet,
+                        extraData: {}
                     )
                 }
             }
 
             if let endAt = self.endAt {
                 if getCurrentBlock().timestamp > endAt {
-                    return Drizzle.ClaimStatus(
-                        code: Drizzle.ClaimStatusCode.ended,
-                        eligibleAmount: eligibility.eligibleAmount,
-                        message: "ended",
-                        extraData: extraData
+                    return Drizzle.Availability(
+                        status: Drizzle.AvailabilityStatus.expired,
+                        extraData: {}
                     )
                 }
             }
 
-            if self.isPaused {
-                return Drizzle.ClaimStatus(
-                    code: Drizzle.ClaimStatusCode.paused,
-                    eligibleAmount: eligibility.eligibleAmount,
-                    message: "paused",
-                    extraData: extraData
+            let newParams: {String: AnyStruct} = self.combinedParams(params: params)
+            if !self.distributor.isAvailable(params: newParams) {
+                return Drizzle.Availability(
+                    status: Drizzle.AvailabilityStatus.noCapacity,
+                    extraData: {}
                 )
             }
 
-            return Drizzle.ClaimStatus(
-                code: Drizzle.ClaimStatusCode.ok,
-                eligibleAmount: eligibility.eligibleAmount,
-                message: "",
-                extraData: extraData
+            if self.isPaused {
+                return Drizzle.Availability(
+                    status: Drizzle.AvailabilityStatus.paused,
+                    extraData: {}
+                ) 
+            }
+
+            return Drizzle.Availability(
+                status: Drizzle.AvailabilityStatus.ok,
+                extraData: {}
+            ) 
+        }
+
+        pub fun checkEligibility(account: Address, params: {String: AnyStruct}): Drizzle.Eligibility {
+            if let record = self.claimedRecords[account] {
+                return Drizzle.Eligibility(
+                    status: Drizzle.EligibilityStatus.hasClaimed,
+                    eligibleAmount: record.amount,
+                    extraData: {}
+                )
+            } 
+
+            params.insert(key: "claimer", account)
+            let newParams: {String: AnyStruct} = self.combinedParams(params: params)
+            var isEligible = false
+            if self.verifyMode == Drizzle.EligibilityVerifyMode.oneOf {
+                for identifier in self.verifiers.keys {
+                    let verifiers = (&self.verifiers[identifier] as &[{Drizzle.IEligibilityVerifier}]?)!
+                    for verifier in verifiers.concat([]) {
+                        if verifier.verify(account: account, params: newParams).isEligible {
+                            isEligible = true
+                            break
+                        }
+                    }
+                    if isEligible {
+                        break
+                    }
+                }
+            } else if self.verifyMode == Drizzle.EligibilityVerifyMode.all {
+                isEligible = true
+                for identifier in self.verifiers.keys {
+                    let verifiers = (&self.verifiers[identifier] as &[{Drizzle.IEligibilityVerifier}]?)!
+                    for verifier in verifiers.concat([]) {
+                        if !verifier.verify(account: account, params: newParams).isEligible {
+                            isEligible = false
+                            break
+                        }
+                    }
+                    if !isEligible {
+                        break
+                    }
+                }
+            }
+
+            let eligibleAmount = self.distributor.getEligibleAmount(params: newParams)
+
+            return Drizzle.Eligibility(
+                isEligible: isEligible ? Drizzle.EligibilityStatus.eligible : Drizzle.EligibilityStatus.notEligible,
+                eligibleAmount: eligibleAmount,
+                extraData: {}
             )
         }
 
@@ -167,7 +187,17 @@ pub contract Cloud {
             return self.dropVault.balance
         }
 
+        pub fun getVerifiers(): {String: [{Drizzle.IEligibilityVerifier}]} {
+            return self.verifiers
+        }
+
+        // private methods
+
         pub fun togglePause(): Bool {
+            pre { 
+                !self.isEnded: "DROP has ended" 
+            }
+
             self.isPaused = !self.isPaused
             return self.isPaused
         }
@@ -177,6 +207,7 @@ pub contract Cloud {
         // this function to make sure the claimers can have enough funds to withdraw.
         pub fun deposit(from: @FungibleToken.Vault) {
             pre {
+                !self.isEnded: "DROP has ended"
                 from.balance > 0.0: "deposit empty vault"
             }
 
@@ -192,6 +223,25 @@ pub contract Cloud {
             }
         }
 
+        pub fun end(receiver: &{FungibleToken.Receiver}) {
+            self.withdrawAllFunds(receiver: receiver)
+            self.isEnded = true
+        }
+
+        access(self) fun combinedParams(params: {String: AnyStruct}): {String: AnyStruct} {
+            let combined: {String: AnyStruct} = {
+                "claimedCount": UInt32(self.claimedRecords.keys.length),
+                "claimedAmount": self.claimedAmount
+            }
+
+            for key in params.keys {
+                if !combined.containsKey(key) {
+                    combined[key] = params[key]
+                }
+            }
+            return combined
+        }
+
         init(
             name: String,
             description: String,
@@ -201,8 +251,11 @@ pub contract Cloud {
             startAt: UFix64?,
             endAt: UFix64?,
             tokenInfo: Drizzle.TokenInfo,
-            eligibilityReviewer: {Drizzle.IEligibilityReviewer},
+            distributor: {Drizzle.IDistributor},
+            verifyMode: Drizzle.EligibilityVerifyMode,
+            verifiers: {String: [{Drizzle.IEligibilityVerifier}]},
             vault: @FungibleToken.Vault,
+            extraData: {String: AnyStruct}
         ) {
             pre {
                 name.length > 0: "invalid name"
@@ -233,13 +286,27 @@ pub contract Cloud {
             self.endAt = endAt
 
             self.tokenInfo = tokenInfo
-            self.eligibilityReviewer = eligibilityReviewer
+
+            self.distributor = distributor
+            self.verifyMode = verifyMode
+            self.verifiers = verifiers
 
             self.isPaused = false
+            self.isEnded = false
             self.claimedRecords = {}
             self.claimedAmount = 0.0
 
             self.dropVault <- vault
+            self.extraData = extraData
+
+            Cloud.totalDrops = Cloud.totalDrops + 1
+            emit DropCreated(
+                dropID: self.dropID,
+                name: self.name,
+                host: self.host,
+                description: self.description,
+                tokenIdentifier: self.tokenInfo.tokenIdentifier
+            )
         }
 
         destroy() {
@@ -277,11 +344,26 @@ pub contract Cloud {
             startAt: UFix64?,
             endAt: UFix64?,
             tokenInfo: Drizzle.TokenInfo,
-            eligibilityReviewer: {Drizzle.IEligibilityReviewer},
-            vault: @FungibleToken.Vault
+            distributor: {Drizzle.IDistributor},
+            verifyMode: Drizzle.EligibilityVerifyMode,
+            verifiers: [{Drizzle.IEligibilityVerifier}],
+            vault: @FungibleToken.Vault,
+            extraData: {String: AnyStruct}
         ): UInt64 {
             pre {
+                verifiers.length == 1: "Currently only 1 verifier supported"
                 !Cloud.isPaused: "Cloud contract is paused!"
+            }
+
+            let typedVerifiers: {String: [{Drizzle.IEligibilityVerifier}]} = {}
+            let verifiersRef = &verifiers as &[{Drizzle.IEligibilityVerifier}]
+            for verifier in verifiersRef.concat([]) {
+                let identifier = verifier.getType().identifier
+                if typedVerifiers[identifier] == nil {
+                    typedVerifiers[identifier] = [verifier]
+                } else {
+                    typedVerifiers[identifier]!.append(verifier)
+                }
             }
             
             let drop <- create Drop(
@@ -293,19 +375,14 @@ pub contract Cloud {
                 startAt: startAt,
                 endAt: endAt,
                 tokenInfo: tokenInfo,
-                eligibilityReviewer: eligibilityReviewer,
+                distributor: distributor,
+                verifyMode: verifyMode,
+                verifiers: typedVerifiers,
                 vault: <- vault,
+                extraData: extraData
             )
 
             let dropID = drop.dropID
-
-            emit DropCreated(
-                dropID: drop.dropID,
-                name: drop.name,
-                host: drop.host,
-                description: drop.description,
-                tokenIdentifier: tokenInfo.tokenIdentifier
-            )
 
             self.drops[dropID] <-! drop
             return dropID
@@ -350,6 +427,7 @@ pub contract Cloud {
     }
 
     pub var isPaused: Bool
+    pub var totalDrops: UInt64
 
     init() {
         self.DropCollectionStoragePath = /storage/drizzleDropCollectionStoragePath
@@ -361,6 +439,7 @@ pub contract Cloud {
         self.CloudAdminPrivatePath = /private/drizzleCloudPublicPath
 
         self.isPaused = false
+        self.totalDrops = 0
 
         self.account.save(<- create Admin(), to: self.CloudAdminStoragePath)
 

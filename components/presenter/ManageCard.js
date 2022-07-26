@@ -11,7 +11,7 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../../lib/atoms"
-import { deleteDrop, depositToDrop, togglePause, withdrawAllFunds } from "../../lib/transactions"
+import { deleteDrop, endDrop, togglePause } from "../../lib/transactions"
 import { classNames } from "../../lib/utils"
 import { queryBalance } from "../../lib/scripts"
 
@@ -58,10 +58,10 @@ export default function ManageCard(props) {
           <button
             type="button"
             className={classNames(
-              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || (drop && drop.isEnded)) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               `rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black`
             )}
-            disabled={transactionInProgress}
+            disabled={transactionInProgress || (drop && drop.isEnded)}
             onClick={async () => {
               if (drop) {
                 await togglePause(
@@ -70,6 +70,7 @@ export default function ManageCard(props) {
                   setTransactionStatus
                 )
 
+                mutate(["claimStatusFetcher", drop.dropID, manager, manager])
                 mutate(["dropFetcher", drop.dropID, manager])
               }
             }}
@@ -79,18 +80,18 @@ export default function ManageCard(props) {
           <button
             type="button"
             className={classNames(
-              transactionInProgress ? "bg-yellow-400/60" : "bg-yellow-400 hover:bg-yellow-500",
+              (transactionInProgress || (drop && drop.isEnded)) ? "bg-red-400/60" : "bg-red-400 hover:bg-red-500",
               `rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black`
             )}
-            disabled={transactionInProgress}
+            disabled={transactionInProgress || (drop && drop.isEnded)}
             onClick={async () => {
               setShowAlertModal(false)
               setAlertModalContent({
-                content: "If you withdraw the funds, the rest of the eligible users will not be able to claim their rewards and the DROP will be paused",
-                actionTitle: "Withdraw",
+                content: "End DROP will send all remaining tokens back to your account, the rest of the eligible users will not be able to claim their rewards, and nobody can recover it",
+                actionTitle: "End",
                 action: async () => {
                   if (drop) {
-                    await withdrawAllFunds(
+                    await endDrop(
                       drop.dropID,
                       drop.tokenInfo.account,
                       drop.tokenInfo.receiverPath.identifier,
@@ -98,6 +99,7 @@ export default function ManageCard(props) {
                       setTransactionStatus
                     )
     
+                    mutate(["claimStatusFetcher", drop.dropID, manager, manager])
                     mutate(["dropFetcher", drop.dropID, manager])
                   }
                 }
@@ -105,7 +107,7 @@ export default function ManageCard(props) {
               setShowAlertModal(true)
               return
             }}>
-            Withdraw Funds
+            End
           </button>
           <button
             type="button"
