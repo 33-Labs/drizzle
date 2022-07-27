@@ -50,7 +50,9 @@ pub contract Distributors {
         }
 
         pub fun getEligibleAmount(params: {String: AnyStruct}): UFix64 {
-            assert(self.isAvailable(params: params), message: "no longer available")
+            if !self.isAvailable(params: params) {
+                return 0.0
+            }
             return self.amountPerEntry
         }
     }
@@ -89,12 +91,15 @@ pub contract Distributors {
         pub fun getEligibleAmount(params: {String: AnyStruct}): UFix64 {
             let claimedCount = params["claimedCount"]! as! UInt32
             let availableCapacity = self.capacity - claimedCount 
-            assert(availableCapacity > 0, message: "no longer available")
-
+            if availableCapacity <= 0 {
+                return 0.0
+            }
 
             let claimedAmount = params["claimedAmount"]! as! UFix64
             let availableAmount = self.totalAmount - claimedAmount
-            assert(availableAmount > 0.0, message: "no longer available")
+            if availableAmount <= 0.0 {
+                return 0.0
+            }
 
             if availableCapacity == 1 {
                 return availableAmount

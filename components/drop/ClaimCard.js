@@ -34,8 +34,6 @@ const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, distributor
     return elements
   }
 
-  console.log("claimStatus: ", claimStatus)
-
   if (!claimStatus) {
     elements.emoji = "❓"
     elements.description = "UNKNOWN STATUS"
@@ -66,7 +64,7 @@ const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, distributor
   } else if (eStatus === "2") {
     elements.emoji = "🎉"
     elements.description = "YOU HAVE CLAIMED"
-    elements.title = "CLAIMED"
+    elements.title = "HAS CLAIMED"
     elements.amount = amount
   }
 
@@ -75,34 +73,33 @@ const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, distributor
   if (aStatus === "1") {
     // ended expired and no capacity
     elements.emoji = "⛔️"
-    elements.title = "ENDED"
+    elements.title = "DROP ENDED"
     if (eStatus != "2") {
       elements.description = "NO LONGER AVAILABLE"
       elements.amount = null
     }
   } else if (aStatus === "3") {
     elements.emoji = "⛔️"
-    elements.title = "EXPIRED"
+    elements.title = "DROP EXPIRED"
     if (eStatus != "2") {
       elements.description = "NO LONGER AVAILABLE"
       elements.amount = null
     }
   } else if (aStatus === "4") {
     elements.emoji = "⛔️"
-    elements.title = "NO CAPACITY"
+    elements.title = "DROP ENDED"
     if (eStatus != "2") {
       elements.description = "NO LONGER AVAILABLE"
       elements.amount = null
     }
   } else if (aStatus === "2") {
     elements.emoji = "🕙"
-    elements.title = "NOT START YET"
+    elements.title = "DROP HAS NOT STARTED"
   } else if (aStatus === "5") {
     elements.emoji = "⏸️"
-    elements.title = "PAUSED"
+    elements.title = "DROP PAUSED"
   }
 
-  console.log(elements)
   return elements
 }
 
@@ -130,11 +127,11 @@ export default function ClaimCard(props) {
         <button
           type="button"
           className={classNames(
-            (isPreview || !isClaimable(claimStatus)) ? "bg-disabled-gray" :
+            (isPreview || (user && user.loggedIn && !isClaimable(claimStatus))) ? "bg-disabled-gray" :
               (transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark"),
             `mt-5 h-[48px] text-base font-medium shadow-sm text-black rounded-2xl`
           )}
-          disabled={isPreview || !isClaimable(claimStatus) || transactionInProgress}
+          disabled={isPreview || (user && user.loggedIn && !isClaimable(claimStatus)) || transactionInProgress}
           onClick={async () => {
             if (!user || !user.loggedIn) {
               fcl.authenticate()

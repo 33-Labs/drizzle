@@ -139,8 +139,8 @@ pub contract Cloud {
             var isEligible = false
             if self.verifyMode == Drizzle.EligibilityVerifyMode.oneOf {
                 for identifier in self.verifiers.keys {
-                    let verifiers = (&self.verifiers[identifier] as &[{Drizzle.IEligibilityVerifier}]?)!
-                    for verifier in verifiers.concat([]) {
+                    let verifiers = self.verifiers[identifier]!
+                    for verifier in verifiers {
                         if verifier.verify(account: account, params: newParams).isEligible {
                             isEligible = true
                             break
@@ -153,8 +153,8 @@ pub contract Cloud {
             } else if self.verifyMode == Drizzle.EligibilityVerifyMode.all {
                 isEligible = true
                 for identifier in self.verifiers.keys {
-                    let verifiers = (&self.verifiers[identifier] as &[{Drizzle.IEligibilityVerifier}]?)!
-                    for verifier in verifiers.concat([]) {
+                    let verifiers = self.verifiers[identifier]!
+                    for verifier in verifiers {
                         if !verifier.verify(account: account, params: newParams).isEligible {
                             isEligible = false
                             break
@@ -356,8 +356,7 @@ pub contract Cloud {
             }
 
             let typedVerifiers: {String: [{Drizzle.IEligibilityVerifier}]} = {}
-            let verifiersRef = &verifiers as &[{Drizzle.IEligibilityVerifier}]
-            for verifier in verifiersRef.concat([]) {
+            for verifier in verifiers {
                 let identifier = verifier.getType().identifier
                 if typedVerifiers[identifier] == nil {
                     typedVerifiers[identifier] = [verifier]
