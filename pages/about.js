@@ -58,7 +58,7 @@ export default function About(props) {
       <p className={p}>Besides, we have a “Whitelist With Amount” mode, with which you can set a specific reward amount to each account on the whitelist manually.</p>
       <br></br>
       <h1 className={h1}>Roadmap</h1>
-      <p className={p}>More features are to be added soon. (NFT airdrop to be the next one!)</p>
+      <p className={p}>Drizzle will be MORE THAN an Airdrop Tool! More features are to be added soon and NFT raffle should be the next one!</p>
       <br></br>
       <h1 className={h1}>One More Thing?</h1>
       <p className={p}>If you have any suggestion, feel free to contact us (open an issue on our&nbsp;
