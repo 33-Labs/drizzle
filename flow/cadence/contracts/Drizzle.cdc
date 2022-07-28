@@ -1,9 +1,11 @@
 // Made by Lanford33
 
-// We aim to create a tool for users to create airdrop easily. Drizzle is the name of this tool, and we call
-// a airdrop created by using Drizzle as DROP.
+// We aim to create a tool for users to distribute their token/NFT(by airdrop/raffle/auction etc) easily. 
+// Drizzle is the name of this tool, and we call
+// 1. An airdrop created by using Drizzle as DROP;
+// 2. comming soon
 
-// Drizzle.cdc defines the interfaces and some enumerations/structs used in this tool.
+// Drizzle.cdc defines the interfaces and some enumerations/structs used in this tool
 
 import FungibleToken from "./core/FungibleToken.cdc"
 
@@ -11,8 +13,8 @@ pub contract Drizzle {
 
     pub event ContractInitialized()
 
-    // In Drizzle, we use Packet to define the fund dispatcher
-    // A Packet should conform IDistributor
+    // In Drizzle, we use Distributor to set the rule of token distribution in an FungibleToken DROP
+    // A Distributor should conform IDistributor
     pub struct interface IDistributor {
         // capacity defines the available quota in a DROP
         pub let capacity: UInt32
@@ -72,8 +74,8 @@ pub contract Drizzle {
         }
     }
 
-    // // In Drizzle, EligibilityReviewer determines an account is eligible or not
-    // // EligibilityReviewer should conform IEligibilityReviewer
+    // // In Drizzle, EligibilityVerifier determines an account is eligible or not
+    // // EligibilityVerifier should conform IEligibilityVerifier
     pub struct interface IEligibilityVerifier {
         pub let type: String
 
@@ -117,7 +119,6 @@ pub contract Drizzle {
         }
     }
 
-    // We will add a ClaimRecord to claimedRecords after an account claiming it's reward
     pub struct ClaimRecord {
         pub let address: Address
         pub let amount: UFix64
@@ -169,7 +170,7 @@ pub contract Drizzle {
         }
     }
 
-    // The airdrop created in Drizzle is called DROP.
+    // The FungibleToken airdrop created in Drizzle is called DROP.
     // IDropPublic defined the public fields and functions of a DROP
     pub resource interface IDropPublic {
         // unique ID of this DROP.
@@ -186,7 +187,6 @@ pub contract Drizzle {
 
         pub let tokenInfo: TokenInfo
         pub let distributor: {IDistributor}
-        // pub let verifiers: [{IEligibilityVerifier}]
         pub let verifyMode: EligibilityVerifyMode
 
         pub var isPaused: Bool

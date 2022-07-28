@@ -1,7 +1,7 @@
 import Drizzle from "./Drizzle.cdc"
 
-// In Drizzle, we use Packet to define the fund dispatcher
-// A Packet should conform IDistributor in Drizzle.cdc
+// In Drizzle, we use Distributor to set the rule of token distribution in an FungibleToken DROP
+// A Distributor should conform IDistributor defined in Drizzle.cdc
 pub contract Distributors {
 
     pub struct Exclusive: Drizzle.IDistributor {
