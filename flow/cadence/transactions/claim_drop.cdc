@@ -1,16 +1,15 @@
 import FungibleToken from "../contracts/core/FungibleToken.cdc"
 import FUSD from "../contracts/core/FUSD.cdc"
-import Drizzle from "../contracts/Drizzle.cdc"
 import Cloud from "../contracts/Cloud.cdc"
 
 transaction(dropID: UInt64, host: Address) {
-    let drop: &{Drizzle.IDropPublic}
+    let drop: &{Cloud.IDropPublic}
     let receiver : &FUSD.Vault{FungibleToken.Receiver}
 
     prepare(acct: AuthAccount) {
         let dropCollection = getAccount(host)
             .getCapability(Cloud.DropCollectionPublicPath)
-            .borrow<&Cloud.DropCollection{Drizzle.IDropCollectionPublic}>()
+            .borrow<&Cloud.DropCollection{Cloud.IDropCollectionPublic}>()
             ?? panic("Could not borrow the public DropCollection from the host")
         
         let drop = dropCollection.borrowPublicDropRef(dropID: dropID)

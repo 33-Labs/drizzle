@@ -1,5 +1,4 @@
 import FungibleToken from "../contracts/core/FungibleToken.cdc"
-import Drizzle from "../contracts/Drizzle.cdc"
 import Cloud from "../contracts/Cloud.cdc"
 import EligibilityVerifiers from "../contracts/EligibilityVerifiers.cdc"
 import Distributors from "../contracts/Distributors.cdc"
@@ -49,7 +48,7 @@ transaction(
     prepare(acct: AuthAccount) {
         if acct.borrow<&Cloud.DropCollection>(from: Cloud.DropCollectionStoragePath) == nil {
             acct.save(<- Cloud.createEmptyDropCollection(), to: Cloud.DropCollectionStoragePath)
-            let cap = acct.link<&Cloud.DropCollection{Drizzle.IDropCollectionPublic}>(
+            let cap = acct.link<&Cloud.DropCollection{Cloud.IDropCollectionPublic}>(
                 Cloud.DropCollectionPublicPath,
                 target: Cloud.DropCollectionStoragePath
             ) ?? panic("Could not link DropCollection to PublicPath")
@@ -64,7 +63,7 @@ transaction(
     }
 
     execute {
-        let tokenInfo = Drizzle.TokenInfo(
+        let tokenInfo = Cloud.TokenInfo(
             account: tokenIssuer,
             contractName: tokenContractName,
             symbol: tokenSymbol,
@@ -74,7 +73,7 @@ transaction(
         )
         
         var amount: UFix64 = 0.0
-        var distributor: {Drizzle.IDistributor}? = nil
+        var distributor: {Distributors.IDistributor}? = nil
         if withExclusiveWhitelist {
             distributor = Distributors.Exclusive(distributeList: exclusiveWhitelist)
             amount = whitelistTokenAmount!
@@ -94,7 +93,7 @@ transaction(
             panic("invalid distributor")
         }
         
-        var verifier: {Drizzle.IEligibilityVerifier}? = nil
+        var verifier: {EligibilityVerifiers.IEligibilityVerifier}? = nil
         if withExclusiveWhitelist {
             verifier = EligibilityVerifiers.Whitelist(
                 whitelist: exclusiveWhitelist
@@ -139,7 +138,7 @@ transaction(
             endAt: endAt,
             tokenInfo: tokenInfo,
             distributor: distributor!,
-            verifyMode: Drizzle.EligibilityVerifyMode.all,
+            verifyMode: EligibilityVerifiers.VerifyMode.all,
             verifiers: [verifier!], 
             vault: <- self.vault.withdraw(amount: amount),
             extraData: {}

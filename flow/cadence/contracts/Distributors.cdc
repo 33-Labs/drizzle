@@ -1,10 +1,23 @@
+<<<<<<< HEAD
 import Drizzle from "./Drizzle.cdc"
 
 // In Drizzle, we use Distributor to set the rule of token distribution in an FungibleToken DROP
 // A Distributor should conform IDistributor defined in Drizzle.cdc
+=======
+>>>>>>> b40d6fd (feat: remove Drizzle.cdc)
 pub contract Distributors {
 
-    pub struct Exclusive: Drizzle.IDistributor {
+    pub struct interface IDistributor {
+        // capacity defines the available quota in a DROP
+        pub let capacity: UInt32
+        pub let type: String
+
+        pub fun isAvailable(params: {String: AnyStruct}): Bool
+        // getEligibleAmount defines how much reward can a claimer get in this DROP
+        pub fun getEligibleAmount(params: {String: AnyStruct}): UFix64
+    }
+
+    pub struct Exclusive: IDistributor {
         pub let capacity: UInt32
         pub let distributeList: {Address: UFix64}
         pub let type: String
@@ -29,7 +42,7 @@ pub contract Distributors {
         }
     }
 
-    pub struct Identical: Drizzle.IDistributor {
+    pub struct Identical: IDistributor {
         pub let capacity: UInt32
         pub let amountPerEntry: UFix64
         pub let type: String
@@ -59,7 +72,7 @@ pub contract Distributors {
 
     // To simplify user interaction, the implementation of this mode is a bit naive, 
     // someone might get a higher reward by using "Try & Abort", so please use it just for fun.
-    pub struct Random: Drizzle.IDistributor {
+    pub struct Random: IDistributor {
         pub let capacity: UInt32
         pub let totalAmount: UFix64
         pub let type: String

@@ -1,14 +1,13 @@
-import Drizzle from "../contracts/Drizzle.cdc"
 import Cloud from "../contracts/Cloud.cdc"
 
 pub struct DropStats {
     pub let dropBalance: UFix64
-    pub let claimed: {Address: Drizzle.ClaimRecord}
+    pub let claimed: {Address: Cloud.ClaimRecord}
     pub let tokenSymbol: String
 
     init(
         dropBalance: UFix64, 
-        claimed: {Address: Drizzle.ClaimRecord},
+        claimed: {Address: Cloud.ClaimRecord},
         tokenSymbol: String
     ) {
         self.dropBalance = dropBalance
@@ -21,7 +20,7 @@ pub fun main(dropID: UInt64, host: Address): DropStats? {
     let dropCollection =
         getAccount(host)
         .getCapability(Cloud.DropCollectionPublicPath)
-        .borrow<&Cloud.DropCollection{Drizzle.IDropCollectionPublic}>()
+        .borrow<&Cloud.DropCollection{Cloud.IDropCollectionPublic}>()
         ?? panic("Could not borrow IDropCollectionPublic from address")
 
     let drop = dropCollection.borrowPublicDropRef(dropID: dropID)
