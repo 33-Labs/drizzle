@@ -1,6 +1,5 @@
 import NonFungibleToken from "./core/NonFungibleToken.cdc"
-import MetadataViews from "./core/MetadataViews.cdc"
-import NFTCatalog from "../NFTCatalog/NFTCatalog.cdc"
+import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
 
 pub contract Mist {
 
@@ -41,19 +40,19 @@ pub contract Mist {
 
         pub fun getStatus(): String {
             switch self.status {
-            case AvailabilityStatus.notStartYet:
+            case RaffleAvailabilityStatus.notStartYet:
                 return "not start yet"
-            case AvailabilityStatus.ended:
+            case RaffleAvailabilityStatus.ended:
                 return "ended"
-            case AvailabilityStatus.registering:
+            case RaffleAvailabilityStatus.registering:
                 return "registering"
-            case AvailabilityStatus.drawing:
+            case RaffleAvailabilityStatus.drawing:
                 return "drawing"
-            case AvailabilityStatus.drawn:
+            case RaffleAvailabilityStatus.drawn:
                 return "drawn"
-            case AvailabilityStatus.expired:
+            case RaffleAvailabilityStatus.expired:
                 return "expired"
-            case AvailabilityStatus.paused:
+            case RaffleAvailabilityStatus.paused:
                 return "paused"
             }
             panic("invalid status")
@@ -77,7 +76,7 @@ pub contract Mist {
         pub let extraData: {String: AnyStruct}
 
         init(
-            status: NFTRaffleEligibilityStatus, 
+            status: RaffleEligibilityStatus, 
             eligibleNFTs: [UInt64],
             extraData: {String: AnyStruct}) {
             self.status = status
@@ -120,6 +119,10 @@ pub contract Mist {
         pub let extraData: {String: AnyStruct}
         pub var isClaimed: Bool
 
+        access(contract) fun markAsClaimed() {
+            self.isClaimed = true
+        }
+
         init(
             address: Address, 
             rewardTokenIDs: [UInt64],
@@ -154,16 +157,19 @@ pub contract Mist {
             let addrTrimmed = address.slice(from: 2, upTo: address.length)
 
             let contractIdentifier = "A.".concat(addrTrimmed).concat(".").concat(contractName)
-            self.nftIdentifier = self.contractIdentifier.concat(".NFT")
+            self.nftIdentifier = contractIdentifier.concat(".NFT")
             self.collectionIdentifier = contractIdentifier.concat(".Collection")
 
             self.contractAddress = contractAddress
             self.contractName = contractName
             self.displayName = displayName
+
+            self.storagePath = storagePath
+            self.publicPath = publicPath
         }
     }
 
-    pub struct interface INFTRafflePublic {
+    pub resource interface INFTRafflePublic {
         pub let raffleID: UInt64
         pub let name: String
         pub let description: String
@@ -175,11 +181,12 @@ pub contract Mist {
         pub let endAt: UFix64?
 
         pub let registerEndAt: UFix64
-        pub let numberOfwinners: UInt8
+        pub let numberOfWinners: UInt64
 
         pub let nftInfo: NFTInfo
 
-        pub let verifyMode: Drizzle.EligibilityVerifyMode
+        pub let registrationVerifyMode: EligibilityVerifiers.VerifyMode
+        pub let claimVerifyMode: EligibilityVerifiers.VerifyMode
 
         pub var isPaused: Bool
         pub var isEnded: Bool
@@ -188,24 +195,24 @@ pub contract Mist {
 
         pub fun register(account: Address, params: {String: AnyStruct})
         pub fun hasRegistered(account: Address): Bool
-        pub fun getRegisterationRecords(): {Address: RegisterationRecord}
-        pub fun getRegisterationRecord(account: Address): RegisterationRecord?
+        pub fun getRegistrationRecords(): {Address: RegistrationRecord}
+        pub fun getRegistrationRecord(account: Address): RegistrationRecord?
 
         pub fun getWinners(): {Address: WinnerRecord}
         pub fun getWinner(account: Address): WinnerRecord?
 
         pub fun claim(receiver: &{NonFungibleToken.Receiver}, params: {String: AnyStruct})
         pub fun checkAvailability(params: {String: AnyStruct}): RaffleAvailability
-        pub fun checkRegisterationEligibility(account: Address, params: {String: AnyStruct}): NFTEligibility
-        pub fun checkClaimEligibility(account: Address, params: {String: AnyStruct}): NFTEligibility
+        pub fun checkRegistrationEligibility(account: Address, params: {String: AnyStruct}): NFTRaffleEligibility
+        pub fun checkClaimEligibility(account: Address, params: {String: AnyStruct}): NFTRaffleEligibility
 
-        pub fun getRegisterationVerifiers(): {String: [{Drizzle.IEligibilityVerifier}]}
-        pub fun getClaimVerifiers(): {String: [{Drizzle.IEligibilityVerifier}]}
+        pub fun getRegistrationVerifiers(): {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
+        pub fun getClaimVerifiers(): {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
         
         pub fun getRewards(): [UInt64]
     }
 
-    pub struct NFTRaffle: INFTRafflePublic {
+    pub resource NFTRaffle: INFTRafflePublic {
         pub let raffleID: UInt64
         pub let name: String
         pub let description: String
@@ -217,22 +224,22 @@ pub contract Mist {
         pub let endAt: UFix64?
 
         pub let registerEndAt: UFix64
-        pub let numberOfwinners: UInt8
+        pub let numberOfWinners: UInt64
 
         pub let nftInfo: NFTInfo
 
-        pub let registerationVerifyMode: Drizzle.EligibilityVerifyMode
-        pub let claimVerifyMode: Drizzle.EligibilityVerifyMode
+        pub let registrationVerifyMode: EligibilityVerifiers.VerifyMode
+        pub let claimVerifyMode: EligibilityVerifiers.VerifyMode
 
         pub var isPaused: Bool
         pub var isEnded: Bool
 
         pub let extraData: {String: AnyStruct}
 
-        access(account) let registerationVerifiers: {String: [{Drizzle.IEligibilityVerifier}]}
-        access(account) let claimVerifiers: {String: [{Drizzle.IEligibilityVerifier}]}
+        access(account) let registrationVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
+        access(account) let claimVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
         access(self) let collection: @NonFungibleToken.Collection
-        access(self) let registerationRecords: {Address: RegisterRecord}
+        access(self) let registrationRecords: {Address: RegistrationRecord}
         access(self) let winners: {Address: WinnerRecord}
         access(self) let candidates: [Address]
         access(self) let nftToBeDrawn: [UInt64]
@@ -242,10 +249,10 @@ pub contract Mist {
             let availability = self.checkAvailability(params: params)
             assert(availability.status == RaffleAvailabilityStatus.registering, message: availability.getStatus())
 
-            let eligibility = self.checkRegisterationEligibility(acount: account, params: params)
+            let eligibility = self.checkRegistrationEligibility(account: account, params: params)
             assert(eligibility.status == RaffleEligibilityStatus.eligibleForRegistering, message: eligibility.getStatus())
 
-            emit RaffleRegistered(
+            emit NFTRaffleRegistered(
                 raffleID: self.raffleID, 
                 name: self.name, 
                 host: self.host, 
@@ -253,27 +260,27 @@ pub contract Mist {
                 nftIdentifier: self.nftInfo.nftIdentifier 
             )
 
-            self.registerationRecords[account] = RegisterationRecord(address: account, extraData: {})
+            self.registrationRecords[account] = RegistrationRecord(address: account, extraData: {})
             self.candidates.append(account)
         }
 
         pub fun hasRegistered(account: Address): Bool {
-            return self.registerationRecords[account] != nil
+            return self.registrationRecords[account] != nil
         }
 
-        pub fun getRegisterationRecords(): {Address: RegisterationRecord} {
-            return self.registerationRecords
+        pub fun getRegistrationRecords(): {Address: RegistrationRecord} {
+            return self.registrationRecords
         }
 
-        pub fun getRegisterationRecord(account: Address): RegisterationRecord? {
-            return self.registerationRecords[account]
+        pub fun getRegistrationRecord(account: Address): RegistrationRecord? {
+            return self.registrationRecords[account]
         }
 
         pub fun getWinners(): {Address: WinnerRecord} {
             return self.winners
         }
 
-        pub fun getWinner(account: Address): WinnerRecord {
+        pub fun getWinner(account: Address): WinnerRecord? {
             return self.winners[account]
         }
 
@@ -282,22 +289,22 @@ pub contract Mist {
             assert(availability.status == RaffleAvailabilityStatus.drawn, message: availability.getStatus())
 
             let claimer = receiver.owner!.address
-            let eligibility = self.checkClaimEligibility(acount: claimer, params: params)
+            let eligibility = self.checkClaimEligibility(account: claimer, params: params)
             assert(eligibility.status == RaffleEligibilityStatus.eligibleForClaiming, message: eligibility.getStatus())
 
-            self.winners[claimer]!.isClaimed = true
-            let winnerRecord = self.winners[claimer]
+            self.winners[claimer]!.markAsClaimed()
+            let winnerRecord = self.winners[claimer]!
 
-            emit RaffleClaimed(
+            emit NFTRaffleClaimed(
                 raffleID: self.raffleID, 
                 name: self.name, 
                 host: self.host, 
                 claimer: claimer, 
                 nftIdentifier: self.nftInfo.nftIdentifier, 
-                tokenIDs: winnerRecord.eligibleNFTs
+                tokenIDs: winnerRecord.rewardTokenIDs
             )
 
-            for tokenID in winnerRecord.eligibleNFTs {
+            for tokenID in winnerRecord.rewardTokenIDs {
                 let nft <- self.collection.withdraw(withdrawID: tokenID)
                 receiver.deposit(token: <- nft)
             }
@@ -330,16 +337,16 @@ pub contract Mist {
             }
 
             if self.isPaused {
-                return Drizzle.Availability(
+                return RaffleAvailability(
                     status: RaffleAvailabilityStatus.paused,
                     extraData: {}
                 ) 
             }
 
-            assert(self.winners.keys.length <= self.numberOfWinners, message: "invalid winners")
+            assert(UInt64(self.winners.keys.length) <= self.numberOfWinners, message: "invalid winners")
 
             // can't register but claiming is available
-            if self.winners.keys.length == self.numberOfWinners {
+            if UInt64(self.winners.keys.length) == self.numberOfWinners {
                 return RaffleAvailability(
                     status: RaffleAvailabilityStatus.drawn,
                     extraData: {}
@@ -347,7 +354,7 @@ pub contract Mist {
             }
 
             // can't register and claim
-            if getCurrentBlock().timestamp > registerEndAt {
+            if getCurrentBlock().timestamp > self.registerEndAt {
                 return RaffleAvailability(
                     status: RaffleAvailabilityStatus.drawing,
                     extraData: {} 
@@ -360,10 +367,10 @@ pub contract Mist {
             )
         }
 
-        pub fun checkRegisterationEligibility(account: Address, params: {String: AnyStruct}): NFTRaffleEligibility {
-            if let record = self.registerationRecords[account] {
+        pub fun checkRegistrationEligibility(account: Address, params: {String: AnyStruct}): NFTRaffleEligibility {
+            if let record = self.registrationRecords[account] {
                 return NFTRaffleEligibility(
-                    status: NFTRaffleEligibilityStatus.hasRegistered,
+                    status: RaffleEligibilityStatus.hasRegistered,
                     eligibleNFTs: [],
                     extraData: {}
                 )
@@ -371,8 +378,8 @@ pub contract Mist {
 
             let isEligible = self.isEligible(
                 account: account,
-                mode: self.registerationVerifyMode,
-                verifiers: self.registerationVerifiers,
+                mode: self.registrationVerifyMode,
+                verifiers: self.registrationVerifiers,
                 params: params
             ) 
 
@@ -388,7 +395,7 @@ pub contract Mist {
         pub fun checkClaimEligibility(account: Address, params: {String: AnyStruct}): NFTRaffleEligibility {
             if self.winners[account] == nil {
                 return NFTRaffleEligibility(
-                    status: NFTRaffleEligibilityStatus.notEligibleForClaiming,
+                    status: RaffleEligibilityStatus.notEligibleForClaiming,
                     eligibleNFTs: [],
                     extraData: {}
                 )
@@ -397,7 +404,7 @@ pub contract Mist {
             let record = self.winners[account]!
             if record.isClaimed {
                 return NFTRaffleEligibility(
-                    status: NFTRaffleEligibilityStatus.hasClaimed,
+                    status: RaffleEligibilityStatus.hasClaimed,
                     eligibleNFTs: record.rewardTokenIDs,
                     extraData: {}
                 ) 
@@ -421,32 +428,40 @@ pub contract Mist {
             ) 
         }
 
+        pub fun getRegistrationVerifiers(): {String: [{EligibilityVerifiers.IEligibilityVerifier}]} {
+            return self.registrationVerifiers
+        }
+
+        pub fun getClaimVerifiers(): {String: [{EligibilityVerifiers.IEligibilityVerifier}]} {
+            return self.claimVerifiers
+        }
+
         pub fun getRewards(): [UInt64] {
             return self.rewards
         }
 
         access(self) fun isEligible(
             account: Address,
-            mode: Drizzle.EligibilityVerifyMode, 
-            verifiers: {String: [Drizzle.IEligibilityVerifier]},
+            mode: EligibilityVerifiers.VerifyMode, 
+            verifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]},
             params: {String: AnyStruct}
         ): Bool {
             params.insert(key: "claimer", account)
-            if verifyMode == Drizzle.EligibilityVerifyMode.oneOf {
-                for identifier in self.verifiers.keys {
-                    let verifiers = self.verifiers[identifier]!
+            if mode == EligibilityVerifiers.VerifyMode.oneOf {
+                for identifier in verifiers.keys {
+                    let verifiers = verifiers[identifier]!
                     for verifier in verifiers {
-                        if verifier.verify(account: account, params: newParams).isEligible {
+                        if verifier.verify(account: account, params: params).isEligible {
                             return true
                         }
                     }
                 }
                 return false
-            } else if verifyMode == Drizzle.EligibilityVerifyMode.all {
-                for identifier in self.verifiers.keys {
-                    let verifiers = self.verifiers[identifier]!
+            } else if mode == EligibilityVerifiers.VerifyMode.all {
+                for identifier in verifiers.keys {
+                    let verifiers = verifiers[identifier]!
                     for verifier in verifiers {
-                        if !verifier.verify(account: account, params: newParams).isEligible {
+                        if !verifier.verify(account: account, params: params).isEligible {
                             return false
                         }
                     }
@@ -463,11 +478,11 @@ pub contract Mist {
             let availability = self.checkAvailability(params: params)
             assert(availability.status == RaffleAvailabilityStatus.drawing, message: availability.getStatus())
 
-            let winnerIndex = unsafeRandom() % self.candidates.length
-            winner = self.candidates[winnerIndex]
+            let winnerIndex = unsafeRandom() % UInt64(self.candidates.length)
+            let winner = self.candidates[winnerIndex]
 
-            let rewardIndex = unsafeRandom() % self.nftToBeDrawn.length
-            rewardTokenID = self.nftToBeDrawn[rewardIndex]
+            let rewardIndex = unsafeRandom() % UInt64(self.nftToBeDrawn.length)
+            let rewardTokenID = self.nftToBeDrawn[rewardIndex]
 
             assert(self.winners[winner] == nil, message: "winner already recorded")
 
@@ -481,7 +496,7 @@ pub contract Mist {
             self.candidates.remove(at: winnerIndex)
             self.nftToBeDrawn.remove(at: rewardIndex)
 
-            emit RaffleWinnerDrawn(
+            emit NFTRaffleWinnerDrawn(
                 raffleID: self.raffleID, 
                 name: self.name, 
                 host: self.host, 
@@ -491,20 +506,22 @@ pub contract Mist {
             )
         }
 
-        pub fun batchDraw() {
-            assert(self.candidates.length > 0, message: "no candidates")
+        pub fun batchDraw(params: {String: AnyStruct}) {
+            assert(UInt64(self.candidates.length) > 0, message: "no candidates")
             assert(self.nftToBeDrawn.length >= self.candidates.length, message: "nft is not enough")
 
             let availability = self.checkAvailability(params: params)
             assert(availability.status == RaffleAvailabilityStatus.drawing, message: availability.getStatus())
 
-            let availableCapacity = self.numberOfWinners - self.winners.keys.length
-            assert(self.candidates.length >= availableCapacity, message: "no enough candidates")
+            let availableCapacity = self.numberOfWinners - UInt64(self.winners.keys.length)
+            assert(UInt64(self.candidates.length) >= availableCapacity, message: "no enough candidates")
 
-            while self.winners.keys.length < numberOfwinners {
-                let winnerIndex = unsafeRandom() % self.candidates.length
-                let rewardIndex = unsafeRandom() % self.nftToBeDrawn.length
-                rewardTokenID = self.nftToBeDrawn[rewardIndex]
+            while UInt64(self.winners.keys.length) < self.numberOfWinners {
+                let winnerIndex = unsafeRandom() % UInt64(self.candidates.length)
+                let winner = self.candidates[winnerIndex]
+
+                let rewardIndex = unsafeRandom() % UInt64(self.nftToBeDrawn.length)
+                let rewardTokenID = self.nftToBeDrawn[rewardIndex]
 
                 assert(self.winners[winner] == nil, message: "winner already recorded")
 
@@ -537,8 +554,8 @@ pub contract Mist {
                 !self.isEnded: "Raffle has ended"
             }
 
-            self.collection.deposit(token: <- token)
             self.rewards.append(token.id)
+            self.collection.deposit(token: <- token)
         }
 
         pub fun withdrawAllNFTs(receiver: &{NonFungibleToken.Receiver}) {
@@ -564,13 +581,13 @@ pub contract Mist {
             startAt: UFix64?,
             endAt: UFix64?,
             registerEndAt: UFix64, 
-            numberOfwinners: UInt8,
+            numberOfWinners: UInt64,
             nftInfo: NFTInfo,
             collection: @NonFungibleToken.Collection,
-            registerationVerifyMode: Drizzle.EligibilityVerifyMode,
-            claimVerifyMode: Drizzle.EligibilityVerifyMode,
-            registerationVerifiers: {String: [Drizzle.IEligibilityVerifier]},
-            claimVerifiers: {String: [{Drizzle.IEligibilityVerifier}]},
+            registrationVerifyMode: EligibilityVerifiers.VerifyMode,
+            claimVerifyMode: EligibilityVerifiers.VerifyMode,
+            registrationVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]},
+            claimVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]},
             extraData: {String: AnyStruct} 
         ) {
             let collectionType = CompositeType(nftInfo.collectionIdentifier)!
@@ -580,9 +597,9 @@ pub contract Mist {
             }
 
             let rewardIDs = collection.getIDs()
-            assert(rewardIDs.length >= numberOfWinners, message: 
+            assert(UInt64(rewardIDs.length) >= numberOfWinners, message: 
                 rewardIDs.length.toString()
-                .cancat(" NFT is not enough for ")
+                .concat(" NFT is not enough for ")
                 .concat(numberOfWinners.toString())
                 .concat(" winners"))
 
@@ -611,9 +628,9 @@ pub contract Mist {
             self.nftInfo = nftInfo
             self.collection <- collection
 
-            self.registerationVerifyMode = registerationVerifyMode
+            self.registrationVerifyMode = registrationVerifyMode
             self.claimVerifyMode = claimVerifyMode
-            self.registerationVerifiers = registerationVerifiers
+            self.registrationVerifiers = registrationVerifiers
             self.claimVerifiers = claimVerifiers
 
             self.extraData = extraData
@@ -621,13 +638,14 @@ pub contract Mist {
             self.isPaused = false
             self.isEnded = false
 
-            self.registeredRecords = {}
-            self.candidates = {}
+            self.registrationRecords = {}
+            self.candidates = []
             self.winners = {}
             self.nftToBeDrawn = rewardIDs
             self.rewards = rewardIDs
 
-            emit RaffleCreated(
+            Mist.totalRaffles = Mist.totalRaffles + 1
+            emit NFTRaffleCreated(
                 raffleID: self.raffleID, 
                 name: self.name, 
                 host: self.host, 
@@ -642,7 +660,7 @@ pub contract Mist {
             }
 
             destroy self.collection
-            emit RaffleDestroyed(raffleID: self.raffleID, name: self.name, host: self.host)
+            emit NFTRaffleDestroyed(raffleID: self.raffleID, name: self.name, host: self.host)
         }
     }
 
@@ -671,32 +689,32 @@ pub contract Mist {
             startAt: UFix64?,
             endAt: UFix64?,
             registerEndAt: UFix64, 
-            numberOfwinners: UInt8,
+            numberOfWinners: UInt64,
             nftInfo: NFTInfo,
             collection: @NonFungibleToken.Collection,
-            registerationVerifyMode: Drizzle.EligibilityVerifyMode,
-            claimVerifyMode: Drizzle.EligibilityVerifyMode,
-            registerationVerifiers: [{Drizzle.IEligibilityVerifier}],
-            claimVerifiers: [{Drizzle.IEligibilityVerifier}],
+            registrationVerifyMode: EligibilityVerifiers.VerifyMode,
+            claimVerifyMode: EligibilityVerifiers.VerifyMode,
+            registrationVerifiers: [{EligibilityVerifiers.IEligibilityVerifier}],
+            claimVerifiers: [{EligibilityVerifiers.IEligibilityVerifier}],
             extraData: {String: AnyStruct} 
-        ) {
+        ): UInt64 {
             pre {
-                registerationVerifyMode.length <= 1: "Currently only 0 or 1 registeration verifier supported"
-                claimVerifiers.length <= 1: "Currently only 0 or 1 registeration verifier supported"
+                registrationVerifiers.length <= 1: "Currently only 0 or 1 registration verifier supported"
+                claimVerifiers.length <= 1: "Currently only 0 or 1 registration verifier supported"
                 !Mist.isPaused: "Mist contract is paused!"
             }
 
-            let typedRegisterationVerifiers: {String: [{Drizzle.IEligibilityVerifier}]} = {}
-            for verifier in registerationVerifiers {
+            let typedRegistrationVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]} = {}
+            for verifier in registrationVerifiers {
                 let identifier = verifier.getType().identifier
-                if typedRegisterationVerifiers[identifier] == nil {
-                    typedRegisterationVerifiers[identifier] = [verifier]
+                if typedRegistrationVerifiers[identifier] == nil {
+                    typedRegistrationVerifiers[identifier] = [verifier]
                 } else {
-                    typedRegisterationVerifiers[identifier]!.append(verifier)
+                    typedRegistrationVerifiers[identifier]!.append(verifier)
                 }
             }
 
-            let typedClaimVerifiers: {String: [{Drizzle.IEligibilityVerifier}]} = {}
+            let typedClaimVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]} = {}
             for verifier in claimVerifiers {
                 let identifier = verifier.getType().identifier
                 if typedClaimVerifiers[identifier] == nil {
@@ -718,10 +736,10 @@ pub contract Mist {
                 numberOfWinners: numberOfWinners,
                 nftInfo: nftInfo,
                 collection: <- collection,
-                registerationVerifyMode: registerationVerifyMode,
+                registrationVerifyMode: registrationVerifyMode,
                 claimVerifyMode: claimVerifyMode,
-                registerationVerifiers: registerationVerifiers,
-                claimVerifiers: claimVerifiers,
+                registrationVerifiers: typedRegistrationVerifiers,
+                claimVerifiers: typedClaimVerifiers,
                 extraData: extraData
             )
 
@@ -729,6 +747,14 @@ pub contract Mist {
 
             self.raffles[raffleID] <-! raffle
             return raffleID
+        }
+
+        init() {
+            self.raffles <- {}
+        }
+
+        destroy() {
+            destroy self.raffles
         }
     }
 
@@ -740,6 +766,19 @@ pub contract Mist {
     pub var totalRaffles: UInt64
 
     init() {
+        self.NFTRaffleCollectionStoragePath = /storage/drizzleNFTRaffleCollectionStoragePath
+        self.NFTRaffleCollectionPublicPath = /public/drizzleNFTRaffleCollectionPublicPath
+        self.NFTRaffleCollectionPrivatePath = /private/drizzleNFTRaffleCollectionPrivatePath
 
+        self.MistAdminStoragePath = /storage/drizzleMistAdminStoragePath
+        self.MistAdminPublicPath = /public/drizzleMistPublicPath
+        self.MistAdminPrivatePath = /private/drizzleMistPublicPath
+
+        self.isPaused = false
+        self.totalRaffles = 0
+
+        self.account.save(<- create Admin(), to: self.MistAdminStoragePath)
+
+        emit ContractInitialized()
     }
 }

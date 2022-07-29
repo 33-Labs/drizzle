@@ -36,6 +36,7 @@ export const deployDrizzleContracts = async (deployer) => {
   await deployByName(Deployer, "Distributors")
   await deployByName(Deployer, "EligibilityVerifiers")
   await deployByName(Deployer, "Cloud")
+  await deployByName(Deployer, "Mist")
 }
 
 export const deployContracts = async (deployer) => {
