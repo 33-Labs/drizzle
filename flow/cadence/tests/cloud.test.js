@@ -6,7 +6,9 @@ import {
 } from "flow-js-testing";
 import {
   checkFUSDBalance,
-  deployContracts,
+  deployCoreContracts,
+  deployFLOATContracts,
+  deployByName,
   getFUSDBalance,
 } from "./src/common";
 import {
@@ -39,7 +41,16 @@ import Decimal from "decimal.js"
 
 jest.setTimeout(1000000)
 
-describe("Common", () => {
+const deployContracts = async () => {
+  const deployer = await getAccountAddress("CloudDeployer")
+  await deployCoreContracts(deployer)
+  await deployFLOATContracts(deployer)
+  await deployByName(deployer, "Distributors")
+  await deployByName(deployer, "EligibilityVerifiers")
+  await deployByName(deployer, "Cloud")
+}
+
+describe("Deployment", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
@@ -53,7 +64,7 @@ describe("Common", () => {
     return await new Promise(r => setTimeout(r, 2000));
   })
 
-  it("Common - Should deploy all contracts successfully", async () => {
+  it("Deployment - Should deploy all contracts successfully", async () => {
     await deployContracts()
   })
 })
@@ -214,7 +225,7 @@ describe("DROP - Management", () => {
   })
 
   it("Management - DROP should not be created if contract is paused", async () => {
-    const Deployer = await getAccountAddress("Deployer")
+    const Deployer = await getAccountAddress("CloudDeployer")
 
     const Alice = await getAccountAddress("Alice")
     const Bob = await getAccountAddress("Bob")

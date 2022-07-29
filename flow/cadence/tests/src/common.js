@@ -24,10 +24,10 @@ export const deployFLOATContracts = async (deployer) => {
   await deployByName(Deployer, "float/FLOATVerifiers")
 }
 
-export const deployNFTCatalogContracts = async (deployer) => {
+export const deployExampleNFTContracts = async (deployer) => {
   const Deployer = deployer || await getAccountAddress("Deployer")
   await mintFlow(Deployer, 1000.0)
-  await deployByName(Deployer, "NFTCatalog/ExampleNFT")
+  await deployByName(Deployer, "examplenft/ExampleNFT")
 }
 
 export const deployDrizzleContracts = async (deployer) => {
@@ -52,19 +52,19 @@ export const deployByName = async (deployer, contractName, args) => {
 
 export const setupFUSDVault = async (account) => {
   const signers = [account]
-  const name = "FUSD/setup_fusd_vault"
+  const name = "fusd/setup_fusd_vault"
   await shallPass(sendTransaction({ name: name, signers: signers }))
 }
 
 export const mintFUSD = async (minter, amount, recipient) => {
   const signers = [minter]
   const args = [amount, recipient]
-  const name = "FUSD/mint_fusd"
+  const name = "fusd/mint_fusd"
   await shallPass(sendTransaction({ name: name, args: args, signers: signers }))
 }
 
 export const getFUSDBalance = async (account) => {
-  const [result, err] = await shallResolve(executeScript({ name: "FUSD/get_fusd_balance", args: [account] }))
+  const [result, err] = await shallResolve(executeScript({ name: "fusd/get_fusd_balance", args: [account] }))
   return parseFloat(result)
 }
 

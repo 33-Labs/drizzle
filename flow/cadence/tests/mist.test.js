@@ -6,13 +6,23 @@ import {
 } from "flow-js-testing";
 import {
   deployCoreContracts,
-  deployNFTCatalogContracts,
+  deployFLOATContracts,
+  deployByName
 } from "./src/common";
-import { getCollectionType } from "./src/NFTCatalog";
+import { getCollectionType } from "./src/examplenft";
 
 jest.setTimeout(1000000)
 
-describe("Common", () => {
+const deployContracts = async () => {
+  const deployer = await getAccountAddress("MistDeployer")
+  await deployCoreContracts(deployer)
+  await deployFLOATContracts(deployer)
+  await deployByName(deployer, "Distributors")
+  await deployByName(deployer, "EligibilityVerifiers")
+  await deployByName(deployer, "Mist")
+}
+
+describe("Deployment", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
@@ -22,14 +32,12 @@ describe("Common", () => {
   })
 
   afterEach(async () => {
-    await emulator.stop();
+    await emulator.stop()
     return await new Promise(r => setTimeout(r, 2000));
   })
 
-  it("Fog - Should deploy all contracts successfully", async () => {
-    await deployCoreContracts()
-    await deployNFTCatalogContracts()
-    const type = await getCollectionType()
-    console.log(type)
+  it("Deployment - Should deploy all contracts successfully", async () => {
+    const deployer = await getAccountAddress("MistDeployer")
+    await deployContracts(deployer)
   })
 })

@@ -8,7 +8,7 @@ import {
 
 export const FLOAT_setupAccount = async (signer) => {
   const signers = [signer]
-  const txName = "FLOAT/setup_account"
+  const txName = "float/setup_account"
   const args = []
   await shallPass(sendTransaction({ name: txName, signers: signers, args: args }))
 }
@@ -16,7 +16,7 @@ export const FLOAT_setupAccount = async (signer) => {
 export const FLOAT_createEvent = async (signer, params = {}) => {
   const {eventName, groups} = params
   const signers = [signer]
-  const txName = "FLOAT/create_event"
+  const txName = "float/create_event"
 
   const forHost = signer
   const claimable = true
@@ -48,7 +48,7 @@ export const FLOAT_createEvent = async (signer, params = {}) => {
 
 export const FLOAT_createGroup = async (signer, params) => {
   const signers = [signer]
-  const txName = "FLOAT/create_group"
+  const txName = "float/create_group"
 
   const {groupName} = params
   const _groupName = groupName || "TEST GROUP"
@@ -72,7 +72,7 @@ export const FLOAT_createEventsWithGroup = async (signer) => {
 
 export const FLOAT_claim = async (signer, eventID, eventHost) => {
   const signers = [signer]
-  const txName = "FLOAT/claim"
+  const txName = "float/claim"
 
   const args = [
     eventID, eventHost, null 
@@ -84,7 +84,7 @@ export const FLOAT_claim = async (signer, eventID, eventHost) => {
 // ===== SCRIPTS =====
 
 export const FLOAT_getEvent = async (account, eventID) => {
-  const name = "FLOAT/get_event"
+  const name = "float/get_event"
   const args = [account, eventID]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
@@ -92,7 +92,7 @@ export const FLOAT_getEvent = async (account, eventID) => {
 }
 
 export const FLOAT_getEventIDs = async (account) => {
-  const name = "FLOAT/get_event_ids"
+  const name = "float/get_event_ids"
   const args = [account]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
@@ -100,7 +100,7 @@ export const FLOAT_getEventIDs = async (account) => {
 }
 
 export const FLOAT_getEventsInGroup = async (account, groupName) => {
-  const name = "FLOAT/get_events_in_group"
+  const name = "float/get_events_in_group"
   const args = [account, groupName]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
@@ -108,7 +108,7 @@ export const FLOAT_getEventsInGroup = async (account, groupName) => {
 }
 
 export const FLOAT_getFLOATIDs = async (account) => {
-  const name = "FLOAT/get_float_ids"
+  const name = "float/get_float_ids"
   const args = [account]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()

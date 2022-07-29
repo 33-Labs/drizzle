@@ -72,7 +72,7 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
   await mintFlow(signer, flowAmount)
   await setupFUSDVault(signer)
 
-  await mintFUSD(await getAccountAddress("Deployer"), fusdAmount, signer)
+  await mintFUSD(await getAccountAddress("CloudDeployer"), fusdAmount, signer)
   await checkFUSDBalance(signer, fusdAmount)
 
   const [tx, error] = await createDrop(signer, Object.values(args))
@@ -86,7 +86,7 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
 
 export const getFUSDInfo = async () => {
   return {
-    tokenIssuer: await getAccountAddress("Deployer"),
+    tokenIssuer: await getAccountAddress("CloudDeployer"),
     tokenContractName: "FUSD",
     tokenSymbol: "FUSD",
     tokenProviderPath: "fusdVault", tokenBalancePath: "fusdBalance", tokenReceiverPath: "fusdReceiver"
