@@ -36,7 +36,6 @@ pub contract Cloud {
         pub let tokenInfo: Drizzle.TokenInfo
 
         pub let distributor: {Drizzle.IDistributor}
-        pub let verifiers: {String: [{Drizzle.IEligibilityVerifier}]}
         pub let verifyMode: Drizzle.EligibilityVerifyMode
 
         pub var isPaused: Bool
@@ -45,6 +44,7 @@ pub contract Cloud {
         pub var claimedAmount: UFix64
         pub let extraData: {String: AnyStruct}
 
+        access(account) let verifiers: {String: [{Drizzle.IEligibilityVerifier}]}
         access(self) let dropVault: @FungibleToken.Vault
 
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct}) {

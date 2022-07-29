@@ -26,7 +26,7 @@ import {
   deleteDrop,
   createFUSDDrop,
   endDrop
-} from "./src/drizzle";
+} from "./src/cloud";
 import {
   FLOAT_claim,
   FLOAT_createEventsWithGroup,
@@ -36,7 +36,6 @@ import {
 } from "./src/float";
 
 import Decimal from "decimal.js"
-import { assert } from "console";
 
 jest.setTimeout(1000000)
 

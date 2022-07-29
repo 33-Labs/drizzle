@@ -24,6 +24,12 @@ export const deployFLOATContracts = async (deployer) => {
   await deployByName(Deployer, "float/FLOATVerifiers")
 }
 
+export const deployNFTCatalogContracts = async (deployer) => {
+  const Deployer = deployer || await getAccountAddress("Deployer")
+  await mintFlow(Deployer, 1000.0)
+  await deployByName(Deployer, "NFTCatalog/ExampleNFT")
+}
+
 export const deployDrizzleContracts = async (deployer) => {
   const Deployer = deployer || await getAccountAddress("Deployer")
   await mintFlow(Deployer, 1000.0)
