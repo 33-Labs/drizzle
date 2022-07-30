@@ -10,6 +10,7 @@ import {
   deployFLOATContracts,
   deployByName,
   getFUSDBalance,
+  getCloudAdmin
 } from "./src/common";
 import {
   claimDrop,
@@ -42,7 +43,7 @@ import Decimal from "decimal.js"
 jest.setTimeout(1000000)
 
 const deployContracts = async () => {
-  const deployer = await getAccountAddress("CloudDeployer")
+  const deployer = await getCloudAdmin()
   await deployCoreContracts(deployer)
   await deployFLOATContracts(deployer)
   await deployByName(deployer, "Distributors")

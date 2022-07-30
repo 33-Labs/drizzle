@@ -677,7 +677,12 @@ pub contract Mist {
         }
     }
 
-    pub resource NFTRaffleCollection {
+    pub resource interface INFTRalleCollectionPublic {
+        pub fun getAllRaffles(): {UInt64: &{INFTRafflePublic}}
+        pub fun borrowPublicRaffleRef(raffleID: UInt64): &{INFTRafflePublic}?
+    }
+
+    pub resource NFTRaffleCollection: INFTRalleCollectionPublic {
         pub var raffles: @{UInt64: NFTRaffle}
 
         pub fun createRaffle(
@@ -747,6 +752,31 @@ pub contract Mist {
 
             self.raffles[raffleID] <-! raffle
             return raffleID
+        }
+
+        pub fun getAllRaffles(): {UInt64: &{INFTRafflePublic}} {
+            let raffleRefs: {UInt64: &{INFTRafflePublic}} = {}
+
+            for raffleID in self.raffles.keys {
+                let raffleRef = (&self.raffles[raffleID] as &{INFTRafflePublic}?)!
+                raffleRefs.insert(key: raffleID, raffleRef)
+            }
+
+            return raffleRefs
+        }
+
+        pub fun borrowPublicRaffleRef(raffleID: UInt64): &{INFTRafflePublic}? {
+            return &self.raffles[raffleID] as &{INFTRafflePublic}?
+        }
+
+        pub fun borrowRaffleRef(raffleID: UInt64): &NFTRaffle? {
+            return &self.raffles[raffleID] as &NFTRaffle?
+        }
+
+        pub fun deleteRaffle(raffleID: UInt64, receiver: &{NonFungibleToken.Receiver}) {
+            let raffle <- self.raffles.remove(key: raffleID) ?? panic("This raffle does not exist")
+            raffle.withdrawAllNFTs(receiver: receiver)
+            destroy raffle
         }
 
         init() {

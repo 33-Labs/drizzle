@@ -8,8 +8,11 @@ import {
   mintFlow
 } from "flow-js-testing"
 
+export const getCloudAdmin = async () => getAccountAddress("CloudAdmin")
+export const getMistAdmin = async () => getAccountAddress("MistAdmin")
+
 export const deployCoreContracts = async (deployer) => {
-  const Deployer = deployer || await getAccountAddress("Deployer")
+  const Deployer = deployer
   await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "core/NonFungibleToken")
   await deployByName(Deployer, "core/MetadataViews")
@@ -17,7 +20,7 @@ export const deployCoreContracts = async (deployer) => {
 }
 
 export const deployFLOATContracts = async (deployer) => {
-  const Deployer = deployer || await getAccountAddress("Deployer")
+  const Deployer = deployer
   await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "float/GrantedAccountAccess")
   await deployByName(Deployer, "float/FLOAT")
@@ -25,13 +28,13 @@ export const deployFLOATContracts = async (deployer) => {
 }
 
 export const deployExampleNFTContracts = async (deployer) => {
-  const Deployer = deployer || await getAccountAddress("Deployer")
+  const Deployer = deployer
   await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "examplenft/ExampleNFT")
 }
 
 export const deployDrizzleContracts = async (deployer) => {
-  const Deployer = deployer || await getAccountAddress("Deployer")
+  const Deployer = deployer
   await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "Distributors")
   await deployByName(Deployer, "EligibilityVerifiers")
