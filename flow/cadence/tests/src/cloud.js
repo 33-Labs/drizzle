@@ -73,7 +73,7 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
   await mintFlow(signer, flowAmount)
   await setupFUSDVault(signer)
 
-  await mintFUSD(await getAccountAddress("CloudDeployer"), fusdAmount, signer)
+  await mintFUSD(await getCloudAdmin(), fusdAmount, signer)
   await checkFUSDBalance(signer, fusdAmount)
 
   const [tx, error] = await createDrop(signer, Object.values(args))

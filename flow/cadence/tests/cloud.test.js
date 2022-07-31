@@ -226,7 +226,7 @@ describe("DROP - Management", () => {
   })
 
   it("Management - DROP should not be created if contract is paused", async () => {
-    const Deployer = await getAccountAddress("CloudDeployer")
+    const Deployer = await getCloudAdmin()
 
     const Alice = await getAccountAddress("Alice")
     const Bob = await getAccountAddress("Bob")

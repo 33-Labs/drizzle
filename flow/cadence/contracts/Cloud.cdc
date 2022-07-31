@@ -17,8 +17,11 @@ pub contract Cloud {
 
     pub event ContractInitialized()
 
-    pub event DropClaimed(dropID: UInt64, name: String, host: Address, claimer: Address, tokenIdentifier: String, amount: UFix64)
     pub event DropCreated(dropID: UInt64, name: String, host: Address, description: String, tokenIdentifier: String)
+    pub event DropClaimed(dropID: UInt64, name: String, host: Address, claimer: Address, tokenIdentifier: String, amount: UFix64)
+    pub event DropPaused(dropID: UInt64, name: String, host: Address)
+    pub event DropUnpaused(dropID: UInt64, name: String, host: Address)
+    pub event DropEnded(dropID: UInt64, name: String, host: Address)
     pub event DropDestroyed(dropID: UInt64, name: String, host: Address)
 
     pub enum EligibilityStatus: UInt8 {
@@ -361,6 +364,11 @@ pub contract Cloud {
             }
 
             self.isPaused = !self.isPaused
+            if self.isPaused {
+                emit DropPaused(dropID: self.dropID, name: self.name, host: self.host)
+            } else {
+                emit DropUnpaused(dropID: self.dropID, name: self.name, host: self.host)
+            }
             return self.isPaused
         }
 
@@ -379,6 +387,7 @@ pub contract Cloud {
         pub fun end(receiver: &{FungibleToken.Receiver}) {
             self.isEnded = true
             self.isPaused = true
+            emit DropEnded(dropID: self.dropID, name: self.name, host: self.host)
             if self.dropVault.balance > 0.0 {
                 let v <- self.dropVault.withdraw(amount: self.dropVault.balance)
                 receiver.deposit(from: <- v)

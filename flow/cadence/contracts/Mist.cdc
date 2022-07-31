@@ -2,7 +2,6 @@ import NonFungibleToken from "./core/NonFungibleToken.cdc"
 import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
 
 pub contract Mist {
-
     pub let MistAdminStoragePath: StoragePath
     pub let MistAdminPublicPath: PublicPath
     pub let MistAdminPrivatePath: PrivatePath
@@ -13,10 +12,13 @@ pub contract Mist {
 
     pub event ContractInitialized()
 
+    pub event RaffleCreated(raffleID: UInt64, name: String, host: Address, description: String, nftIdentifier: String)
     pub event RaffleRegistered(raffleID: UInt64, name: String, host: Address, registrator: Address, nftIdentifier: String)
     pub event RaffleWinnerDrawn(raffleID: UInt64, name: String, host: Address, winner: Address, nftIdentifier: String, tokenIDs: [UInt64])
     pub event RaffleClaimed(raffleID: UInt64, name: String, host: Address, claimer: Address, nftIdentifier: String, tokenIDs: [UInt64])
-    pub event RaffleCreated(raffleID: UInt64, name: String, host: Address, description: String, nftIdentifier: String)
+    pub event RafflePaused(raffleID: UInt64, name: String, host: Address)
+    pub event RaffleUnpaused(raffleID: UInt64, name: String, host: Address)
+    pub event RaffleEnded(raffleID: UInt64, name: String, host: Address)
     pub event RaffleDestroyed(raffleID: UInt64, name: String, host: Address)
 
     pub enum AvailabilityStatus: UInt8 {
@@ -550,6 +552,11 @@ pub contract Mist {
             }
 
             self.isPaused = !self.isPaused
+            if self.isPaused {
+                emit RafflePaused(raffleID: self.raffleID, name: self.name, host: self.host)
+            } else {
+                emit RaffleUnpaused(raffleID: self.raffleID, name: self.name, host: self.host)
+            }
             return self.isPaused
         }
 
@@ -567,6 +574,7 @@ pub contract Mist {
         pub fun end(receiver: &{NonFungibleToken.CollectionPublic}) {
             self.isEnded = true
             self.isPaused = true
+            emit RaffleEnded(raffleID: self.raffleID, name: self.name, host: self.host)
             let tokenIDs = self.collection.getIDs()
             for tokenID in tokenIDs {
                 let token <- self.collection.withdraw(withdrawID: tokenID)
