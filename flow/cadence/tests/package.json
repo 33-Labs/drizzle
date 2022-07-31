@@ -4,7 +4,7 @@
     "description": "",
     "main": "test.js",
     "scripts": {
-      "test": "jest",
+      "test": "jest --runInBand",
       "t cloud": "jest cloud.test.js",
       "t mist": "jest mist.test.js"
     },

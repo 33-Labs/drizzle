@@ -143,13 +143,6 @@ export const depositToDrop = async (dropID, host, amount) => {
   return await sendTransaction({ name: name, signers: signers, args: args})
 }
 
-export const withdrawAllFunds = async (dropID, host, tokenIssuer, tokenReceiverPath) => {
-  const signers = [host]
-  const name = "cloud/withdraw_all_funds"
-  const args = [dropID, tokenIssuer, tokenReceiverPath]
-  return await sendTransaction({ name: name, signers: signers, args: args})
-}
-
 export const endDrop = async (dropID, host, tokenIssuer, tokenReceiverPath) => {
   const signers = [host]
   const name = "cloud/end_drop"

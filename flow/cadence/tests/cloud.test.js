@@ -241,29 +241,6 @@ describe("DROP - Management", () => {
     await createFUSDDrop(Carl, { withExclusiveWhitelist: true })
   })
 
-  it("Management - DROP host should be able to withdraw funds in DROP", async () => {
-    const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withExclusiveWhitelist: true })
-
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-
-    const FUSDInfo = await getFUSDInfo()
-
-    await checkFUSDBalance(Alice, 850.0)
-
-    const preDropBalance = parseFloat(await getDropBalance(dropID, Alice))
-    expect(preDropBalance).toBe(150.0)
-
-    const [, error] = await withdrawAllFunds(dropID, Alice, FUSDInfo.tokenIssuer, FUSDInfo.tokenReceiverPath)
-    expect(error).toBeNull()
-
-    const postDropBalance = parseFloat(await getDropBalance(dropID, Alice))
-    expect(postDropBalance).toBe(0.0)
-
-    await checkFUSDBalance(Alice, 1000.0)
-  })
-
   it("Management - DROP owner should be able to pause and unpause DROP", async () => {
     const Alice = await getAccountAddress("Alice")
     await createFUSDDrop(Alice, { withExclusiveWhitelist: true })

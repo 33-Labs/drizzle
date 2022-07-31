@@ -376,18 +376,13 @@ pub contract Cloud {
             self.dropVault.deposit(from: <- from)
         }
 
-        // withdraw all funds in the DROP's vault.
-        pub fun withdrawAllFunds(receiver: &{FungibleToken.Receiver}) {
+        pub fun end(receiver: &{FungibleToken.Receiver}) {
+            self.isEnded = true
             self.isPaused = true
             if self.dropVault.balance > 0.0 {
                 let v <- self.dropVault.withdraw(amount: self.dropVault.balance)
                 receiver.deposit(from: <- v)
             }
-        }
-
-        pub fun end(receiver: &{FungibleToken.Receiver}) {
-            self.withdrawAllFunds(receiver: receiver)
-            self.isEnded = true
         }
 
         access(self) fun combinedParams(params: {String: AnyStruct}): {String: AnyStruct} {
@@ -570,7 +565,7 @@ pub contract Cloud {
 
         pub fun deleteDrop(dropID: UInt64, receiver: &{FungibleToken.Receiver}) {
             let drop <- self.drops.remove(key: dropID) ?? panic("This drop does not exist")
-            drop.withdrawAllFunds(receiver: receiver)
+            drop.end(receiver: receiver)
             destroy drop
         }
 

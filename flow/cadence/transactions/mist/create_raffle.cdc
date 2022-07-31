@@ -11,9 +11,10 @@ transaction(
     url: String?,
     startAt: UFix64?,
     endAt: UFix64?,
-    registerEndAt: UFix64,
+    registeryEndAt: UFix64,
     numberOfWinners: UInt64,
     // NFTInfo
+    nftCatalogCollectioNID: String,
     nftContractAddress: Address,
     nftContractName: String,
     nftDisplayName: String,
@@ -34,20 +35,20 @@ transaction(
     floatGroupName: String?,
     floatGroupHost: Address?
 ) {
-    let raffleCollection: &Mist.NFTRaffleCollection
+    let raffleCollection: &Mist.RaffleCollection
     let nftCollectionRef: &ExampleNFT.Collection
 
     prepare(acct: AuthAccount) {
-        if acct.borrow<&Mist.NFTRaffleCollection>(from: Mist.NFTRaffleCollectionStoragePath) == nil {
-            acct.save(<- Mist.createEmptyNFTRaffleCollection(), to: Mist.NFTRaffleCollectionStoragePath)
-            let cap = acct.link<&Mist.NFTRaffleCollection{Mist.INFTRalleCollectionPublic}>(
-                Mist.NFTRaffleCollectionPublicPath,
-                target: Mist.NFTRaffleCollectionStoragePath
-            ) ?? panic("Could not link NFTRaffleCollection to PublicPath")
+        if acct.borrow<&Mist.RaffleCollection>(from: Mist.RaffleCollectionStoragePath) == nil {
+            acct.save(<- Mist.createEmptyRaffleCollection(), to: Mist.RaffleCollectionStoragePath)
+            let cap = acct.link<&Mist.RaffleCollection{Mist.IRaffleCollectionPublic}>(
+                Mist.RaffleCollectionPublicPath,
+                target: Mist.RaffleCollectionStoragePath
+            ) ?? panic("Could not link RaffleCollection to PublicPath")
         }
 
-        self.raffleCollection = acct.borrow<&Mist.NFTRaffleCollection>(from: Mist.NFTRaffleCollectionStoragePath)
-            ?? panic("Could not borrow NFTRaffleCollection from signer")
+        self.raffleCollection = acct.borrow<&Mist.RaffleCollection>(from: Mist.RaffleCollectionStoragePath)
+            ?? panic("Could not borrow RaffleCollection from signer")
 
         let nftStoragePath = StoragePath(identifier: nftCollectionStoragePath)!
         self.nftCollectionRef = acct.borrow<&ExampleNFT.Collection>(from: nftStoragePath)
@@ -56,6 +57,7 @@ transaction(
 
     execute {
         let nftInfo = Mist.NFTInfo(
+            nftCatalogCollectionID: nftCatalogCollectioNID,
             contractName: nftContractName,
             contractAddress: nftContractAddress,
             displayName: nftDisplayName,
@@ -108,7 +110,7 @@ transaction(
             url: url,
             startAt: startAt,
             endAt: endAt,
-            registerEndAt: registerEndAt,
+            registeryEndAt: registeryEndAt,
             numberOfWinners: numberOfWinners,
             nftInfo: nftInfo,
             collection: <- collection,

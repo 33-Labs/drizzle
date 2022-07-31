@@ -1,4 +1,4 @@
-import { executeScript, getAccountAddress, mintFlow, sendTransaction, shallPass, shallResolve } from "flow-js-testing"
+import { builtInMethods, executeScript, getAccountAddress, mintFlow, sendTransaction, shallPass, shallResolve } from "flow-js-testing"
 import { getMistAdmin } from "./common"
 import { NFT_mintExampleNFT, NFT_setupExampleNFTCollection } from "./examplenft"
 
@@ -24,7 +24,7 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
 
   const {initFlowAmount, 
     image, url, startAt, endAt,
-    registerEndAt, numberOfWinners,
+    registeryEndAt, numberOfWinners,
     rewardTokenIDs,
     withWhitelist, whitelist,
     withFloats, threshold, eventIDs, eventHosts,
@@ -44,8 +44,9 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
     description: "Test DROP", 
     image: image || null, url: url || null,
     startAt: startAt || null, endAt: endAt || null,
-    registerEndAt: registerEndAt || (new Date()).getTime() / 1000 + 10, 
+    registeryEndAt: registeryEndAt || (new Date()).getTime() / 1000 + 2, 
     numberOfWinners: numberOfWinners || 2,
+    nftCatalogCollectionID: nftInfo.contractName,
     nftContractAddress: nftInfo.contractAddress,
     nftContractName: nftInfo.contractName,
     nftDisplayName: nftInfo.displayName, 
@@ -67,6 +68,7 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
     return error
   }
   expect(error).toBeNull()
+  return tx
 }
 
 // ===== UTILS =====
@@ -94,3 +96,131 @@ export const getDefaultWhitelist = async () => {
     [Emily]: true
   }
 }
+
+// ===== TRANSACTIONS =====
+
+export const toggleRafflePause = async (signer) => {
+  const signers = [signer]
+  const name = "mist/toggle_mist_pause"
+  const args = []
+  return await sendTransaction({ name: name, signers: signers, args: args })
+}
+
+export const registerRaffle = async (raffleID, host, registrator) => {
+  const signers = [registrator]
+  const name = "mist/register_raffle"
+  const args = [raffleID, host]
+  return await sendTransaction({ name: name, signers: signers, args: args, transformers: [builtInMethods] })
+}
+
+export const claimRaffle = async (raffleID, host, claimer) => {
+  const signers = [claimer]
+  const name = "mist/claim_raffle"
+  const args = [raffleID, host]
+  return await sendTransaction({ name: name, signers: signers, args: args, transformers: [builtInMethods] })
+}
+
+export const draw = async (raffleID, host) => {
+  const signers = [host]
+  const name = "mist/draw"
+  const args = [raffleID]
+  return await sendTransaction({ name: name, signers: signers, args: args, transformers: [builtInMethods] })
+}
+
+export const batchDraw = async (raffleID, host) => {
+  const signers = [host]
+  const name = "mist/batch_draw"
+  const args = [raffleID]
+  return await sendTransaction({ name: name, signers: signers, args: args, transformers: [builtInMethods] })
+}
+
+export const depositToRaffle = async (raffleID, host, tokenIDs) => {
+  const signers = [host]
+  const name = "mist/deposit_to_raffle"
+  const args = [raffleID, tokenIDs]
+  return await sendTransaction({ name: name, signers: signers, args: args})
+}
+
+export const endRaffle = async (raffleID, host) => {
+  const signers = [host]
+  const name = "mist/end_raffle"
+  const args = [raffleID]
+  console.log(name, {raffleID})
+  return await sendTransaction({ name: name, signers: signers, args: args})
+}
+
+export const deleteRaffle = async (raffleID, signer) => {
+  const signers = [signer]
+  const name = "mist/delete_raffle"
+  const args = [raffleID]
+  return await sendTransaction({ name: name, signers: signers, args: args})
+}
+
+export const togglePause = async (raffleID, host) => {
+  const signers = [host]
+  const name = "mist/toggle_pause"
+  const args = [raffleID]
+  return await sendTransaction({ name: name, signers: signers, args: args})
+}
+
+// ===== SCRIPTS =====
+
+export const getAllRaffles = async (account) => {
+  const name = "mist/get_all_raffles"
+  const args = [account]
+  const [result, error] = await executeScript({ name: name, args: args })
+  expect(error).toBeNull()
+  return result
+}
+
+export const getClaimStatus = async (raffleID, host, claimer) => {
+  const name = "mist/get_claim_status"
+  const args = [raffleID, host, claimer]
+  const [result, error] = await executeScript({ name: name, args: args })
+  expect(error).toBeNull()
+  return result
+}
+
+export const getRegistrationRecord = async (raffleID, host, claimer) => {
+  const name = "mist/get_registration_record"
+  const args = [raffleID, host, claimer]
+  const [result, error] = await executeScript({ name: name, args: args })
+  expect(error).toBeNull()
+  return result
+}
+
+export const getRegistrationRecords = async (raffleID, host) => {
+  const name = "mist/get_registration_records"
+  const args = [raffleID, host]
+  const [result, error] = await executeScript({ name: name, args: args })
+  expect(error).toBeNull()
+  return result
+}
+
+export const getWinner = async (raffleID, host, winner) => {
+  const name = "mist/get_winner"
+  const args = [raffleID, host, winner]
+  const [result, error] = await executeScript({ name: name, args: args })
+  expect(error).toBeNull()
+  return result
+}
+
+export const getRaffle = async (raffleID, host, mustResolve = true) => {
+  const name = "mist/get_raffle"
+  const args = [raffleID, host]
+  const [result, error] = await executeScript({ name: name, args: args })
+  if (mustResolve === true) {
+    expect(error).toBeNull()
+    return result
+  }
+  return [result, error]
+}
+
+// export const getRaffleBalance = async (raffleID, host) => {
+//   const name = "mist/get_raffle_balance"
+//   const args = [raffleID, host]
+//   const [result, error] = await executeScript({ name: name, args: args })
+//   expect(error).toBeNull()
+//   return result
+// }
+
