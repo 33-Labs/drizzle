@@ -30,7 +30,7 @@ export default function Landing(props) {
           </div>
           <div className="flex flex-col">
             <label className={`-mt-5 font-flow text-gray-400 font-medium text-md`}>
-              DROP to your community in one minute!
+              Create DROP or Raffle in one minute!
             </label>
             <Link href="/about">
               <label className={`cursor-pointer font-flow text-drizzle-green font-medium text-md underline decoration-drizzle-green decoration-3`}>
@@ -39,23 +39,51 @@ export default function Landing(props) {
             </Link>
           </div>
 
-          <button
-            type="button"
-            disabled={transactionInProgress}
-            className={classNames(
-              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
-              "h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black"
-            )}
-            onClick={() => {
-              if (props.user.loggedIn) {
-                router.push("/create")
-              } else {
-                fcl.authenticate()
-              }
-            }}
-          >
-            {props.user.loggedIn ? "Get Started" : "Connect Wallet"}
-          </button>
+          {props.user && props.user.loggedIn ?
+            <div className="-mt-5 flex flex-col gap-y-2">
+              <label className="font-flow text-gray-400 font-medium text-md">Create a new:</label>
+              <div className="flex gap-x-2">
+                <button
+                  type="button"
+                  disabled={transactionInProgress}
+                  className={classNames(
+                    transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                    "h-12 w-32 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black"
+                  )}
+                  onClick={() => {
+                    router.push("/create/ft_drop")
+                  }}
+                >
+                  {"DROP"}
+                </button>
+                <button
+                  type="button"
+                  disabled={true}
+                  className={classNames(
+                    // transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark text-black",
+                    "bg-drizzle-green/30 text-gray-400",
+                    "h-12 w-32 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm"
+                  )}
+                  onClick={() => {
+                    router.push("/create/nft_raffle")
+                  }}
+                >
+                  {"NFT Raffle"}
+                </button>
+              </div>
+            </div> :
+            <button
+              type="button"
+              disabled={transactionInProgress}
+              className={classNames(
+                transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                "h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black"
+              )}
+              onClick={() => { fcl.authenticate() }}
+            >
+              {"Connect Wallet"}
+            </button>
+          }
         </div>
 
         <div className="w-[350px] h-[350px] sm:w-[400px] sm:h-[400px] relative">

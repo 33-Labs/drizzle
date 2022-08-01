@@ -1,12 +1,29 @@
 import FungibleToken from "./core/FungibleToken.cdc"
-import Drizzle from "./Drizzle.cdc"
-import Distributors from "./Distributors.cdc"
 import FLOAT from "./float/FLOAT.cdc"
 
-// In Drizzle, EligibilityVerifiers determines an account is eligible or not
-// EligibilityVerifier should conform IEligibilityVerifier in Drizzle.cdc
-
+// In Drizzle, EligibilityReviewer determines an account is eligible or not
 pub contract EligibilityVerifiers {
+
+    pub enum VerifyMode: UInt8 {
+        pub case oneOf
+        pub case all
+    }
+
+    pub struct VerifyResult {
+        pub let isEligible: Bool
+        pub let extraData: {String: AnyStruct}
+
+        init(isEligible: Bool, extraData: {String: AnyStruct}) {
+            self.isEligible = isEligible
+            self.extraData = extraData
+        }
+    }
+
+    pub struct interface IEligibilityVerifier {
+        pub let type: String
+
+        pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResult
+    }
 
     pub struct FLOATEventData {
         pub let host: Address
@@ -28,7 +45,7 @@ pub contract EligibilityVerifiers {
         }
     }
 
-    pub struct Whitelist: Drizzle.IEligibilityVerifier {
+    pub struct Whitelist: IEligibilityVerifier {
         pub let whitelist: {Address: AnyStruct}
         pub let type: String
 
@@ -37,15 +54,15 @@ pub contract EligibilityVerifiers {
             self.type = "Whitelist"
         }
 
-        pub fun verify(account: Address, params: {String: AnyStruct}): Drizzle.VerifyResult {
-            return Drizzle.VerifyResult(
+        pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResult {
+            return VerifyResult(
                 isEligible: self.whitelist[account] != nil,
                 extraData: {}
             )
         }
     }
 
-    pub struct FLOATGroup: Drizzle.IEligibilityVerifier {
+    pub struct FLOATGroup: IEligibilityVerifier {
         pub let group: FLOATGroupData
         pub let threshold: UInt32
         pub let receivedBefore: UFix64
@@ -67,7 +84,7 @@ pub contract EligibilityVerifiers {
             self.type = "FLOATGroup"
         }
 
-        pub fun verify(account: Address, params: {String: AnyStruct}): Drizzle.VerifyResult {
+        pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResult {
             let floatEventCollection = getAccount(self.group.host)
                 .getCapability(FLOAT.FLOATEventsPublicPath)
                 .borrow<&FLOAT.FLOATEvents{FLOAT.FLOATEventsPublic}>()
@@ -82,7 +99,7 @@ pub contract EligibilityVerifiers {
                 .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
 
             if floatCollection == nil {
-                return Drizzle.VerifyResult(isEligible: false, extraData: {})
+                return VerifyResult(isEligible: false, extraData: {})
             } 
 
             var validCount: UInt32 = 0
@@ -93,17 +110,17 @@ pub contract EligibilityVerifiers {
                         if float.dateReceived <= self.receivedBefore {
                             validCount = validCount + 1
                             if validCount >= self.threshold {
-                                return Drizzle.VerifyResult(isEligible: true, extraData: {})
+                                return VerifyResult(isEligible: true, extraData: {})
                             }
                         }
                     }
                 }
             }
-            return Drizzle.VerifyResult(isEligible: false, extraData: {})
+            return VerifyResult(isEligible: false, extraData: {})
         }
     }
 
-    pub struct FLOATs: Drizzle.IEligibilityVerifier {
+    pub struct FLOATs: IEligibilityVerifier {
         pub let events: [FLOATEventData]
         pub let threshold: UInt32
         pub let receivedBefore: UFix64
@@ -126,13 +143,13 @@ pub contract EligibilityVerifiers {
             self.type = "FLOATs"
         }
 
-        pub fun verify(account: Address, params: {String: AnyStruct}): Drizzle.VerifyResult {
+        pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResult {
             let floatCollection = getAccount(account)
                 .getCapability(FLOAT.FLOATCollectionPublicPath)
                 .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
 
             if floatCollection == nil {
-                return Drizzle.VerifyResult(isEligible: false, extraData: {})
+                return VerifyResult(isEligible: false, extraData: {})
             }
 
             var validCount: UInt32 = 0
@@ -143,13 +160,13 @@ pub contract EligibilityVerifiers {
                         if float.dateReceived <= self.receivedBefore {
                             validCount = validCount + 1
                             if validCount >= self.threshold {
-                                return Drizzle.VerifyResult(isEligible: true, extraData: {})
+                                return VerifyResult(isEligible: true, extraData: {})
                             }
                         }
                     }
                 }
             }
-            return Drizzle.VerifyResult(isEligible: false, extraData: {})
+            return VerifyResult(isEligible: false, extraData: {})
         }
     }
 }

@@ -146,7 +146,7 @@ export default function DropCard(props) {
         {
           dropID && host ?
             <ShareCard url={`${publicConfig.appURL}/${host}/drops/${dropID}`} />
-            : <ShareCard disabled={true} url={`${publicConfig.appURL}/create`} />
+            : <ShareCard disabled={true} url={`${publicConfig.appURL}/create/ft_drop`} />
         }
       </div>
     </div>

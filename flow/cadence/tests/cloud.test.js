@@ -6,8 +6,11 @@ import {
 } from "flow-js-testing";
 import {
   checkFUSDBalance,
-  deployContracts,
+  deployCoreContracts,
+  deployFLOATContracts,
+  deployByName,
   getFUSDBalance,
+  getCloudAdmin
 } from "./src/common";
 import {
   claimDrop,
@@ -26,7 +29,7 @@ import {
   deleteDrop,
   createFUSDDrop,
   endDrop
-} from "./src/drizzle";
+} from "./src/cloud";
 import {
   FLOAT_claim,
   FLOAT_createEventsWithGroup,
@@ -36,11 +39,19 @@ import {
 } from "./src/float";
 
 import Decimal from "decimal.js"
-import { assert } from "console";
 
 jest.setTimeout(1000000)
 
-describe("Common", () => {
+const deployContracts = async () => {
+  const deployer = await getCloudAdmin()
+  await deployCoreContracts(deployer)
+  await deployFLOATContracts(deployer)
+  await deployByName(deployer, "Distributors")
+  await deployByName(deployer, "EligibilityVerifiers")
+  await deployByName(deployer, "Cloud")
+}
+
+describe("Deployment", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
@@ -54,7 +65,7 @@ describe("Common", () => {
     return await new Promise(r => setTimeout(r, 2000));
   })
 
-  it("Common - Should deploy all contracts successfully", async () => {
+  it("Deployment - Should deploy all contracts successfully", async () => {
     await deployContracts()
   })
 })
@@ -215,7 +226,7 @@ describe("DROP - Management", () => {
   })
 
   it("Management - DROP should not be created if contract is paused", async () => {
-    const Deployer = await getAccountAddress("Deployer")
+    const Deployer = await getCloudAdmin()
 
     const Alice = await getAccountAddress("Alice")
     const Bob = await getAccountAddress("Bob")
@@ -228,29 +239,6 @@ describe("DROP - Management", () => {
 
     await toggleCloudPause(Deployer)
     await createFUSDDrop(Carl, { withExclusiveWhitelist: true })
-  })
-
-  it("Management - DROP host should be able to withdraw funds in DROP", async () => {
-    const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withExclusiveWhitelist: true })
-
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-
-    const FUSDInfo = await getFUSDInfo()
-
-    await checkFUSDBalance(Alice, 850.0)
-
-    const preDropBalance = parseFloat(await getDropBalance(dropID, Alice))
-    expect(preDropBalance).toBe(150.0)
-
-    const [, error] = await withdrawAllFunds(dropID, Alice, FUSDInfo.tokenIssuer, FUSDInfo.tokenReceiverPath)
-    expect(error).toBeNull()
-
-    const postDropBalance = parseFloat(await getDropBalance(dropID, Alice))
-    expect(postDropBalance).toBe(0.0)
-
-    await checkFUSDBalance(Alice, 1000.0)
   })
 
   it("Management - DROP owner should be able to pause and unpause DROP", async () => {

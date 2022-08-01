@@ -167,11 +167,11 @@ export default function StatsCard(props) {
         {cards.length > 0 ?
           cards.map((card, index) => {
             return (
-              <div key={index} className={`w-full rounded-2xl border-4 ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-drizzle`}>
-                <label className="text-base font-medium font-flow">
+              <div key={index} className={`w-full rounded-2xl ring-1 ring-black ring-opacity-5 overflow-hidden ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-drizzle`}>
+                <label className="text-sm font-medium text-gray-500 font-flow">
                   {card.title}
                 </label>
-                <label className="text-xl font-bold font-flow">{card.content}</label>
+                <label className="text-2xl font-bold font-flow text-drizzle-green">{card.content}</label>
               </div>
             )
           }) : null

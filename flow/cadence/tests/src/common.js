@@ -8,8 +8,11 @@ import {
   mintFlow
 } from "flow-js-testing"
 
+export const getCloudAdmin = async () => getAccountAddress("CloudAdmin")
+export const getMistAdmin = async () => getAccountAddress("MistAdmin")
+
 export const deployCoreContracts = async (deployer) => {
-  const Deployer = deployer || await getAccountAddress("Deployer")
+  const Deployer = deployer
   await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "core/NonFungibleToken")
   await deployByName(Deployer, "core/MetadataViews")
@@ -17,20 +20,26 @@ export const deployCoreContracts = async (deployer) => {
 }
 
 export const deployFLOATContracts = async (deployer) => {
-  const Deployer = deployer || await getAccountAddress("Deployer")
+  const Deployer = deployer
   await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "float/GrantedAccountAccess")
   await deployByName(Deployer, "float/FLOAT")
   await deployByName(Deployer, "float/FLOATVerifiers")
 }
 
-export const deployDrizzleContracts = async (deployer) => {
-  const Deployer = deployer || await getAccountAddress("Deployer")
+export const deployExampleNFTContracts = async (deployer) => {
+  const Deployer = deployer
   await mintFlow(Deployer, 1000.0)
-  await deployByName(Deployer, "Drizzle")
+  await deployByName(Deployer, "examplenft/ExampleNFT")
+}
+
+export const deployDrizzleContracts = async (deployer) => {
+  const Deployer = deployer
+  await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "Distributors")
   await deployByName(Deployer, "EligibilityVerifiers")
   await deployByName(Deployer, "Cloud")
+  await deployByName(Deployer, "Mist")
 }
 
 export const deployContracts = async (deployer) => {
@@ -46,19 +55,19 @@ export const deployByName = async (deployer, contractName, args) => {
 
 export const setupFUSDVault = async (account) => {
   const signers = [account]
-  const name = "FUSD/setup_fusd_vault"
+  const name = "fusd/setup_fusd_vault"
   await shallPass(sendTransaction({ name: name, signers: signers }))
 }
 
 export const mintFUSD = async (minter, amount, recipient) => {
   const signers = [minter]
   const args = [amount, recipient]
-  const name = "FUSD/mint_fusd"
+  const name = "fusd/mint_fusd"
   await shallPass(sendTransaction({ name: name, args: args, signers: signers }))
 }
 
 export const getFUSDBalance = async (account) => {
-  const [result, err] = await shallResolve(executeScript({ name: "FUSD/get_fusd_balance", args: [account] }))
+  const [result, err] = await shallResolve(executeScript({ name: "fusd/get_fusd_balance", args: [account] }))
   return parseFloat(result)
 }
 

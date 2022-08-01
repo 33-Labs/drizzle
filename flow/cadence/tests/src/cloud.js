@@ -6,6 +6,7 @@ import {
 } from "flow-js-testing"
 import { 
   checkFUSDBalance,
+  getCloudAdmin,
   mintFUSD,
   setupFUSDVault 
 } from "./common"
@@ -16,7 +17,7 @@ import {
 
 export const createDrop = async (signer, params) => {
   const signers = [signer]
-  const txName = "create_drop"
+  const txName = "cloud/create_drop"
   return await sendTransaction({ name: txName, signers: signers, args: params})
 }
 
@@ -72,7 +73,7 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
   await mintFlow(signer, flowAmount)
   await setupFUSDVault(signer)
 
-  await mintFUSD(await getAccountAddress("Deployer"), fusdAmount, signer)
+  await mintFUSD(await getCloudAdmin(), fusdAmount, signer)
   await checkFUSDBalance(signer, fusdAmount)
 
   const [tx, error] = await createDrop(signer, Object.values(args))
@@ -86,7 +87,7 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
 
 export const getFUSDInfo = async () => {
   return {
-    tokenIssuer: await getAccountAddress("Deployer"),
+    tokenIssuer: await getCloudAdmin(),
     tokenContractName: "FUSD",
     tokenSymbol: "FUSD",
     tokenProviderPath: "fusdVault", tokenBalancePath: "fusdBalance", tokenReceiverPath: "fusdReceiver"
@@ -123,49 +124,42 @@ export const createDefaultEvents = async (creator) => {
 
 export const toggleCloudPause = async (signer) => {
   const signers = [signer]
-  const name = "toggle_cloud_pause"
+  const name = "cloud/toggle_cloud_pause"
   const args = []
   return await sendTransaction({ name: name, signers: signers, args: args })
 }
 
 export const claimDrop = async (dropID, host, claimer) => {
   const signers = [claimer]
-  const name = "claim_drop"
+  const name = "cloud/claim_drop"
   const args = [dropID, host]
   return await sendTransaction({ name: name, signers: signers, args: args })
 }
 
 export const depositToDrop = async (dropID, host, amount) => {
   const signers = [host]
-  const name = "deposit_to_drop"
+  const name = "cloud/deposit_to_drop"
   const args = [dropID, amount]
-  return await sendTransaction({ name: name, signers: signers, args: args})
-}
-
-export const withdrawAllFunds = async (dropID, host, tokenIssuer, tokenReceiverPath) => {
-  const signers = [host]
-  const name = "withdraw_all_funds"
-  const args = [dropID, tokenIssuer, tokenReceiverPath]
   return await sendTransaction({ name: name, signers: signers, args: args})
 }
 
 export const endDrop = async (dropID, host, tokenIssuer, tokenReceiverPath) => {
   const signers = [host]
-  const name = "end_drop"
+  const name = "cloud/end_drop"
   const args = [dropID, tokenIssuer, tokenReceiverPath]
   return await sendTransaction({ name: name, signers: signers, args: args})
 }
 
 export const deleteDrop = async (dropID, signer, tokenIssuer, tokenReceiverPath) => {
   const signers = [signer]
-  const name = "delete_drop"
+  const name = "cloud/delete_drop"
   const args = [dropID, tokenIssuer, tokenReceiverPath]
   return await sendTransaction({ name: name, signers: signers, args: args})
 }
 
 export const togglePause = async (dropID, host) => {
   const signers = [host]
-  const name = "toggle_pause"
+  const name = "cloud/toggle_pause"
   const args = [dropID]
   return await sendTransaction({ name: name, signers: signers, args: args})
 }
@@ -173,7 +167,7 @@ export const togglePause = async (dropID, host) => {
 // ===== SCRIPTS =====
 
 export const getAllDrops = async (account) => {
-  const name = "get_all_drops"
+  const name = "cloud/get_all_drops"
   const args = [account]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
@@ -181,7 +175,7 @@ export const getAllDrops = async (account) => {
 }
 
 export const getClaimStatus = async (dropID, host, claimer) => {
-  const name = "get_claim_status"
+  const name = "cloud/get_claim_status"
   const args = [dropID, host, claimer]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
@@ -189,7 +183,7 @@ export const getClaimStatus = async (dropID, host, claimer) => {
 }
 
 export const getClaimedRecord = async (dropID, host, claimer) => {
-  const name = "get_claimed_record"
+  const name = "cloud/get_claimed_record"
   const args = [dropID, host, claimer]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
@@ -197,7 +191,7 @@ export const getClaimedRecord = async (dropID, host, claimer) => {
 }
 
 export const getClaimedRecords = async (dropID, host) => {
-  const name = "get_claimed_records"
+  const name = "cloud/get_claimed_records"
   const args = [dropID, host]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
@@ -205,7 +199,7 @@ export const getClaimedRecords = async (dropID, host) => {
 }
 
 export const getDrop = async (dropID, host, mustResolve = true) => {
-  const name = "get_drop"
+  const name = "cloud/get_drop"
   const args = [dropID, host]
   const [result, error] = await executeScript({ name: name, args: args })
   if (mustResolve === true) {
@@ -216,7 +210,7 @@ export const getDrop = async (dropID, host, mustResolve = true) => {
 }
 
 export const getDropBalance = async (dropID, host) => {
-  const name = "get_drop_balance"
+  const name = "cloud/get_drop_balance"
   const args = [dropID, host]
   const [result, error] = await executeScript({ name: name, args: args })
   expect(error).toBeNull()
