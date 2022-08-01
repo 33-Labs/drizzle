@@ -10,7 +10,7 @@ import {
 } from '../lib/transactions'
 import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidHttpUrl } from '../lib/utils'
 
-import { constSelector, useRecoilState } from "recoil"
+import { useRecoilState } from "recoil"
 import {
   basicNotificationContentState,
   showBasicNotificationState,

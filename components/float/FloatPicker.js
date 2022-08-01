@@ -8,10 +8,8 @@ import {
 } from "../../lib/atoms"
 import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidFlowAddress } from "../../lib/utils"
 import { getFloatEvent, getFloatEventsInGroup } from '../../lib/float-scripts'
-import Decimal from 'decimal.js'
 import FloatEventList from './FloatEventList'
 import Warning from '../toolbox/Warning'
-import publicConfig from '../../publicConfig'
 
 export const FloatModeFloatEvent = {
   key: "FLOATEvent",

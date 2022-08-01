@@ -8,7 +8,6 @@ import DropPresenter from '../../../components/DropPresenter'
 import { 
   queryDrop,
   queryClaimStatus,
-  queryStats 
 } from '../../../lib/scripts'
 import Custom404 from '../../404'
 
