@@ -48,7 +48,7 @@ export default function Landing(props) {
             )}
             onClick={() => {
               if (props.user.loggedIn) {
-                router.push("/create")
+                router.push("/create/ft_drop")
               } else {
                 fcl.authenticate()
               }

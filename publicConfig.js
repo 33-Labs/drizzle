@@ -22,9 +22,6 @@ if (!fungibleTokenAddress) throw "Missing NEXT_PUBLIC_FUNGIBLE_TOKEN_ADDRESS"
 const flowTokenAddress = process.env.NEXT_PUBLIC_FLOW_TOKEN_ADDRESS
 if (!flowTokenAddress) throw "Missing NEXT_PUBLIC_FLOW_TOKEN_ADDRESS"
 
-const drizzleAddress = process.env.NEXT_PUBLIC_DRIZZLE_ADDRESS
-if (!drizzleAddress) throw "Missing NEXT_PUBLIC_DRIZZLE_ADDRESS"
-
 const cloudAddress = process.env.NEXT_PUBLIC_CLOUD_ADDRESS
 if (!cloudAddress) throw "Missing NEXT_PUBLIC_CLOUD_ADDRESS"
 
@@ -45,7 +42,6 @@ const publicConfig = {
   flowscanURL,
   fungibleTokenAddress,
   flowTokenAddress,
-  drizzleAddress,
   cloudAddress,
   eligibilityVerifiersAddress,
   distributorsAddress,

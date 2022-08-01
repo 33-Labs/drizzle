@@ -40,7 +40,7 @@ export default function DropList(props) {
                 "inline-flex items-center rounded-2xl justify-center border border-transparent px-4 py-2 text-sm font-medium text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
               )}
             onClick={() => {
-              router.push("/create")
+              router.push("/create/ft_drop")
             }}
           >
             New

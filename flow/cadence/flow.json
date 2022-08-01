@@ -60,28 +60,22 @@
                 "testnet": "0x0afe396ebc8eee65"
             } 
         },
-        "Drizzle": {
-            "source": "./contracts/Drizzle.cdc",
-            "aliases": {
-                "testnet": "0xfa6367bca1cf8766"
-            }  
-        },
         "Distributors": {
             "source": "./contracts/Distributors.cdc",
             "aliases": {
-                "testnet": "0xfa6367bca1cf8766"
+                "testnet": "0xdc34f5a7b807bcfb"
             }
         },
         "EligibilityVerifiers": {
             "source": "./contracts/EligibilityVerifiers.cdc",
             "aliases": {
-                "testnet": "0xfa6367bca1cf8766"
+                "testnet": "0xdc34f5a7b807bcfb"
             }
         },
         "Cloud": {
             "source": "./contracts/Cloud.cdc",
             "aliases": {
-                "testnet": "0xfa6367bca1cf8766"
+                "testnet": "0xdc34f5a7b807bcfb"
             }
         }
     },
@@ -103,7 +97,6 @@
 	"deployments": {
         "testnet": {
             "drizzle-deployer": [
-                "Drizzle",
                 "Distributors",
                 "EligibilityVerifiers",
                 "Cloud" 
