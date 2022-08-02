@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-import Drizzle from "./Drizzle.cdc"
-
-// In Drizzle, we use Distributor to set the rule of token distribution in an FungibleToken DROP
-// A Distributor should conform IDistributor defined in Drizzle.cdc
-=======
->>>>>>> b40d6fd (feat: remove Drizzle.cdc)
 pub contract Distributors {
 
     pub struct interface IDistributor {

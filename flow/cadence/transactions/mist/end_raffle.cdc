@@ -17,6 +17,6 @@ transaction(raffleID: UInt64) {
     }
 
     execute {
-        self.raffle.end(receiver: self.nftCollectionRef)
+        self.raffle.end(receiver: nftCollectionRef)
     }
 }

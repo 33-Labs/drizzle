@@ -3,7 +3,7 @@ import Image from "next/image"
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid"
 import { Combobox } from "@headlessui/react"
 
-import { queryBalance } from "../../lib/scripts"
+import { queryBalance } from "../../lib/cloud-scripts"
 import Decimal from "decimal.js";
 
 import { TokenListProvider, ENV, Strategy } from "flow-native-token-registry";

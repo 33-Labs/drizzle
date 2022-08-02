@@ -11,9 +11,9 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../../lib/atoms"
-import { deleteDrop, endDrop, togglePause } from "../../lib/transactions"
+import { deleteDrop, endDrop, togglePause } from "../../lib/cloud-transactions"
 import { classNames } from "../../lib/utils"
-import { queryBalance } from "../../lib/scripts"
+import { queryBalance } from "../../lib/cloud-scripts"
 
 // tokenInfo in Drizzle
 const balanceFetcher = async (funcName, tokenInfo, account) => {

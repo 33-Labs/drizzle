@@ -1,6 +1,6 @@
 import Decimal from "decimal.js"
 import { classNames } from "../../lib/utils"
-import { claim } from "../../lib/transactions"
+import { claim } from "../../lib/cloud-transactions"
 import { useSWRConfig } from 'swr'
 import * as fcl from "@onflow/fcl"
 
