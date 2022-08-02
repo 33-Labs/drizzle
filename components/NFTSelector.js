@@ -13,6 +13,8 @@ import {
 import { NFTList } from "../flow/nft-list"
 import publicConfig from "../publicConfig.js"
 import { filterTokenIDs } from "../lib/utils"
+import { getNFTDisplays } from "../lib/mist-scripts"
+import NFTCard from "./NFTCard"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ")
@@ -30,6 +32,8 @@ export default function NFTSelector(props) {
   const [rawRecordsStr, setRawRecordsStr] = useState('')
   const [validRecords, setValidRecords] = useState([])
   const [invalidRecords, setInvalidRecords] = useState([])
+  const [nftDisplays, setNFTDisplays] = useState({})
+  const [selectedTokens, setSelectedTokens] = useState({})
 
   const filteredNFTs =
     query === ""
@@ -50,8 +54,19 @@ export default function NFTSelector(props) {
 
       <Combobox as="div" className={props.className} value={props.user && props.user.loggedIn && selectedNFT} onChange={async (nft) => {
         if (props.user && props.user.loggedIn) {
-          setSelectedNFT(nft)
-          props.onNFTSelected(nft)
+          if (!selectedNFT || nft.contractName != selectedNFT.contractName) {
+            setSelectedNFT(nft)
+            setNFTDisplays({})
+            setSelectedTokens({})
+            getNFTDisplays(props.user.addr, nft).then((displays) => {
+              console.log(displays)
+              // for (const [key, value] of Object.entries(displays)) {
+                // console.log(key, {value})
+                // displays[key+1] = value
+              // }
+              setNFTDisplays(displays)
+            })
+          }
         }
       }}>
 
@@ -107,58 +122,46 @@ export default function NFTSelector(props) {
           )}
         </div>
       </Combobox>
-
-      {selectedNFT ?
-        <div className="flex flex-col mt-1">
-          <label className="block text-md font-flow leading-6 mt-2 mb-2">For each line, enter one tokenID. Duplicate tokenIDs are not allowed.</label>
-          <textarea
-            rows={4}
-            name="recipients"
-            id="recipients"
-            className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
-            bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-            spellCheck={false}
-            value={rawRecordsStr}
-            placeholder={
-              "1234"
-            }
-            onChange={(event) => {
-              if (validRecords.length > 0 || invalidRecords.length > 0) {
-                setValidRecords([])
-                setInvalidRecords([])
-              }
-              setRawRecordsStr(event.target.value)
-            }}
-          />
-          <div className="flex mt-4 gap-x-2 justify-between">
-            <button
-              type="button"
-              className={classNames(
-                transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
-                "h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-md text-black"
-              )}
-              disabled={transactionInProgress}
-              onClick={() => {
-                if (rawRecordsStr.trim().length == 0) {
-                  setShowBasicNotification(true)
-                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "No tokenIDs provided" })
-                  return
-                }
-
-                const [valids, invalids] = filterTokenIDs(rawRecordsStr.trim())
-                if (invalids.length > 0) {
-                  setShowBasicNotification(true)
-                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "Invalid tokenIDs or duplicate tokenIDs" })
-                  return
-                }
-
-                
-              }}
-            >
-              Check
-            </button>
-          </div>
+      {
+        Object.keys(nftDisplays).length > 0 ? 
+        // <div className="px-1 py-3 pb-3 mt-4 grid grid-rows-2 grid-flow-col gap-4 justify-start w-full overflow-auto">
+        <div className="px-1 py-3 pb-3 mt-4 flex max-h-[464px] gap-5 justify-start w-full overflow-auto flex-wrap">
+          {Object.entries(nftDisplays)
+            .sort(([tokenID1, ], [tokenID2, ]) => tokenID2 - tokenID1)
+            .map(([tokenID, tokenDisplay]) => {
+            return (
+              <NFTCard
+                tokenID={tokenID}
+                display={tokenDisplay}
+                selectedTokens={selectedTokens}
+                setSelectedTokens={setSelectedTokens}
+              />
+            )
+          })
+          }
         </div> : null
+      }
+
+      {
+        Object.entries(selectedTokens).filter(([, info]) => info.isSelected).length > 0 ?
+        <div className="mt-10 flex flex-col p-4 sm:p-8 rounded-3xl border-4 border-drizzle-green/30 border-dashed">
+      <label className="block text-2xl font-flow font-bold">Selected NFT</label>
+        <div className="px-1 py-3 pb-3 mt-4 flex max-h-[464px] gap-3 justify-start w-full overflow-auto flex-wrap">
+          {Object.entries(selectedTokens)
+            .filter(([, info]) => info.isSelected)
+            .sort(([, info1], [, info2]) => info1.selectedAt - info2.selectedAt)
+            .map(([tokenID,]) => {
+            return (
+              <NFTCard
+              disabled={true}
+                tokenID={tokenID}
+                display={nftDisplays[tokenID]}
+              />
+            )
+          })
+          }
+        </div> 
+        </div>: null
       }
 
     </div>

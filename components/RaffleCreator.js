@@ -382,13 +382,6 @@ export default function RaffleCreator(props) {
           NamePlaceholder={NamePlaceholder} DescriptionPlaceholder={DescriptionPlaceholder}
         />
 
-        <NFTSelector 
-          user={props.user}
-          onNFTSelected={() => {
-            console.log("Hi")
-          }}
-        />
-
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
             Eligibility
@@ -397,7 +390,17 @@ export default function RaffleCreator(props) {
         </div>
 
         {showEligibilityModeInputs(eligibilityMode)}
+
+        <NFTSelector 
+          user={props.user}
+          onNFTSelected={() => {
+            console.log("Hi")
+          }}
+      />
       </div>
+
+
+
 
       {/** create button */}
       <div className="w-full mt-16 flex flex-col gap-y-5 sm:flex-row sm:justify-between sm:gap-x-10 items-center">

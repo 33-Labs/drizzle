@@ -19,6 +19,12 @@ if (!floatURL) throw "Missing NEXT_PUBLIC_FLOAT_URL"
 const fungibleTokenAddress = process.env.NEXT_PUBLIC_FUNGIBLE_TOKEN_ADDRESS
 if (!fungibleTokenAddress) throw "Missing NEXT_PUBLIC_FUNGIBLE_TOKEN_ADDRESS"
 
+const nonFungibleTokenAddress = process.env.NEXT_PUBLIC_NON_FUNGIBLE_TOKEN_ADDRESS
+if (!nonFungibleTokenAddress) throw "Missing NEXT_PUBLIC_NON_FUNGIBLE_TOKEN_ADDRESS"
+
+const metadataViewsAddress = process.env.NEXT_PUBLIC_METADATA_VIEWS_ADDRESS
+if (!metadataViewsAddress) throw "Missing NEXT_PUBLIC_METADATA_VIEWS_ADDRESS"
+
 const flowTokenAddress = process.env.NEXT_PUBLIC_FLOW_TOKEN_ADDRESS
 if (!flowTokenAddress) throw "Missing NEXT_PUBLIC_FLOW_TOKEN_ADDRESS"
 
@@ -41,6 +47,8 @@ const publicConfig = {
   walletDiscovery,
   flowscanURL,
   fungibleTokenAddress,
+  nonFungibleTokenAddress,
+  metadataViewsAddress,
   flowTokenAddress,
   cloudAddress,
   eligibilityVerifiersAddress,

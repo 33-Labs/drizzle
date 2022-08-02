@@ -20,8 +20,8 @@ export const testnetNFTList = [
         "MetadataViews.ResolverCollection"
       ]
     },
-    collectionPublicPathName: "FLOATCollectionPublicPath",
-    collectionStoragePathName: "FLOATCollectionStoragePath"
+    collectionPublicPath: "FLOAT.FLOATCollectionPublicPath",
+    collectionStoragePath: "FLOAT.FLOATCollectionStoragePath"
   }
 ]
 
@@ -40,7 +40,7 @@ export const mainnetNFTList = [
         "MetadataViews.ResolverCollection"
       ]
     },
-    collectionPublicPathName: "FLOATCollectionPublicPath",
-    collectionStoragePathName: "FLOATCollectionStoragePath"
+    collectionPublicPath: "FLOAT.FLOATCollectionPublicPath",
+    collectionStoragePath: "FLOAT.FLOATCollectionStoragePath"
   } 
 ]
