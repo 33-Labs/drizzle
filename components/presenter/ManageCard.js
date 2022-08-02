@@ -54,7 +54,7 @@ export default function ManageCard(props) {
         overflow-hidden ring-1 ring-black ring-opacity-5 rounded-2xl
         shadow-drizzle 
         p-6 flex flex-col gap-y-2 items-center justify-start">
-        <div className="w-full flex justify-between gap-x-3">
+        <div className="w-full flex flex-col gap-y-3 sm:flex-row sm:justify-between sm:gap-x-3">
           <button
             type="button"
             className={classNames(
@@ -75,7 +75,7 @@ export default function ManageCard(props) {
               }
             }}
           >
-            {drop && drop.isPaused ? "Unpause" : "Pause"}
+            {drop && drop.isPaused ? "UNPAUSE" : "PAUSE"}
           </button>
           <button
             type="button"
@@ -107,7 +107,7 @@ export default function ManageCard(props) {
               setShowAlertModal(true)
               return
             }}>
-            End
+            END
           </button>
           <button
             type="button"
@@ -137,7 +137,7 @@ export default function ManageCard(props) {
               })
               setShowAlertModal(true)
             }}>
-            Delete
+            DELETE
           </button>
         </div>
 

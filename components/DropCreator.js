@@ -6,18 +6,11 @@ import Decimal from 'decimal.js'
 import DropCard from './drop/DropCard'
 
 import {
-  createDrop_FLOATs_Identical,
-  createDrop_FLOATs_Random,
-  createDrop_WhitelistWithAmount,
-  createDrop_FLOATGroup_Identical,
-  createDrop_FLOATGroup_Random,
-  createDrop_Whitelist_Identical,
-  createDrop_Whitelist_Random,
   createDrop
 } from '../lib/transactions'
 import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidHttpUrl } from '../lib/utils'
 
-import { constSelector, useRecoilState } from "recoil"
+import { useRecoilState } from "recoil"
 import {
   basicNotificationContentState,
   showBasicNotificationState,
@@ -349,10 +342,10 @@ export default function DropCreator(props) {
       {/** title */}
       {showPreview ?
         <h1 className="font-flow font-semibold text-4xl text-center mb-10">
-          Preview
+          PREVIEW
         </h1> :
         <h1 className="font-flow font-semibold text-4xl text-center mb-10">
-          Create DROP
+          CREATE DROP
         </h1>
       }
 

@@ -21,6 +21,14 @@ export default function Footer() {
               <Image src="/33.png" alt="" width={20} height={20} priority />
             </div>
           </a>
+          <a href="https://twitter.com/33_labs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="min-w-[20px]">
+              <Image src="/twitter.png" alt="" width={20} height={20} objectFit="contain" priority />
+            </div>
+          </a>
           <a href="https://bayou33.app"
             target="_blank"
             rel="noopener noreferrer"
