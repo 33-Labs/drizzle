@@ -20,11 +20,11 @@ export default function NFTCard(props) {
   return (
     <button className={
       classNames(
-        isDisabled ? "w-[128px]" : "w-[136px]",
+        isDisabled ? "w-[120px] h-48 sm:w-[128px]" : "w-[136px] h-48",
         isSelected ? `ring-2 ring-drizzle-green` : `ring-1 ring-black ring-opacity-5`,
-        `bg-white h-48 rounded-2xl
+        `bg-white rounded-2xl
         flex flex-col gap-y-1 pb-2 justify-between items-center shrink-0
-        overflow-hidden shadow-md `
+        overflow-hidden shadow-md`
       )
     }
     disabled={isDisabled}
