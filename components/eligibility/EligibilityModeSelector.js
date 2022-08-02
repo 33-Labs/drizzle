@@ -79,7 +79,7 @@ export const EligibilityModeFLOAT = {
 export const EligibilityModeFLOATGroup = {
   key: "FLOATGroup",
   name: 'FLOAT Group',
-  intro: 'Distribute tokens to holders of FLOATs in speicific FLOAT Group. FCFS',
+  intro: 'Distribute tokens to holders of FLOATs in specific FLOAT Group. FCFS',
   detail: FloatModeFloatGroup,
   checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
     try {

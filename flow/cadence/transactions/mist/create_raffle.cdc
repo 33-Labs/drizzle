@@ -14,7 +14,7 @@ transaction(
     registeryEndAt: UFix64,
     numberOfWinners: UInt64,
     // NFTInfo
-    nftCatalogCollectioNID: String,
+    nftCatalogCollectionID: String,
     nftContractAddress: Address,
     nftContractName: String,
     nftDisplayName: String,
@@ -57,7 +57,7 @@ transaction(
 
     execute {
         let nftInfo = Mist.NFTInfo(
-            nftCatalogCollectionID: nftCatalogCollectioNID,
+            nftCatalogCollectionID: nftCatalogCollectionID,
             contractName: nftContractName,
             contractAddress: nftContractAddress,
             displayName: nftDisplayName,

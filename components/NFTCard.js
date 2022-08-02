@@ -20,8 +20,9 @@ export default function NFTCard(props) {
   return (
     <button className={
       classNames(
+        isDisabled ? `w-[124px]` : `w-[136px]`,
         isSelected ? `ring-2 ring-drizzle-green` : `ring-1 ring-black ring-opacity-5`,
-        `bg-white w-32 h-48 rounded-2xl
+        `bg-white h-48 rounded-2xl
         flex flex-col gap-y-1 pb-2 justify-between items-center shrink-0
         overflow-hidden shadow-md `
       )
@@ -37,9 +38,9 @@ export default function NFTCard(props) {
       }
       setSelectedTokens(tokens)
     }}>
-      <div className="h-28 bg-drizzle-green/10">
+      <div className="w-full h-28 bg-drizzle-green/10 relative">
         <Image src={convertURI(display.thumbnail)}
-          alt="" width={128} height={112} priority 
+          alt="" layout="fill" priority 
           objectFit="contain"
         />
       </div>
