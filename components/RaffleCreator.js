@@ -31,6 +31,7 @@ import WhitelistReviewer from './eligibility/WhitelistReviewer'
 import DropCreatedModal from './creator/DropCreatedModal'
 import publicConfig from '../publicConfig'
 import StatsCard from './presenter/StatsCard'
+import NFTSelector from './NFTSelector'
 
 const NamePlaceholder = "RAFFLE NAME"
 const DescriptionPlaceholder = "Detailed information about this RAFFLE"
@@ -379,6 +380,13 @@ export default function RaffleCreator(props) {
           timeLockEnabled={timeLockEnabled} setTimeLockEnabled={setTimeLockEnabled}
           setStartAt={setStartAt} setEndAt={setEndAt}
           NamePlaceholder={NamePlaceholder} DescriptionPlaceholder={DescriptionPlaceholder}
+        />
+
+        <NFTSelector 
+          user={props.user}
+          onNFTSelected={() => {
+            console.log("Hi")
+          }}
         />
 
         <div className="flex flex-col gap-y-2">

@@ -26,7 +26,7 @@ export default function WhitelistWithAmountInput(props) {
     <>
       <div>
         <label className="block text-2xl font-bold font-flow">
-          Recipients & Amounts
+          Addresses & Amounts
         </label>
         <label className="block font-flow text-md leading-6 mt-2 mb-2">
           For each line, enter one address and the token amount, seperate with comma. Duplicate addresses are not allowed.
@@ -57,7 +57,7 @@ export default function WhitelistWithAmountInput(props) {
               type="button"
               className={classNames(
                 transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
-                "h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-sm text-black"
+                "h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-md text-black"
               )}
               disabled={transactionInProgress}
               onClick={() => {
@@ -69,7 +69,7 @@ export default function WhitelistWithAmountInput(props) {
 
                 if (rawRecordsStr.trim().length == 0) {
                   setShowBasicNotification(true)
-                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "No recipients provided" })
+                  setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "NO addresses provided" })
                   return
                 }
 

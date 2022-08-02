@@ -60,7 +60,7 @@ export default function TokenSelector(props) {
       <Combobox.Label className="block text-2xl font-flow font-bold">Token</Combobox.Label>
       {props.user && props.user.loggedIn ? (selectedToken
         ? <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Your balance is {balance.toString()} {selectedToken.symbol}</Combobox.Label>
-        : <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Select the token to transfer</Combobox.Label>
+        : <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Select the token to add to the DROP</Combobox.Label>
       ) : <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Connect wallet to select token</Combobox.Label>
       }
       <div className="relative mt-1">
