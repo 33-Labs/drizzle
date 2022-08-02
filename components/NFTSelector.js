@@ -124,8 +124,8 @@ export default function NFTSelector(props) {
       </Combobox>
       {
         Object.keys(nftDisplays).length > 0 ? 
-        // <div className="px-1 py-3 pb-3 mt-4 grid grid-rows-2 grid-flow-col gap-4 justify-start w-full overflow-auto">
-        <div className="px-1 py-3 pb-3 mt-4 flex max-h-[464px] gap-5 justify-start w-full overflow-auto flex-wrap">
+        <div className="px-1 py-3 pb-3 mt-4 grid grid-rows-2 grid-flow-col gap-4 justify-start w-full overflow-auto">
+        {/* // <div className="px-1 py-3 pb-3 mt-4 flex max-h-[464px] gap-5 justify-start w-full overflow-auto flex-wrap"> */}
           {Object.entries(nftDisplays)
             .sort(([tokenID1, ], [tokenID2, ]) => tokenID2 - tokenID1)
             .map(([tokenID, tokenDisplay]) => {
@@ -146,7 +146,8 @@ export default function NFTSelector(props) {
         Object.entries(selectedTokens).filter(([, info]) => info.isSelected).length > 0 ?
         <div className="mt-10 flex flex-col p-4 sm:p-8 rounded-3xl border-4 border-drizzle-green/30 border-dashed">
       <label className="block text-2xl font-flow font-bold">Selected NFT</label>
-        <div className="px-1 py-3 pb-3 mt-4 flex max-h-[464px] gap-3 justify-start w-full overflow-auto flex-wrap">
+        <div className="px-1 py-3 pb-3 mt-4 grid grid-rows-2 grid-flow-col gap-4 justify-start w-full overflow-auto">
+        {/* <div className="px-1 py-3 pb-3 mt-4 flex max-h-[464px] gap-3 justify-start w-full overflow-auto flex-wrap"> */}
           {Object.entries(selectedTokens)
             .filter(([, info]) => info.isSelected)
             .sort(([, info1], [, info2]) => info1.selectedAt - info2.selectedAt)
