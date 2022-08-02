@@ -13,24 +13,32 @@ export default function FloatReviewer(props) {
     totalAmount, setTotalAmount,
     floatMode, rawFloatInput,
     floatEvents, setFloatEvents,
-    setFloatGroup, setFloatEventPairs
+    setFloatGroup, setFloatEventPairs,
+    withTokenSelector,
+    withDistributorSelector
   } = props
 
   return (
     <div className="p-4 sm:p-8 flex flex-col gap-y-10 rounded-3xl
     border-4 border-drizzle-green/30 border-dashed">
+      {
+      withTokenSelector ?
       <TokenSelector
         user={user}
         className="w-full"
         onTokenSelected={setToken}
         onBalanceFetched={setTokenBalance}
       />
+      : null}
+      {
+        withDistributorSelector ?
       <PacketSelector
         mode={packetMode} setMode={setPacketMode}
         capacity={capacity} setCapacity={setCapacity}
         identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
         totalAmount={totalAmount} setTotalAmount={setTotalAmount}
-      />
+      /> : null
+      }
       <FloatPicker
         mode={floatMode}
         threshold={threshold} setThreshold={setThreshold}

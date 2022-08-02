@@ -309,6 +309,8 @@ export default function DropCreator(props) {
           capacity={capacity} setCapacity={setCapacity}
           identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
           totalAmount={totalAmount} setTotalAmount={setTotalAmount}
+          withTokenSelector={true}
+          withDistributorSelector={true}
         />
       )
     }
@@ -330,6 +332,8 @@ export default function DropCreator(props) {
           setFloatEvents={setFloatEvents}
           setFloatEventPairs={setFloatEventPairs}
           setFloatGroup={setFloatGroup}
+          withTokenSelector={true}
+          withDistributorSelector={true}
         />
       )
     }
@@ -341,10 +345,10 @@ export default function DropCreator(props) {
     <>
       {/** title */}
       {showPreview ?
-        <h1 className="font-flow font-semibold text-4xl text-center mb-10">
+        <h1 className="font-flow font-semibold text-2xl sm:text-4xl text-center mb-10">
           PREVIEW
         </h1> :
-        <h1 className="font-flow font-semibold text-4xl text-center mb-10">
+        <h1 className="font-flow font-semibold text-2xl sm:text-4xl text-center mb-10">
           CREATE DROP
         </h1>
       }
@@ -392,6 +396,7 @@ export default function DropCreator(props) {
           setName={setName} setURL={setURL} setDescription={setDescription}
           timeLockEnabled={timeLockEnabled} setTimeLockEnabled={setTimeLockEnabled}
           setStartAt={setStartAt} setEndAt={setEndAt}
+          NamePlaceholder={NamePlaceholder} DescriptionPlaceholder={DescriptionPlaceholder}
         />
 
         <div className="flex flex-col gap-y-2">

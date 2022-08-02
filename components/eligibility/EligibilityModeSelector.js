@@ -108,15 +108,23 @@ export const EligibilityModeFLOATGroup = {
   }
 }
 
-const modes = [
+const dropModes = [
   EligibilityModeFLOAT,
   EligibilityModeFLOATGroup,
   EligibilityModeWhitelist,
   EligibilityModeWhitelistWitAmount,
 ]
 
+const raffleModes = [
+  EligibilityModeFLOAT,
+  EligibilityModeFLOATGroup,
+  EligibilityModeWhitelist 
+]
+
 export default function EligibilityModeSelector(props) {
-  const { mode, setMode, setPacketMode } = props
+  const { mode, setMode, setPacketMode, type } = props
+  const _type = type || "drop"
+  const modes = _type === "drop" ? dropModes : raffleModes
 
   useEffect(() => {
     setPacketMode(null)

@@ -58,10 +58,9 @@ export default function Landing(props) {
                 </button>
                 <button
                   type="button"
-                  disabled={true}
+                  disabled={transactionInProgress}
                   className={classNames(
-                    // transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark text-black",
-                    "bg-drizzle-green/30 text-gray-400",
+                    transactionInProgress ? "bg-drizzle-green/60 text-gray-400" : "bg-drizzle-green hover:bg-drizzle-green-dark text-black",
                     "h-12 w-32 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm"
                   )}
                   onClick={() => {
@@ -76,7 +75,7 @@ export default function Landing(props) {
               type="button"
               disabled={transactionInProgress}
               className={classNames(
-                transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                transactionInProgress ? "bg-drizzle-green/60 text-gray-400" : "bg-drizzle-green hover:bg-drizzle-green-dark text-black",
                 "h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black"
               )}
               onClick={() => { fcl.authenticate() }}

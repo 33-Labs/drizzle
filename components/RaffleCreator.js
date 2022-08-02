@@ -23,7 +23,6 @@ import EligibilityModeSelector, {
   EligibilityModeWhitelistWitAmount,
   EligibilityModeWhitelist
 } from './eligibility/EligibilityModeSelector'
-import WhitelistWithAmountReviewer from './eligibility/WhitelistWithAmountReviewer'
 import FloatReviewer from './eligibility/FloatReviewer'
 import BasicInfoBoard from './creator/BasicInfoBoard'
 import Hints from '../lib/hints'
@@ -33,8 +32,8 @@ import DropCreatedModal from './creator/DropCreatedModal'
 import publicConfig from '../publicConfig'
 import StatsCard from './presenter/StatsCard'
 
-const NamePlaceholder = "DROP NAME"
-const DescriptionPlaceholder = "Detailed information about this DROP"
+const NamePlaceholder = "RAFFLE NAME"
+const DescriptionPlaceholder = "Detailed information about this RAFFLE"
 const HostPlaceholder = "0x0042"
 const TokenPlaceholder = { symbol: "FLOW" }
 const AmountPlaceholder = new Decimal(42)
@@ -285,30 +284,18 @@ export default function RaffleCreator(props) {
 
   const showEligibilityModeInputs = (mode) => {
     if (!mode) { return null }
-    if (mode.key == EligibilityModeWhitelistWitAmount.key) {
-      return (
-        <WhitelistWithAmountReviewer
-          user={props.user}
-          token={token}
-          setToken={setToken}
-          tokenBalance={tokenBalance}
-          setTokenBalance={setTokenBalance}
-          callback={setWhitelistWithAmountReviewerCallback}
-        />
-      )
-    }
 
     if (mode.key === EligibilityModeWhitelist.key) {
       return (
         <WhitelistReviewer
           user={props.user}
-          setToken={setToken}
-          setTokenBalance={setTokenBalance}
           callback={setWhitelistReviewerCallback}
           packetMode={packetMode} setPacketMode={setPacketMode}
           capacity={capacity} setCapacity={setCapacity}
           identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
           totalAmount={totalAmount} setTotalAmount={setTotalAmount}
+          withTokenSelector={false}
+          withDistributorSelector={false}
         />
       )
     }
@@ -317,9 +304,6 @@ export default function RaffleCreator(props) {
       return (
         <FloatReviewer
           user={props.user}
-          token={token} setToken={setToken}
-          tokenBalance={tokenBalance} setTokenBalance={setTokenBalance}
-          packetMode={packetMode} setPacketMode={setPacketMode}
           capacity={capacity} setCapacity={setCapacity}
           identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
           totalAmount={totalAmount} setTotalAmount={setTotalAmount}
@@ -330,6 +314,8 @@ export default function RaffleCreator(props) {
           setFloatEvents={setFloatEvents}
           setFloatEventPairs={setFloatEventPairs}
           setFloatGroup={setFloatGroup}
+          withTokenSelector={false}
+          withDistributorSelector={false}
         />
       )
     }
@@ -341,11 +327,11 @@ export default function RaffleCreator(props) {
     <>
       {/** title */}
       {showPreview ?
-        <h1 className="font-flow font-semibold text-4xl text-center mb-10">
-          Preview
+        <h1 className="font-flow font-semibold text-2xl sm:text-4xl text-center mb-10">
+          PREVIEW
         </h1> :
-        <h1 className="font-flow font-semibold text-4xl text-center mb-10">
-          Create DROP
+        <h1 className="font-flow font-semibold text-2xl sm:text-4xl text-center mb-10">
+          CREATE NFT RAFFLE
         </h1>
       }
 
@@ -392,13 +378,14 @@ export default function RaffleCreator(props) {
           setName={setName} setURL={setURL} setDescription={setDescription}
           timeLockEnabled={timeLockEnabled} setTimeLockEnabled={setTimeLockEnabled}
           setStartAt={setStartAt} setEndAt={setEndAt}
+          NamePlaceholder={NamePlaceholder} DescriptionPlaceholder={DescriptionPlaceholder}
         />
 
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
             Eligibility
           </label>
-          <EligibilityModeSelector mode={eligibilityMode} setMode={setEligibilityMode} setPacketMode={setPacketMode} />
+          <EligibilityModeSelector type="raffle" mode={eligibilityMode} setMode={setEligibilityMode} setPacketMode={setPacketMode} />
         </div>
 
         {showEligibilityModeInputs(eligibilityMode)}
