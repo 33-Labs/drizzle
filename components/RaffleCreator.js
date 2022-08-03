@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
 
-import DropCard from './drop/DropCard'
+import RaffleCard from './raffle/RaffleCard'
 
 import {
   createDrop
@@ -345,7 +345,7 @@ export default function RaffleCreator(props) {
       {showPreview ?
         <>
           <div className="flex justify-center mb-10">
-            <DropCard
+            <RaffleCard
               isPreview={true}
               banner={banner}
               name={(!name || name.length == 0) ? NamePlaceholder : name}
@@ -353,20 +353,21 @@ export default function RaffleCreator(props) {
               host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
               createdAt={CreatedAtPlaceholder}
               description={description ?? DescriptionPlaceholder}
-              token={token || TokenPlaceholder}
+              nft={selectedNFT}
               timeLockEnabled={timeLockEnabled}
               startAt={startAt}
               endAt={endAt}
-              amount={AmountPlaceholder}
+              registerationDeadline={registrationDeadline}
               eligibilityMode={eligibilityMode}
               floatGroup={floatGroup}
               floatEventPairs={floatEventPairs}
               threshold={threshold}
+              selectedTokens={selectedTokens}
             />
           </div>
           <div className="flex flex-col items-center justify-center">
-            <StatsCard isPreview={true}
-            />
+            {/* <StatsCard isPreview={true} */}
+            {/* /> */}
           </div>
         </>
         : null

@@ -23,18 +23,19 @@ const getPacketPreview = (packetMode) => {
   if (packetMode.key === PacketModeRandom.key) { return "Random" }
 }
 
-const getEligibilityTag = (drop, eligibilityMode) => {
-  if (drop) {
+const getEligibilityTag = ({drop, eligibilityMode, raffle}) => {
+  if (drop || raffle) {
     return (
       <div
         className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm"
         data-tip="same amount to all users">
         <label>
-          {getVerifierType(drop)}
+          {getVerifierType(drop ? drop : raffle)}
         </label>
       </div>
     )
   }
+
   if (eligibilityMode) {
     return (
       <div
@@ -49,7 +50,7 @@ const getEligibilityTag = (drop, eligibilityMode) => {
   return null
 }
 
-const getPacketTag = (drop, packetMode) => {
+const getPacketTag = ({drop, packetMode}) => {
   if (drop) {
     return (
       <div
@@ -73,22 +74,44 @@ const getPacketTag = (drop, packetMode) => {
   )
 }
 
+const getIdentifier = (info) => {
+  if (info.drop) {
+    return info.drop.tokenInfo.tokenIdentifier
+  } else if (info.token) {
+    return `A.${info.token.address}.${info.token.contractName}`
+  } else if (info.raffle) {
+    return info.raffle.nftInfo.nftIdentifier
+  } else if (info.nft) {
+    return `A.${info.nft.contractAddress.replace("0x", "")}.${info.nft.contractName}`
+  }
+}
+
+const getSymbol = (info) => {
+  if (info.drop) {
+    return info.drop.tokenInfo.symbol
+  } else if (info.token) {
+    return info.token.symbol
+  } else if (info.raffle) {
+    return info.raffle.nftInfo.displayName
+  } else if (info.nft) {
+    return info.nft.displayName
+  }
+}
+
 export default function TagsCard(props) {
-  const { token, eligibilityMode, packetMode, drop } = props
-  const symbol = drop ? drop.tokenInfo.symbol : (token ? token.symbol : null)
-  const identifer = drop ? drop.tokenInfo.tokenIdentifier : (token ? `A.${token.address}.${token.contractName}` : null)
+  const { info } = props
 
   return (
     <div className={`flex gap-x-1 mb-2`}>
-      {getEligibilityTag(drop, eligibilityMode)}
-      {getPacketTag(drop, packetMode)}
+      {getEligibilityTag(info)}
+      {info.type == "DROP" ? getPacketTag(info) : null}
       <a
-        href={`${publicConfig.flowscanURL}/contract/${identifer}`}
+        href={`${publicConfig.flowscanURL}/contract/${getIdentifier(info)}`}
         target="_blank"
         rel="noopener noreferrer"
         className="px-2 bg-drizzle-green rounded-full font-flow font-medium text-sm"
       >
-        <label>{symbol}</label>
+        <label>{getSymbol(info)}</label>
       </a>
     </div>
   )

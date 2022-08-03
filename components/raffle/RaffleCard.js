@@ -10,11 +10,12 @@ import {
 
 import { ExternalLinkIcon } from "@heroicons/react/outline"
 import { convertCadenceDateTime } from "../../lib/utils"
-import ShareCard from "./ShareCard"
-import ClaimCard from "./ClaimCard"
-import CriteriaCard from "./CriteriaCard"
-import TimeLimitCard from "./TimeLimitCard"
-import TagsCard from "./TagsCard"
+import ShareCard from "../drop/ShareCard"
+import ClaimCard from "../drop/ClaimCard"
+import CriteriaCard from "../drop/CriteriaCard"
+import TimeLimitCard from "../drop/TimeLimitCard"
+import TagsCard from "../drop/TagsCard"
+import ActionCard from "./ActionCard"
 
 const MemoizeBanner = React.memo(({ banner }) => {
   return (
@@ -51,15 +52,14 @@ const MemoizeName = React.memo(({ name, url }) => {
 })
 MemoizeName.displayName = "MemoizeName"
 
-const MemoizeBasicInfo = React.memo(({ host, createdAt, token, eligibilityMode, packetMode, drop }) => {
+const MemoizeBasicInfo = React.memo(({ host, createdAt, nft, eligibilityMode, raffle }) => {
   return (
     <div className="w-full flex flex-col -mt-3">
-      <Tags info={{
-        drop: drop,
-        type: "DROP",
-        token: token,
+      <TagsCard info={{
+        raffle: raffle,
+        type: "RAFFLE",
         eligibilityMode: eligibilityMode,
-        packetMode: packetMode
+        nft: nft
       }}
       />
       <label className="w-full font-flow text-sm text-gray-400 break-words">
@@ -92,7 +92,7 @@ const MemoizeDescription = React.memo(({ description }) => {
 })
 MemoizeDescription.displayName = "MemoizeDescription"
 
-export default function DropCard(props) {
+export default function RaffleCard(props) {
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
 
@@ -100,19 +100,20 @@ export default function DropCard(props) {
   const setShowClaimedModal = props.setShowClaimedModal
   const setClaimedAmountInfo = props.setClaimedAmountInfo
 
-  // Only created Drop has claimStatus
-  const { drop, claimStatus, user, token,
-    eligibilityMode, packetMode, floatGroup, floatEventPairs, threshold } = props
-  const dropID = (drop && drop.dropID) || props.dropID
-  const name = (drop && drop.name) || props.name
-  const host = (drop && drop.host) || props.host
-  const description = (drop && drop.description) || props.description
-  const url = (drop && drop.url) || props.url
-  const banner = (drop && drop.image) || props.banner
-  const createdAt = convertCadenceDateTime((drop && drop.createdAt) || props.createdAt)
-  const startAt = convertCadenceDateTime((drop && drop.startAt) || props.startAt)
-  const endAt = convertCadenceDateTime((drop && drop.endAt) || props.endAt)
-  const tokenInfo = (drop && drop.tokenInfo) || props.tokenInfo
+  // Only created Raffle has claimStatus
+  const { raffle, claimStatus, user, nft, selectedTokens,
+    eligibilityMode, floatGroup, floatEventPairs, threshold } = props
+  const raffleID = (raffle && raffle.raffleID) || props.raffleID
+  const name = (raffle && raffle.name) || props.name
+  const host = (raffle && raffle.host) || props.host
+  const description = (raffle && raffle.description) || props.description
+  const url = (raffle && raffle.url) || props.url
+  const banner = (raffle && raffle.image) || props.banner
+
+  const registrationDeadline = convertCadenceDateTime((raffle && raffle.registryEndAt) || props.registrationDeadline)
+  const createdAt = convertCadenceDateTime((raffle && raffle.createdAt) || props.createdAt)
+  const startAt = convertCadenceDateTime((raffle && raffle.startAt) || props.startAt)
+  const endAt = convertCadenceDateTime((raffle && raffle.endAt) || props.endAt)
 
   return (
     <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8 text-black">
@@ -126,7 +127,7 @@ export default function DropCard(props) {
         <div className="flex flex-col p-5 sm:p-8 gap-y-5">
           <MemoizeName name={name} url={url} />
           <MemoizeBasicInfo
-            host={host} createdAt={createdAt} token={token} eligibilityMode={eligibilityMode} packetMode={packetMode} drop={drop}
+            host={host} createdAt={createdAt} nft={nft} eligibilityMode={eligibilityMode} raffle={raffle}
           />
           {(startAt || endAt) ?
             <TimeLimitCard startAt={startAt} endAt={endAt} /> : null}
@@ -135,24 +136,24 @@ export default function DropCard(props) {
       </div>
       <div className="flex flex-col gap-y-8">
         <CriteriaCard
-          drop={drop} eligibilityMode={eligibilityMode}
+          raffle={raffle} eligibilityMode={eligibilityMode}
           floatGroup={floatGroup} floatEventPairs={floatEventPairs} threshold={threshold}
         />
-        <ClaimCard
+        <ActionCard
           isPreview={isPreview}
           claimStatus={claimStatus}
-          drop={drop}
+          raffle={raffle}
           host={host}
-          token={token}
-          tokenInfo={tokenInfo}
+          token={nft}
+          // tokenInfo={nftInfo}
           user={user}
           setShowClaimedModal={setShowClaimedModal}
           setClaimedAmountInfo={setClaimedAmountInfo}
-        />
+        /> 
         {
-          dropID && host ?
-            <ShareCard url={`${publicConfig.appURL}/${host}/drops/${dropID}`} />
-            : <ShareCard disabled={true} url={`${publicConfig.appURL}/create/ft_drop`} />
+          raffleID && host ?
+            <ShareCard url={`${publicConfig.appURL}/${host}/raffles/${raffleID}`} />
+            : <ShareCard disabled={true} url={`${publicConfig.appURL}/create/ft_raffle`} />
         }
       </div>
     </div>
