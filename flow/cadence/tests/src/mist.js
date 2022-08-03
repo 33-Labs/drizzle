@@ -62,7 +62,6 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
 
   await mintFlow(signer, flowAmount)
 
-  console.log(args)
   const [tx, error] = await createRaffle(signer, Object.values(args))
   if (returnErr === true) {
     return error
@@ -145,7 +144,6 @@ export const endRaffle = async (raffleID, host) => {
   const signers = [host]
   const name = "mist/end_raffle"
   const args = [raffleID]
-  console.log(name, {raffleID})
   return await sendTransaction({ name: name, signers: signers, args: args})
 }
 

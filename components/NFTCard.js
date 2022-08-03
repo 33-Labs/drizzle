@@ -3,21 +3,12 @@ import { useState } from "react"
 import { classNames, convertURI } from "../lib/utils"
 
 export default function NFTCard(props) {
-  const { tokenID, display, selectedTokens, setSelectedTokens, disabled} = props
-  const [selected, setSelected] = useState([])
-  console.log(tokenID)
-  console.log(display)
-  console.log(convertURI(display.thumbnail))
+  const { tokenID, display, selectedTokens, setSelectedTokens, disabled } = props
   const isDisabled = disabled == true
   const isSelected = (selectedTokens && selectedTokens[tokenID] && selectedTokens[tokenID].isSelected == true) ? true : false
 
-  if (selectedTokens) {
-    console.log("hahaha", selectedTokens)
-    const result = Object.entries(selectedTokens).filter(([, info]) => info.isSelected).sort(([, info1], [, info2]) => info1.selectedAt - info2.selectedAt)
-    console.log("dodod", result)
-  }
-
   return (
+    <div key={tokenID}>
     <button className={
       classNames(
         isDisabled ? `w-[124px]` : `w-[136px]`,
@@ -27,20 +18,20 @@ export default function NFTCard(props) {
         overflow-hidden shadow-md `
       )
     }
-    disabled={isDisabled}
-     onClick={() => {
-      if (isDisabled) return
-      let tokens = Object.assign({}, selectedTokens)
-      if (!tokens[tokenID] || tokens[tokenID].isSelected == false) {
-          tokens[tokenID] = {isSelected: true, selectedAt: new Date().getTime()}
-      } else {
-        tokens[tokenID] = {isSelected: false, selectedAt: 0}
-      }
-      setSelectedTokens(tokens)
-    }}>
+      disabled={isDisabled}
+      onClick={() => {
+        if (isDisabled) return
+        let tokens = Object.assign({}, selectedTokens)
+        if (!tokens[tokenID] || tokens[tokenID].isSelected == false) {
+          tokens[tokenID] = { isSelected: true, selectedAt: new Date().getTime() }
+        } else {
+          tokens[tokenID] = { isSelected: false, selectedAt: 0 }
+        }
+        setSelectedTokens(tokens)
+      }}>
       <div className="w-full h-28 bg-drizzle-green/10 relative">
         <Image src={convertURI(display.thumbnail)}
-          alt="" layout="fill" priority 
+          alt="" layout="fill" priority
           objectFit="contain"
         />
       </div>
@@ -51,5 +42,6 @@ export default function NFTCard(props) {
         {`#${tokenID}`}
       </label>
     </button>
+    </div>
   )
 }

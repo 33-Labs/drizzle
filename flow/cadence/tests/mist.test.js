@@ -137,7 +137,6 @@ describe("Mist", () => {
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
     const registeryEndAt = new Date().getTime() / 1000 + 1
-    console.log(registeryEndAt)
     await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt: registeryEndAt})
 
     const Bob = await getAccountAddress("Bob")
@@ -225,7 +224,6 @@ describe("Mist", () => {
     expect(raffle2.rewards.length).toBe(3)
 
     const [, errorDraw3] = await draw(raffleID, Alice)
-    console.log(errorDraw3)
     expect(errorDraw3.includes("no candidates")).toBeTruthy()
   })
 
@@ -265,7 +263,6 @@ describe("Mist", () => {
     expect(Object.keys(raffle1.winners).length).toBe(1)
 
     const [, errorDraw2] = await draw(raffleID, Alice)
-    console.log(errorDraw2)
     expect(errorDraw2.includes("drawn")).toBeTruthy()
   })
 
@@ -311,7 +308,6 @@ describe("Mist", () => {
     expect(errorBatchDraw).toBeNull()
     const raffle2 = await getRaffle(raffleID, Alice) 
     expect(Object.keys(raffle2.winners).length).toBe(3)
-    console.log(raffle2.winners)
   })
 
   it("Mist - Only winner can claim the reward", async () => {
@@ -354,24 +350,19 @@ describe("Mist", () => {
 
     // unregistered account
     const [, errorAliceClaim] = await claimRaffle(raffleID, Alice, Alice)
-    console.log(errorAliceClaim)
     expect(errorAliceClaim.includes("not eligible")).toBeTruthy()
 
     // loser 
     const [, errorLoserClaim] = await claimRaffle(raffleID, Alice, loser)
-    console.log(errorLoserClaim)
     expect(errorLoserClaim.includes("not eligible")).toBeTruthy()
 
     const [, errorWinner] = await claimRaffle(raffleID, Alice, winner)
-    console.log(errorWinner)
     expect(errorWinner).toBeNull()
 
     const winnerRecord = await getWinner(raffleID, Alice, winner)
-    console.log(winnerRecord)
     expect(winnerRecord.isClaimed).toBeTruthy()
 
     const winnerTokenIDs = (await NFT_getIDs(winner)).map((id) => parseInt(id)).sort()
-    console.log(winnerTokenIDs)
     expect(winnerTokenIDs).toEqual(winnerRecord.rewardTokenIDs)
   })
 
@@ -418,7 +409,6 @@ describe("Mist", () => {
     expect(errorWinner).toBeNull()
 
     const winnerRecord = await getWinner(raffleID, Alice, winner)
-    console.log(winnerRecord)
     expect(winnerRecord.isClaimed).toBeTruthy() 
   })
 
@@ -439,7 +429,6 @@ describe("Mist", () => {
     await NFT_mintExampleNFT(admin, Alice)
     await NFT_mintExampleNFT(admin, Alice)
     const newTokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    console.log(newTokenIDs)
 
     await depositToRaffle(raffleID, Alice, newTokenIDs)
     const raffle2 = await getRaffle(raffleID, Alice) 
@@ -447,7 +436,6 @@ describe("Mist", () => {
     expect(raffle2.rewards.length).toBe(5)
 
     tokenIDs.push(...newTokenIDs)
-    console.log(tokenIDs)
     expect(raffle2.nftToBeDrawn.sort()).toEqual(tokenIDs.sort())
     expect(raffle2.rewards.sort()).toEqual(tokenIDs.sort())
   })
@@ -457,7 +445,6 @@ describe("Mist", () => {
     const Bob = await getAccountAddress("Bob")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    console.log(tokenIDs)
     await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs }) 
 
     const raffles = await getAllRaffles(Alice)
@@ -467,7 +454,6 @@ describe("Mist", () => {
     expect(error).toBeNull()
 
     const raffle = await getRaffle(raffleID, Alice) 
-    console.log(raffle)
     expect(raffle.isPaused).toBeTruthy()
 
     const [, errorBob] = await registerRaffle(raffleID, Alice, Bob)
@@ -479,7 +465,6 @@ describe("Mist", () => {
     const Bob = await getAccountAddress("Bob")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    console.log(tokenIDs)
     await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs }) 
 
     const raffles = await getAllRaffles(Alice)
@@ -503,7 +488,6 @@ describe("Mist", () => {
     const Bob = await getAccountAddress("Bob")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    console.log(tokenIDs)
     await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs }) 
 
     const raffles = await getAllRaffles(Alice)

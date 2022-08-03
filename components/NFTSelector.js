@@ -26,11 +26,10 @@ export default function NFTSelector(props) {
   const [transactionInProgress] = useRecoilState(transactionInProgressState)
 
   const [query, setQuery] = useState("")
-  const [selectedNFT, setSelectedNFT] = useState(null)
+  const { selectedNFT, setSelectedNFT, selectedTokens, setSelectedTokens } = props
 
   const NFTs = NFTList(publicConfig.chainEnv)
   const [nftDisplays, setNFTDisplays] = useState({})
-  const [selectedTokens, setSelectedTokens] = useState({})
 
   const filteredNFTs =
     query === ""
@@ -56,11 +55,9 @@ export default function NFTSelector(props) {
             setNFTDisplays({})
             setSelectedTokens({})
             getNFTDisplays(props.user.addr, nft).then((displays) => {
-              console.log(displays)
-              for (const [key, value] of Object.entries(displays)) {
-                console.log(key, {value})
-                displays[key+1] = value
-              }
+              // for (const [key, value] of Object.entries(displays)) {
+              //   displays[key+1] = value
+              // }
               setNFTDisplays(displays)
             })
           }
@@ -120,48 +117,50 @@ export default function NFTSelector(props) {
         </div>
       </Combobox>
       {
-        Object.keys(nftDisplays).length > 0 ? 
-        <div className={`
+        Object.keys(nftDisplays).length > 0 ?
+          <div className={`
           px-1 py-3 pb-3 mt-4 sm:flex sm:flex-wrap grid grid-rows-2 grid-flow-col gap-3 sm:gap-5 justify-start w-full overflow-auto sm:max-h-[450px]
         `}>
-          {Object.entries(nftDisplays)
-            .sort(([tokenID1, ], [tokenID2, ]) => tokenID2 - tokenID1)
-            .map(([tokenID, tokenDisplay]) => {
-            return (
-              <NFTCard
-                tokenID={tokenID}
-                display={tokenDisplay}
-                selectedTokens={selectedTokens}
-                setSelectedTokens={setSelectedTokens}
-              />
-            )
-          })
-          }
-        </div> : null
+            {Object.entries(nftDisplays)
+              .sort(([tokenID1,], [tokenID2,]) => tokenID2 - tokenID1)
+              .map(([tokenID, tokenDisplay]) => {
+                return (
+                  <NFTCard
+                    key={tokenID}
+                    tokenID={tokenID}
+                    display={tokenDisplay}
+                    selectedTokens={selectedTokens}
+                    setSelectedTokens={setSelectedTokens}
+                  />
+                )
+              })
+            }
+          </div> : null
       }
 
       {
         Object.entries(selectedTokens).filter(([, info]) => info.isSelected).length > 0 ?
-        <div className="mt-10 flex flex-col p-4 sm:p-8 rounded-3xl border-4 border-drizzle-green/30 border-dashed">
-      <label className="block text-2xl font-flow font-bold">Selected NFT</label>
-        <div className={`
+          <div className="mt-10 flex flex-col p-4 sm:p-8 rounded-3xl border-4 border-drizzle-green/30 border-dashed">
+            <label className="block text-2xl font-flow font-bold">Selected NFT</label>
+            <div className={`
           px-1 py-3 pb-3 mt-4 sm:flex sm:flex-wrap grid grid-rows-2 grid-flow-col gap-3 sm:gap-4 justify-start w-full overflow-auto sm:max-h-[464px]
         `}>
-          {Object.entries(selectedTokens)
-            .filter(([, info]) => info.isSelected)
-            .sort(([, info1], [, info2]) => info1.selectedAt - info2.selectedAt)
-            .map(([tokenID,]) => {
-            return (
-              <NFTCard
-              disabled={true}
-                tokenID={tokenID}
-                display={nftDisplays[tokenID]}
-              />
-            )
-          })
-          }
-        </div> 
-        </div>: null
+              {Object.entries(selectedTokens)
+                .filter(([, info]) => info.isSelected)
+                .sort(([, info1], [, info2]) => info1.selectedAt - info2.selectedAt)
+                .map(([tokenID,]) => {
+                  return (
+                    <NFTCard
+                      key={tokenID}
+                      disabled={true}
+                      tokenID={tokenID}
+                      display={nftDisplays[tokenID]}
+                    />
+                  )
+                })
+              }
+            </div>
+          </div> : null
       }
 
     </div>

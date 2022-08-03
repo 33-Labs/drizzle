@@ -35,6 +35,10 @@ export const EligibilityModeWhitelistWitAmount = {
     }
 
     return [true, Hints.Valid]
+  },
+  checkRaffleParams: () => {
+    // This mode is not supported in Raffle
+    throw "invalid mode"
   }
 }
 
@@ -71,6 +75,20 @@ export const EligibilityModeWhitelist = {
     } catch (error) {
       return [false, error]
     }
+  },
+  checkRaffleParams: (whitelistReviewerCallback) => {
+    try {
+      if (!whitelistReviewerCallback) {
+        throw Hints.NeedProcessR
+      }
+      if (whitelistReviewerCallback.invalidRecordsCount > 0) {
+        throw Hints.HaveInvalidRRecords
+      }
+
+      return [true, Hints.Valid]
+    } catch (error) {
+      return [false, error]
+    } 
   }
 }
 
@@ -103,6 +121,17 @@ export const EligibilityModeFLOAT = {
     } catch (error) {
       return [false, error]
     }
+  },
+  checkRaffleParams: (floatEvents) => {
+    try {
+      if (floatEvents.length != 1) {
+        throw Hints.InvalidFloatEvent
+      }
+      // threshold should be 1 now
+      return [true, Hints.Valid]
+    } catch (error) {
+      return [false, error]
+    } 
   }
 }
 
@@ -145,6 +174,26 @@ export const EligibilityModeFLOATGroup = {
     } catch (error) {
       return [false, error]
     }
+  },
+  checkRaffleParams: (floatEvents, threshold) => {
+    try {
+      if (floatEvents.length == 0) {
+        throw Hints.EmptyFloatGroup
+      }
+
+      if (!threshold || isNaN(parseInt(threshold))) {
+        throw Hints.InvalidThreshold
+      }
+
+      const _threshold = new Decimal(threshold)
+      if (!(_threshold.isInteger() && _threshold.isPositive() && !_threshold.isZero() && _threshold.toNumber() <= floatEvents.length)) {
+        throw Hints.InvalidThreshold
+      }
+
+      return [true, Hints.Valid]
+    } catch (error) {
+      return [false, error]
+    }
   }
 }
 
@@ -167,7 +216,9 @@ export default function EligibilityModeSelector(props) {
   const modes = _type === "DROP" ? dropModes : raffleModes
 
   useEffect(() => {
-    setPacketMode(null)
+    if (setPacketMode) {
+      setPacketMode(null)
+    }
   }, [mode])
 
   return (
