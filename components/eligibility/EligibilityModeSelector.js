@@ -8,7 +8,17 @@ import { useEffect } from 'react'
 export const EligibilityModeWhitelistWitAmount = {
   key: "WhitelistWithAmount",
   name: 'Whitelist with Amount',
-  intro: 'Distribute specific amount to specific account on whitelist',
+  intro: (type) => {
+    if (type === "DROP") {
+      return 'Distribute specific amount to specific account on whitelist'
+    }
+
+    if (type === "RAFFLE") {
+      return 'Accounts on whitelist is eligible for registration'
+    }
+
+    return ""
+  },
   checkParams: (whitelistWithAmountReviewerCallback, tokenBalance) => {
     if (!whitelistWithAmountReviewerCallback) {
       return [false, Hints.NeedProcessRA]
@@ -31,7 +41,17 @@ export const EligibilityModeWhitelistWitAmount = {
 export const EligibilityModeWhitelist = {
   key: "Whitelist",
   name: 'Whitelist',
-  intro: 'Distribute tokens to accounts on whitelist. FCFS',
+  intro: (type) => {
+    if (type === "DROP") {
+      return 'Distribute tokens to holders of specific FLOAT. FCFS'
+    }
+
+    if (type === "RAFFLE") {
+      return 'Accounts on whitelist is eligible for registration'
+    }
+
+    return ""
+  },
   checkParams: (
     whitelistReviewerCallback, packetMode, totalBalance, capacity, amount = {}
   ) => {
@@ -57,7 +77,17 @@ export const EligibilityModeWhitelist = {
 export const EligibilityModeFLOAT = {
   key: "FLOAT",
   name: 'FLOAT',
-  intro: 'Distribute tokens to holders of specific FLOAT. FCFS',
+  intro: (type) => {
+    if (type === "DROP") {
+      return 'Distribute tokens to holders of specific FLOAT. FCFS'
+    }
+
+    if (type === "RAFFLE") {
+      return 'Holders of specific FLOAT is eligible for registration'
+    }
+
+    return ""
+  },
   detail: FloatModeFloatEvent,
   checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
     try {
@@ -79,7 +109,17 @@ export const EligibilityModeFLOAT = {
 export const EligibilityModeFLOATGroup = {
   key: "FLOATGroup",
   name: 'FLOAT Group',
-  intro: 'Distribute tokens to holders of FLOATs in specific FLOAT Group. FCFS',
+  intro: (type) => {
+    if (type === "DROP") {
+      return 'Distribute tokens to holders of FLOATs in specific FLOAT Group. FCFS'
+    }
+
+    if (type === "RAFFLE") {
+      return 'Holders of FLOATs in specific FLOAT Group is eligible for registration'
+    }
+
+    return ""
+  },
   detail: FloatModeFloatGroup,
   checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
     try {
@@ -123,8 +163,8 @@ const raffleModes = [
 
 export default function EligibilityModeSelector(props) {
   const { mode, setMode, setPacketMode, type } = props
-  const _type = type || "drop"
-  const modes = _type === "drop" ? dropModes : raffleModes
+  const _type = type || "DROP"
+  const modes = _type === "DROP" ? dropModes : raffleModes
 
   useEffect(() => {
     setPacketMode(null)
@@ -165,7 +205,7 @@ export default function EligibilityModeSelector(props) {
                           as="span"
                           className={`inline text-gray-500`}
                         >
-                          {mode.intro}
+                          {mode.intro(_type)}
                         </RadioGroup.Description>
                       </div>
                     </div>

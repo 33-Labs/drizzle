@@ -8,7 +8,7 @@ import DropCard from './drop/DropCard'
 import {
   createDrop
 } from '../lib/cloud-transactions'
-import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidHttpUrl } from '../lib/utils'
+import { classNames, floatEventInputHandler, floatGroupInputHandler, getTimezone, isValidHttpUrl } from '../lib/utils'
 
 import { useRecoilState } from "recoil"
 import {
@@ -39,6 +39,7 @@ const HostPlaceholder = "0x0042"
 const TokenPlaceholder = { symbol: "FLOW" }
 const AmountPlaceholder = new Decimal(42)
 const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
+const Timezone = getTimezone()
 
 export default function RaffleCreator(props) {
   const router = useRouter()
@@ -93,13 +94,21 @@ export default function RaffleCreator(props) {
   const [showCreatedModal, setShowCreatedModal] = useState(false)
   const [newDropURL, setNewDropURL] = useState(null)
 
+  const [timezone, setTimezone] = useState(null)
+  const [registrationDeadline, setRegistrationDeadline] = useState(null)
+  const [numberOfWinners, setNumberOfWinners] = useState('')
+
+  useEffect(() => {
+    setTimezone(Timezone)
+  }, [timezone])
+
   useEffect(() => {
     if (float && float.trim() != '') {
       try {
         const eventPairs = floatEventInputHandler(float)
         setFloatEventPairs(eventPairs)
         setEligibilityMode(EligibilityModeFLOAT)
-      } catch (e) {}
+      } catch (e) { }
     }
 
     if (float_group && float_group.trim() != '') {
@@ -107,7 +116,7 @@ export default function RaffleCreator(props) {
         const group = floatGroupInputHandler(float_group)
         setFloatGroup(group)
         setEligibilityMode(EligibilityModeFLOATGroup)
-      } catch (e) {} 
+      } catch (e) { }
     }
   }, [float, float_group])
 
@@ -338,37 +347,37 @@ export default function RaffleCreator(props) {
 
       {/** preview */}
       {showPreview ?
-      <>
-        <div className="flex justify-center mb-10">
-          <DropCard
-            isPreview={true}
-            banner={banner}
-            name={(!name || name.length == 0) ? NamePlaceholder : name}
-            url={url}
-            host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
-            createdAt={CreatedAtPlaceholder}
-            description={description ?? DescriptionPlaceholder}
-            token={token || TokenPlaceholder}
-            timeLockEnabled={timeLockEnabled}
-            startAt={startAt}
-            endAt={endAt}
-            amount={AmountPlaceholder}
-            eligibilityMode={eligibilityMode}
-            packetMode={packetMode}
-            floatGroup={floatGroup}
-            floatEventPairs = {floatEventPairs}
-            threshold={threshold}
-          />
-        </div> 
-        <div className="flex flex-col items-center justify-center">
-          <StatsCard isPreview={true} token={token} 
-            packetMode={packetMode} 
-            randomTotalAmount={totalAmount}
-            identicalAmount={identicalAmount} 
-            totalTokenAmount={whitelistWithAmountReviewerCallback && whitelistWithAmountReviewerCallback.tokenAmount}
-            capacity={capacity}
-          />
-        </div>
+        <>
+          <div className="flex justify-center mb-10">
+            <DropCard
+              isPreview={true}
+              banner={banner}
+              name={(!name || name.length == 0) ? NamePlaceholder : name}
+              url={url}
+              host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
+              createdAt={CreatedAtPlaceholder}
+              description={description ?? DescriptionPlaceholder}
+              token={token || TokenPlaceholder}
+              timeLockEnabled={timeLockEnabled}
+              startAt={startAt}
+              endAt={endAt}
+              amount={AmountPlaceholder}
+              eligibilityMode={eligibilityMode}
+              packetMode={packetMode}
+              floatGroup={floatGroup}
+              floatEventPairs={floatEventPairs}
+              threshold={threshold}
+            />
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <StatsCard isPreview={true} token={token}
+              packetMode={packetMode}
+              randomTotalAmount={totalAmount}
+              identicalAmount={identicalAmount}
+              totalTokenAmount={whitelistWithAmountReviewerCallback && whitelistWithAmountReviewerCallback.tokenAmount}
+              capacity={capacity}
+            />
+          </div>
         </>
         : null
       }
@@ -382,25 +391,58 @@ export default function RaffleCreator(props) {
           NamePlaceholder={NamePlaceholder} DescriptionPlaceholder={DescriptionPlaceholder}
         />
 
+        <div className="flex flex-col">
+          <label className="text-2xl font-bold font-flow">
+            # of Winners
+          </label>
+          <label className="block text-md font-flow leading-6 mt-2 mb-2">
+            The max number of winners to be drawn
+          </label>
+          <input
+            type="number"
+            disabled={transactionInProgress}
+            min="1"
+            // max={floatEvents.length}
+            value={numberOfWinners}
+            id="numberOfWinners"
+            className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+            onWheel={(e) => e.target.blur()}
+            onChange={(event) => { setNumberOfWinners(event.target.value) }}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-2xl font-bold font-flow">
+            Registration Deadline{timezone ? ` (${timezone})` : ''}
+          </label>
+          <label className="block text-md font-flow leading-6 mt-2 mb-2">
+            To be a candidate, eligible accounts should register before this date
+          </label>
+          <input
+            type="datetime-local"
+            disabled={transactionInProgress}
+            id="start_at"
+            className="mt-1 rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300 min-w-[220px]"
+            onChange={(e) => { setRegistrationDeadline(new Date(e.target.value)) }}
+          />
+        </div>
+
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            Eligibility
+            Registration Eligibility
           </label>
-          <EligibilityModeSelector type="raffle" mode={eligibilityMode} setMode={setEligibilityMode} setPacketMode={setPacketMode} />
+          <EligibilityModeSelector type="RAFFLE" mode={eligibilityMode} setMode={setEligibilityMode} setPacketMode={setPacketMode} />
         </div>
 
         {showEligibilityModeInputs(eligibilityMode)}
 
-        <NFTSelector 
+        <NFTSelector
           user={props.user}
           onNFTSelected={() => {
             console.log("Hi")
           }}
-      />
+        />
       </div>
-
-
-
 
       {/** create button */}
       <div className="w-full mt-16 flex flex-col gap-y-5 sm:flex-row sm:justify-between sm:gap-x-10 items-center">

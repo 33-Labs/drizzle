@@ -29,9 +29,6 @@ export default function NFTSelector(props) {
   const [selectedNFT, setSelectedNFT] = useState(null)
 
   const NFTs = NFTList(publicConfig.chainEnv)
-  const [rawRecordsStr, setRawRecordsStr] = useState('')
-  const [validRecords, setValidRecords] = useState([])
-  const [invalidRecords, setInvalidRecords] = useState([])
   const [nftDisplays, setNFTDisplays] = useState({})
   const [selectedTokens, setSelectedTokens] = useState({})
 
@@ -54,7 +51,7 @@ export default function NFTSelector(props) {
 
       <Combobox as="div" className={props.className} value={props.user && props.user.loggedIn && selectedNFT} onChange={async (nft) => {
         if (props.user && props.user.loggedIn) {
-          if (!selectedNFT || nft.contractName != selectedNFT.contractName) {
+          if (!selectedNFT || nft.contractName != selectedNFT.contractName || Object.keys(nftDisplays).length == 0) {
             setSelectedNFT(nft)
             setNFTDisplays({})
             setSelectedTokens({})
