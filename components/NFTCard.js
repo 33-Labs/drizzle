@@ -7,6 +7,10 @@ export default function NFTCard(props) {
   const isDisabled = disabled == true
   const isSelected = (selectedTokens && selectedTokens[tokenID] && selectedTokens[tokenID].isSelected == true) ? true : false
 
+  const thumbnailURI = convertURI(display.thumbnail)
+  const thumbnail = (thumbnailURI == "" || !thumbnailURI) ? "/drizzle.png" : thumbnailURI
+  
+
   return (
     <div key={tokenID}>
     <button className={
@@ -30,7 +34,7 @@ export default function NFTCard(props) {
         setSelectedTokens(tokens)
       }}>
       <div className="w-full h-28 bg-drizzle-green/10 relative">
-        <Image src={convertURI(display.thumbnail)}
+        <Image src={thumbnail}
           alt="" layout="fill" priority
           objectFit="contain"
         />

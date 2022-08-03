@@ -12,16 +12,32 @@ export const testnetNFTList = [
     contractName: "FLOAT",
     contractAddress: "0x0afe396ebc8eee65",
     collectionType: {
-      type: "FLOAT.Collection",
+      type: "A.0afe396ebc8eee65.FLOAT.Collection",
       restrictions: [
-        "FLOAT.CollectionPublic",
-        "NonFungibleToken.CollectionPublic",
-        "NonFungibleToken.Receiver",
-        "MetadataViews.ResolverCollection"
+        "A.0afe396ebc8eee65.FLOAT.CollectionPublic",
+        "A.631e88ae7f1d7c20.NonFungibleToken.CollectionPublic",
+        "A.631e88ae7f1d7c20.NonFungibleToken.Receiver",
+        "A.631e88ae7f1d7c20.MetadataViews.ResolverCollection"
       ]
     },
     collectionPublicPath: "FLOAT.FLOATCollectionPublicPath",
     collectionStoragePath: "FLOAT.FLOATCollectionStoragePath"
+  },
+  {
+    displayName: "Example",
+    logoURI: "/float.png",
+    contractName: "ExampleNFT",
+    contractAddress: "0x257c27ba4951541d",
+    collectionType: {
+      type: "A.257c27ba4951541d.ExampleNFT.Collection",
+      restrictions: [
+        "A.257c27ba4951541d.ExampleNFT.ExampleNFTCollectionPublic",
+        "A.631e88ae7f1d7c20.NonFungibleToken.CollectionPublic",
+        "A.631e88ae7f1d7c20.MetadataViews.ResolverCollection"
+      ]
+    },
+    collectionPublicPath: "ExampleNFT.CollectionPublicPath",
+    collectionStoragePath: "ExampleNFT.CollectionStoragePath"
   }
 ]
 
