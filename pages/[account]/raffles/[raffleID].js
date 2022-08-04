@@ -30,9 +30,6 @@ export default function Raffle(props) {
   const { data: claimStatusData, error: claimStatusError } = useSWR(
     raffleID && host && user && user.loggedIn ? ["raffleClaimStatusFetcher", raffleID, host, user.addr] : null, raffleClaimStatusFetcher)
 
-  console.log("claimStatusError", claimStatusError)
-  console.log("raffleError", raffleError)
-
   useEffect(() => {
     if (raffleData) { setRaffle(raffleData) }
     if (claimStatusData) { setClaimStatus(claimStatusData) }

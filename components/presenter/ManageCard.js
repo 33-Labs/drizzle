@@ -48,11 +48,11 @@ export default function ManageCard(props) {
   }, [balanceData])
 
   return (
-    <>
-      <label className="text-2xl font-bold font-flow">Manage DROP</label>
+    <div className="w-full flex flex-col">
+      <label className="px-3 text-2xl font-bold font-flow">MANAGE</label>
       <div className="w-full mt-5 mb-10 bg-white
         overflow-hidden ring-1 ring-black ring-opacity-5 rounded-2xl
-        shadow-drizzle 
+        shadow
         p-6 flex flex-col gap-y-2 items-center justify-start">
         <div className="w-full flex flex-col gap-y-3 sm:flex-row sm:justify-between sm:gap-x-3">
           <button
@@ -217,6 +217,6 @@ export default function ManageCard(props) {
         </div> */}
 
       </div>
-    </>
+    </div>
   )
 }

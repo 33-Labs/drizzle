@@ -67,7 +67,7 @@ export default function RaffleList(props) {
                         Eligibility
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        # of Winners
+                        Winners (Drawn / Total)
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Status
@@ -80,6 +80,7 @@ export default function RaffleList(props) {
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {raffles.map((raffle) => {
                       const status = getRaffleStatus(raffle)
+                      console.log(status)
                       raffle.status = status
                       return raffle
                     }).map((raffle) => (
@@ -104,7 +105,7 @@ export default function RaffleList(props) {
                             {getVerifierType(raffle, "RAFFLE")}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {raffle.numberOfWinners}
+                            {`${Object.keys(raffle.winners).length} / ${raffle.numberOfWinners}`}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${raffle.status.tagColor}`}>

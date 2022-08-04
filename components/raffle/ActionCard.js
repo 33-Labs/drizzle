@@ -1,6 +1,5 @@
 import Decimal from "decimal.js"
 import { classNames } from "../../lib/utils"
-import { claim } from "../../lib/cloud-transactions"
 import { useSWRConfig } from 'swr'
 import * as fcl from "@onflow/fcl"
 
@@ -9,7 +8,7 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../../lib/atoms"
-import { register } from "../../lib/mist-transactions"
+import { register, claim } from "../../lib/mist-transactions"
 
 const isClaimable = (claimStatus) => {
   if (!claimStatus) return false
@@ -170,7 +169,7 @@ export default function ActionCard(props) {
   const { mutate } = useSWRConfig()
 
   const { isPreview, raffle, host, user, nft, claimStatus, setShowClaimedModal, setClaimedAmountInfo } = props
-  const displayName = isPreview ? (nft && nft.displayName) : (raffle.nftInfo && raffle.nftInfo.name)
+  const displayName = isPreview ? (nft && nft.name) : (raffle.nftInfo && raffle.nftInfo.name)
 
   // [Emoji, Description, Amount, Title]
   const {emoji, description, amount, title} = parseClaimStatus(user, claimStatus, displayName, isPreview)
@@ -217,6 +216,21 @@ export default function ActionCard(props) {
                   console.log("REGISTERED!")
                 }
               } 
+            } else if (claimStatus.availability.status.rawValue == "3" || claimStatus.availability.status.rawValue == "4") {
+              console.log(raffle.nftInfo)
+              const res = await claim(raffle.raffleID, host, raffle.nftInfo,
+                setTransactionInProgress,
+                setTransactionStatus)
+
+              if (res && res.status === 4 && res.statusCode === 0) {
+                const event = res.events.find((e) => e.type.includes("RaffleClaimed"))
+                if (event) {
+                  // setClaimedAmountInfo(claimedAmountInfo)
+                  // setShowClaimedModal(true)
+                  console.log("CLAIMED!")
+                }
+              }  
+
             }
 
 

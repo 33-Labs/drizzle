@@ -118,7 +118,6 @@ export default function RaffleCreator(props) {
       return [false, Hints.InvalidURL]
     }
 
-    console.log(selectedNFT)
     if (!selectedNFT) {
       return [false, Hints.InvalidNFT]
     }
@@ -217,14 +216,17 @@ export default function RaffleCreator(props) {
       url: url,
       startAt: startAt && isFinite(startAt) ? `${startAt.getTime() / 1000}.0` : null,
       endAt: endAt && isFinite(endAt) ? `${endAt.getTime() / 1000}.0` : null,
-      registeryEndAt: `${registrationDeadline.getTime() / 1000}.0`,
+      registrationEndAt: `${registrationDeadline.getTime() / 1000}.0`,
       numberOfWinners: numberOfWinners,
-      nftCatalogCollectionID: selectedNFT.displayName,
-      nftContractAddress: selectedNFT.contractAddress,
+      nftName: selectedNFT.name,
+      nftTypeIdentifier: selectedNFT.nftType,
       nftContractName: selectedNFT.contractName,
-      nftDisplayName: selectedNFT.displayName,
-      nftCollectionStoragePath: selectedNFT.collectionStoragePath.replace("/storage/", ""),
+      nftContractAddress: selectedNFT.contractAddress,
+      nftCollectionTypeIdentifier: selectedNFT.collectionType.type,
+      nftCollectionTypeRestrictions: selectedNFT.collectionType.restrictions,
+      nftCollectionLogoURL: selectedNFT.logoURL,
       nftCollectionPublicPath: selectedNFT.collectionPublicPath.replace("/public/", ""),
+      nftCollectionStoragePath: selectedNFT.collectionStoragePath.replace("/storage/", ""),
       rewardTokenIDs: rewardTokenIDs,
       withWhitelist: false,
       whitelist: [],
@@ -260,8 +262,6 @@ export default function RaffleCreator(props) {
     }
 
     const args = Object.values(params)
-    console.log(args)
-    console.log(setTransactionStatus)
     const res = await createRaffle(...args,
       setTransactionInProgress, setTransactionStatus
     )

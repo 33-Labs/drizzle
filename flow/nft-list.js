@@ -7,8 +7,8 @@ export const NFTList = (network) => {
 
 export const testnetNFTList = [
   {
-    displayName: "FLOAT",
-    logoURI: "/float.png",
+    name: "FLOAT",
+    nftType: "A.0afe396ebc8eee65.FLOAT.NFT",
     contractName: "FLOAT",
     contractAddress: "0x0afe396ebc8eee65",
     collectionType: {
@@ -20,12 +20,13 @@ export const testnetNFTList = [
         "A.631e88ae7f1d7c20.MetadataViews.ResolverCollection"
       ]
     },
+    logoURL: "/float.png",
     collectionPublicPath: "/public/FLOATCollectionPublicPath",
     collectionStoragePath: "/storage/FLOATCollectionStoragePath"
   },
   {
-    displayName: "Example",
-    logoURI: "/float.png",
+    name: "Example",
+    nftType: "A.257c27ba4951541d.ExampleNFT.NFT",
     contractName: "ExampleNFT",
     contractAddress: "0x257c27ba4951541d",
     collectionType: {
@@ -36,27 +37,11 @@ export const testnetNFTList = [
         "A.631e88ae7f1d7c20.MetadataViews.ResolverCollection"
       ]
     },
+    logoURL: "/float.png",
     collectionPublicPath: "/public/exampleNFTCollection",
     collectionStoragePath: "/storage/exampleNFTCollection"
   }
 ]
 
 export const mainnetNFTList = [
-  {
-    displayName: "FLOAT",
-    logoURI: "/float.png",
-    contractName: "FLOAT",
-    contractAddress: "0x2d4c3caffbeab845",
-    collectionType: {
-      type: "FLOAT.Collection",
-      restrictions: [
-        "FLOAT.CollectionPublic",
-        "NonFungibleToken.CollectionPublic",
-        "NonFungibleToken.Receiver",
-        "MetadataViews.ResolverCollection"
-      ]
-    },
-    collectionPublicPath: "FLOAT.FLOATCollectionPublicPath",
-    collectionStoragePath: "FLOAT.FLOATCollectionStoragePath"
-  } 
 ]

@@ -358,15 +358,13 @@ pub contract Mist {
 
             assert(UInt64(self.winners.keys.length) <= self.numberOfWinners, message: "invalid winners")
 
-            // can't register but claiming is available
-            if UInt64(self.winners.keys.length) == self.numberOfWinners {
+            if (UInt64(self.winners.keys.length) == self.numberOfWinners) || self.candidates.length == 0 {
                 return Availability(
                     status: AvailabilityStatus.drawn,
                     extraData: {}
                 )
             }
 
-            // can't register and claim
             if getCurrentBlock().timestamp > self.registrationEndAt {
                 return Availability(
                     status: AvailabilityStatus.drawing,
@@ -487,7 +485,6 @@ pub contract Mist {
         }
 
         pub fun draw(params: {String: AnyStruct}) {
-            assert(self.candidates.length > 0, message: "no candidates")
             assert(self.nftToBeDrawn.length >= self.candidates.length, message: "nft is not enough")
 
             let availability = self.checkAvailability(params: params)
@@ -522,16 +519,15 @@ pub contract Mist {
         }
 
         pub fun batchDraw(params: {String: AnyStruct}) {
-            assert(UInt64(self.candidates.length) > 0, message: "no candidates")
             assert(self.nftToBeDrawn.length >= self.candidates.length, message: "nft is not enough")
 
             let availability = self.checkAvailability(params: params)
             assert(availability.status == AvailabilityStatus.drawing, message: availability.getStatus())
 
-            let availableCapacity = self.numberOfWinners - UInt64(self.winners.keys.length)
-            assert(UInt64(self.candidates.length) >= availableCapacity, message: "no enough candidates")
+            let upperLimit = self.numberOfWinners > UInt64(self.candidates.length) ?
+                UInt64(self.candidates.length) : self.numberOfWinners
 
-            while UInt64(self.winners.keys.length) < self.numberOfWinners {
+            while UInt64(self.winners.keys.length) < upperLimit {
                 let winnerIndex = unsafeRandom() % UInt64(self.candidates.length)
                 let winner = self.candidates[winnerIndex]
 

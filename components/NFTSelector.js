@@ -35,7 +35,7 @@ export default function NFTSelector(props) {
     query === ""
       ? NFTs
       : NFTs.filter((nft) => {
-        const content = `${nft.displayName}`
+        const content = `${nft.name}`
         return content.toLowerCase().includes(query.toLowerCase())
       })
 
@@ -70,7 +70,7 @@ export default function NFTSelector(props) {
             onChange={(event) => {
               setQuery(event.target.value)
             }}
-            displayValue={(nft) => nft && `${nft.displayName}`}
+            displayValue={(nft) => nft && `${nft.name}`}
           />
           <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
             <SelectorIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -80,7 +80,7 @@ export default function NFTSelector(props) {
             <Combobox.Options className="absolute z-10 rounded-2xl mt-1 max-h-56 w-full overflow-auto  bg-white py-1 text-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               {filteredNFTs.map((nft) => (
                 <Combobox.Option
-                  key={nft.displayName}
+                  key={nft.name}
                   value={nft}
                   className={({ active }) =>
                     classNames(
@@ -93,9 +93,9 @@ export default function NFTSelector(props) {
                     <>
                       <div className="flex items-center">
                         <div className="w-6 h-6 relative">
-                          <Image src={nft.logoURI} alt="" layout="fill" objectFit="cover" className="rounded-full" />
+                          <Image src={nft.logoURL} alt="" layout="fill" objectFit="cover" className="rounded-full" />
                         </div>
-                        <span className={classNames("ml-3 truncate", selected && "font-semibold")}>{`${nft.displayName}`}</span>
+                        <span className={classNames("ml-3 truncate", selected && "font-semibold")}>{`${nft.name}`}</span>
                       </div>
 
                       {selected && (

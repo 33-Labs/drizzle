@@ -95,7 +95,7 @@ const getSymbol = (info) => {
   } else if (info.raffle) {
     return info.raffle.nftInfo.name
   } else if (info.nft) {
-    return info.nft.displayName
+    return info.nft.name
   }
 }
 

@@ -52,8 +52,6 @@ export default function Account(props) {
     account ? ["dropsFetcher", account] : null, dropsFetcher)
   const { data: rafflesData, error: rafflesError } = useSWR(
     account ? ["rafflesFetcher", account] : null, rafflesFetcher)
-  console.log("raffleData", rafflesData)
-  console.log("raffleError", rafflesError)
 
   const [showDrop, setShowDrop] = useState(true)
   const [showRaffle, setShowRaffle] = useState(false)

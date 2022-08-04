@@ -103,7 +103,7 @@ describe("Mist", () => {
     const Alice = await getAccountAddress("Alice")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt:  (new Date()).getTime() / 1000 + 100})
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt:  (new Date()).getTime() / 1000 + 100})
 
     const Bob = await getAccountAddress("Bob")
 
@@ -121,7 +121,7 @@ describe("Mist", () => {
     const Alice = await getAccountAddress("Alice")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt:  (new Date()).getTime() / 1000 + 100})
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt:  (new Date()).getTime() / 1000 + 100})
 
     const Frank = await getAccountAddress("Frank")
 
@@ -136,8 +136,8 @@ describe("Mist", () => {
     const Alice = await getAccountAddress("Alice")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    const registeryEndAt = new Date().getTime() / 1000 + 1
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt: registeryEndAt})
+    const registrationEndAt = new Date().getTime() / 1000 + 1
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt: registrationEndAt})
 
     const Bob = await getAccountAddress("Bob")
 
@@ -154,8 +154,8 @@ describe("Mist", () => {
     const Alice = await getAccountAddress("Alice")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    const registeryEndAt = new Date().getTime() / 1000 + 100
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt: registeryEndAt})
+    const registrationEndAt = new Date().getTime() / 1000 + 100
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt: registrationEndAt})
 
     const Bob = await getAccountAddress("Bob")
 
@@ -176,8 +176,8 @@ describe("Mist", () => {
 
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    const registeryEndAt = new Date().getTime() / 1000 + 2 
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt: registeryEndAt})
+    const registrationEndAt = new Date().getTime() / 1000 + 2 
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt: registrationEndAt})
 
     const raffles = await getAllRaffles(Alice)
     const raffleID = parseInt(Object.keys(raffles)[0])
@@ -234,8 +234,8 @@ describe("Mist", () => {
 
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    const registeryEndAt = new Date().getTime() / 1000 + 2 
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt: registeryEndAt, numberOfWinners: 1})
+    const registrationEndAt = new Date().getTime() / 1000 + 2 
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt: registrationEndAt, numberOfWinners: 1})
 
     const raffles = await getAllRaffles(Alice)
     const raffleID = parseInt(Object.keys(raffles)[0])
@@ -274,8 +274,8 @@ describe("Mist", () => {
 
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    const registeryEndAt = new Date().getTime() / 1000 + 2 
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt: registeryEndAt, numberOfWinners: 3 })
+    const registrationEndAt = new Date().getTime() / 1000 + 2 
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt: registrationEndAt, numberOfWinners: 3 })
 
     const raffles = await getAllRaffles(Alice)
     const raffleID = parseInt(Object.keys(raffles)[0])
@@ -317,8 +317,8 @@ describe("Mist", () => {
 
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    const registeryEndAt = new Date().getTime() / 1000 + 2 
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt: registeryEndAt, numberOfWinners: 1 })
+    const registrationEndAt = new Date().getTime() / 1000 + 2 
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt: registrationEndAt, numberOfWinners: 1 })
 
     const raffles = await getAllRaffles(Alice)
     const raffleID = parseInt(Object.keys(raffles)[0])
@@ -374,8 +374,8 @@ describe("Mist", () => {
 
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    const registeryEndAt = new Date().getTime() / 1000 + 2 
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt: registeryEndAt, numberOfWinners: 3 })
+    const registrationEndAt = new Date().getTime() / 1000 + 2 
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt: registrationEndAt, numberOfWinners: 3 })
 
     const raffles = await getAllRaffles(Alice)
     const raffleID = parseInt(Object.keys(raffles)[0])
@@ -508,7 +508,7 @@ describe("Mist", () => {
     const Alice = await getAccountAddress("Alice")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registeryEndAt:  (new Date()).getTime() / 1000 + 100})
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt:  (new Date()).getTime() / 1000 + 100})
 
     const Bob = await getAccountAddress("Bob")
 

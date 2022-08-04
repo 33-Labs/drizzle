@@ -20,8 +20,8 @@ transaction(
     nftCollectionTypeIdentifier: String,
     nftCollectionTypeRestrictions: [String],
     nftCollectionLogoURL: String,
-    nftCollectionStoragePath: String,
     nftCollectionPublicPath: String,
+    nftCollectionStoragePath: String,
 
     rewardTokenIDs: [UInt64],
     // EligibilityVerifier

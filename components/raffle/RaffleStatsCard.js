@@ -96,7 +96,7 @@ export default function RaffleStatsCard(props) {
         {cards.length > 0 ?
           cards.map((card, index) => {
             return (
-              <div key={index} className={`w-full rounded-2xl ring-1 ring-black ring-opacity-5 overflow-hidden ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow-drizzle`}>
+              <div key={index} className={`w-full rounded-2xl ring-1 ring-black ring-opacity-5 overflow-hidden ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow`}>
                 <label className="text-sm font-medium text-gray-500 font-flow">
                   {card.title}
                 </label>

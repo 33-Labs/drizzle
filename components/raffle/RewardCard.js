@@ -13,14 +13,14 @@ export default function RewardCard(props) {
   //   displays[tokenID + i] = display
   //   displays[tokenID + i + i] = display
   // }
-  console.log(displays)
   return (
     <div className="w-full flex flex-col">
       <label className="px-3 text-2xl font-bold font-flow">REWARDS</label>
       {
         Object.keys(displays).length > 0 ?
           <div className={`
-          p-3 bg-white shadow-drizzle rounded-3xl mt-4 mb-10 grid grid-rows-1 grid-flow-col gap-3 sm:gap-5 justify-start w-full overflow-auto sm:max-h-[450px]
+          ring-1 ring-black ring-opacity-5
+          p-3 bg-white shadow rounded-3xl mt-4 mb-10 grid grid-rows-1 grid-flow-col gap-3 sm:gap-5 justify-start w-full overflow-auto sm:max-h-[450px]
         `}>
             {Object.entries(displays)
               .sort(([tokenID1,], [tokenID2,]) => tokenID2 - tokenID1)

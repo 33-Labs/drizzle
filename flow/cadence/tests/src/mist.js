@@ -25,7 +25,7 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
 
   const {initFlowAmount, 
     image, url, startAt, endAt,
-    registeryEndAt, numberOfWinners,
+    registrationEndAt, numberOfWinners,
     rewardTokenIDs,
     withWhitelist, whitelist,
     withFloats, threshold, eventIDs, eventHosts,
@@ -45,7 +45,7 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
     description: "Test DROP", 
     image: image || null, url: url || null,
     startAt: startAt || null, endAt: endAt || null,
-    registeryEndAt: registeryEndAt || (new Date()).getTime() / 1000 + 2, 
+    registrationEndAt: registrationEndAt || (new Date()).getTime() / 1000 + 2, 
     numberOfWinners: numberOfWinners || 2,
     nftName: nftInfo.nftName,
     nftTypeIdentifer: nftInfo.nftTypeIdentifer,
@@ -54,8 +54,8 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
     nftCollectionTypeIdentifier: nftInfo.nftCollectionTypeIdentifier, 
     nftCollectionTypeRestrictions: nftInfo.nftCollectionTypeRestrictions, 
     nftCollectionLogoURL: nftInfo.nftCollectionLogoURL, 
-    nftCollectionStoragePath: nftInfo.nftCollectionStoragePath,
     nftCollectionPublicPath: nftInfo.nftCollectionPublicPath,
+    nftCollectionStoragePath: nftInfo.nftCollectionStoragePath,
     rewardTokenIDs: rewardTokenIDs || [],
     withWhitelist: withWhitelist || false, whitelist: whitelist || defaultWhitelist,
     withFloats: withFloats || false, threshold: threshold || 2, eventIDs: eventIDs || defaultEventIDs, eventHosts: eventHosts || defaultEventHosts,
@@ -81,7 +81,7 @@ export const getExampleNFTInfo = async () => {
   const trimmedMistAdmin = mistAdmin.replace("0x", "")
   return {
     nftName: "Example",
-    nftTypeIdentifer: `A.${trimmedMistAdmin}.ExampleNFT`,
+    nftTypeIdentifer: `A.${trimmedMistAdmin}.ExampleNFT.NFT`,
     nftContractName: "ExampleNFT",
     nftContractAddress: await getMistAdmin(),
     nftCollectionTypeIdentifier: `A.${trimmedMistAdmin}.ExampleNFT.Collection`,
