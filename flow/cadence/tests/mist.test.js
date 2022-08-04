@@ -202,7 +202,7 @@ describe("Mist", () => {
     const preRaffle = await getRaffle(raffleID, Alice) 
     expect(Object.keys(preRaffle.winners).length).toBe(0)
     expect(preRaffle.nftToBeDrawn.length).toBe(3)
-    expect(preRaffle.rewards.length).toBe(3)
+    expect(Object.keys(preRaffle.rewardDisplays).length).toBe(3)
 
     const recordBob = await getRegistrationRecord(raffleID, Alice, Bob)
     expect(recordBob.address).toBe(Bob)
@@ -221,7 +221,7 @@ describe("Mist", () => {
     const raffle2 = await getRaffle(raffleID, Alice) 
     expect(Object.keys(raffle2.winners).length).toBe(2)
     expect(raffle2.nftToBeDrawn.length).toBe(1)
-    expect(raffle2.rewards.length).toBe(3)
+    expect(Object.keys(raffle2.rewardDisplays).length).toBe(3)
 
     const [, errorDraw3] = await draw(raffleID, Alice)
     expect(errorDraw3.includes("no candidates")).toBeTruthy()
@@ -423,21 +423,22 @@ describe("Mist", () => {
 
     const raffle1 = await getRaffle(raffleID, Alice) 
     expect(raffle1.nftToBeDrawn.length).toBe(3)
-    expect(raffle1.rewards.length).toBe(3) 
+    expect(Object.keys(raffle1.rewardDisplays).length).toBe(3) 
 
     const admin = await getMistAdmin()
     await NFT_mintExampleNFT(admin, Alice)
     await NFT_mintExampleNFT(admin, Alice)
     const newTokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
 
-    await depositToRaffle(raffleID, Alice, newTokenIDs)
+    const [, error] = await depositToRaffle(raffleID, Alice, newTokenIDs)
+    expect(error).toBeNull()
     const raffle2 = await getRaffle(raffleID, Alice) 
     expect(raffle2.nftToBeDrawn.length).toBe(5)
-    expect(raffle2.rewards.length).toBe(5)
+    expect(Object.keys(raffle2.rewardDisplays).length).toBe(5)
 
     tokenIDs.push(...newTokenIDs)
     expect(raffle2.nftToBeDrawn.sort()).toEqual(tokenIDs.sort())
-    expect(raffle2.rewards.sort()).toEqual(tokenIDs.sort())
+    expect(Object.keys(raffle2.rewardDisplays).map((id) => parseInt(id)).sort()).toEqual(tokenIDs.sort())
   })
 
   it("Mist - Should be ok for host to pause raffle", async () => {
@@ -515,7 +516,7 @@ describe("Mist", () => {
     const raffleID = parseInt(Object.keys(raffles)[0])
 
     const raffle = await getRaffle(raffleID, Alice)
-    expect(raffle.rewards.sort()).toEqual(tokenIDs)
+    expect(Object.keys(raffle.rewardDisplays).map((id) => parseInt(id)).sort()).toEqual(tokenIDs)
     expect(raffle.nftToBeDrawn.sort()).toEqual(tokenIDs)
 
     const preClaimed = await getClaimStatus(raffleID, Alice, Bob)

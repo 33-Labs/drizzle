@@ -1,5 +1,4 @@
 import NonFungibleToken from "./core/NonFungibleToken.cdc"
-import MetadataViews from "./core/MetadataViews.cdc"
 import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
 
 pub contract Mist {
@@ -103,6 +102,20 @@ pub contract Mist {
                 return "has claimed" 
             }
             panic("invalid status")
+        }
+    }
+
+    pub struct NFTDisplay {
+        pub let tokenID: UInt64
+        pub let name: String
+        pub let description: String
+        pub let thumbnail: String
+
+        init(tokenID: UInt64, name: String, description: String, thumbnail: String) {
+            self.tokenID = tokenID
+            self.name = name
+            self.description = description
+            self.thumbnail = thumbnail
         }
     }
 
@@ -215,7 +228,7 @@ pub contract Mist {
         pub fun getRegistrationVerifiers(): {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
         pub fun getClaimVerifiers(): {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
         
-        pub fun getRewardDisplays(): {UInt64: MetadataViews.Display}
+        pub fun getRewardDisplays(): {UInt64: NFTDisplay}
     }
 
     pub resource Raffle: IRafflePublic {
@@ -249,7 +262,7 @@ pub contract Mist {
         access(self) let winners: {Address: WinnerRecord}
         access(self) let candidates: [Address]
         access(self) let nftToBeDrawn: [UInt64]
-        access(self) let rewardDisplays: {UInt64: MetadataViews.Display}
+        access(self) let rewardDisplays: {UInt64: NFTDisplay}
 
         pub fun register(account: Address, params: {String: AnyStruct}) {
             let availability = self.checkAvailability(params: params)
@@ -442,7 +455,7 @@ pub contract Mist {
             return self.claimVerifiers
         }
 
-        pub fun getRewardDisplays(): {UInt64: MetadataViews.Display} {
+        pub fun getRewardDisplays(): {UInt64: NFTDisplay} {
             return self.rewardDisplays
         }
 
@@ -562,7 +575,7 @@ pub contract Mist {
         }
 
         // deposit more NFT into the Raffle
-        pub fun deposit(token: @NonFungibleToken.NFT, display: MetadataViews.Display) {
+        pub fun deposit(token: @NonFungibleToken.NFT, display: NFTDisplay) {
             pre {
                 !self.isEnded: "Raffle has ended"
             }
@@ -607,13 +620,6 @@ pub contract Mist {
                 panic("invalid nft info: get ".concat(collection.getType().identifier)
                 .concat(", want ").concat(collectionType.identifier))
             }
-
-            // let rewardIDs = collection.getIDs()
-            // assert(UInt64(rewardIDs.length) >= numberOfWinners, message: 
-            //     rewardIDs.length.toString()
-            //     .concat(" NFT is not enough for ")
-            //     .concat(numberOfWinners.toString())
-            //     .concat(" winners"))
 
             if let _startAt = startAt {
                 if let _endAt = endAt {

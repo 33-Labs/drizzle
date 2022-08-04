@@ -48,8 +48,11 @@ export default function Account(props) {
 
   const [drops, setDrops] = useState([])
   const [raffles, setRaffles] = useState([])
-  const { data: dropsData, error: dropsError } = useSWR(["dropsFetcher", account], dropsFetcher)
-  const { data: rafflesData, error: rafflesError } = useSWR(["rafflesFetcher", account], rafflesFetcher)
+  const { data: dropsData, error: dropsError } = useSWR(
+    account ? ["dropsFetcher", account] : null, dropsFetcher)
+  const { data: rafflesData, error: rafflesError } = useSWR(
+    account ? ["rafflesFetcher", account] : null, rafflesFetcher)
+  console.log("raffleData", rafflesData)
   console.log("raffleError", rafflesError)
 
   const [showDrop, setShowDrop] = useState(true)
@@ -136,7 +139,7 @@ export default function Account(props) {
               setShowRaffle(true)
             }}
           >
-            Raffle
+            NFT Raffle
           </button>
         </div>
       </div>

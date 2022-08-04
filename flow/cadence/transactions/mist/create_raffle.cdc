@@ -36,7 +36,7 @@ transaction(
 ) {
     let raffleCollection: &Mist.RaffleCollection
     let nftCollectionRef: &ExampleNFT.Collection
-    let rewardDisplays: {UInt64: MetadataViews.Display}
+    let rewardDisplays: {UInt64: Mist.NFTDisplay}
 
     prepare(acct: AuthAccount) {
         if acct.borrow<&Mist.RaffleCollection>(from: Mist.RaffleCollectionStoragePath) == nil {
@@ -57,7 +57,13 @@ transaction(
         self.rewardDisplays = {}
         for tokenID in rewardTokenIDs {
             let resolver = self.nftCollectionRef.borrowViewResolver(id: tokenID)
-            let display = MetadataViews.getDisplay(resolver)!
+            let mDisplay = MetadataViews.getDisplay(resolver)!
+            let display = Mist.NFTDisplay(
+                tokenID: tokenID,
+                name: mDisplay.name,
+                description: mDisplay.description,
+                thumbnail: mDisplay.thumbnail.uri()
+            )
             self.rewardDisplays[tokenID] = display
         } 
     }
