@@ -15,10 +15,9 @@ const TimeCard = ({ title, time, active }) => {
 }
 
 export default function TimeLimitCard(props) {
-  const startAt = props.startAt
-  const endAt = props.endAt
-
+  const {startAt, endAt, registryEndAt} = props
   const current = new Date()
+
   let inRange = true
   if (startAt && (startAt.getTime() > current.getTime())) {
     inRange = false
@@ -28,9 +27,14 @@ export default function TimeLimitCard(props) {
     inRange = false
   }
 
+  if (registryEndAt && (registryEndAt.getTime() < current.getTime())) {
+    inRange = false
+  }
+
   return (
     <div className="w-full flex flex-col gap-y-2">
       {startAt && isFinite(startAt) ? <TimeCard title="Start" time={startAt.toLocaleString()} active={inRange} /> : null}
+      {registryEndAt && isFinite(registryEndAt) ? <TimeCard title="REG End" time={registryEndAt.toLocaleString()} active={inRange} /> : null}
       {endAt && isFinite(endAt) ? <TimeCard title="End" time={endAt.toLocaleString()} active={inRange} /> : null}
     </div>
   )

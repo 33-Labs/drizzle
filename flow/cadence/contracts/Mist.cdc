@@ -199,7 +199,7 @@ pub contract Mist {
         pub let startAt: UFix64?
         pub let endAt: UFix64?
 
-        pub let registeryEndAt: UFix64
+        pub let registryEndAt: UFix64
         pub let numberOfWinners: UInt64
 
         pub let nftInfo: NFTInfo
@@ -242,7 +242,7 @@ pub contract Mist {
         pub let startAt: UFix64?
         pub let endAt: UFix64?
 
-        pub let registeryEndAt: UFix64
+        pub let registryEndAt: UFix64
         pub let numberOfWinners: UInt64
 
         pub let nftInfo: NFTInfo
@@ -373,7 +373,7 @@ pub contract Mist {
             }
 
             // can't register and claim
-            if getCurrentBlock().timestamp > self.registeryEndAt {
+            if getCurrentBlock().timestamp > self.registryEndAt {
                 return Availability(
                     status: AvailabilityStatus.drawing,
                     extraData: {} 
@@ -605,7 +605,7 @@ pub contract Mist {
             url: String?,
             startAt: UFix64?,
             endAt: UFix64?,
-            registeryEndAt: UFix64, 
+            registryEndAt: UFix64, 
             numberOfWinners: UInt64,
             nftInfo: NFTInfo,
             collection: @NonFungibleToken.Collection,
@@ -624,9 +624,9 @@ pub contract Mist {
             if let _startAt = startAt {
                 if let _endAt = endAt {
                     assert(_startAt < _endAt, message: "endAt should greater than startAt")
-                    assert(registeryEndAt < _endAt, message: "registeryEndAt should smaller than endAt")
+                    assert(registryEndAt < _endAt, message: "registryEndAt should smaller than endAt")
                 }
-                assert(registeryEndAt > _startAt, message: "registeryEndAt should greater than startAt")
+                assert(registryEndAt > _startAt, message: "registryEndAt should greater than startAt")
             }
 
             self.raffleID = self.uuid
@@ -640,7 +640,7 @@ pub contract Mist {
             self.startAt = startAt
             self.endAt = endAt
 
-            self.registeryEndAt = registeryEndAt
+            self.registryEndAt = registryEndAt
             self.numberOfWinners = numberOfWinners
 
             self.nftInfo = nftInfo
@@ -711,7 +711,7 @@ pub contract Mist {
             url: String?,
             startAt: UFix64?,
             endAt: UFix64?,
-            registeryEndAt: UFix64, 
+            registryEndAt: UFix64, 
             numberOfWinners: UInt64,
             nftInfo: NFTInfo,
             collection: @NonFungibleToken.Collection,
@@ -755,7 +755,7 @@ pub contract Mist {
                 url: url,
                 startAt: startAt,
                 endAt: endAt,
-                registeryEndAt: registeryEndAt,
+                registryEndAt: registryEndAt,
                 numberOfWinners: numberOfWinners,
                 nftInfo: nftInfo,
                 collection: <- collection,

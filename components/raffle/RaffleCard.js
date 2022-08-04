@@ -110,10 +110,14 @@ export default function RaffleCard(props) {
   const url = (raffle && raffle.url) || props.url
   const banner = (raffle && raffle.image) || props.banner
 
-  const registrationDeadline = convertCadenceDateTime((raffle && raffle.registryEndAt) || props.registrationDeadline)
+  // TODO: registery => registry
+  const registrationDeadline = convertCadenceDateTime((raffle && raffle.registeryEndAt) || props.registrationDeadline)
   const createdAt = convertCadenceDateTime((raffle && raffle.createdAt) || props.createdAt)
   const startAt = convertCadenceDateTime((raffle && raffle.startAt) || props.startAt)
   const endAt = convertCadenceDateTime((raffle && raffle.endAt) || props.endAt)
+
+  console.log(raffle)
+  console.log(registrationDeadline)
 
   return (
     <div className="w-full justify-center flex flex-col gap-y-8 mt-2 mb-2 sm:flex-row sm:gap-x-8 text-black">
@@ -129,8 +133,8 @@ export default function RaffleCard(props) {
           <MemoizeBasicInfo
             host={host} createdAt={createdAt} nft={nft} eligibilityMode={eligibilityMode} raffle={raffle}
           />
-          {(startAt || endAt) ?
-            <TimeLimitCard startAt={startAt} endAt={endAt} /> : null}
+          {(startAt || endAt || registrationDeadline) ?
+            <TimeLimitCard startAt={startAt} endAt={endAt} registryEndAt={registrationDeadline} /> : null}
           <MemoizeDescription description={description} />
         </div>
       </div>
