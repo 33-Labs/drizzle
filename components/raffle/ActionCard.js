@@ -11,14 +11,12 @@ import {
 } from "../../lib/atoms"
 
 const isClaimable = (claimStatus) => {
-  if (claimStatus && 
-    (claimStatus.eligibility.status.rawValue === "0" && 
-    claimStatus.availability.status.rawValue === "2") &&
-    (claimStatus.eligibility.status.rawValue === "1" &&
-    (claimStatus.availability.status.rawValue === "3" ||
-    claimStatus.availability.status.rawValue === "4"))) {
-    return true
-  }
+  if (!claimStatus) return false
+  let aStatus = claimStatus.availability.status.rawValue
+  let eStatusR = claimStatus.eligibilityForRegistration.status.rawValue
+  let eStatusC = claimStatus.eligibilityForClaim.status.rawValue 
+  if (aStatus == "2" && eStatusR == "0") return true
+  if ((aStatus == "3" || aStatus == "4") && eStatusC == "1") return true
   return false
 }
 
@@ -45,73 +43,124 @@ const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
     return elements
   }
 
-  let eStatus = claimStatus.eligibility.status.rawValue
-  let eligibleNFT = claimStatus.eligibility.eligibleNFTs[0]
-  if (eStatus === "0") {
-    elements.emoji = "✅"
-    elements.description = "YOU ARE ELIGIBLE!"
-    elements.title = "REGISTER NOW"
-    elements.amount = null
-  } else if (eStatus === "1") {
-    elements.emoji = "🎉"
-    elements.description = "YOU WON"
-    elements.title = "CLAIM"
-    elements.amount = `${dispalyName} #${eligibleNFT}`
-  } else if (eStatus === "2") {
-    elements.emoji = "🙉"
-    elements.description = "YOU ARE NOT ELIGIBLE"
-    elements.title = "NOT ELIGIBLE"
-    elements.amount = null
-  } else if (eStatus === "3") {
-    elements.emoji = "🙈"
-    elements.description = "YOU DID NOT WIN"
-    elements.title = "NOT ELIGIBLE"
-    elements.amount = null 
-  } else if (eStatus === "4") {
-    elements.emoji = "✅"
-    elements.description = "YOU HAVE REGISTERED!"
-    elements.title = "COME BACK LATER"
-    elements.amount = null 
-  } else if (eStatus === "5") {
-    elements.emoji = "🎉"
-    elements.description = "YOU HAVE CLAIMED"
-    elements.title = "HAVE CLAIMED"
-    elements.amount = `${dispalyName} #${eligibleNFT}`
+  let aStatus = claimStatus.availability.status.rawValue
+  let eStatusR = claimStatus.eligibilityForRegistration.status.rawValue
+  let eStatusC = claimStatus.eligibilityForClaim.status.rawValue
+  let eligibleNFT = claimStatus.eligibilityForClaim.eligibleNFTs[0]
+  if (aStatus === "1") {
+    // ended expired and no capacity
+    elements.emoji = "⛔️"
+    elements.title = "RAFFLE ENDED"
+    // Keep the draw result
+    if (eStatusC == "5") {
+      elements.description = "YOU HAVE CLAIMED" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+    } else if (eStatusC == "1") {
+      elements.description = "YOU ARE THE WINNER OF" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+    } else {
+      elements.description = "NO LONGER AVAILABLE"
+      elements.amount = null 
+    }
+  } else if (aStatus === "5") {
+    elements.emoji = "⛔️"
+    elements.title = "RAFFLE EXPIRED"
+    // Keep the draw result
+    if (eStatusC == "5") {
+      elements.description = "YOU HAVE CLAIMED" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+    } else if (eStatusC == "1") {
+      elements.description = "YOU ARE THE WINNER OF" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+    } else {
+      elements.description = "NO LONGER AVAILABLE"
+      elements.amount = null 
+    }
+  } else if (aStatus === "3") {
+    if (eStatusC == "5") {
+      elements.emoji = "🎉"
+      elements.description = "YOU HAVE CLAIMED" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.title = "HAVE CLAIMED"
+    } else if (eStatusC == "1") {
+      elements.emoji = "🎉"
+      elements.description = "YOU ARE THE WINNER OF" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.title = "CLAIM"
+    } else if (eStatusC == "3" && eStatusR == "4") {
+      // registered but not winner
+      elements.emoji = "🎲"
+      elements.description = "HAVE A GOOD DAY"  
+      elements.amount = null
+      elements.title = "RAFFLE DRAWING"
+    } else {
+      elements.emoji = "🙉"
+      elements.description = "YOU ARE NOT ELIGIBLE"
+      elements.title = "NOT ELIGIBLE"
+      elements.amount = null 
+    }
+  } else if (aStatus === "4") {
+    if (eStatusC == "5") {
+      elements.emoji = "🎉"
+      elements.description = "YOU HAVE CLAIMED" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.title = "HAVE CLAIMED"
+    } else if (eStatusC == "1") {
+      elements.emoji = "🎉"
+      elements.description = "YOU ARE THE WINNER OF" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.title = "CLAIM"
+    } else {
+      elements.emoji = "🙉"
+      elements.description = "YOU ARE NOT ELIGIBLE"
+      elements.title = "NOT ELIGIBLE"
+      elements.amount = null 
+    }
+  } else if (aStatus === "0") {
+    elements.emoji = "🕙"
+    elements.description = "DIDA DIDA ..."   
+    elements.title = "NOT STARTED"
+  } else if (aStatus === "6") {
+    elements.emoji = "⏸️"
+    elements.title = "RAFFLE PAUSED"
+    if (eStatusC == "5") {
+      elements.description = "YOU HAVE CLAIMED" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+    } else if (eStatusC == "1") {
+      elements.description = "YOU ARE THE WINNER OF" 
+      elements.amount = `${dispalyName} #${eligibleNFT}`
+    } else if (eStatusC == "3") {
+      if (eStatusR == "4") {
+        elements.description = "YOU HAVE REGISTERED"
+        elements.amount = null
+      } else if (eStatusR == "2") {
+        elements.description = "YOU ARE NOT ELIGIBLE" 
+        elements.amount = null
+      } else if (eStatusR == "0") {
+        elements.description = "YOU ARE ELIGIBLE" 
+        elements.amount = null
+      }
+    } 
+  } else if (aStatus === "2") {
+    if (eStatusR === "0") {
+      elements.emoji = "✅"
+      elements.description = "YOU ARE ELIGIBLE"
+      elements.title = "REGISTER NOW"
+      elements.amount = null
+    } else if (eStatusR === "2") {
+      elements.emoji = "🙉"
+      elements.description = "YOU ARE NOT ELIGIBLE"
+      elements.title = "NOT ELIGIBLE"
+      elements.amount = null
+    } else if (eStatusR === "4") {
+      elements.emoji = "✅"
+      elements.description = "YOU HAVE REGISTERED!"
+      elements.title = "COME BACK LATER"
+      elements.amount = null
+    }  
   }
 
-  // // availability
-  // let aStatus = claimStatus.availability.status.rawValue
-  // if (aStatus === "1") {
-  //   // ended expired and no capacity
-  //   elements.emoji = "⛔️"
-  //   elements.title = "DROP ENDED"
-  //   if (eStatus != "5") {
-  //     elements.description = "NO LONGER AVAILABLE"
-  //     elements.amount = null
-  //   }
-  // } else if (aStatus === "5") {
-  //   elements.emoji = "⛔️"
-  //   elements.title = "DROP EXPIRED"
-  //   if (eStatus != "2") {
-  //     elements.description = "NO LONGER AVAILABLE"
-  //     elements.amount = null
-  //   }
-  // } else if (aStatus === "3") {
-  //   elements.emoji = "🎲"
-  //   elements.title = "RAFFLE DRAWING"
-  //   if (eStatus != "4" && eStatus != "1" && eStatus != "5") {
-  //     elements.description = "NO LONGER AVAILABLE"
-  //     elements.amount = null
-  //   }
-  // } else if (aStatus === "0") {
-  //   elements.emoji = "🕙"
-  //   elements.title = "DROP HAS NOT STARTED"
-  // } else if (aStatus === "6") {
-  //   elements.emoji = "⏸️"
-  //   elements.title = "DROP PAUSED"
-  // }
-
-  // return elements
+  return elements
 }
 
 export default function ActionCard(props) {
@@ -120,7 +169,7 @@ export default function ActionCard(props) {
   const { mutate } = useSWRConfig()
 
   const { isPreview, raffle, host, user, nft, claimStatus, setShowClaimedModal, setClaimedAmountInfo } = props
-  const displayName = isPreview ? (nft && nft.displayName) : (nftInfo && nftInfo.displayName)
+  const displayName = isPreview ? (nft && nft.displayName) : (raffle.nftInfo && raffle.nftInfo.displayName)
 
   // [Emoji, Description, Amount, Title]
   const {emoji, description, amount, title} = parseClaimStatus(user, claimStatus, displayName, isPreview)

@@ -24,13 +24,14 @@ const getPacketPreview = (packetMode) => {
 }
 
 const getEligibilityTag = ({drop, eligibilityMode, raffle}) => {
+  const type = drop ? "DROP" : "RAFFLE"
   if (drop || raffle) {
     return (
       <div
         className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm"
         data-tip="same amount to all users">
         <label>
-          {getVerifierType(drop ? drop : raffle)}
+          {getVerifierType(drop ? drop : raffle, type)}
         </label>
       </div>
     )

@@ -5,12 +5,12 @@ import { useRecoilState } from "recoil"
 import {
   transactionInProgressState
 } from "../lib/atoms"
-import { classNames, convertCadenceDateTime, getDistributorType, getDropStatus, getVerifierType } from '../lib/utils'
+import { classNames, convertCadenceDateTime, getRaffleStatus, getVerifierType } from '../lib/utils'
 
-export default function DropList(props) {
+export default function RaffleList(props) {
   const [transactionInProgress] = useRecoilState(transactionInProgressState)
   const router = useRouter()
-  const {drops, user, pageAccount} = props
+  const {raffles, user, pageAccount} = props
   let isCurrentUser = false
   if (user && user.addr === pageAccount) {
     isCurrentUser = true
@@ -21,7 +21,7 @@ export default function DropList(props) {
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-2xl font-bold text-gray-900">
-            {isCurrentUser ?  `My DROPs (${drops.length})` : `DROPs (${drops.length})`}
+            {isCurrentUser ?  `My Raffles (${raffles.length})` : `Raffles (${raffles.length})`}
           </h1>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
@@ -40,16 +40,16 @@ export default function DropList(props) {
                 "inline-flex items-center rounded-2xl justify-center border border-transparent px-4 py-2 text-sm font-medium text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
               )}
             onClick={() => {
-              router.push("/create/ft_drop")
+              router.push("/create/nft_raffle")
             }}
           >
-            New DROP
+            New NFT Raffle
           </button> : null
           }
         </div>
       </div>
 
-      {drops.length > 0 ?
+      {raffles.length > 0 ?
         <div className="mt-3 flex flex-col w-full">
           <div className="px-1 overflow-x-auto">
             <div className="inline-block min-w-full py-2 align-middle">
@@ -61,13 +61,13 @@ export default function DropList(props) {
                         Name
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Token
+                        NFT 
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Eligibility
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Mode
+                        # of Winners
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Status
@@ -78,41 +78,41 @@ export default function DropList(props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {drops.map((drop) => {
-                      const status = getDropStatus(drop)
-                      drop.status = status
-                      return drop
-                    }).map((drop) => (
-                      <Link key={`${drop.dropID}-link`} href={`${drop.host}/drops/${drop.dropID}`}>
-                        <tr key={drop.dropID}>
+                    {raffles.map((raffle) => {
+                      const status = getRaffleStatus(raffle)
+                      raffle.status = status
+                      return raffle
+                    }).map((raffle) => (
+                      <Link key={`${raffle.raffleID}-link`} href={`${raffle.host}/raffles/${raffle.raffleID}`}>
+                        <tr key={raffle.raffleID}>
                           <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
                             <div className="flex items-center">
                               <div className="h-10 w-10 flex-shrink-0 relative">
-                                <Image className="rounded-xl" src={drop.image ?? "/flow-banner.jpg"} alt="" layout="fill" objectFit="contain" />
+                                <Image className="rounded-xl" src={raffle.image ?? "/flow-banner.jpg"} alt="" layout="fill" objectFit="contain" />
                               </div>
                               <div className="ml-4">
-                                <label className="block font-medium text-gray-900 break-words max-w-[300px] min-w-[60px]">{drop.name}</label>
+                                <label className="block font-medium text-gray-900 break-words max-w-[300px] min-w-[60px]">{raffle.name}</label>
                               </div>
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <div className="text-gray-500">
-                              {drop.tokenInfo.symbol}
+                              {raffle.nftInfo.displayName}
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {getVerifierType(drop, "DROP")}
+                            {getVerifierType(raffle, "RAFFLE")}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {getDistributorType(drop)}
+                            {raffle.numberOfWinners}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${drop.status.tagColor}`}>
-                              {drop.status.title}
+                            <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${raffle.status.tagColor}`}>
+                              {raffle.status.title}
                             </label>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {convertCadenceDateTime(drop.createdAt).toLocaleString()}
+                            {convertCadenceDateTime(raffle.createdAt).toLocaleString()}
                           </td>
                         </tr>
                       </Link>
@@ -125,7 +125,7 @@ export default function DropList(props) {
         </div> :
         <div className="flex mb-10 justify-center">
           <label className="leading-[200px] font-flow font-medium text-base text-gray-500">
-            {isCurrentUser ?  "You haven't created DROP yet" : "This account haven't created DROP yet"}
+            {isCurrentUser ?  "You haven't created Raffle yet" : "This account haven't created Raffle yet"}
           </label>
         </div>}
     </div>

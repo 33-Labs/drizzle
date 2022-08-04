@@ -2,10 +2,16 @@ import { convertCadenceDateTime } from "../../lib/utils"
 import publicConfig from "../../publicConfig"
 import { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelist, EligibilityModeWhitelistWitAmount } from "../eligibility/EligibilityModeSelector"
 
-const getCriteriaLabel = (drizzle) => {
-  if (!drizzle || Object.keys(drizzle.verifiers) <= 0) return null
+const getCriteriaLabel = (drizzle, type) => {
+  let verifier = null
+  if (type === "DROP") {
+    if (!drizzle || Object.keys(drizzle.verifiers) <= 0) return null
+    verifier = Object.values(drizzle.verifiers)[0][0]
+  } else if (type === "RAFFLE") {
+    if (!drizzle || Object.keys(drizzle.registrationVerifiers) <= 0) return null
+    verifier = Object.values(drizzle.registrationVerifiers)[0][0]
+  }
   // NOTE Only 1 verifier is supported now
-  const verifier = Object.values(drizzle.verifiers)[0][0]
   // WhitelistWithAmount & Whitelist
   if (verifier.type === "Whitelist") {
     return (
@@ -102,6 +108,7 @@ const getCriteriaLabelPreview = (
 export default function CriteriaCard(props) {
   const {drop, raffle, eligibilityMode, floatGroup, floatEventPairs, threshold} = props
   const drizzle = drop ? drop : (raffle ? raffle : null)
+  const type = drop ? "DROP" : (raffle ? "RAFFLE" : "PREVIEW")
 
   return (
     <div className="p-5 w-full min-w-[240px]
@@ -110,7 +117,7 @@ export default function CriteriaCard(props) {
     sm:max-w-[240px]">
       <div className={`flex flex-col gap-y-2 ring-2 ring-drizzle-green rounded-2xl p-3 `}>
         <label className="text-center font-flow font-semibold">WHO IS ELIGIBLE?</label>
-        {drizzle ?  getCriteriaLabel(drizzle)
+        {drizzle ?  getCriteriaLabel(drizzle, type)
         : getCriteriaLabelPreview(eligibilityMode, floatGroup, floatEventPairs, threshold)
         }
       </div>

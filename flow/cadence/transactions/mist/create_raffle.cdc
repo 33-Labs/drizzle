@@ -1,8 +1,7 @@
-import FungibleToken from "../contracts/core/FungibleToken.cdc"
 import Mist from "../contracts/Mist.cdc"
 import EligibilityVerifiers from "../contracts/EligibilityVerifiers.cdc"
-import Distributors from "../contracts/Distributors.cdc"
 import ExampleNFT from "../contracts/examplenft/ExampleNFT.cdc"
+import MetadataViews from "../contracts/core/MetadataViews.cdc"
 
 transaction(
     name: String,
@@ -37,6 +36,7 @@ transaction(
 ) {
     let raffleCollection: &Mist.RaffleCollection
     let nftCollectionRef: &ExampleNFT.Collection
+    let rewardDisplays: {UInt64: MetadataViews.Display}
 
     prepare(acct: AuthAccount) {
         if acct.borrow<&Mist.RaffleCollection>(from: Mist.RaffleCollectionStoragePath) == nil {
@@ -53,9 +53,17 @@ transaction(
         let nftStoragePath = StoragePath(identifier: nftCollectionStoragePath)!
         self.nftCollectionRef = acct.borrow<&ExampleNFT.Collection>(from: nftStoragePath)
             ?? panic("Could not borrow collection from signer")
+
+        self.rewardDisplays = {}
+        for tokenID in rewardTokenIDs {
+            let resolver = self.nftCollectionRef.borrowViewResolver(id: tokenID)
+            let display = MetadataViews.getDisplay(resolver)!
+            self.rewardDisplays[tokenID] = display
+        } 
     }
 
     execute {
+        assert(UInt64(rewardTokenIDs.length) >= numberOfWinners, message: "reward number is not enough")
         let nftInfo = Mist.NFTInfo(
             nftCatalogCollectionID: nftCatalogCollectionID,
             contractName: nftContractName,
@@ -97,12 +105,7 @@ transaction(
         }
 
         let collection <- ExampleNFT.createEmptyCollection()
-        for tokenID in rewardTokenIDs {
-            let token <- self.nftCollectionRef.withdraw(withdrawID: tokenID)
-            collection.deposit(token: <- token)
-        }
-
-        self.raffleCollection.createRaffle(
+        let raffleID = self.raffleCollection.createRaffle(
             name: name, 
             description: description, 
             host: self.nftCollectionRef.owner!.address, 
@@ -120,5 +123,12 @@ transaction(
             claimVerifiers: [],
             extraData: {}
         )
+
+        let raffle = self.raffleCollection.borrowRaffleRef(raffleID: raffleID)!
+        for tokenID in rewardTokenIDs {
+            let token <- self.nftCollectionRef.withdraw(withdrawID: tokenID)
+            let display = self.rewardDisplays[tokenID]!
+            raffle.deposit(token: <- token, display: display)
+        }
     }
 }

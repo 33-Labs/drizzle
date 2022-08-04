@@ -1,4 +1,5 @@
 import NonFungibleToken from "./core/NonFungibleToken.cdc"
+import MetadataViews from "./core/MetadataViews.cdc"
 import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
 
 pub contract Mist {
@@ -214,7 +215,7 @@ pub contract Mist {
         pub fun getRegistrationVerifiers(): {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
         pub fun getClaimVerifiers(): {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
         
-        pub fun getRewards(): [UInt64]
+        pub fun getRewardDisplays(): {UInt64: MetadataViews.Display}
     }
 
     pub resource Raffle: IRafflePublic {
@@ -248,7 +249,7 @@ pub contract Mist {
         access(self) let winners: {Address: WinnerRecord}
         access(self) let candidates: [Address]
         access(self) let nftToBeDrawn: [UInt64]
-        access(self) let rewards: [UInt64]
+        access(self) let rewardDisplays: {UInt64: MetadataViews.Display}
 
         pub fun register(account: Address, params: {String: AnyStruct}) {
             let availability = self.checkAvailability(params: params)
@@ -441,8 +442,8 @@ pub contract Mist {
             return self.claimVerifiers
         }
 
-        pub fun getRewards(): [UInt64] {
-            return self.rewards
+        pub fun getRewardDisplays(): {UInt64: MetadataViews.Display} {
+            return self.rewardDisplays
         }
 
         access(self) fun isEligible(
@@ -561,14 +562,15 @@ pub contract Mist {
         }
 
         // deposit more NFT into the Raffle
-        pub fun deposit(token: @NonFungibleToken.NFT) {
+        pub fun deposit(token: @NonFungibleToken.NFT, display: MetadataViews.Display) {
             pre {
                 !self.isEnded: "Raffle has ended"
             }
 
-            self.rewards.append(token.id)
-            self.nftToBeDrawn.append(token.id)
+            let tokenID = token.id
             self.collection.deposit(token: <- token)
+            self.nftToBeDrawn.append(tokenID)
+            self.rewardDisplays[tokenID] = display
         }
 
         pub fun end(receiver: &{NonFungibleToken.CollectionPublic}) {
@@ -606,12 +608,12 @@ pub contract Mist {
                 .concat(", want ").concat(collectionType.identifier))
             }
 
-            let rewardIDs = collection.getIDs()
-            assert(UInt64(rewardIDs.length) >= numberOfWinners, message: 
-                rewardIDs.length.toString()
-                .concat(" NFT is not enough for ")
-                .concat(numberOfWinners.toString())
-                .concat(" winners"))
+            // let rewardIDs = collection.getIDs()
+            // assert(UInt64(rewardIDs.length) >= numberOfWinners, message: 
+            //     rewardIDs.length.toString()
+            //     .concat(" NFT is not enough for ")
+            //     .concat(numberOfWinners.toString())
+            //     .concat(" winners"))
 
             if let _startAt = startAt {
                 if let _endAt = endAt {
@@ -651,8 +653,8 @@ pub contract Mist {
             self.registrationRecords = {}
             self.candidates = []
             self.winners = {}
-            self.nftToBeDrawn = rewardIDs
-            self.rewards = rewardIDs
+            self.nftToBeDrawn = []
+            self.rewardDisplays = {}
 
             Mist.totalRaffles = Mist.totalRaffles + 1
             emit RaffleCreated(
@@ -806,13 +808,13 @@ pub contract Mist {
     pub var totalRaffles: UInt64
 
     init() {
-        self.RaffleCollectionStoragePath = /storage/drizzleRaffleCollectionStoragePath
-        self.RaffleCollectionPublicPath = /public/drizzleRaffleCollectionPublicPath
-        self.RaffleCollectionPrivatePath = /private/drizzleRaffleCollectionPrivatePath
+        self.RaffleCollectionStoragePath = /storage/drizzleRaffleCollection
+        self.RaffleCollectionPublicPath = /public/drizzleRaffleCollection
+        self.RaffleCollectionPrivatePath = /private/drizzleRaffleCollection
 
-        self.MistAdminStoragePath = /storage/drizzleMistAdminStoragePath
-        self.MistAdminPublicPath = /public/drizzleMistPublicPath
-        self.MistAdminPrivatePath = /private/drizzleMistPublicPath
+        self.MistAdminStoragePath = /storage/drizzleMistAdmin
+        self.MistAdminPublicPath = /public/drizzleMistAdmin
+        self.MistAdminPrivatePath = /private/drizzleMistAdmin
 
         self.isPaused = false
         self.totalRaffles = 0

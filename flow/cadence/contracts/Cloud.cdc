@@ -595,13 +595,13 @@ pub contract Cloud {
     pub var totalDrops: UInt64
 
     init() {
-        self.DropCollectionStoragePath = /storage/drizzleDropCollectionStoragePath
-        self.DropCollectionPublicPath = /public/drizzleDropCollectionPublicPath
-        self.DropCollectionPrivatePath = /private/drizzleDropCollectionPrivatePath
+        self.DropCollectionStoragePath = /storage/drizzleDropCollection
+        self.DropCollectionPublicPath = /public/drizzleDropCollection
+        self.DropCollectionPrivatePath = /private/drizzleDropCollection
 
-        self.CloudAdminStoragePath = /storage/drizzleCloudAdminStoragePath
-        self.CloudAdminPublicPath = /public/drizzleCloudPublicPath
-        self.CloudAdminPrivatePath = /private/drizzleCloudPublicPath
+        self.CloudAdminStoragePath = /storage/drizzleCloudAdmin
+        self.CloudAdminPublicPath = /public/drizzleCloudAdmin
+        self.CloudAdminPrivatePath = /private/drizzleCloudAdmin
 
         self.isPaused = false
         self.totalDrops = 0

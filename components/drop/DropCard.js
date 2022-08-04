@@ -54,7 +54,7 @@ MemoizeName.displayName = "MemoizeName"
 const MemoizeBasicInfo = React.memo(({ host, createdAt, token, eligibilityMode, packetMode, drop }) => {
   return (
     <div className="w-full flex flex-col -mt-3">
-      <Tags info={{
+      <TagsCard info={{
         drop: drop,
         type: "DROP",
         token: token,

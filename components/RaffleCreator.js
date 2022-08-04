@@ -5,9 +5,6 @@ import Decimal from 'decimal.js'
 
 import RaffleCard from './raffle/RaffleCard'
 
-import {
-  createDrop
-} from '../lib/cloud-transactions'
 import { classNames, floatEventInputHandler, floatGroupInputHandler, getTimezone, isValidHttpUrl } from '../lib/utils'
 
 import { useRecoilState } from "recoil"
@@ -32,6 +29,7 @@ import DropCreatedModal from './creator/DropCreatedModal'
 import publicConfig from '../publicConfig'
 import StatsCard from './presenter/StatsCard'
 import NFTSelector from './NFTSelector'
+import { createRaffle } from '../lib/mist-transactions'
 
 const NamePlaceholder = "RAFFLE NAME"
 const DescriptionPlaceholder = "Detailed information about this RAFFLE"
@@ -208,6 +206,10 @@ export default function RaffleCreator(props) {
       return
     }
 
+    const rewardTokenIDs = Object.entries(selectedTokens)
+      .filter(([, info]) => info.isSelected)
+      .map(([tokenID,]) => tokenID)
+
     const params = {
       name: name,
       description: description ?? '',
@@ -215,17 +217,17 @@ export default function RaffleCreator(props) {
       url: url,
       startAt: startAt && isFinite(startAt) ? `${startAt.getTime() / 1000}.0` : null,
       endAt: endAt && isFinite(endAt) ? `${endAt.getTime() / 1000}.0` : null,
-      token: token,
-      withExclusiveWhitelist: false,
-      exclusiveWhitelist: [],
-      whitelistTokenAmount: null,
+      registeryEndAt: `${registrationDeadline.getTime() / 1000}.0`,
+      numberOfWinners: numberOfWinners,
+      nftCatalogCollectionID: selectedNFT.displayName,
+      nftContractAddress: selectedNFT.contractAddress,
+      nftContractName: selectedNFT.contractName,
+      nftDisplayName: selectedNFT.displayName,
+      nftCollectionStoragePath: selectedNFT.collectionStoragePath.replace("/storage/", ""),
+      nftCollectionPublicPath: selectedNFT.collectionPublicPath.replace("/public/", ""),
+      rewardTokenIDs: rewardTokenIDs,
       withWhitelist: false,
       whitelist: [],
-      withIdenticalDistributor: false,
-      capacity: null,
-      amountPerEntry: null,
-      withRandomDistributor: false,
-      totalRandomAmount: null,
       withFloats: false,
       threshold: null,
       eventIDs: [],
@@ -235,14 +237,7 @@ export default function RaffleCreator(props) {
       floatGroupHost: null
     }
 
-    if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
-      const { whitelist, tokenAmount, } = whitelistWithAmountReviewerCallback
-      const _tokenAmount = tokenAmount.toFixed(8).toString()
-      params.withExclusiveWhitelist = true
-      params.exclusiveWhitelist = whitelist
-      params.whitelistTokenAmount = _tokenAmount
-
-    } else if (eligibilityMode.key === EligibilityModeWhitelist.key) {
+    if (eligibilityMode.key === EligibilityModeWhitelist.key) {
       const { whitelist, } = whitelistReviewerCallback
       params.withWhitelist = true
       params.whitelist = whitelist
@@ -264,21 +259,10 @@ export default function RaffleCreator(props) {
       params.floatGroupHost = floatGroup.groupHost
     }
 
-    if (packetMode && packetMode.key === PacketModeIdentical.key) {
-      let _identicalAmount = new Decimal(identicalAmount).toFixed(8).toString()
-      params.withIdenticalDistributor = true
-      params.capacity = capacity
-      params.amountPerEntry = _identicalAmount
-
-    } else if (packetMode && packetMode.key === PacketModeRandom.key) {
-      let totalRandomAmount = new Decimal(totalAmount).toFixed(8).toString()
-      params.withRandomDistributor = true
-      params.capacity = capacity
-      params.totalRandomAmount = totalRandomAmount
-    }
-
     const args = Object.values(params)
-    const res = await createDrop(...args,
+    console.log(args)
+    console.log(setTransactionStatus)
+    const res = await createRaffle(...args,
       setTransactionInProgress, setTransactionStatus
     )
     handleCreationResponse(res)

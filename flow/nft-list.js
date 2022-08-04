@@ -20,8 +20,8 @@ export const testnetNFTList = [
         "A.631e88ae7f1d7c20.MetadataViews.ResolverCollection"
       ]
     },
-    collectionPublicPath: "FLOAT.FLOATCollectionPublicPath",
-    collectionStoragePath: "FLOAT.FLOATCollectionStoragePath"
+    collectionPublicPath: "/public/FLOATCollectionPublicPath",
+    collectionStoragePath: "/storage/FLOATCollectionStoragePath"
   },
   {
     displayName: "Example",
@@ -36,8 +36,8 @@ export const testnetNFTList = [
         "A.631e88ae7f1d7c20.MetadataViews.ResolverCollection"
       ]
     },
-    collectionPublicPath: "ExampleNFT.CollectionPublicPath",
-    collectionStoragePath: "ExampleNFT.CollectionStoragePath"
+    collectionPublicPath: "/public/exampleNFTCollection",
+    collectionStoragePath: "/storage/exampleNFTCollection"
   }
 ]
 

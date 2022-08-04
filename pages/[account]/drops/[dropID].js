@@ -8,7 +8,7 @@ import DropPresenter from '../../../components/DropPresenter'
 import { 
   queryDrop,
   queryClaimStatus,
-} from '../../../lib/scripts'
+} from '../../../lib/cloud-scripts'
 import Custom404 from '../../404'
 
 const dropFetcher = async (funcName, dropID, host) => {

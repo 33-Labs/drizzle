@@ -31,6 +31,9 @@ if (!flowTokenAddress) throw "Missing NEXT_PUBLIC_FLOW_TOKEN_ADDRESS"
 const cloudAddress = process.env.NEXT_PUBLIC_CLOUD_ADDRESS
 if (!cloudAddress) throw "Missing NEXT_PUBLIC_CLOUD_ADDRESS"
 
+const mistAddress = process.env.NEXT_PUBLIC_MIST_ADDRESS
+if (!mistAddress) throw "Missing NEXT_PUBLIC_MIST_ADDRESS"
+
 const eligibilityVerifiersAddress = process.env.NEXT_PUBLIC_ELIGIBILITY_VERIFIERS_ADDRESS
 if (!eligibilityVerifiersAddress) throw "Missing NEXT_PUBLIC_ELIGIBILITY_VERIFIERS_ADDRESS"
 
@@ -51,6 +54,7 @@ const publicConfig = {
   metadataViewsAddress,
   flowTokenAddress,
   cloudAddress,
+  mistAddress,
   eligibilityVerifiersAddress,
   distributorsAddress,
   floatAddress,
