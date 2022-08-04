@@ -164,7 +164,5 @@ export default function NFTSelector(props) {
       }
 
     </div>
-
-
   )
 }

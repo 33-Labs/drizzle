@@ -1,3 +1,5 @@
+import publicConfig from "../../publicConfig"
+
 const parseWinners = (raffle) => {
   let winners = []
   for (let [address, record] of Object.entries(raffle.winners)) {
@@ -25,10 +27,10 @@ export default function WinnersCard(props) {
                         Winner
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Rewards
+                        Reward Token ID
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        isClaimed
+                        Claimed
                       </th>
                     </tr>
                   </thead>
@@ -48,12 +50,12 @@ export default function WinnersCard(props) {
                           </td>
                           <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
                             <div className="text-gray-500">
-                              {winner.rewardTokenIDs.join(", ")}
+                              {winner.rewardTokenIDs.map((id) => `#${id}`).join(", ")}
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
                             <div className="text-gray-500">
-                              {winner.isClaimed}
+                              {winner.isClaimed == true ? "True" : "False"}
                             </div>
                           </td>
                         </tr>

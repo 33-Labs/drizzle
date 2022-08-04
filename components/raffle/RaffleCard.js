@@ -134,7 +134,7 @@ export default function RaffleCard(props) {
             host={host} createdAt={createdAt} nft={nft} eligibilityMode={eligibilityMode} raffle={raffle}
           />
           {(startAt || endAt || registrationDeadline) ?
-            <TimeLimitCard startAt={startAt} endAt={endAt} registryEndAt={registrationDeadline} /> : null}
+            <TimeLimitCard startAt={startAt} endAt={endAt} registrationEndAt={registrationDeadline} /> : null}
           <MemoizeDescription description={description} />
         </div>
       </div>

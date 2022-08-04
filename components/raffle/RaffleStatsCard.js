@@ -67,7 +67,7 @@ const extractStats = (raffle) => {
   return [
     {
       title: "NFT",
-      content: `${raffle.nftInfo.displayName}`,
+      content: `${raffle.nftInfo.name}`,
       color: green
     },
     {

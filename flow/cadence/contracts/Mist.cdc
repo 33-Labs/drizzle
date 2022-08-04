@@ -152,39 +152,33 @@ pub contract Mist {
     }
 
     pub struct NFTInfo {
-        pub let nftIdentifier: String
-        pub let nftCatalogCollectionID: String
-        pub let collectionIdentifier: String
+        pub let name: String
+        pub let nftType: Type
         pub let contractName : String
-
         pub let contractAddress : Address
-        pub let displayName: String
-
-        pub let storagePath : StoragePath
-        pub let publicPath : PublicPath
+        pub let collectionType: Type
+        pub let collectionLogoURL: String
+        pub let collectionStoragePath : StoragePath
+        pub let collectionPublicPath : PublicPath
 
         init(
-            nftCatalogCollectionID: String,
+            name: String,
+            nftType: Type,
             contractName: String,
             contractAddress: Address,
-            displayName: String,
-            storagePath: StoragePath,
-            publicPath: PublicPath
+            collectionType: Type,
+            collectionLogoURL: String,
+            collectionStoragePath: StoragePath,
+            collectionPublicPath: PublicPath
         ) {
-            let address = contractAddress.toString()
-            let addrTrimmed = address.slice(from: 2, upTo: address.length)
-
-            let contractIdentifier = "A.".concat(addrTrimmed).concat(".").concat(contractName)
-            self.nftCatalogCollectionID = nftCatalogCollectionID
-            self.nftIdentifier = contractIdentifier.concat(".NFT")
-            self.collectionIdentifier = contractIdentifier.concat(".Collection")
-
-            self.contractAddress = contractAddress
+            self.name = name
+            self.nftType = nftType
             self.contractName = contractName
-            self.displayName = displayName
-
-            self.storagePath = storagePath
-            self.publicPath = publicPath
+            self.contractAddress = contractAddress
+            self.collectionType = collectionType
+            self.collectionLogoURL = collectionLogoURL
+            self.collectionStoragePath = collectionStoragePath
+            self.collectionPublicPath = collectionPublicPath
         }
     }
 
@@ -199,7 +193,7 @@ pub contract Mist {
         pub let startAt: UFix64?
         pub let endAt: UFix64?
 
-        pub let registryEndAt: UFix64
+        pub let registrationEndAt: UFix64
         pub let numberOfWinners: UInt64
 
         pub let nftInfo: NFTInfo
@@ -242,7 +236,7 @@ pub contract Mist {
         pub let startAt: UFix64?
         pub let endAt: UFix64?
 
-        pub let registryEndAt: UFix64
+        pub let registrationEndAt: UFix64
         pub let numberOfWinners: UInt64
 
         pub let nftInfo: NFTInfo
@@ -276,7 +270,7 @@ pub contract Mist {
                 name: self.name, 
                 host: self.host, 
                 registrator: account, 
-                nftIdentifier: self.nftInfo.nftIdentifier 
+                nftIdentifier: self.nftInfo.nftType.identifier
             )
 
             self.registrationRecords[account] = RegistrationRecord(address: account, extraData: {})
@@ -319,7 +313,7 @@ pub contract Mist {
                 name: self.name, 
                 host: self.host, 
                 claimer: claimer, 
-                nftIdentifier: self.nftInfo.nftIdentifier, 
+                nftIdentifier: self.nftInfo.nftType.identifier, 
                 tokenIDs: winnerRecord.rewardTokenIDs
             )
 
@@ -373,7 +367,7 @@ pub contract Mist {
             }
 
             // can't register and claim
-            if getCurrentBlock().timestamp > self.registryEndAt {
+            if getCurrentBlock().timestamp > self.registrationEndAt {
                 return Availability(
                     status: AvailabilityStatus.drawing,
                     extraData: {} 
@@ -522,7 +516,7 @@ pub contract Mist {
                 name: self.name, 
                 host: self.host, 
                 winner: winner, 
-                nftIdentifier: self.nftInfo.nftIdentifier, 
+                nftIdentifier: self.nftInfo.nftType.identifier, 
                 tokenIDs: [rewardTokenID]
             )
         }
@@ -605,7 +599,7 @@ pub contract Mist {
             url: String?,
             startAt: UFix64?,
             endAt: UFix64?,
-            registryEndAt: UFix64, 
+            registrationEndAt: UFix64, 
             numberOfWinners: UInt64,
             nftInfo: NFTInfo,
             collection: @NonFungibleToken.Collection,
@@ -615,18 +609,17 @@ pub contract Mist {
             claimVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]},
             extraData: {String: AnyStruct} 
         ) {
-            let collectionType = CompositeType(nftInfo.collectionIdentifier)!
-            if !collection.isInstance(collectionType) {
+            if !collection.isInstance(nftInfo.collectionType) {
                 panic("invalid nft info: get ".concat(collection.getType().identifier)
-                .concat(", want ").concat(collectionType.identifier))
+                .concat(", want ").concat(nftInfo.collectionType.identifier))
             }
 
             if let _startAt = startAt {
                 if let _endAt = endAt {
                     assert(_startAt < _endAt, message: "endAt should greater than startAt")
-                    assert(registryEndAt < _endAt, message: "registryEndAt should smaller than endAt")
+                    assert(registrationEndAt < _endAt, message: "registrationEndAt should smaller than endAt")
                 }
-                assert(registryEndAt > _startAt, message: "registryEndAt should greater than startAt")
+                assert(registrationEndAt > _startAt, message: "registrationEndAt should greater than startAt")
             }
 
             self.raffleID = self.uuid
@@ -640,7 +633,7 @@ pub contract Mist {
             self.startAt = startAt
             self.endAt = endAt
 
-            self.registryEndAt = registryEndAt
+            self.registrationEndAt = registrationEndAt
             self.numberOfWinners = numberOfWinners
 
             self.nftInfo = nftInfo
@@ -668,7 +661,7 @@ pub contract Mist {
                 name: self.name, 
                 host: self.host, 
                 description: self.description, 
-                nftIdentifier: self.nftInfo.nftIdentifier 
+                nftIdentifier: self.nftInfo.nftType.identifier 
             )
         }
 
@@ -711,7 +704,7 @@ pub contract Mist {
             url: String?,
             startAt: UFix64?,
             endAt: UFix64?,
-            registryEndAt: UFix64, 
+            registrationEndAt: UFix64, 
             numberOfWinners: UInt64,
             nftInfo: NFTInfo,
             collection: @NonFungibleToken.Collection,
@@ -755,7 +748,7 @@ pub contract Mist {
                 url: url,
                 startAt: startAt,
                 endAt: endAt,
-                registryEndAt: registryEndAt,
+                registrationEndAt: registrationEndAt,
                 numberOfWinners: numberOfWinners,
                 nftInfo: nftInfo,
                 collection: <- collection,
@@ -792,8 +785,9 @@ pub contract Mist {
         }
 
         pub fun deleteRaffle(raffleID: UInt64, receiver: &{NonFungibleToken.CollectionPublic}) {
+            let raffleRef = self.borrowRaffleRef(raffleID: raffleID) ?? panic("This raffle does not exist")
+            raffleRef.end(receiver: receiver)
             let raffle <- self.raffles.remove(key: raffleID) ?? panic("This raffle does not exist")
-            raffle.end(receiver: receiver)
             destroy raffle
         }
 

@@ -235,6 +235,5 @@ export default function StatsCard(props) {
           </label>
         </div>}
     </div>
-
   )
 }

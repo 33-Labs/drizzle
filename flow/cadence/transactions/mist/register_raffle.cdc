@@ -1,5 +1,4 @@
 import NonFungibleToken from "../contracts/core/NonFungibleToken.cdc"
-import ExampleNFT from "../contracts/examplenft/ExampleNFT.cdc"
 import Mist from "../contracts/Mist.cdc"
 
 transaction(raffleID: UInt64, host: Address) {

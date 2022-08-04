@@ -13,7 +13,7 @@ transaction(raffleID: UInt64, tokenIDs: [UInt64]) {
 
         self.raffle = raffleCollection.borrowRaffleRef(raffleID: raffleID)!
 
-        self.nftCollectionRef = acct.borrow<&ExampleNFT.Collection>(from: self.raffle.nftInfo.storagePath)
+        self.nftCollectionRef = acct.borrow<&ExampleNFT.Collection>(from: self.raffle.nftInfo.collectionStoragePath)
             ?? panic("Could not borrow collection from signer")
     
         self.displays = {}

@@ -97,7 +97,7 @@ export default function RaffleList(props) {
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <div className="text-gray-500">
-                              {raffle.nftInfo.displayName}
+                              {raffle.nftInfo.name}
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

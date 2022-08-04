@@ -9,6 +9,7 @@ import {
   transactionInProgressState,
   transactionStatusState
 } from "../../lib/atoms"
+import { register } from "../../lib/mist-transactions"
 
 const isClaimable = (claimStatus) => {
   if (!claimStatus) return false
@@ -21,7 +22,7 @@ const isClaimable = (claimStatus) => {
 }
 
 // [Emoji, Description, Amount, Title]
-const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
+const parseClaimStatus = (user, claimStatus, displayName, isPreview) => {
   const elements = {
     emoji: "🎉", description: "YOU WON", amount: `FLOAT #10242048`, title: "PREVIEWING"
   }
@@ -47,6 +48,7 @@ const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
   let eStatusR = claimStatus.eligibilityForRegistration.status.rawValue
   let eStatusC = claimStatus.eligibilityForClaim.status.rawValue
   let eligibleNFT = claimStatus.eligibilityForClaim.eligibleNFTs[0]
+  let winnerAmount = `${displayName} #${eligibleNFT}`
   if (aStatus === "1") {
     // ended expired and no capacity
     elements.emoji = "⛔️"
@@ -54,10 +56,10 @@ const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
     // Keep the draw result
     if (eStatusC == "5") {
       elements.description = "YOU HAVE CLAIMED" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.amount = winnerAmount
     } else if (eStatusC == "1") {
-      elements.description = "YOU ARE THE WINNER OF" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.description = "YOU WON" 
+      elements.amount = winnerAmount
     } else {
       elements.description = "NO LONGER AVAILABLE"
       elements.amount = null 
@@ -68,10 +70,10 @@ const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
     // Keep the draw result
     if (eStatusC == "5") {
       elements.description = "YOU HAVE CLAIMED" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.amount = winnerAmount
     } else if (eStatusC == "1") {
-      elements.description = "YOU ARE THE WINNER OF" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.description = "YOU WON" 
+      elements.amount = winnerAmount
     } else {
       elements.description = "NO LONGER AVAILABLE"
       elements.amount = null 
@@ -80,12 +82,12 @@ const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
     if (eStatusC == "5") {
       elements.emoji = "🎉"
       elements.description = "YOU HAVE CLAIMED" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.amount = winnerAmount
       elements.title = "HAVE CLAIMED"
     } else if (eStatusC == "1") {
       elements.emoji = "🎉"
-      elements.description = "YOU ARE THE WINNER OF" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.description = "YOU WON" 
+      elements.amount = winnerAmount
       elements.title = "CLAIM"
     } else if (eStatusC == "3" && eStatusR == "4") {
       // registered but not winner
@@ -103,12 +105,12 @@ const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
     if (eStatusC == "5") {
       elements.emoji = "🎉"
       elements.description = "YOU HAVE CLAIMED" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.amount = winnerAmount
       elements.title = "HAVE CLAIMED"
     } else if (eStatusC == "1") {
       elements.emoji = "🎉"
-      elements.description = "YOU ARE THE WINNER OF" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.description = "YOU WON" 
+      elements.amount = winnerAmount
       elements.title = "CLAIM"
     } else {
       elements.emoji = "🙉"
@@ -125,10 +127,9 @@ const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
     elements.title = "RAFFLE PAUSED"
     if (eStatusC == "5") {
       elements.description = "YOU HAVE CLAIMED" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
-    } else if (eStatusC == "1") {
-      elements.description = "YOU ARE THE WINNER OF" 
-      elements.amount = `${dispalyName} #${eligibleNFT}`
+      elements.amount = winnerAmount
+      elements.description = "YOU WON" 
+      elements.amount = winnerAmount
     } else if (eStatusC == "3") {
       if (eStatusR == "4") {
         elements.description = "YOU HAVE REGISTERED"
@@ -154,7 +155,7 @@ const parseClaimStatus = (user, claimStatus, nftDispalyName, isPreview) => {
       elements.amount = null
     } else if (eStatusR === "4") {
       elements.emoji = "✅"
-      elements.description = "YOU HAVE REGISTERED!"
+      elements.description = "YOU HAVE REGISTERED"
       elements.title = "COME BACK LATER"
       elements.amount = null
     }  
@@ -169,7 +170,7 @@ export default function ActionCard(props) {
   const { mutate } = useSWRConfig()
 
   const { isPreview, raffle, host, user, nft, claimStatus, setShowClaimedModal, setClaimedAmountInfo } = props
-  const displayName = isPreview ? (nft && nft.displayName) : (raffle.nftInfo && raffle.nftInfo.displayName)
+  const displayName = isPreview ? (nft && nft.displayName) : (raffle.nftInfo && raffle.nftInfo.name)
 
   // [Emoji, Description, Amount, Title]
   const {emoji, description, amount, title} = parseClaimStatus(user, claimStatus, displayName, isPreview)
@@ -202,7 +203,23 @@ export default function ActionCard(props) {
               return
             }
 
-            console.log("YES")
+            // Registering
+            if (claimStatus.availability.status.rawValue == "2") {
+              const res = await register(raffle.raffleID, host,
+                setTransactionInProgress,
+                setTransactionStatus)
+
+              if (res && res.status === 4 && res.statusCode === 0) {
+                const event = res.events.find((e) => e.type.includes("RaffleRegistered"))
+                if (event) {
+                  // setClaimedAmountInfo(claimedAmountInfo)
+                  // setShowClaimedModal(true)
+                  console.log("REGISTERED!")
+                }
+              } 
+            }
+
+
 
             // const res = await claim(drop.dropID, host, tokenInfo,
             //   setTransactionInProgress,
@@ -217,8 +234,8 @@ export default function ActionCard(props) {
             //   }
             // } 
 
-            // mutate(["claimStatusFetcher", drop.dropID, host, user && user.addr])
-            // mutate(["dropFetcher", drop.dropID, host])
+            mutate(["raffleClaimStatusFetcher", raffle.raffleID, host, user && user.addr])
+            mutate(["raffleFetcher", raffle.raffleID, host])
           }}
         >
           {title}

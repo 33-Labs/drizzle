@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { SpinnerCircular } from 'spinners-react'
 
-import DropPresenter from '../../../components/DropPresenter'
-
 import Custom404 from '../../404'
 import { queryRaffle, queryClaimStatus } from '../../../lib/mist-scripts'
 import RafflePresenter from '../../../components/RafflePresenter'
@@ -13,7 +11,7 @@ const raffleFetcher = async (funcName, raffleID, host) => {
   return await queryRaffle(raffleID, host)
 }
 
-const claimStatusFetcher = async (funcName, raffleID, host, claimer) => {
+const raffleClaimStatusFetcher = async (funcName, raffleID, host, claimer) => {
   return await queryClaimStatus(raffleID, host, claimer)
 }
 
@@ -30,7 +28,7 @@ export default function Raffle(props) {
     raffleID && host ? ["raffleFetcher", raffleID, host] : null, raffleFetcher)
 
   const { data: claimStatusData, error: claimStatusError } = useSWR(
-    raffleID && host && user && user.loggedIn ? ["claimStatusFetcher", raffleID, host, user.addr] : null, claimStatusFetcher)
+    raffleID && host && user && user.loggedIn ? ["raffleClaimStatusFetcher", raffleID, host, user.addr] : null, raffleClaimStatusFetcher)
 
   console.log("claimStatusError", claimStatusError)
   console.log("raffleError", raffleError)

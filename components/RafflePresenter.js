@@ -9,6 +9,7 @@ import AlertModal from './toolbox/AlertModal'
 import RewardCard from './raffle/RewardCard'
 import RaffleStatsCard from './raffle/RaffleStatsCard'
 import WinnersCard from './raffle/WinnersCard'
+import RaffleManageCard from './raffle/RaffleManageCard'
 
 export default function RafflePresenter(props) {
   const { raffle, claimStatus, user, host } = props
@@ -35,16 +36,15 @@ export default function RafflePresenter(props) {
               <RaffleStatsCard isPreview={false} raffle={raffle} />
               <RewardCard nftDisplays={raffle.rewardDisplays} />
               <WinnersCard isPreview={false} raffle={raffle} />
-              {/* <StatsCard raffle={raffle} />
               {
                 user && user.loggedIn && claimStatus && (user.addr == host) ? (
-                  <ManageCard
+                  <RaffleManageCard
                     raffle={raffle}
                     manager={host}
                     claimStatus={claimStatus}
                   />
                 ) : null
-              } */}
+              }
             </div>
           </>
 

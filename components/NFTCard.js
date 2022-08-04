@@ -9,7 +9,6 @@ export default function NFTCard(props) {
 
   const thumbnailURI = convertURI(display.thumbnail)
   const thumbnail = (thumbnailURI == "" || !thumbnailURI) ? "/drizzle.png" : thumbnailURI
-  
 
   return (
     <div key={tokenID}>

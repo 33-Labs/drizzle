@@ -1,4 +1,5 @@
 import { builtInMethods, executeScript, getAccountAddress, mintFlow, sendTransaction, shallPass, shallResolve } from "flow-js-testing"
+import { getMiddlewareManifest } from "next/dist/client/route-loader"
 import { getMistAdmin } from "./common"
 import { NFT_mintExampleNFT, NFT_setupExampleNFTCollection } from "./examplenft"
 
@@ -46,12 +47,15 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
     startAt: startAt || null, endAt: endAt || null,
     registeryEndAt: registeryEndAt || (new Date()).getTime() / 1000 + 2, 
     numberOfWinners: numberOfWinners || 2,
-    nftCatalogCollectionID: nftInfo.contractName,
-    nftContractAddress: nftInfo.contractAddress,
-    nftContractName: nftInfo.contractName,
-    nftDisplayName: nftInfo.displayName, 
-    nftCollectionStoragePath: nftInfo.collectionStoragePath, 
-    nftCollectionPublicPath: nftInfo.collectionPublicPath,
+    nftName: nftInfo.nftName,
+    nftTypeIdentifer: nftInfo.nftTypeIdentifer,
+    nftContractName: nftInfo.nftContractName,
+    nftContractAddress: nftInfo.nftContractAddress, 
+    nftCollectionTypeIdentifier: nftInfo.nftCollectionTypeIdentifier, 
+    nftCollectionTypeRestrictions: nftInfo.nftCollectionTypeRestrictions, 
+    nftCollectionLogoURL: nftInfo.nftCollectionLogoURL, 
+    nftCollectionStoragePath: nftInfo.nftCollectionStoragePath,
+    nftCollectionPublicPath: nftInfo.nftCollectionPublicPath,
     rewardTokenIDs: rewardTokenIDs || [],
     withWhitelist: withWhitelist || false, whitelist: whitelist || defaultWhitelist,
     withFloats: withFloats || false, threshold: threshold || 2, eventIDs: eventIDs || defaultEventIDs, eventHosts: eventHosts || defaultEventHosts,
@@ -73,12 +77,22 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
 // ===== UTILS =====
 
 export const getExampleNFTInfo = async () => {
+  const mistAdmin = await getMistAdmin()
+  const trimmedMistAdmin = mistAdmin.replace("0x", "")
   return {
-    contractAddress: await getMistAdmin(),
-    contractName: "ExampleNFT",
-    displayName: "Example",
-    collectionStoragePath: "exampleNFTCollection", 
-    collectionPublicPath: "exampleNFTCollection"
+    nftName: "Example",
+    nftTypeIdentifer: `A.${trimmedMistAdmin}.ExampleNFT`,
+    nftContractName: "ExampleNFT",
+    nftContractAddress: await getMistAdmin(),
+    nftCollectionTypeIdentifier: `A.${trimmedMistAdmin}.ExampleNFT.Collection`,
+    nftCollectionTypeRestrictions: [
+      `A.${trimmedMistAdmin}.ExampleNFT.ExampleNFTCollectionPublic`,
+      `A.${trimmedMistAdmin}.NonFungibleToken.CollectionPublic`,
+      `A.${trimmedMistAdmin}.MetadataViews.ResolverCollection`
+    ],
+    nftCollectionLogoURL: "",
+    nftCollectionStoragePath: "exampleNFTCollection", 
+    nftCollectionPublicPath: "exampleNFTCollection"
   }
 }
 

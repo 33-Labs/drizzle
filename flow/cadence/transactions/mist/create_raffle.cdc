@@ -10,15 +10,19 @@ transaction(
     url: String?,
     startAt: UFix64?,
     endAt: UFix64?,
-    registeryEndAt: UFix64,
+    registrationEndAt: UFix64,
     numberOfWinners: UInt64,
     // NFTInfo
-    nftCatalogCollectionID: String,
-    nftContractAddress: Address,
+    nftName: String,
+    nftTypeIdentifier: String,
     nftContractName: String,
-    nftDisplayName: String,
+    nftContractAddress: Address,
+    nftCollectionTypeIdentifier: String,
+    nftCollectionTypeRestrictions: [String],
+    nftCollectionLogoURL: String,
     nftCollectionStoragePath: String,
     nftCollectionPublicPath: String,
+
     rewardTokenIDs: [UInt64],
     // EligibilityVerifier
     // Only support registrationVerify now
@@ -70,13 +74,19 @@ transaction(
 
     execute {
         assert(UInt64(rewardTokenIDs.length) >= numberOfWinners, message: "reward number is not enough")
+
         let nftInfo = Mist.NFTInfo(
-            nftCatalogCollectionID: nftCatalogCollectionID,
+            name: nftName,
+            nftType: CompositeType(nftTypeIdentifier)!,
             contractName: nftContractName,
             contractAddress: nftContractAddress,
-            displayName: nftDisplayName,
-            nftCollectionStoragePath: StoragePath(identifier: nftCollectionStoragePath)!,
-            nftCollectionPublicPath: PublicPath(identifier: nftCollectionPublicPath)!
+            collectionType: RestrictedType(
+                identifier: nftCollectionTypeIdentifier,
+                restrictions: nftCollectionTypeRestrictions
+            )!,
+            collectionLogoURL: nftCollectionLogoURL,
+            collectionStoragePath: StoragePath(identifier: nftCollectionStoragePath)!,
+            collectionPublicPath: PublicPath(identifier: nftCollectionPublicPath)!
         )
         
         var verifier: {EligibilityVerifiers.IEligibilityVerifier}? = nil
@@ -119,7 +129,7 @@ transaction(
             url: url,
             startAt: startAt,
             endAt: endAt,
-            registeryEndAt: registeryEndAt,
+            registrationEndAt: registrationEndAt,
             numberOfWinners: numberOfWinners,
             nftInfo: nftInfo,
             collection: <- collection,

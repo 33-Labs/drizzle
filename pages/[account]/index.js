@@ -116,7 +116,7 @@ export default function Account(props) {
           <button 
             className={classNames(
               showDrop ? "bg-drizzle-green text-black shadow-md" : "bg-drizzle-green-light text-gray-500",
-              `grow rounded-md font-flow font-semibold`
+              `basis-1/2 rounded-md font-flow font-semibold`
               )
             }
             onClick={() => {
@@ -131,7 +131,7 @@ export default function Account(props) {
           <button 
             className={classNames(
               showRaffle ? "bg-drizzle-green text-black shadow-md" : "bg-drizzle-green-light text-gray-500",
-              `grow rounded-md font-flow font-semibold`
+              `basis-1/2 rounded-md font-flow font-semibold`
               )
             }
             onClick={() => {
