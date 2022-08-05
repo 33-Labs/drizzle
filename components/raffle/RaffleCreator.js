@@ -124,7 +124,7 @@ export default function RaffleCreator(props) {
       return [false, Hints.InvalidNFT]
     }
 
-    if (bannerSize > 500000) {
+    if (bannerSize > publicConfig.bannerSizeLimit) {
       return [false, Hints.BannerOversize]
     }
 

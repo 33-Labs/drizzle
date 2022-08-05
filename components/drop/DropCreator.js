@@ -124,7 +124,7 @@ export default function DropCreator(props) {
       return [false, Hints.InvalidToken]
     }
 
-    if (bannerSize > 500000) {
+    if (bannerSize > publicConfig.bannerSizeLimit) {
       return [false, Hints.BannerOversize]
     }
 

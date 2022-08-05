@@ -1,7 +1,17 @@
+// Made by Lanford33
+//
+// Mist.cdc defines the NFT Raffle and the collections of it.
+//
+// There are three stages in a NFT Raffle. 
+// Stage 1. Eligible accounts register themselves to the raffle, and be the winner candidates
+// Stage 2. After the registeration ended, the host can draw the winner from candidates.
+// Stage 3. The winners claim their reward
+
 import NonFungibleToken from "./core/NonFungibleToken.cdc"
 import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
 
 pub contract Mist {
+
     pub let MistAdminStoragePath: StoragePath
     pub let MistAdminPublicPath: PublicPath
     pub let MistAdminPrivatePath: PrivatePath
@@ -105,6 +115,8 @@ pub contract Mist {
         }
     }
 
+    // We want to get the thumbnail uri directly from Raffle
+    // so we define NFTDisplay rather than use MetadataViews.Display
     pub struct NFTDisplay {
         pub let tokenID: UInt64
         pub let name: String
@@ -246,17 +258,27 @@ pub contract Mist {
         pub let claimVerifyMode: EligibilityVerifiers.VerifyMode
 
         pub var isPaused: Bool
+        // After a Raffle ended, it can't be recovered.
         pub var isEnded: Bool
 
         pub let extraData: {String: AnyStruct}
 
+        // Check an account is eligible for registration or not
         access(account) let registrationVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
+        // Check a winner account is eligible for claiming the reward or not
+        // This is mainly used to allow the host add some extra requirements to the winners
         access(account) let claimVerifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]}
         access(self) let collection: @NonFungibleToken.Collection
+        // The information of registrants
         access(self) let registrationRecords: {Address: RegistrationRecord}
+        // The information of winners
         access(self) let winners: {Address: WinnerRecord}
+        // Candidates stores the accounts of registrants. It's a helper field to make drawing easy
         access(self) let candidates: [Address]
+        // nftToBeDrawn stores the tokenIDs of undrawn NFTs. It's a helper field to make drawing easy
         access(self) let nftToBeDrawn: [UInt64]
+        // rewardDisplays stores the Display of NFTs added to this Raffle. Once an NFT added as reward, the Display will be recorded here.
+        // No item will be deleted from this field.
         access(self) let rewardDisplays: {UInt64: NFTDisplay}
 
         pub fun register(account: Address, params: {String: AnyStruct}) {
@@ -793,6 +815,7 @@ pub contract Mist {
         }
 
         pub fun deleteRaffle(raffleID: UInt64, receiver: &{NonFungibleToken.CollectionPublic}) {
+            // Clean the Raffle before make it ownerless
             let raffleRef = self.borrowRaffleRef(raffleID: raffleID) ?? panic("This raffle does not exist")
             raffleRef.end(receiver: receiver)
             let raffle <- self.raffles.remove(key: raffleID) ?? panic("This raffle does not exist")
