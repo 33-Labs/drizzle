@@ -11,7 +11,6 @@ import {
 import { ExternalLinkIcon } from "@heroicons/react/outline"
 import { convertCadenceDateTime } from "../../lib/utils"
 import ShareCard from "../drop/ShareCard"
-import ClaimCard from "../drop/ClaimCard"
 import CriteriaCard from "../drop/CriteriaCard"
 import TimeLimitCard from "../drop/TimeLimitCard"
 import TagsCard from "../drop/TagsCard"
@@ -98,7 +97,8 @@ export default function RaffleCard(props) {
 
   const isPreview = props.isPreview == true
   const setShowClaimedModal = props.setShowClaimedModal
-  const setClaimedAmountInfo = props.setClaimedAmountInfo
+  const setShowRegisteredModal = props.setShowRegisteredModal
+  const setRewardInfo = props.setRewardInfo
 
   // Only created Raffle has claimStatus
   const { raffle, claimStatus, user, nft, selectedTokens,
@@ -137,6 +137,7 @@ export default function RaffleCard(props) {
       </div>
       <div className="flex flex-col gap-y-8">
         <CriteriaCard
+          type="Raffle"
           raffle={raffle} eligibilityMode={eligibilityMode}
           floatGroup={floatGroup} floatEventPairs={floatEventPairs} threshold={threshold}
         />
@@ -148,7 +149,8 @@ export default function RaffleCard(props) {
           token={nft}
           user={user}
           setShowClaimedModal={setShowClaimedModal}
-          setClaimedAmountInfo={setClaimedAmountInfo}
+          setShowRegisteredModal={setShowRegisteredModal}
+          setRewardInfo={setRewardInfo}
         /> 
         {
           raffleID && host ?

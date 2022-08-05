@@ -23,7 +23,7 @@ import FloatReviewer from './eligibility/FloatReviewer'
 import BasicInfoBoard from './creator/BasicInfoBoard'
 import Hints from '../lib/hints'
 import WhitelistReviewer from './eligibility/WhitelistReviewer'
-import DropCreatedModal from './creator/DropCreatedModal'
+import CreatedModal from './creator/CreatedModal'
 import publicConfig from '../publicConfig'
 import NFTSelector from './NFTSelector'
 import { createRaffle } from '../lib/mist-transactions'
@@ -37,7 +37,6 @@ const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
 const Timezone = getTimezone()
 
 export const convertSelectTokensToDisplays = (selectedTokens) => {
-  console.log(selectedTokens)
   const displays = {}
   for (const [tokenID, token] of Object.entries(selectedTokens)) {
     if (token.isSelected) displays[tokenID] = token.display
@@ -81,7 +80,7 @@ export default function RaffleCreator(props) {
   const [showPreview, setShowPreview] = useState(false)
 
   const [showCreatedModal, setShowCreatedModal] = useState(false)
-  const [newDropURL, setNewDropURL] = useState(null)
+  const [newRaffleURL, setNewRaffleURL] = useState(null)
 
   const [timezone, setTimezone] = useState(null)
   const [registrationDeadline, setRegistrationDeadline] = useState(null)
@@ -133,16 +132,19 @@ export default function RaffleCreator(props) {
       return [false, Hints.RaffleEnded]
     }
 
-    if (!registrationDeadline || 
-      !isFinite(registrationDeadline) || 
-      registrationDeadline.getTime() < (new Date()).getTime() ||
-      (endAt && isFinite(endAt) && registrationDeadline.getTime() >= endAt.getTime())) {
-        return [false, Hints.InvalidRegistrationDeadline]
-    }
-
     if (startAt && isFinite(startAt) && endAt && startAt.getTime() >= endAt.getTime()) {
       return [false, Hints.InvalidTimeLimit]
     }
+
+    if (!registrationDeadline || 
+      !isFinite(registrationDeadline) || 
+      registrationDeadline.getTime() < (new Date()).getTime() ||
+      (endAt && isFinite(endAt) && registrationDeadline.getTime() >= endAt.getTime()) ||
+      (startAt && isFinite(startAt) && registrationDeadline.getTime() <= startAt.getTime())
+      ) {
+        return [false, Hints.InvalidRegistrationDeadline]
+    }
+
 
     if (!numberOfWinners || isNaN(parseInt(numberOfWinners))) {
       return [false, Hints.InvalidNumberOfWinners]
@@ -273,10 +275,10 @@ export default function RaffleCreator(props) {
 
   const handleCreationResponse = (res) => {
     if (res && res.status === 4 && res.statusCode === 0) {
-      const createDropEvent = res.events.find((e) => e.data.dropID)
-      if (createDropEvent) {
-        const url = `${publicConfig.appURL}/${props.user && props.user.addr}/drops/${createDropEvent.data.dropID}`
-        setNewDropURL(url)
+      const event = res.events.find((e) => e.data.raffleID)
+      if (event) {
+        const url = `${publicConfig.appURL}/${props.user && props.user.addr}/raffles/${event.data.raffleID}`
+        setNewRaffleURL(url)
         setShowCreatedModal(true)
       }
     }
@@ -466,7 +468,7 @@ export default function RaffleCreator(props) {
               : "Select a mode") : "Connect Wallet"}
         </button>
       </div>
-      <DropCreatedModal open={showCreatedModal} setOpen={setShowCreatedModal} url={newDropURL} />
+      <CreatedModal type="Raffle" open={showCreatedModal} setOpen={setShowCreatedModal} url={newRaffleURL} />
     </>
   )
 }

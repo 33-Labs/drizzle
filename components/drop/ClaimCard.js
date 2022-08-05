@@ -94,7 +94,7 @@ const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, distributor
     }
   } else if (aStatus === "2") {
     elements.emoji = "🕙"
-    elements.title = "DROP HAS NOT STARTED"
+    elements.title = "NOT STARTED YET"
   } else if (aStatus === "5") {
     elements.emoji = "⏸️"
     elements.title = "DROP PAUSED"

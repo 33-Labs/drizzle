@@ -7,7 +7,7 @@ const getCriteriaLabel = (drizzle, type) => {
   if (type === "DROP") {
     if (!drizzle || Object.keys(drizzle.verifiers) <= 0) return null
     verifier = Object.values(drizzle.verifiers)[0][0]
-  } else if (type === "RAFFLE") {
+  } else if (type === "Raffle") {
     if (!drizzle || Object.keys(drizzle.registrationVerifiers) <= 0) return null
     verifier = Object.values(drizzle.registrationVerifiers)[0][0]
   }
@@ -106,9 +106,8 @@ const getCriteriaLabelPreview = (
 }
 
 export default function CriteriaCard(props) {
-  const {drop, raffle, eligibilityMode, floatGroup, floatEventPairs, threshold} = props
+  const {type, drop, raffle, eligibilityMode, floatGroup, floatEventPairs, threshold} = props
   const drizzle = drop ? drop : (raffle ? raffle : null)
-  const type = drop ? "DROP" : (raffle ? "RAFFLE" : "PREVIEW")
 
   return (
     <div className="p-5 w-full min-w-[240px]

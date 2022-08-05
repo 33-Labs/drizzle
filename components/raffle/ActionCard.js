@@ -89,7 +89,6 @@ const parseClaimStatus = (user, claimStatus, displayName, isPreview) => {
       elements.amount = winnerAmount
       elements.title = "CLAIM"
     } else if (eStatusC == "3" && eStatusR == "4") {
-      // registered but not winner
       elements.emoji = "🎲"
       elements.description = "HAVE A GOOD DAY"  
       elements.amount = null
@@ -111,6 +110,11 @@ const parseClaimStatus = (user, claimStatus, displayName, isPreview) => {
       elements.description = "YOU WON" 
       elements.amount = winnerAmount
       elements.title = "CLAIM"
+    } else if (eStatusC == "3" && eStatusR == "4") {
+      elements.emoji = "🙈"
+      elements.description = "YOU ARE NOT WINNER"
+      elements.title = "NOT WINNER"
+      elements.amount = null  
     } else {
       elements.emoji = "🙉"
       elements.description = "YOU ARE NOT ELIGIBLE"
@@ -120,7 +124,8 @@ const parseClaimStatus = (user, claimStatus, displayName, isPreview) => {
   } else if (aStatus === "0") {
     elements.emoji = "🕙"
     elements.description = "DIDA DIDA ..."   
-    elements.title = "NOT STARTED"
+    elements.title = "NOT STARTED YET"
+    elements.amount = null
   } else if (aStatus === "6") {
     elements.emoji = "⏸️"
     elements.title = "RAFFLE PAUSED"
@@ -168,7 +173,7 @@ export default function ActionCard(props) {
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
   const { mutate } = useSWRConfig()
 
-  const { isPreview, raffle, host, user, nft, claimStatus, setShowClaimedModal, setClaimedAmountInfo } = props
+  const { isPreview, raffle, host, user, nft, claimStatus, setShowClaimedModal, setShowRegisteredModal, setRewardInfo } = props
   const displayName = isPreview ? (nft && nft.name) : (raffle.nftInfo && raffle.nftInfo.name)
 
   // [Emoji, Description, Amount, Title]
@@ -211,13 +216,10 @@ export default function ActionCard(props) {
               if (res && res.status === 4 && res.statusCode === 0) {
                 const event = res.events.find((e) => e.type.includes("RaffleRegistered"))
                 if (event) {
-                  // setClaimedAmountInfo(claimedAmountInfo)
-                  // setShowClaimedModal(true)
-                  console.log("REGISTERED!")
+                  setShowRegisteredModal(true)
                 }
               } 
             } else if (claimStatus.availability.status.rawValue == "3" || claimStatus.availability.status.rawValue == "4") {
-              console.log(raffle.nftInfo)
               const res = await claim(raffle.raffleID, host, raffle.nftInfo,
                 setTransactionInProgress,
                 setTransactionStatus)
@@ -225,12 +227,10 @@ export default function ActionCard(props) {
               if (res && res.status === 4 && res.statusCode === 0) {
                 const event = res.events.find((e) => e.type.includes("RaffleClaimed"))
                 if (event) {
-                  // setClaimedAmountInfo(claimedAmountInfo)
-                  // setShowClaimedModal(true)
-                  console.log("CLAIMED!")
+                  setRewardInfo(amount)
+                  setShowClaimedModal(true)
                 }
               }  
-
             }
 
             mutate(["raffleClaimStatusFetcher", raffle.raffleID, host, user && user.addr])

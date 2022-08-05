@@ -10,7 +10,6 @@ module.exports = {
       colors: {
         'drizzle-green': '#00d588',
         'drizzle-green-dark': '#00a368',
-        'drizzle-green-thick': '#47a06d',
         'drizzle-green-light': '#95e7c1',
         'drizzle-green-ultralight': '#e9faf3', 
         'disabled-gray': '#e2e8f0',

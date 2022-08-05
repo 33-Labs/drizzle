@@ -135,6 +135,7 @@ export default function DropCard(props) {
       </div>
       <div className="flex flex-col gap-y-8">
         <CriteriaCard
+          type="DROP"
           drop={drop} eligibilityMode={eligibilityMode}
           floatGroup={floatGroup} floatEventPairs={floatEventPairs} threshold={threshold}
         />

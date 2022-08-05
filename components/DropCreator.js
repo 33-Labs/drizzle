@@ -29,7 +29,7 @@ import BasicInfoBoard from './creator/BasicInfoBoard'
 import Hints from '../lib/hints'
 import { PacketModeIdentical, PacketModeRandom } from './eligibility/PacketModeSelector'
 import WhitelistReviewer from './eligibility/WhitelistReviewer'
-import DropCreatedModal from './creator/DropCreatedModal'
+import CreatedModal from './creator/CreatedModal'
 import publicConfig from '../publicConfig'
 import StatsCard from './presenter/StatsCard'
 
@@ -443,7 +443,7 @@ export default function DropCreator(props) {
               : "Select a mode") : "Connect Wallet"}
         </button>
       </div>
-      <DropCreatedModal open={showCreatedModal} setOpen={setShowCreatedModal} url={newDropURL} />
+      <CreatedModal open={showCreatedModal} setOpen={setShowCreatedModal} url={newDropURL} />
     </>
   )
 }

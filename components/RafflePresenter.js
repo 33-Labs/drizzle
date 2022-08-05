@@ -3,8 +3,6 @@ import { SpinnerCircular } from 'spinners-react'
 import ClaimedModal from './creator/ClaimedModal'
 
 import RaffleCard from './raffle/RaffleCard'
-import ManageCard from './presenter/ManageCard'
-import StatsCard from './presenter/StatsCard'
 import AlertModal from './toolbox/AlertModal'
 import RewardCard from './raffle/RewardCard'
 import RaffleStatsCard from './raffle/RaffleStatsCard'
@@ -14,7 +12,10 @@ import RaffleManageCard from './raffle/RaffleManageCard'
 export default function RafflePresenter(props) {
   const { raffle, claimStatus, user, host } = props
   const [showClaimedModal, setShowClaimedModal] = useState(false)
-  // const [claimedAmountInfo, setClaimedAmountInfo] = useState('')
+  const [showRegisteredModal, setShowRegisteredModal] = useState(false)
+  const [rewardInfo, setRewardInfo] = useState('')
+  console.log(raffle)
+  console.log(claimStatus)
 
   return (
     <>
@@ -25,11 +26,11 @@ export default function RafflePresenter(props) {
               <RaffleCard
                 isPreview={false}
                 raffle={raffle}
-                // startAt={raffle.startAt ? convertCadenceDateTime(raffle.startAt) : null}
                 claimStatus={claimStatus}
                 user={user}
                 setShowClaimedModal={setShowClaimedModal}
-                // setClaimedAmountInfo={setClaimedAmountInfo}
+                setShowRegisteredModal={setShowRegisteredModal}
+                setRewardInfo={setRewardInfo}
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -53,7 +54,8 @@ export default function RafflePresenter(props) {
         </div>
       }
       <AlertModal />
-      {/* <ClaimedModal open={showClaimedModal} setOpen={setShowClaimedModal} claimedAmountInfo={claimedAmountInfo} /> */}
+      <ClaimedModal open={showClaimedModal} setOpen={setShowClaimedModal} rewardInfo={rewardInfo} title="Claimed Successfully!" />
+      <ClaimedModal open={showRegisteredModal} setOpen={setShowRegisteredModal} title="Registered Successfully!" />
     </>
   )
 }

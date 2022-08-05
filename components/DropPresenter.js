@@ -47,7 +47,7 @@ export default function DropPresenter(props) {
         </div>
       }
       <AlertModal />
-      <ClaimedModal open={showClaimedModal} setOpen={setShowClaimedModal} claimedAmountInfo={claimedAmountInfo} />
+      <ClaimedModal open={showClaimedModal} setOpen={setShowClaimedModal} rewardInfo={claimedAmountInfo} title="Claimed Successfully!" />
     </>
   )
 }

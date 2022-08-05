@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 export default function ClaimedModal(props) {
   const router = useRouter()
-  const { open, setOpen, claimedAmountInfo } = props
+  const { open, setOpen, rewardInfo, title } = props
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -36,11 +36,14 @@ export default function ClaimedModal(props) {
                 <div>
                   <label className="block w-full h-[80px] text-center text-[60px]">🎉</label>
                   <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-2xl leading-10 font-semibold text-gray-900">
-                      {`${claimedAmountInfo}`}
-                    </Dialog.Title>
+                    {
+                      rewardInfo ?
+                        <Dialog.Title as="h3" className="text-2xl leading-10 font-semibold text-gray-900">
+                          {`${rewardInfo}`}
+                        </Dialog.Title> : null
+                    }
                     <Dialog.Title as="h3" className="text-xl leading-10 font-semibold text-gray-900">
-                      {`Claimed Successfully!`}
+                      {title}
                     </Dialog.Title>
                   </div>
                 </div>

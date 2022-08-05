@@ -137,6 +137,7 @@ pub contract Mist {
 
         access(contract) fun markAsClaimed() {
             self.isClaimed = true
+            self.extraData["claimedAt"] = getCurrentBlock().timestamp
         }
 
         init(
@@ -358,7 +359,7 @@ pub contract Mist {
 
             assert(UInt64(self.winners.keys.length) <= self.numberOfWinners, message: "invalid winners")
 
-            if (UInt64(self.winners.keys.length) == self.numberOfWinners) || self.candidates.length == 0 {
+            if (UInt64(self.winners.keys.length) == self.numberOfWinners) {
                 return Availability(
                     status: AvailabilityStatus.drawn,
                     extraData: {}
@@ -366,6 +367,12 @@ pub contract Mist {
             }
 
             if getCurrentBlock().timestamp > self.registrationEndAt {
+                if self.candidates.length == 0 {
+                    return Availability(
+                        status: AvailabilityStatus.drawn,
+                        extraData: {} 
+                    ) 
+                }
                 return Availability(
                     status: AvailabilityStatus.drawing,
                     extraData: {} 
@@ -485,10 +492,13 @@ pub contract Mist {
         }
 
         pub fun draw(params: {String: AnyStruct}) {
-            assert(self.nftToBeDrawn.length >= self.candidates.length, message: "nft is not enough")
-
             let availability = self.checkAvailability(params: params)
             assert(availability.status == AvailabilityStatus.drawing, message: availability.getStatus())
+
+            let capacity = self.numberOfWinners - UInt64(self.winners.keys.length)
+            let upperLimit = capacity > UInt64(self.candidates.length) ?
+                UInt64(self.candidates.length) : capacity
+            assert(UInt64(self.nftToBeDrawn.length) >= upperLimit, message: "nft is not enough")
 
             let winnerIndex = unsafeRandom() % UInt64(self.candidates.length)
             let winner = self.candidates[winnerIndex]
@@ -519,15 +529,16 @@ pub contract Mist {
         }
 
         pub fun batchDraw(params: {String: AnyStruct}) {
-            assert(self.nftToBeDrawn.length >= self.candidates.length, message: "nft is not enough")
-
             let availability = self.checkAvailability(params: params)
             assert(availability.status == AvailabilityStatus.drawing, message: availability.getStatus())
 
-            let upperLimit = self.numberOfWinners > UInt64(self.candidates.length) ?
-                UInt64(self.candidates.length) : self.numberOfWinners
+            let capacity = self.numberOfWinners - UInt64(self.winners.keys.length)
+            let upperLimit = capacity > UInt64(self.candidates.length) ?
+                UInt64(self.candidates.length) : capacity
+            assert(UInt64(self.nftToBeDrawn.length) >= upperLimit, message: "nft is not enough")
 
-            while UInt64(self.winners.keys.length) < upperLimit {
+            var counter: UInt64 = 0
+            while counter < upperLimit {
                 let winnerIndex = unsafeRandom() % UInt64(self.candidates.length)
                 let winner = self.candidates[winnerIndex]
 
@@ -545,6 +556,7 @@ pub contract Mist {
 
                 self.candidates.remove(at: winnerIndex)
                 self.nftToBeDrawn.remove(at: rewardIndex)
+                counter = counter + 1
             }
         }
 
