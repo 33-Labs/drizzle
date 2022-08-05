@@ -65,7 +65,7 @@ export default function TokenSelector(props) {
       }
       <div className="relative mt-1">
         <Combobox.Input
-          className="w-full h-[50px] text-lg font-flow rounded-2xl border border-drizzle-green bg-drizzle-green/10 py-2 pl-3 pr-10  focus:border-drizzle-green-dark focus:outline-none focus:ring-1 focus:ring-drizzle-green-dark"
+          className="w-full h-[50px] text-lg font-flow rounded-2xl border border-drizzle-green bg-drizzle-green-ultralight py-2 pl-3 pr-10  focus:border-drizzle-green-dark focus:outline-none focus:ring-1 focus:ring-drizzle-green-dark"
           onChange={(event) => {
             setQuery(event.target.value)
           }}
@@ -84,7 +84,7 @@ export default function TokenSelector(props) {
                 className={({ active }) =>
                   classNames(
                     "relative cursor-default select-none py-2 pl-3 pr-9",
-                    active ? "bg-drizzle-green/50" : "text-black"
+                    active ? "bg-drizzle-green-light" : "text-black"
                   )
                 }
               >

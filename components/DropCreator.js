@@ -415,7 +415,7 @@ export default function DropCreator(props) {
           <button
             type="button"
             className={classNames(
-              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
             )}
             disabled={transactionInProgress}
@@ -429,7 +429,7 @@ export default function DropCreator(props) {
         <button
           type="button"
           className={classNames(
-            (transactionInProgress || !eligibilityMode) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+            (transactionInProgress || !eligibilityMode) ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
             "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
           )}
           disabled={transactionInProgress || !eligibilityMode}

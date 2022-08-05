@@ -88,7 +88,7 @@ export default function PacketModeSelector(props) {
                   ? 'ring-2 ring-drizzle-green ring-offset-2'
                   : 'ring-1 ring-black ring-opacity-5'
                 }
-                  ${checked ? 'bg-drizzle-green/80 text-black' : 'bg-white'
+                  ${checked ? 'bg-drizzle-green text-black' : 'bg-white'
                 }
 
                   relative flex cursor-pointer rounded-2xl px-5 py-4 shadow-md focus:outline-none`

@@ -75,7 +75,7 @@ export default function FloatPicker(props) {
           type="text"
           name="floatPicker"
           id="floatPicker"
-          className="w-full bg-drizzle-green/10 grow border-drizzle-green font-flow text-lg rounded-2xl
+          className="w-full bg-drizzle-green-ultralight grow border-drizzle-green font-flow text-lg rounded-2xl
           focus:ring-drizzle-green-dark focus:border-drizzle-green-dark  placeholder:text-gray-300"
           disabled={transactionInProgress}
           value={rawEventStr}
@@ -87,7 +87,7 @@ export default function FloatPicker(props) {
         <button
           type="button"
           className={classNames(
-            transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+            transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
             `rounded-xl h-12 px-3 sm:px-6 text-base font-medium shadow-sm text-black`
           )}
           disabled={transactionInProgress}
@@ -148,7 +148,7 @@ export default function FloatPicker(props) {
                     max={floatEvents.length}
                     value={threshold}
                     id="threshold"
-                    className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                    className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green-ultralight border-drizzle-green font-flow text-lg placeholder:text-gray-300"
                     onWheel={(e) => e.target.blur()}
                     onChange={(event) => { setThreshold(event.target.value) }}
                   />

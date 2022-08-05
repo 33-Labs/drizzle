@@ -58,7 +58,7 @@ export default function BasicInfoBoard(props) {
               id="name"
               disabled={transactionInProgress}
               required
-              className="bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg rounded-2xl
+              className="bg-drizzle-green-ultralight block w-full border-drizzle-green font-flow text-lg rounded-2xl
                 focus:ring-drizzle-green-dark focus:border-drizzle-green-dark  placeholder:text-gray-300"
               placeholder={NamePlaceholder}
               onChange={(event) => {
@@ -80,7 +80,7 @@ export default function BasicInfoBoard(props) {
               id="description"
               disabled={transactionInProgress}
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
-                bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+                bg-drizzle-green-ultralight resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
 
               defaultValue={''}
               spellCheck={false}
@@ -103,7 +103,7 @@ export default function BasicInfoBoard(props) {
               disabled={transactionInProgress}
               pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
               className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
-              bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+              bg-drizzle-green-ultralight block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
               placeholder={URLPlaceholder}
               onChange={(event) => { setURL(event.target.value) }}
             />

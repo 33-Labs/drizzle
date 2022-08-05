@@ -66,7 +66,7 @@ export default function NFTSelector(props) {
 
         <div className="relative mt-1">
           <Combobox.Input
-            className="w-full h-[50px] text-lg font-flow rounded-2xl border border-drizzle-green bg-drizzle-green/10 py-2 pl-3 pr-10  focus:border-drizzle-green-dark focus:outline-none focus:ring-1 focus:ring-drizzle-green-dark"
+            className="w-full h-[50px] text-lg font-flow rounded-2xl border border-drizzle-green bg-drizzle-green-ultralight py-2 pl-3 pr-10  focus:border-drizzle-green-dark focus:outline-none focus:ring-1 focus:ring-drizzle-green-dark"
             onChange={(event) => {
               setQuery(event.target.value)
             }}
@@ -85,7 +85,7 @@ export default function NFTSelector(props) {
                   className={({ active }) =>
                     classNames(
                       "relative cursor-default select-none py-2 pl-3 pr-9",
-                      active ? "bg-drizzle-green/50" : "text-black"
+                      active ? "bg-drizzle-green-light" : "text-black"
                     )
                   }
                 >
@@ -140,7 +140,7 @@ export default function NFTSelector(props) {
 
       {
         Object.entries(selectedTokens).filter(([, info]) => info.isSelected).length > 0 ?
-          <div className="mt-10 flex flex-col p-4 sm:p-8 rounded-3xl border-4 border-drizzle-green/30 border-dashed">
+          <div className="mt-10 flex flex-col p-4 sm:p-8 rounded-3xl border-4 border-drizzle-green-light border-dashed">
             <label className="block text-2xl font-flow font-bold">Selected NFT</label>
             <div className={`
           px-1 py-3 pb-3 mt-4 sm:flex sm:flex-wrap grid grid-rows-2 grid-flow-col gap-3 sm:gap-4 justify-start w-full overflow-auto sm:max-h-[464px]

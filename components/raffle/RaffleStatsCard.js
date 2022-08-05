@@ -62,7 +62,7 @@ export default function RaffleStatsCard(props) {
         {cards.length > 0 ?
           cards.map((card, index) => {
             return (
-              <div className="w-full">
+              <div key={`${index}-div`} className="w-full">
                 {
                   card.link ?
                     <a

@@ -32,7 +32,7 @@ export default function NFTCard(props) {
         }
         setSelectedTokens(tokens)
       }}>
-      <div className="w-full h-28 bg-drizzle-green/10 relative">
+      <div className="w-full h-28 bg-drizzle-green-ultralight relative">
         <Image src={thumbnail}
           alt="" layout="fill" priority
           objectFit="contain"

@@ -188,7 +188,7 @@ export default function ActionCard(props) {
           type="button"
           className={classNames(
             (isPreview || (user && user.loggedIn && !isClaimable(claimStatus))) ? "bg-disabled-gray" :
-              (transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark"),
+              (transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark"),
             `mt-5 h-[48px] text-base font-medium shadow-sm text-black rounded-2xl`
           )}
           disabled={isPreview || (user && user.loggedIn && !isClaimable(claimStatus)) || transactionInProgress}

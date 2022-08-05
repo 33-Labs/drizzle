@@ -47,7 +47,7 @@ export default function Landing(props) {
                   type="button"
                   disabled={transactionInProgress}
                   className={classNames(
-                    transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                    transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
                     "h-12 w-32 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black"
                   )}
                   onClick={() => {
@@ -60,7 +60,7 @@ export default function Landing(props) {
                   type="button"
                   disabled={transactionInProgress}
                   className={classNames(
-                    transactionInProgress ? "bg-drizzle-green/60 text-gray-400" : "bg-drizzle-green hover:bg-drizzle-green-dark text-black",
+                    transactionInProgress ? "bg-drizzle-green-light text-gray-400" : "bg-drizzle-green hover:bg-drizzle-green-dark text-black",
                     "h-12 w-32 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm"
                   )}
                   onClick={() => {
@@ -75,7 +75,7 @@ export default function Landing(props) {
               type="button"
               disabled={transactionInProgress}
               className={classNames(
-                transactionInProgress ? "bg-drizzle-green/60 text-gray-400" : "bg-drizzle-green hover:bg-drizzle-green-dark text-black",
+                transactionInProgress ? "bg-drizzle-green-light text-gray-400" : "bg-drizzle-green hover:bg-drizzle-green-dark text-black",
                 "h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black"
               )}
               onClick={() => { fcl.authenticate() }}
@@ -93,7 +93,7 @@ export default function Landing(props) {
         <a href={publicConfig.floatURL}
           target="_blank"
           rel="noopener noreferrer">
-          <div className="flex items-center rounded-full bg-drizzle-green/50 px-3 py-1 text-xs sm:text-sm text-drizzle-green-dark">
+          <div className="flex items-center rounded-full bg-drizzle-green-light px-3 py-1 text-xs sm:text-sm text-drizzle-green-dark">
             <Image src="/float_logo.png" alt="" layout="intrinsic" width={20} height={20} objectFit="cover" priority={true} />&nbsp;Eligibility checking with FLOAT is now available!
           </div>
         </a>

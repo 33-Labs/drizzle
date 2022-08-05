@@ -38,7 +38,7 @@ export default function NavigationBar(props) {
         <button
           className="shrink truncate font-flow text-base
           text-drizzle-green-dark shadow-sm
-          bg-drizzle-green/50 rounded-full px-3 py-2 leading-5"
+          bg-drizzle-green-light rounded-full px-3 py-2 leading-5"
           onClick={() => {
             if (user) {
               router.push(`/${user.addr}`)
@@ -49,7 +49,7 @@ export default function NavigationBar(props) {
         </button>
         <button
           type="button"
-          className="shrink-0 bg-drizzle-green/50 rounded-full p-2"
+          className="shrink-0 bg-drizzle-green-light rounded-full p-2"
           onClick={() => {
             fcl.unauthenticate()
             router.push("/")

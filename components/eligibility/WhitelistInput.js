@@ -35,7 +35,7 @@ export default function WhitelistInput(props) {
             name="recipients"
             id="recipients"
             className="focus:ring-drizzle-green-dark focus:border-drizzle-green-dark rounded-2xl
-        bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+        bg-drizzle-green-ultralight resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
             spellCheck={false}
             value={rawRecordsStr}
             placeholder={
@@ -53,7 +53,7 @@ export default function WhitelistInput(props) {
             <button
               type="button"
               className={classNames(
-                transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
                 "h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-md text-black"
               )}
               disabled={transactionInProgress}

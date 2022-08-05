@@ -66,14 +66,14 @@ export default function RewardCard(props) {
               .sort(([tokenID1,], [tokenID2,]) => tokenID2 - tokenID1)
               .map(([tokenID, tokenDisplay]) => {
                 return (
-                  <div className="flex flex-col gap-y-2 items-center">
+                  <div key={`${tokenID}-div`} className="flex flex-col gap-y-2 items-center">
                     <NFTCard
                       key={tokenID}
                       disabled={true}
                       tokenID={tokenID}
                       display={tokenDisplay}
                     />
-                    <label className={`rounded-full px-2 text-xs font-semibold leading-6 ${tokenDisplay.status.style}`}>
+                    <label key={`${tokenID}-label`} className={`rounded-full px-2 text-xs font-semibold leading-6 ${tokenDisplay.status.style}`}>
                       {tokenDisplay.status.title}
                     </label>
                   </div>

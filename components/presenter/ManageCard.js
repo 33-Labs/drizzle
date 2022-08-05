@@ -58,7 +58,7 @@ export default function ManageCard(props) {
           <button
             type="button"
             className={classNames(
-              (transactionInProgress || (drop && drop.isEnded)) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || (drop && drop.isEnded)) ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               `rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black`
             )}
             disabled={transactionInProgress || (drop && drop.isEnded)}
@@ -151,7 +151,7 @@ export default function ManageCard(props) {
             name="deposit"
             id="deposit"
             min="0"
-            className="rounded-xl focus:ring-drizzle-green focus:border-drizzle-green bg-drizzle-green/10 grow border-drizzle-green font-flow text-sm"
+            className="rounded-xl focus:ring-drizzle-green focus:border-drizzle-green bg-drizzle-green-ultralight grow border-drizzle-green font-flow text-sm"
             disabled={transactionInProgress}
             value={rawDepositAmt}
             onWheel={(e) => e.target.blur()}
@@ -162,7 +162,7 @@ export default function ManageCard(props) {
           <button
             type="button"
             className={classNames(
-              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               `rounded-xl h-12 px-6 text-base font-medium shadow-sm text-black`
             )}
             disabled={transactionInProgress}
@@ -199,7 +199,7 @@ export default function ManageCard(props) {
             rows={4}
             name="recipients"
             id="recipients"
-            className="rounded-xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+            className="rounded-xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green-ultralight resize-none block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300"
             defaultValue={''}
             spellCheck={false}
             placeholder={

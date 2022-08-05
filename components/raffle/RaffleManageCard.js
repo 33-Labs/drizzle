@@ -46,7 +46,7 @@ export default function RaffleManageCard(props) {
           <button
             type="button"
             className={classNames(
-              (transactionInProgress || !_isDrawable) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || !_isDrawable) ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               `rounded-xl min-h-[60px] basis-1/2 px-3 text-base font-medium shadow text-black`
             )}
             disabled={transactionInProgress || !_isDrawable}
@@ -68,7 +68,7 @@ export default function RaffleManageCard(props) {
           <button
             type="button"
             className={classNames(
-              (transactionInProgress || !_isDrawable) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || !_isDrawable) ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               `rounded-xl min-h-[60px] basis-1/2 px-3 text-base font-medium shadow text-black`
             )}
             disabled={transactionInProgress || !_isDrawable}
@@ -94,7 +94,7 @@ export default function RaffleManageCard(props) {
           <button
             type="button"
             className={classNames(
-              (transactionInProgress || (raffle && raffle.isEnded)) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || (raffle && raffle.isEnded)) ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               `rounded-xl min-h-[60px] basis-1/3 px-3 text-base font-medium shadow text-black`
             )}
             disabled={transactionInProgress || (raffle && raffle.isEnded)}

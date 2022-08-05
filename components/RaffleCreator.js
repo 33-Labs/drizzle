@@ -392,7 +392,7 @@ export default function RaffleCreator(props) {
             // max={floatEvents.length}
             value={numberOfWinners}
             id="numberOfWinners"
-            className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 border-drizzle-green font-flow text-lg placeholder:text-gray-300"
+            className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green-ultralight border-drizzle-green font-flow text-lg placeholder:text-gray-300"
             onWheel={(e) => e.target.blur()}
             onChange={(event) => { setNumberOfWinners(event.target.value) }}
           />
@@ -409,7 +409,7 @@ export default function RaffleCreator(props) {
             type="datetime-local"
             disabled={transactionInProgress}
             id="start_at"
-            className="mt-1 rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green/10 block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300 min-w-[220px]"
+            className="mt-1 rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green-ultralight block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300 min-w-[220px]"
             onChange={(e) => { setRegistrationDeadline(new Date(e.target.value)) }}
           />
         </div>
@@ -438,7 +438,7 @@ export default function RaffleCreator(props) {
           <button
             type="button"
             className={classNames(
-              transactionInProgress ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
             )}
             disabled={transactionInProgress}
@@ -452,7 +452,7 @@ export default function RaffleCreator(props) {
         <button
           type="button"
           className={classNames(
-            (transactionInProgress || !eligibilityMode) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+            (transactionInProgress || !eligibilityMode) ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
             "w-full h-[60px] text-xl font-semibold rounded-3xl text-black shadow-drizzle"
           )}
           disabled={transactionInProgress || !eligibilityMode}

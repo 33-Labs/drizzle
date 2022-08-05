@@ -6,7 +6,7 @@ export default function CSVSelector(props) {
         className="text-drizzle-green-dark text-base font-medium"
       >Sample</a>
       <div className="h-12 px-3 shadow-sm 
-      font-medium text-base text-drizzle-green-dark bg-drizzle-green/50
+      font-medium text-base text-drizzle-green-dark bg-drizzle-green-light
       rounded-2xl 
     hover:bg-drizzle-green-dark hover:text-black"
       >
