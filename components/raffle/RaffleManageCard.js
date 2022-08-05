@@ -14,6 +14,12 @@ import {
 import { batchDraw, deleteRaffle, draw, endRaffle, togglePause } from "../../lib/mist-transactions"
 import { classNames } from "../../lib/utils"
 
+const isDrawable = (claimStatus, raffle) => {
+  if (!raffle) return false
+  if (!claimStatus) return false
+  return claimStatus.availability.status.rawValue === "3"
+}
+
 export default function RaffleManageCard(props) {
   const { raffle, manager, claimStatus } = props
   const [, setShowAlertModal] = useRecoilState(showAlertModalState)
@@ -21,6 +27,7 @@ export default function RaffleManageCard(props) {
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
   const { mutate } = useSWRConfig()
+  const _isDrawable = isDrawable(claimStatus, raffle)
 
   return (
     <div className="w-full flex flex-col">
@@ -29,15 +36,20 @@ export default function RaffleManageCard(props) {
         overflow-hidden ring-1 ring-black ring-opacity-5 rounded-2xl
         shadow
         p-6 flex flex-col gap-y-2 items-center justify-start">
+        <div className="flex w-full">
+          <label className="px-1 text-md font-flow leading-6 mb-2">Only available in&nbsp;
+            <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-6 text-yellow-800 bg-yellow-100">
+              DRAWING
+            </span> stage</label>
+        </div>
         <div className="w-full flex flex-col gap-y-3 sm:flex-row sm:justify-between sm:gap-x-3">
-
           <button
             type="button"
             className={classNames(
-              (transactionInProgress || (raffle && raffle.isEnded)) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || !_isDrawable) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               `rounded-xl min-h-[60px] basis-1/2 px-3 text-base font-medium shadow text-black`
             )}
-            disabled={transactionInProgress || (raffle && raffle.isEnded)}
+            disabled={transactionInProgress || !_isDrawable}
             onClick={async () => {
               if (raffle) {
                 await draw(
@@ -56,10 +68,10 @@ export default function RaffleManageCard(props) {
           <button
             type="button"
             className={classNames(
-              (transactionInProgress || (raffle && raffle.isEnded)) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+              (transactionInProgress || !_isDrawable) ? "bg-drizzle-green/60" : "bg-drizzle-green hover:bg-drizzle-green-dark",
               `rounded-xl min-h-[60px] basis-1/2 px-3 text-base font-medium shadow text-black`
             )}
-            disabled={transactionInProgress || (raffle && raffle.isEnded)}
+            disabled={transactionInProgress || !_isDrawable}
             onClick={async () => {
               if (raffle) {
                 await batchDraw(

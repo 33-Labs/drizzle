@@ -36,7 +36,7 @@ export default function Raffle(props) {
   }, [raffleData, claimStatusData])
 
   if (raffleError && raffleError.statusCode === 400) {
-    return <Custom404 title={"DROP may not exist or deleted"} />
+    return <Custom404 title={"Raffle may not exist or deleted"} />
   }
 
   return (

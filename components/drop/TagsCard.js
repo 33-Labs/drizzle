@@ -81,7 +81,7 @@ const getIdentifier = (info) => {
   } else if (info.token) {
     return `A.${info.token.address}.${info.token.contractName}`
   } else if (info.raffle) {
-    return info.raffle.nftInfo.nftType.typeID
+    return `A.${info.raffle.nftInfo.contractAddress.replace("0x", "")}.${info.raffle.nftInfo.contractName}`
   } else if (info.nft) {
     return `A.${info.nft.contractAddress.replace("0x", "")}.${info.nft.contractName}`
   }

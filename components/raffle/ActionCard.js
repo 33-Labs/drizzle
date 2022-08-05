@@ -182,8 +182,8 @@ export default function ActionCard(props) {
   shadow-drizzle
   ">
         <label className="block w-full text-center text-[60px]">{emoji}</label>
-        <label className="block w-full mt-5 text-center text-lg font-bold font-flow">{description}</label>
-        <label className="block w-full text-center mt-1 text-2xl font-bold font-flow">{amount}</label>
+        <label className="block w-full mt-5 text-center text-lg font-semibold font-flow">{description}</label>
+        <label className="block w-full text-center mt-1 text-2xl font-bold font-flow text-drizzle-green">{amount}</label>
         <button
           type="button"
           className={classNames(
@@ -232,21 +232,6 @@ export default function ActionCard(props) {
               }  
 
             }
-
-
-
-            // const res = await claim(drop.dropID, host, tokenInfo,
-            //   setTransactionInProgress,
-            //   setTransactionStatus)
-
-            // if (res && res.status === 4 && res.statusCode === 0) {
-            //   const claimedEvent = res.events.find((e) => e.type.includes("DropClaimed"))
-            //   if (claimedEvent && claimedEvent.data.amount) {
-            //     const claimedAmountInfo = `${new Decimal(claimedEvent.data.amount).toString()} ${symbol}`
-            //     setClaimedAmountInfo(claimedAmountInfo)
-            //     setShowClaimedModal(true)
-            //   }
-            // } 
 
             mutate(["raffleClaimStatusFetcher", raffle.raffleID, host, user && user.addr])
             mutate(["raffleFetcher", raffle.raffleID, host])

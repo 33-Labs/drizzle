@@ -17,25 +17,21 @@ import {
 import EligibilityModeSelector, {
   EligibilityModeFLOAT,
   EligibilityModeFLOATGroup,
-  EligibilityModeWhitelistWitAmount,
   EligibilityModeWhitelist
 } from './eligibility/EligibilityModeSelector'
 import FloatReviewer from './eligibility/FloatReviewer'
 import BasicInfoBoard from './creator/BasicInfoBoard'
 import Hints from '../lib/hints'
-import { PacketModeIdentical, PacketModeRandom } from './eligibility/PacketModeSelector'
 import WhitelistReviewer from './eligibility/WhitelistReviewer'
 import DropCreatedModal from './creator/DropCreatedModal'
 import publicConfig from '../publicConfig'
-import StatsCard from './presenter/StatsCard'
 import NFTSelector from './NFTSelector'
 import { createRaffle } from '../lib/mist-transactions'
+import RaffleStatsCard from './raffle/RaffleStatsCard'
 
 const NamePlaceholder = "RAFFLE NAME"
 const DescriptionPlaceholder = "Detailed information about this RAFFLE"
 const HostPlaceholder = "0x0042"
-const TokenPlaceholder = { symbol: "FLOW" }
-const AmountPlaceholder = new Decimal(42)
 const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
 const Timezone = getTimezone()
 
@@ -54,9 +50,6 @@ export default function RaffleCreator(props) {
   const [name, setName] = useState(null)
   const [url, setURL] = useState(null)
   const [description, setDescription] = useState(null)
-
-  // const [token, setToken] = useState(null)
-  // const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
 
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startAt, setStartAt] = useState(null)
@@ -341,7 +334,7 @@ export default function RaffleCreator(props) {
               timeLockEnabled={timeLockEnabled}
               startAt={startAt}
               endAt={endAt}
-              registerationDeadline={registrationDeadline}
+              registrationEndAt={registrationDeadline}
               eligibilityMode={eligibilityMode}
               floatGroup={floatGroup}
               floatEventPairs={floatEventPairs}
@@ -350,7 +343,12 @@ export default function RaffleCreator(props) {
             />
           </div>
           <div className="flex flex-col items-center justify-center">
-            {/* <StatsCard isPreview={true} */}
+            <RaffleStatsCard isPreview={true} draft={
+              {
+                nftInfo: selectedNFT,
+                numberOfWinners: numberOfWinners
+              }
+            }/>
             {/* /> */}
           </div>
         </>

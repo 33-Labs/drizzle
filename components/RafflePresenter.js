@@ -34,7 +34,7 @@ export default function RafflePresenter(props) {
             </div>
             <div className="flex flex-col items-center justify-center">
               <RaffleStatsCard isPreview={false} raffle={raffle} />
-              <RewardCard nftDisplays={raffle.rewardDisplays} />
+              <RewardCard raffle={raffle} />
               <WinnersCard isPreview={false} raffle={raffle} />
               {
                 user && user.loggedIn && claimStatus && (user.addr == host) ? (

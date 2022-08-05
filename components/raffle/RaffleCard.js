@@ -111,7 +111,7 @@ export default function RaffleCard(props) {
   const banner = (raffle && raffle.image) || props.banner
 
   // TODO: registery => registry
-  const registrationDeadline = convertCadenceDateTime((raffle && raffle.registrationEndAt) || props.registrationDeadline)
+  const registrationDeadline = convertCadenceDateTime((raffle && raffle.registrationEndAt) || props.registrationEndAt)
   const createdAt = convertCadenceDateTime((raffle && raffle.createdAt) || props.createdAt)
   const startAt = convertCadenceDateTime((raffle && raffle.startAt) || props.startAt)
   const endAt = convertCadenceDateTime((raffle && raffle.endAt) || props.endAt)
@@ -146,7 +146,6 @@ export default function RaffleCard(props) {
           raffle={raffle}
           host={host}
           token={nft}
-          // tokenInfo={nftInfo}
           user={user}
           setShowClaimedModal={setShowClaimedModal}
           setClaimedAmountInfo={setClaimedAmountInfo}

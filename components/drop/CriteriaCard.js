@@ -16,7 +16,7 @@ const getCriteriaLabel = (drizzle, type) => {
   if (verifier.type === "Whitelist") {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        On the whitelist of this DROP
+        {`On the whitelist of this ${type}`}
       </label>
     )
   }
@@ -56,7 +56,7 @@ const getCriteriaLabel = (drizzle, type) => {
 }
 
 const getCriteriaLabelPreview = (
-  eligibilityMode, floatGroup, floatEventPairs, threshold
+  eligibilityMode, floatGroup, floatEventPairs, threshold, type
 ) => {
   if (!eligibilityMode) return null
   // WhitelistWithAmount & Whitelist
@@ -64,7 +64,7 @@ const getCriteriaLabelPreview = (
     eligibilityMode.key === EligibilityModeWhitelist.key) {
     return (
       <label className="w-full font-flow font-medium text-sm break-words">
-        On the whitelist of this DROP
+        {`On the whitelist of this ${type}`}
       </label>
     )
   }
@@ -118,7 +118,7 @@ export default function CriteriaCard(props) {
       <div className={`flex flex-col gap-y-2 ring-2 ring-drizzle-green rounded-2xl p-3 `}>
         <label className="text-center font-flow font-semibold">WHO IS ELIGIBLE?</label>
         {drizzle ?  getCriteriaLabel(drizzle, type)
-        : getCriteriaLabelPreview(eligibilityMode, floatGroup, floatEventPairs, threshold)
+        : getCriteriaLabelPreview(eligibilityMode, floatGroup, floatEventPairs, threshold, type)
         }
       </div>
     </div>

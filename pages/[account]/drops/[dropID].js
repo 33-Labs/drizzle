@@ -43,6 +43,10 @@ export default function Drop(props) {
     return <Custom404 title={"DROP may not exist or deleted"} />
   }
 
+  if (claimStatusError && claimStatusError.statusCode === 400) {
+    return <Custom404 title={"Raffle may not exist or deleted"} />
+  }
+
   return (
     <>
       <div className="container mx-auto max-w-[880px] min-w-[380px] px-6">

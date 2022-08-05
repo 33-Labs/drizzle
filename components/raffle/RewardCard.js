@@ -3,18 +3,41 @@ import publicConfig from "../../publicConfig"
 import { PacketModeRandom } from "../eligibility/PacketModeSelector"
 import NFTCard from "../NFTCard"
 
+const CardStatus = {
+  UNDRAWN: {
+    title: "UNDRAWN",
+    style: "text-gray-800 bg-gray-100"
+  },
+  DRAWN: {
+    title: "DRAWN",
+    style: "text-yellow-800 bg-yellow-100"
+  },
+  CLAIMED: {
+    title: "CLAIMED",
+    style: "text-green-800 bg-green-100"
+  }
+}
+
 export default function RewardCard(props) {
-  const {nftDisplays} = props
-  let displays = Object.assign({}, nftDisplays)
-  // for (let i = 0; i < Object.keys(nftDisplays).length; i++) {
-  //   let tokenIDs = Object.keys(nftDisplays)
-  //   let tokenID = tokenIDs[i]
-  //   let display = displays[tokenID]
-  //   displays[tokenID + i] = display
-  //   displays[tokenID + i + i] = display
-  // }
+  const { raffle } = props
+  let displays = Object.assign({}, raffle.rewardDisplays)
+  for (const [, winnerRecord] of Object.entries(raffle.winners)) {
+    const rewardID = winnerRecord.rewardTokenIDs[0]
+    const display = displays[rewardID]
+    display.status = winnerRecord.isClaimed ? CardStatus.CLAIMED : CardStatus.DRAWN
+  }
+
+  for (const [, display] of Object.entries(displays)) {
+    if (!display.status) {
+      display.status = CardStatus.UNDRAWN
+    }
+  }
+
   return (
     <div className="w-full flex flex-col">
+      <div hidden className="text-green-800 bg-green-100"></div>
+      <div hidden className="text-gray-800 bg-gray-100"></div>
+      <div hidden className="text-yellow-800 bg-yellow-100"></div>
       <label className="px-3 text-2xl font-bold font-flow">REWARDS</label>
       {
         Object.keys(displays).length > 0 ?
@@ -26,12 +49,17 @@ export default function RewardCard(props) {
               .sort(([tokenID1,], [tokenID2,]) => tokenID2 - tokenID1)
               .map(([tokenID, tokenDisplay]) => {
                 return (
-                  <NFTCard
-                    key={tokenID}
-                    disabled={true}
-                    tokenID={tokenID}
-                    display={tokenDisplay}
-                  />
+                  <div className="flex flex-col gap-y-2 items-center">
+                    <NFTCard
+                      key={tokenID}
+                      disabled={true}
+                      tokenID={tokenID}
+                      display={tokenDisplay}
+                    />
+                    <label className={`rounded-full px-2 text-xs font-semibold leading-6 ${tokenDisplay.status.style}`}>
+                      {tokenDisplay.status.title}
+                    </label>
+                  </div>
                 )
               })
             }
