@@ -1,5 +1,20 @@
+import { useRecoilState } from "recoil"
+import {
+  showBasicNotificationState,
+  basicNotificationContentState
+} from "../../lib/atoms.js"
+
 export default function ImageSelector(props) {
+  const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
+  const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
+
   const handleImageChosen = (file) => {
+    if (file.size > 500000) {
+      setShowBasicNotification(true)
+      setBasicNotificationContent({ type: "exclamation", title: "Image too large", detail: "Should be less than 500KB"})
+      return
+    }
+
     if (file) {
       const fileReader = new FileReader()
       fileReader.onloadend = (e) => {
