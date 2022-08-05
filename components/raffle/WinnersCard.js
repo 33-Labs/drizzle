@@ -1,16 +1,21 @@
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/solid"
+import { useState } from "react"
+import { getItemsInPage } from "../../lib/utils"
 import publicConfig from "../../publicConfig"
 
 const parseWinners = (raffle) => {
   let winners = []
   for (let [address, record] of Object.entries(raffle.winners)) {
-    winners.push(record)
+      winners.push(record)
   }
   return winners
 }
 
 export default function WinnersCard(props) {
-  const { isPreiview, raffle } = props
+  const { raffle } = props
   const winners = raffle ? parseWinners(raffle) : []
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 10
 
   return (
     <div className="w-full flex flex-col">
@@ -36,7 +41,7 @@ export default function WinnersCard(props) {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {
-                      winners.map((winner, index) => (
+                      getItemsInPage(winners, currentPage, pageSize).map((winner, index) => (
                         <tr key={index}>
                           <td className="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6">
                             <a
@@ -65,6 +70,38 @@ export default function WinnersCard(props) {
               </div>
             </div>
           </div>
+          {winners.length > pageSize ?
+            <div className="mt-2 flex justify-between">
+              <button
+                className="bg-gray-50 p-2 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={currentPage == 1}
+                onClick={() => {
+                  if (currentPage == 1) { return }
+                  setCurrentPage(currentPage - 1)
+                }}
+              >
+                <ArrowLeftIcon
+                  className={`h-5 w-5 ${currentPage == 1 ? "text-gray-400" : "text-black"}`}
+                />
+              </button>
+              <button
+                className="bg-gray-50 h-9 w-9 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={true}
+              >{currentPage}</button>
+              <button
+                className="bg-gray-50 p-2 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={currentPage * pageSize >= winners.length}
+                onClick={() => {
+                  if (currentPage * pageSize >= winners.length) {
+                    return
+                  }
+                  setCurrentPage(currentPage + 1)
+                }}
+              >
+                <ArrowRightIcon className={`h-5 w-5 ${currentPage * pageSize >= winners.length ? "text-gray-400" : "text-black"}`} />
+              </button>
+            </div> : null
+          }
         </div> :
         <div className="w-full flex mb-10 items-center justify-center">
           <label className="mt-10 leading-10 font-flow font-medium text-base text-gray-500">

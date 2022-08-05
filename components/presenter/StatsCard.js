@@ -5,6 +5,7 @@ import publicConfig from "../../publicConfig"
 import { PacketModeRandom } from "../eligibility/PacketModeSelector"
 import { ArrowLeftIcon } from "@heroicons/react/solid"
 import { ArrowRightIcon } from "@heroicons/react/solid"
+import { getItemsInPage } from "../../lib/utils"
 
 const extractStatsPreview = (packetMode,
   randomTotalAmount,
@@ -153,11 +154,6 @@ const parseClaimed = (claimedRecords) => {
   return claimed.sort((a, b) => a.rawClaimedAt - b.rawClaimedAt)
 }
 
-const getItemsInPage = (totalItems, page, pageSize) => {
-  const items = totalItems.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
-  return items
-}
-
 export default function StatsCard(props) {
   // isPreview/token for Preview, drop for real data
   const { isPreview, token, packetMode,
@@ -165,7 +161,7 @@ export default function StatsCard(props) {
     capacity, drop } = props
   const symbol = (drop && drop.tokenInfo.symbol) || (isPreview && token && token.symbol)
   const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 5
+  const pageSize = 10
 
   const claimed = drop ? parseClaimed(drop.claimedRecords) : []
   const cards = drop ? extractStats(drop) :
