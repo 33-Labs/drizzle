@@ -18,8 +18,17 @@ const CardStatus = {
   }
 }
 
-export default function RewardCard(props) {
-  const { raffle } = props
+const parsePreviewDisplays = (draft) => {
+  let displays = Object.assign({}, draft.rewardDisplays)
+  for (const [, display] of Object.entries(displays)) {
+    if (!display.status) {
+      display.status = CardStatus.UNDRAWN
+    }
+  }
+  return displays
+}
+
+const parseDisplays = (raffle) => {
   let displays = Object.assign({}, raffle.rewardDisplays)
   for (const [, winnerRecord] of Object.entries(raffle.winners)) {
     const rewardID = winnerRecord.rewardTokenIDs[0]
@@ -32,6 +41,14 @@ export default function RewardCard(props) {
       display.status = CardStatus.UNDRAWN
     }
   }
+  return displays
+}
+
+export default function RewardCard(props) {
+  const { isPreview, raffle, draft } = props
+  const displays = isPreview ? parsePreviewDisplays(draft) : (
+    raffle ? parseDisplays(raffle) : []
+  )
 
   return (
     <div className="w-full flex flex-col">

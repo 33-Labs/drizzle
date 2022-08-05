@@ -26,9 +26,9 @@ export default function NFTCard(props) {
         if (isDisabled) return
         let tokens = Object.assign({}, selectedTokens)
         if (!tokens[tokenID] || tokens[tokenID].isSelected == false) {
-          tokens[tokenID] = { isSelected: true, selectedAt: new Date().getTime() }
+          tokens[tokenID] = { isSelected: true, selectedAt: new Date().getTime(), display: display }
         } else {
-          tokens[tokenID] = { isSelected: false, selectedAt: 0 }
+          tokens[tokenID] = { isSelected: false, selectedAt: 0, display: display }
         }
         setSelectedTokens(tokens)
       }}>

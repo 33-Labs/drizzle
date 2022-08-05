@@ -28,12 +28,22 @@ import publicConfig from '../publicConfig'
 import NFTSelector from './NFTSelector'
 import { createRaffle } from '../lib/mist-transactions'
 import RaffleStatsCard from './raffle/RaffleStatsCard'
+import RewardCard from './raffle/RewardCard'
 
 const NamePlaceholder = "RAFFLE NAME"
 const DescriptionPlaceholder = "Detailed information about this RAFFLE"
 const HostPlaceholder = "0x0042"
 const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
 const Timezone = getTimezone()
+
+export const convertSelectTokensToDisplays = (selectedTokens) => {
+  console.log(selectedTokens)
+  const displays = {}
+  for (const [tokenID, token] of Object.entries(selectedTokens)) {
+    if (token.isSelected) displays[tokenID] = token.display
+  }
+  return displays
+}
 
 export default function RaffleCreator(props) {
   const router = useRouter()
@@ -349,7 +359,11 @@ export default function RaffleCreator(props) {
                 numberOfWinners: numberOfWinners
               }
             }/>
-            {/* /> */}
+            <RewardCard isPreview={true} draft={
+              {
+                rewardDisplays: convertSelectTokensToDisplays(selectedTokens)
+              }
+            } />
           </div>
         </>
         : null

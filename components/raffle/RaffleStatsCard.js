@@ -2,6 +2,7 @@ import publicConfig from "../../publicConfig"
 
 const extractStatsPreview = (draft) => {
   const green = "border-drizzle-green"
+
   return [
     {
       title: "NFT",
@@ -22,7 +23,6 @@ const extractStatsPreview = (draft) => {
       link: null
     }
   ]
-
 }
 
 const extractStats = (raffle) => {
