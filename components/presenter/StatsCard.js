@@ -1,9 +1,13 @@
+import { current } from "daisyui/src/colors"
 import Decimal from "decimal.js"
+import { useState } from "react"
 import publicConfig from "../../publicConfig"
 import { PacketModeRandom } from "../eligibility/PacketModeSelector"
+import { ArrowLeftIcon } from "@heroicons/react/solid"
+import { ArrowRightIcon } from "@heroicons/react/solid"
 
-const extractStatsPreview = (packetMode, 
-  randomTotalAmount, 
+const extractStatsPreview = (packetMode,
+  randomTotalAmount,
   identicalAmount,
   totalTokenAmount,
   capacity, symbol) => {
@@ -32,13 +36,13 @@ const extractStatsPreview = (packetMode,
   }
 
   if (packetMode) {
-    let balance 
+    let balance
     if (packetMode.key === PacketModeRandom.key) {
       balance = new Decimal(randomTotalAmount)
     } else {
       balance = new Decimal(identicalAmount).mul(new Decimal(capacity))
     }
-     
+
     return [
       {
         title: "DROP Balance",
@@ -149,20 +153,27 @@ const parseClaimed = (claimedRecords) => {
   return claimed.sort((a, b) => a.rawClaimedAt - b.rawClaimedAt)
 }
 
+const getItemsInPage = (totalItems, page, pageSize) => {
+  const items = totalItems.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
+  return items
+}
+
 export default function StatsCard(props) {
   // isPreview/token for Preview, drop for real data
-  const { isPreview, token, packetMode, 
+  const { isPreview, token, packetMode,
     randomTotalAmount, identicalAmount, totalTokenAmount,
     capacity, drop } = props
   const symbol = (drop && drop.tokenInfo.symbol) || (isPreview && token && token.symbol)
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 5
 
   const claimed = drop ? parseClaimed(drop.claimedRecords) : []
-  const cards = drop ? extractStats(drop) : 
+  const cards = drop ? extractStats(drop) :
     extractStatsPreview(packetMode, randomTotalAmount, identicalAmount, totalTokenAmount, capacity, symbol)
   return (
     <div className="w-full flex flex-col">
       <label className="px-3 text-2xl font-bold font-flow">DATA</label>
-      <div className="w-full flex flex-col mt-5 mb-5 justify-center gap-y-3 items-stretch
+      <div className="w-full flex flex-col mt-5 mb-10 justify-center gap-y-3 items-stretch
       sm:flex-row sm:gap-x-3">
         {cards.length > 0 ?
           cards.map((card, index) => {
@@ -178,6 +189,7 @@ export default function StatsCard(props) {
         }
       </div>
 
+      <label className="px-3 text-2xl font-bold font-flow">CLAIMERS</label>
       {claimed.length > 0 ?
         <div className="w-full p-4 flex flex-col mb-10">
           <div className="-my-2 -mx-4 overflow-x-auto">
@@ -199,7 +211,7 @@ export default function StatsCard(props) {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {
-                      claimed.map((claim, index) => (
+                      getItemsInPage(claimed, currentPage, pageSize).map((claim, index) => (
                         <tr key={index}>
                           <td className="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6">
                             <a
@@ -228,8 +240,40 @@ export default function StatsCard(props) {
               </div>
             </div>
           </div>
+          {claimed.length > pageSize ?
+            <div className="mt-2 flex justify-between">
+              <button
+                className="bg-gray-50 p-2 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={currentPage == 1}
+                onClick={() => {
+                  if (currentPage == 1) { return }
+                  setCurrentPage(currentPage - 1)
+                }}
+              >
+                <ArrowLeftIcon
+                  className={`h-5 w-5 ${currentPage == 1 ? "text-gray-400" : "text-black"}`}
+                />
+              </button>
+              <button
+                className="bg-gray-50 h-9 w-9 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={true}
+              >{currentPage}</button>
+              <button
+                className="bg-gray-50 p-2 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={currentPage * pageSize >= claimed.length}
+                onClick={() => {
+                  if (currentPage * pageSize >= claimed.length) {
+                    return
+                  }
+                  setCurrentPage(currentPage + 1)
+                }}
+              >
+                <ArrowRightIcon className={`h-5 w-5 ${currentPage * pageSize >= claimed.length ? "text-gray-400" : "text-black"}`} />
+              </button>
+            </div> : null
+          }
         </div> :
-        <div className="mb-10">
+        <div className="mb-10 flex justify-center">
           <label className="leading-10 font-flow font-medium text-base text-gray-500">
             This DROP has not been claimed yet
           </label>

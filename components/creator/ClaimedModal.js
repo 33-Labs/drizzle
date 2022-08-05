@@ -38,7 +38,7 @@ export default function ClaimedModal(props) {
                   <div className="mt-3 text-center sm:mt-5">
                     {
                       rewardInfo ?
-                        <Dialog.Title as="h3" className="text-2xl leading-10 font-semibold text-gray-900">
+                        <Dialog.Title as="h3" className="text-2xl leading-10 font-semibold text-drizzle-green">
                           {`${rewardInfo}`}
                         </Dialog.Title> : null
                     }
