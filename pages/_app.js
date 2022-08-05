@@ -7,8 +7,8 @@ import * as fcl from "@onflow/fcl"
 
 import NavigationBar from '../components/NavigationBar'
 import Footer from '../components/Footer'
-import TransactionNotification from '../components/toolbox/TransactionNotification'
-import BasicNotification from '../components/toolbox/BasicNotification'
+import TransactionNotification from '../components/common/TransactionNotification'
+import BasicNotification from '../components/common/BasicNotification'
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState({ loggedIn: null })

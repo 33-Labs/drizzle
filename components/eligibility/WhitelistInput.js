@@ -6,7 +6,7 @@ import {
   showBasicNotificationState,
   transactionInProgressState,
 } from "../../lib/atoms"
-import CSVSelector from '../toolbox/CSVSelector'
+import CSVSelector from '../common/CSVSelector'
 import { classNames, filterAddresses, getWhitelistFromAddresses } from '../../lib/utils'
 
 export default function WhitelistInput(props) {

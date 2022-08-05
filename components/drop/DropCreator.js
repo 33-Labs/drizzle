@@ -3,9 +3,12 @@ import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
 
-import RaffleCard from './raffle/RaffleCard'
+import DropCard from './DropCard'
 
-import { classNames, floatEventInputHandler, floatGroupInputHandler, getTimezone, isValidHttpUrl } from '../lib/utils'
+import {
+  createDrop
+} from '../../lib/cloud-transactions'
+import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidHttpUrl } from '../../lib/utils'
 
 import { useRecoilState } from "recoil"
 import {
@@ -13,38 +16,31 @@ import {
   showBasicNotificationState,
   transactionInProgressState,
   transactionStatusState
-} from "../lib/atoms"
+} from "../../lib/atoms"
 import EligibilityModeSelector, {
   EligibilityModeFLOAT,
   EligibilityModeFLOATGroup,
+  EligibilityModeWhitelistWitAmount,
   EligibilityModeWhitelist
-} from './eligibility/EligibilityModeSelector'
-import FloatReviewer from './eligibility/FloatReviewer'
-import BasicInfoBoard from './creator/BasicInfoBoard'
-import Hints from '../lib/hints'
-import WhitelistReviewer from './eligibility/WhitelistReviewer'
-import CreatedModal from './creator/CreatedModal'
-import publicConfig from '../publicConfig'
-import NFTSelector from './NFTSelector'
-import { createRaffle } from '../lib/mist-transactions'
-import RaffleStatsCard from './raffle/RaffleStatsCard'
-import RewardCard from './raffle/RewardCard'
+} from '../eligibility/EligibilityModeSelector'
+import WhitelistWithAmountReviewer from '../eligibility/WhitelistWithAmountReviewer'
+import FloatReviewer from '../eligibility/FloatReviewer'
+import BasicInfoBoard from '../common/BasicInfoBoard'
+import Hints from '../../lib/hints'
+import { PacketModeIdentical, PacketModeRandom } from '../eligibility/PacketModeSelector'
+import WhitelistReviewer from '../eligibility/WhitelistReviewer'
+import CreatedModal from '../common/CreatedModal'
+import publicConfig from '../../publicConfig'
+import StatsCard from './StatsCard'
 
-const NamePlaceholder = "RAFFLE NAME"
-const DescriptionPlaceholder = "Detailed information about this RAFFLE"
+const NamePlaceholder = "DROP NAME"
+const DescriptionPlaceholder = "Detailed information about this DROP"
 const HostPlaceholder = "0x0042"
+const TokenPlaceholder = { symbol: "FLOW" }
+const AmountPlaceholder = new Decimal(42)
 const CreatedAtPlaceholder = new Date('2020-08-01T08:16:16Z')
-const Timezone = getTimezone()
 
-export const convertSelectTokensToDisplays = (selectedTokens) => {
-  const displays = {}
-  for (const [tokenID, token] of Object.entries(selectedTokens)) {
-    if (token.isSelected) displays[tokenID] = token.display
-  }
-  return displays
-}
-
-export default function RaffleCreator(props) {
+export default function DropCreator(props) {
   const router = useRouter()
   const { float, float_group } = router.query
 
@@ -60,11 +56,17 @@ export default function RaffleCreator(props) {
   const [url, setURL] = useState(null)
   const [description, setDescription] = useState(null)
 
+  const [token, setToken] = useState(null)
+  const [tokenBalance, setTokenBalance] = useState(new Decimal(0))
+
   const [timeLockEnabled, setTimeLockEnabled] = useState(false)
   const [startAt, setStartAt] = useState(null)
   const [endAt, setEndAt] = useState(null)
 
   const [eligibilityMode, setEligibilityMode] = useState(null)
+
+  // For WhitelistWithAmountReviewer
+  const [whitelistWithAmountReviewerCallback, setWhitelistWithAmountReviewerCallback] = useState(null)
 
   // For Whitelist
   const [whitelistReviewerCallback, setWhitelistReviewerCallback] = useState(null)
@@ -77,21 +79,19 @@ export default function RaffleCreator(props) {
   const [floatGroup, setFloatGroup] = useState(null)
   const [threshold, setThreshold] = useState('')
 
+  // For Packet
+  const [packetMode, setPacketMode] = useState(null)
+  const [capacity, setCapacity] = useState('')
+
+  // For Identical
+  const [identicalAmount, setIdenticalAmount] = useState('')
+  // For Random
+  const [totalAmount, setTotalAmount] = useState('')
+
   const [showPreview, setShowPreview] = useState(false)
 
   const [showCreatedModal, setShowCreatedModal] = useState(false)
-  const [newRaffleURL, setNewRaffleURL] = useState(null)
-
-  const [timezone, setTimezone] = useState(null)
-  const [registrationDeadline, setRegistrationDeadline] = useState(null)
-  const [numberOfWinners, setNumberOfWinners] = useState('')
-
-  const [selectedNFT, setSelectedNFT] = useState(null)
-  const [selectedTokens, setSelectedTokens] = useState({})
-
-  useEffect(() => {
-    setTimezone(Timezone)
-  }, [timezone])
+  const [newDropURL, setNewDropURL] = useState(null)
 
   useEffect(() => {
     if (float && float.trim() != '') {
@@ -99,7 +99,7 @@ export default function RaffleCreator(props) {
         const eventPairs = floatEventInputHandler(float)
         setFloatEventPairs(eventPairs)
         setEligibilityMode(EligibilityModeFLOAT)
-      } catch (e) { }
+      } catch (e) {}
     }
 
     if (float_group && float_group.trim() != '') {
@@ -107,7 +107,7 @@ export default function RaffleCreator(props) {
         const group = floatGroupInputHandler(float_group)
         setFloatGroup(group)
         setEligibilityMode(EligibilityModeFLOATGroup)
-      } catch (e) { }
+      } catch (e) {} 
     }
   }, [float, float_group])
 
@@ -120,8 +120,8 @@ export default function RaffleCreator(props) {
       return [false, Hints.InvalidURL]
     }
 
-    if (!selectedNFT) {
-      return [false, Hints.InvalidNFT]
+    if (!token) {
+      return [false, Hints.InvalidToken]
     }
 
     if (bannerSize > 500000) {
@@ -129,35 +129,11 @@ export default function RaffleCreator(props) {
     }
 
     if (endAt && isFinite(endAt) && endAt.getTime() < (new Date()).getTime()) {
-      return [false, Hints.RaffleEnded]
+      return [false, Hints.DropEnded]
     }
 
     if (startAt && isFinite(startAt) && endAt && startAt.getTime() >= endAt.getTime()) {
       return [false, Hints.InvalidTimeLimit]
-    }
-
-    if (!registrationDeadline || 
-      !isFinite(registrationDeadline) || 
-      registrationDeadline.getTime() < (new Date()).getTime() ||
-      (endAt && isFinite(endAt) && registrationDeadline.getTime() >= endAt.getTime()) ||
-      (startAt && isFinite(startAt) && registrationDeadline.getTime() <= startAt.getTime())
-      ) {
-        return [false, Hints.InvalidRegistrationDeadline]
-    }
-
-
-    if (!numberOfWinners || isNaN(parseInt(numberOfWinners))) {
-      return [false, Hints.InvalidNumberOfWinners]
-    }
-
-    const _numberOfWinners = new Decimal(numberOfWinners)
-    if (!(_numberOfWinners.isInteger() && _numberOfWinners.toNumber() >= 1)) {
-      return [false, Hints.InvalidNumberOfWinners]
-    }
-
-    const numberOfNFTs = Object.values(selectedTokens).filter((info) => info.isSelected).length
-    if (numberOfNFTs < numberOfWinners) {
-      return [false, Hints.InsufficientNFTs]
     }
 
     return [true, null]
@@ -165,20 +141,30 @@ export default function RaffleCreator(props) {
 
   const checkEligibilityParams = () => {
     if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-      return EligibilityModeFLOATGroup.checkRaffleParams(
-        floatEvents, threshold
+      return EligibilityModeFLOATGroup.checkParams(
+        floatEvents, threshold,
+        packetMode, tokenBalance, capacity,
+        { identicalAmount: identicalAmount, totalAmount: totalAmount }
       )
     }
 
     if (eligibilityMode.key === EligibilityModeFLOAT.key) {
-      return EligibilityModeFLOAT.checkRaffleParams(
-        floatEvents, threshold
+      return EligibilityModeFLOAT.checkParams(
+        floatEvents, threshold,
+        packetMode, tokenBalance, capacity,
+        { identicalAmount: identicalAmount, totalAmount: totalAmount }
       )
     }
 
+    if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
+      return EligibilityModeWhitelistWitAmount.checkParams(whitelistWithAmountReviewerCallback, tokenBalance)
+    }
+
     if (eligibilityMode.key === EligibilityModeWhitelist.key) {
-      return EligibilityModeWhitelist.checkRaffleParams(
-        whitelistReviewerCallback
+      return EligibilityModeWhitelist.checkParams(
+        whitelistReviewerCallback,
+        packetMode, tokenBalance, capacity,
+        { identicalAmount: identicalAmount, totalAmount: totalAmount }
       )
     }
   }
@@ -210,10 +196,6 @@ export default function RaffleCreator(props) {
       return
     }
 
-    const rewardTokenIDs = Object.entries(selectedTokens)
-      .filter(([, info]) => info.isSelected)
-      .map(([tokenID,]) => tokenID)
-
     const params = {
       name: name,
       description: description ?? '',
@@ -221,20 +203,17 @@ export default function RaffleCreator(props) {
       url: url,
       startAt: startAt && isFinite(startAt) ? `${startAt.getTime() / 1000}.0` : null,
       endAt: endAt && isFinite(endAt) ? `${endAt.getTime() / 1000}.0` : null,
-      registrationEndAt: `${registrationDeadline.getTime() / 1000}.0`,
-      numberOfWinners: numberOfWinners,
-      nftName: selectedNFT.name,
-      nftTypeIdentifier: selectedNFT.nftType,
-      nftContractName: selectedNFT.contractName,
-      nftContractAddress: selectedNFT.contractAddress,
-      nftCollectionTypeIdentifier: selectedNFT.collectionType.type,
-      nftCollectionTypeRestrictions: selectedNFT.collectionType.restrictions,
-      nftCollectionLogoURL: selectedNFT.logoURL,
-      nftCollectionPublicPath: selectedNFT.collectionPublicPath.replace("/public/", ""),
-      nftCollectionStoragePath: selectedNFT.collectionStoragePath.replace("/storage/", ""),
-      rewardTokenIDs: rewardTokenIDs,
+      token: token,
+      withExclusiveWhitelist: false,
+      exclusiveWhitelist: [],
+      whitelistTokenAmount: null,
       withWhitelist: false,
       whitelist: [],
+      withIdenticalDistributor: false,
+      capacity: null,
+      amountPerEntry: null,
+      withRandomDistributor: false,
+      totalRandomAmount: null,
       withFloats: false,
       threshold: null,
       eventIDs: [],
@@ -244,7 +223,14 @@ export default function RaffleCreator(props) {
       floatGroupHost: null
     }
 
-    if (eligibilityMode.key === EligibilityModeWhitelist.key) {
+    if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
+      const { whitelist, tokenAmount, } = whitelistWithAmountReviewerCallback
+      const _tokenAmount = tokenAmount.toFixed(8).toString()
+      params.withExclusiveWhitelist = true
+      params.exclusiveWhitelist = whitelist
+      params.whitelistTokenAmount = _tokenAmount
+
+    } else if (eligibilityMode.key === EligibilityModeWhitelist.key) {
       const { whitelist, } = whitelistReviewerCallback
       params.withWhitelist = true
       params.whitelist = whitelist
@@ -266,8 +252,21 @@ export default function RaffleCreator(props) {
       params.floatGroupHost = floatGroup.groupHost
     }
 
+    if (packetMode && packetMode.key === PacketModeIdentical.key) {
+      let _identicalAmount = new Decimal(identicalAmount).toFixed(8).toString()
+      params.withIdenticalDistributor = true
+      params.capacity = capacity
+      params.amountPerEntry = _identicalAmount
+
+    } else if (packetMode && packetMode.key === PacketModeRandom.key) {
+      let totalRandomAmount = new Decimal(totalAmount).toFixed(8).toString()
+      params.withRandomDistributor = true
+      params.capacity = capacity
+      params.totalRandomAmount = totalRandomAmount
+    }
+
     const args = Object.values(params)
-    const res = await createRaffle(...args,
+    const res = await createDrop(...args,
       setTransactionInProgress, setTransactionStatus
     )
     handleCreationResponse(res)
@@ -275,10 +274,10 @@ export default function RaffleCreator(props) {
 
   const handleCreationResponse = (res) => {
     if (res && res.status === 4 && res.statusCode === 0) {
-      const event = res.events.find((e) => e.data.raffleID)
-      if (event) {
-        const url = `${publicConfig.appURL}/${props.user && props.user.addr}/raffles/${event.data.raffleID}`
-        setNewRaffleURL(url)
+      const createDropEvent = res.events.find((e) => e.data.dropID)
+      if (createDropEvent) {
+        const url = `${publicConfig.appURL}/${props.user && props.user.addr}/drops/${createDropEvent.data.dropID}`
+        setNewDropURL(url)
         setShowCreatedModal(true)
       }
     }
@@ -286,14 +285,32 @@ export default function RaffleCreator(props) {
 
   const showEligibilityModeInputs = (mode) => {
     if (!mode) { return null }
+    if (mode.key == EligibilityModeWhitelistWitAmount.key) {
+      return (
+        <WhitelistWithAmountReviewer
+          user={props.user}
+          token={token}
+          setToken={setToken}
+          tokenBalance={tokenBalance}
+          setTokenBalance={setTokenBalance}
+          callback={setWhitelistWithAmountReviewerCallback}
+        />
+      )
+    }
 
     if (mode.key === EligibilityModeWhitelist.key) {
       return (
         <WhitelistReviewer
           user={props.user}
+          setToken={setToken}
+          setTokenBalance={setTokenBalance}
           callback={setWhitelistReviewerCallback}
-          withTokenSelector={false}
-          withDistributorSelector={false}
+          packetMode={packetMode} setPacketMode={setPacketMode}
+          capacity={capacity} setCapacity={setCapacity}
+          identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
+          totalAmount={totalAmount} setTotalAmount={setTotalAmount}
+          withTokenSelector={true}
+          withDistributorSelector={true}
         />
       )
     }
@@ -302,6 +319,12 @@ export default function RaffleCreator(props) {
       return (
         <FloatReviewer
           user={props.user}
+          token={token} setToken={setToken}
+          tokenBalance={tokenBalance} setTokenBalance={setTokenBalance}
+          packetMode={packetMode} setPacketMode={setPacketMode}
+          capacity={capacity} setCapacity={setCapacity}
+          identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
+          totalAmount={totalAmount} setTotalAmount={setTotalAmount}
           floatMode={mode.detail}
           threshold={threshold} setThreshold={setThreshold}
           rawFloatInput={float || float_group}
@@ -309,8 +332,8 @@ export default function RaffleCreator(props) {
           setFloatEvents={setFloatEvents}
           setFloatEventPairs={setFloatEventPairs}
           setFloatGroup={setFloatGroup}
-          withTokenSelector={false}
-          withDistributorSelector={false}
+          withTokenSelector={true}
+          withDistributorSelector={true}
         />
       )
     }
@@ -326,47 +349,43 @@ export default function RaffleCreator(props) {
           PREVIEW
         </h1> :
         <h1 className="font-flow font-semibold text-2xl sm:text-4xl text-center mb-10">
-          CREATE NFT RAFFLE
+          CREATE DROP
         </h1>
       }
 
       {/** preview */}
       {showPreview ?
-        <>
-          <div className="flex justify-center mb-10">
-            <RaffleCard
-              isPreview={true}
-              banner={banner}
-              name={(!name || name.length == 0) ? NamePlaceholder : name}
-              url={url}
-              host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
-              createdAt={CreatedAtPlaceholder}
-              description={description ?? DescriptionPlaceholder}
-              nft={selectedNFT}
-              timeLockEnabled={timeLockEnabled}
-              startAt={startAt}
-              endAt={endAt}
-              registrationEndAt={registrationDeadline}
-              eligibilityMode={eligibilityMode}
-              floatGroup={floatGroup}
-              floatEventPairs={floatEventPairs}
-              threshold={threshold}
-              selectedTokens={selectedTokens}
-            />
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <RaffleStatsCard isPreview={true} draft={
-              {
-                nftInfo: selectedNFT,
-                numberOfWinners: numberOfWinners
-              }
-            }/>
-            <RewardCard isPreview={true} draft={
-              {
-                rewardDisplays: convertSelectTokensToDisplays(selectedTokens)
-              }
-            } />
-          </div>
+      <>
+        <div className="flex justify-center mb-10">
+          <DropCard
+            isPreview={true}
+            banner={banner}
+            name={(!name || name.length == 0) ? NamePlaceholder : name}
+            url={url}
+            host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
+            createdAt={CreatedAtPlaceholder}
+            description={description ?? DescriptionPlaceholder}
+            token={token || TokenPlaceholder}
+            timeLockEnabled={timeLockEnabled}
+            startAt={startAt}
+            endAt={endAt}
+            amount={AmountPlaceholder}
+            eligibilityMode={eligibilityMode}
+            packetMode={packetMode}
+            floatGroup={floatGroup}
+            floatEventPairs = {floatEventPairs}
+            threshold={threshold}
+          />
+        </div> 
+        <div className="flex flex-col items-center justify-center">
+          <StatsCard isPreview={true} token={token} 
+            packetMode={packetMode} 
+            randomTotalAmount={totalAmount}
+            identicalAmount={identicalAmount} 
+            totalTokenAmount={whitelistWithAmountReviewerCallback && whitelistWithAmountReviewerCallback.tokenAmount}
+            capacity={capacity}
+          />
+        </div>
         </>
         : null
       }
@@ -380,58 +399,14 @@ export default function RaffleCreator(props) {
           NamePlaceholder={NamePlaceholder} DescriptionPlaceholder={DescriptionPlaceholder}
         />
 
-        <div className="flex flex-col">
-          <label className="text-2xl font-bold font-flow">
-            # of Winners
-          </label>
-          <label className="block text-md font-flow leading-6 mt-2 mb-2">
-            The max number of winners to be drawn
-          </label>
-          <input
-            type="number"
-            disabled={transactionInProgress}
-            min="1"
-            // max={floatEvents.length}
-            value={numberOfWinners}
-            id="numberOfWinners"
-            className="grow w-full rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green-ultralight border-drizzle-green font-flow text-lg placeholder:text-gray-300"
-            onWheel={(e) => e.target.blur()}
-            onChange={(event) => { setNumberOfWinners(event.target.value) }}
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-2xl font-bold font-flow">
-            Registration Deadline{timezone ? ` (${timezone})` : ''}
-          </label>
-          <label className="block text-md font-flow leading-6 mt-2 mb-2">
-            To be a candidate, eligible accounts should register before this date
-          </label>
-          <input
-            type="datetime-local"
-            disabled={transactionInProgress}
-            id="start_at"
-            className="mt-1 rounded-2xl focus:ring-drizzle-green-dark focus:border-drizzle-green-dark bg-drizzle-green-ultralight block w-full border-drizzle-green font-flow text-lg placeholder:text-gray-300 min-w-[220px]"
-            onChange={(e) => { setRegistrationDeadline(new Date(e.target.value)) }}
-          />
-        </div>
-
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            Registration Eligibility
+            Eligibility
           </label>
-          <EligibilityModeSelector type="RAFFLE" mode={eligibilityMode} setMode={setEligibilityMode} />
+          <EligibilityModeSelector mode={eligibilityMode} setMode={setEligibilityMode} setPacketMode={setPacketMode} />
         </div>
 
         {showEligibilityModeInputs(eligibilityMode)}
-
-        <NFTSelector
-          user={props.user}
-          selectedNFT={selectedNFT}
-          setSelectedNFT={setSelectedNFT}
-          selectedTokens={selectedTokens}
-          setSelectedTokens={setSelectedTokens}
-        />
       </div>
 
       {/** create button */}
@@ -468,7 +443,7 @@ export default function RaffleCreator(props) {
               : "Select a mode") : "Connect Wallet"}
         </button>
       </div>
-      <CreatedModal type="Raffle" open={showCreatedModal} setOpen={setShowCreatedModal} url={newRaffleURL} />
+      <CreatedModal open={showCreatedModal} setOpen={setShowCreatedModal} url={newDropURL} />
     </>
   )
 }

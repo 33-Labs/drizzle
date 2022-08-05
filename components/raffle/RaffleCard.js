@@ -10,10 +10,10 @@ import {
 
 import { ExternalLinkIcon } from "@heroicons/react/outline"
 import { convertCadenceDateTime } from "../../lib/utils"
-import ShareCard from "../drop/ShareCard"
-import CriteriaCard from "../drop/CriteriaCard"
-import TimeLimitCard from "../drop/TimeLimitCard"
-import TagsCard from "../drop/TagsCard"
+import ShareCard from "../common/ShareCard"
+import CriteriaCard from "../common/CriteriaCard"
+import TimeLimitCard from "../common/TimeLimitCard"
+import TagsCard from "../common/TagsCard"
 import ActionCard from "./ActionCard"
 
 const MemoizeBanner = React.memo(({ banner }) => {

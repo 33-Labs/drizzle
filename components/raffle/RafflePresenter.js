@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { SpinnerCircular } from 'spinners-react'
-import ClaimedModal from './creator/ClaimedModal'
+import ClaimedModal from '../common/ClaimedModal'
 
-import RaffleCard from './raffle/RaffleCard'
-import AlertModal from './toolbox/AlertModal'
-import RewardCard from './raffle/RewardCard'
-import RaffleStatsCard from './raffle/RaffleStatsCard'
-import WinnersCard from './raffle/WinnersCard'
-import RaffleManageCard from './raffle/RaffleManageCard'
+import RaffleCard from './RaffleCard'
+import AlertModal from '../common/AlertModal'
+import RewardCard from './RewardCard'
+import RaffleStatsCard from './RaffleStatsCard'
+import WinnersCard from './WinnersCard'
+import RaffleManageCard from './RaffleManageCard'
 
 export default function RafflePresenter(props) {
   const { raffle, claimStatus, user, host } = props

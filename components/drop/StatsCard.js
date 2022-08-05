@@ -269,8 +269,8 @@ export default function StatsCard(props) {
             </div> : null
           }
         </div> :
-        <div className="mb-10 flex justify-center">
-          <label className="leading-10 font-flow font-medium text-base text-gray-500">
+        <div className="mb-10 w-full flex justify-center">
+          <label className="mt-10 leading-10 font-flow font-medium text-base text-gray-500">
             This DROP has not been claimed yet
           </label>
         </div>}

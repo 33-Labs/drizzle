@@ -5,7 +5,7 @@ import { SpinnerCircular } from 'spinners-react'
 
 import Custom404 from '../../404'
 import { queryRaffle, queryClaimStatus } from '../../../lib/mist-scripts'
-import RafflePresenter from '../../../components/RafflePresenter'
+import RafflePresenter from '../../../components/raffle/RafflePresenter'
 
 const raffleFetcher = async (funcName, raffleID, host) => {
   return await queryRaffle(raffleID, host)

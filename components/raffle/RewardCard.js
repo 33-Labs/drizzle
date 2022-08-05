@@ -1,7 +1,7 @@
 import Decimal from "decimal.js"
 import publicConfig from "../../publicConfig"
 import { PacketModeRandom } from "../eligibility/PacketModeSelector"
-import NFTCard from "../NFTCard"
+import NFTCard from "./NFTCard"
 
 const CardStatus = {
   UNDRAWN: {

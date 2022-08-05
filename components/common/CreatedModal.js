@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useRouter } from 'next/router'
-import ShareCard from '../drop/ShareCard'
+import ShareCard from './ShareCard'
 
 export default function CreatedModal(props) {
   const router = useRouter()

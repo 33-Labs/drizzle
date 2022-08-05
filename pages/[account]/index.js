@@ -3,10 +3,10 @@ import useSWR from 'swr'
 import { SpinnerCircular } from 'spinners-react'
 
 import { useState, useEffect } from 'react'
-import DropList from '../../components/DropList'
+import DropList from '../../components/drop/DropList'
 import Custom404 from '../404'
 import { queryDrops } from '../../lib/cloud-scripts'
-import RaffleList from '../../components/RaffleList'
+import RaffleList from '../../components/raffle/RaffleList'
 import { classNames } from '../../lib/utils'
 import { queryRaffles } from '../../lib/mist-scripts'
 

@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import { useRecoilState } from "recoil"
 import {
   transactionInProgressState
-} from "../lib/atoms"
-import { classNames, convertCadenceDateTime, getItemsInPage, getRaffleStatus, getVerifierType } from '../lib/utils'
+} from "../../lib/atoms"
+import { classNames, convertCadenceDateTime, getItemsInPage, getRaffleStatus, getVerifierType } from '../../lib/utils'
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/solid"
 
 export default function RaffleList(props) {

@@ -90,7 +90,7 @@ const parseClaimStatus = (user, claimStatus, displayName, isPreview) => {
       elements.title = "CLAIM"
     } else if (eStatusC == "3" && eStatusR == "4") {
       elements.emoji = "🎲"
-      elements.description = "HAVE A GOOD DAY"  
+      elements.description = "MAY YOU BE THE WINNER"  
       elements.amount = null
       elements.title = "RAFFLE DRAWING"
     } else {

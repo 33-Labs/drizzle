@@ -8,12 +8,12 @@ import {
   basicNotificationContentState,
   showBasicNotificationState,
   transactionInProgressState,
-} from "../lib/atoms"
+} from "../../lib/atoms"
 
-import { NFTList } from "../flow/nft-list"
-import publicConfig from "../publicConfig.js"
-import { filterTokenIDs } from "../lib/utils"
-import { getNFTDisplays } from "../lib/mist-scripts"
+import { NFTList } from "../../flow/nft-list"
+import publicConfig from "../../publicConfig.js"
+import { filterTokenIDs } from "../../lib/utils"
+import { getNFTDisplays } from "../../lib/mist-scripts"
 import NFTCard from "./NFTCard"
 
 function classNames(...classes) {

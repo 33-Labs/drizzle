@@ -5,7 +5,7 @@ import {
   transactionInProgressState,
 } from "../../lib/atoms"
 import TimeLimitPicker from './TimeLimitPicker'
-import ImageSelector from '../toolbox/ImageSelector'
+import ImageSelector from './ImageSelector'
 
 const URLPlaceholder = "https://the.link.you.want.to.add"
 

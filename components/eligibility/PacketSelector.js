@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import Warning from '../toolbox/Warning';
+import Warning from '../common/Warning';
 
 import PacketModeSelector from "./PacketModeSelector";
 

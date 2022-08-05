@@ -1,6 +1,6 @@
 import Image from "next/image"
 import { useState } from "react"
-import { classNames, convertURI } from "../lib/utils"
+import { classNames, convertURI } from "../../lib/utils"
 
 export default function NFTCard(props) {
   const { tokenID, display, selectedTokens, setSelectedTokens, disabled } = props

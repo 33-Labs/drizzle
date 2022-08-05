@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { SpinnerCircular } from 'spinners-react'
 
-import DropPresenter from '../../../components/DropPresenter'
+import DropPresenter from '../../../components/drop/DropPresenter'
 
 import { 
   queryDrop,

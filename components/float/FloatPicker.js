@@ -9,7 +9,7 @@ import {
 import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidFlowAddress } from "../../lib/utils"
 import { getFloatEvent, getFloatEventsInGroup } from '../../lib/float-scripts'
 import FloatEventList from './FloatEventList'
-import Warning from '../toolbox/Warning'
+import Warning from '../common/Warning'
 
 export const FloatModeFloatEvent = {
   key: "FLOATEvent",

@@ -1,4 +1,4 @@
-import RaffleCreator from '../../components/RaffleCreator'
+import RaffleCreator from '../../components/raffle/RaffleCreator'
 
 export default function NewRaffle(props) {
   return (

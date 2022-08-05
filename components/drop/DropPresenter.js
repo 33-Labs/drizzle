@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { SpinnerCircular } from 'spinners-react'
-import ClaimedModal from './creator/ClaimedModal'
+import ClaimedModal from '../common/ClaimedModal'
 
-import DropCard from './drop/DropCard'
-import ManageCard from './presenter/ManageCard'
-import StatsCard from './presenter/StatsCard'
-import AlertModal from './toolbox/AlertModal'
+import DropCard from './DropCard'
+import ManageCard from './ManageCard'
+import StatsCard from './StatsCard'
+import AlertModal from '../common/AlertModal'
 
 export default function DropPresenter(props) {
   const { drop, claimStatus, user, host } = props

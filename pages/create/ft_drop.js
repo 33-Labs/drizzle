@@ -1,4 +1,4 @@
-import DropCreator from '../../components/DropCreator'
+import DropCreator from '../../components/drop/DropCreator'
 
 export default function NewDrop(props) {
   return (
