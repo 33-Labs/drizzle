@@ -1,3 +1,4 @@
+import { useState } from "react"
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -5,23 +6,26 @@ import { useRecoilState } from "recoil"
 import {
   transactionInProgressState
 } from "../lib/atoms"
-import { classNames, convertCadenceDateTime, getRaffleStatus, getVerifierType } from '../lib/utils'
+import { classNames, convertCadenceDateTime, getItemsInPage, getRaffleStatus, getVerifierType } from '../lib/utils'
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/solid"
 
 export default function RaffleList(props) {
   const [transactionInProgress] = useRecoilState(transactionInProgressState)
   const router = useRouter()
-  const {raffles, user, pageAccount} = props
+  const { raffles, user, pageAccount } = props
   let isCurrentUser = false
   if (user && user.addr === pageAccount) {
     isCurrentUser = true
   }
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 10
 
   return (
     <div className="p-2">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-2xl font-bold text-gray-900">
-            {isCurrentUser ?  `My Raffles (${raffles.length})` : `Raffles (${raffles.length})`}
+            {isCurrentUser ? `My Raffles (${raffles.length})` : `Raffles (${raffles.length})`}
           </h1>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
@@ -30,21 +34,21 @@ export default function RaffleList(props) {
           <div hidden className="text-red-800 bg-red-100"></div>
           <div hidden className="text-yellow-800 bg-yellow-100"></div>
           {
-            isCurrentUser ? 
-            <button
-            type="button"
-            disabled={transactionInProgress}
-            className={
-              classNames(
-                transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
-                "inline-flex items-center rounded-2xl justify-center border border-transparent px-4 py-2 text-sm font-medium text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
-              )}
-            onClick={() => {
-              router.push("/create/nft_raffle")
-            }}
-          >
-            New NFT Raffle
-          </button> : null
+            isCurrentUser ?
+              <button
+                type="button"
+                disabled={transactionInProgress}
+                className={
+                  classNames(
+                    transactionInProgress ? "bg-drizzle-green-light" : "bg-drizzle-green hover:bg-drizzle-green-dark",
+                    "inline-flex items-center rounded-2xl justify-center border border-transparent px-4 py-2 text-sm font-medium text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-drizzle-green focus:ring-offset-2 sm:w-auto"
+                  )}
+                onClick={() => {
+                  router.push("/create/nft_raffle")
+                }}
+              >
+                New NFT Raffle
+              </button> : null
           }
         </div>
       </div>
@@ -61,7 +65,7 @@ export default function RaffleList(props) {
                         Name
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        NFT 
+                        NFT
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Eligibility
@@ -81,7 +85,7 @@ export default function RaffleList(props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {raffles.map((raffle) => {
+                    {getItemsInPage(raffles, currentPage, pageSize).map((raffle) => {
                       const status = getRaffleStatus(raffle)
                       raffle.status = status
                       return raffle
@@ -128,10 +132,42 @@ export default function RaffleList(props) {
               </div>
             </div>
           </div>
+          {raffles.length > pageSize ?
+            <div className="mt-2 flex justify-between">
+              <button
+                className="bg-gray-50 p-2 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={currentPage == 1}
+                onClick={() => {
+                  if (currentPage == 1) { return }
+                  setCurrentPage(currentPage - 1)
+                }}
+              >
+                <ArrowLeftIcon
+                  className={`h-5 w-5 ${currentPage == 1 ? "text-gray-400" : "text-black"}`}
+                />
+              </button>
+              <button
+                className="bg-gray-50 h-9 w-9 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={true}
+              >{currentPage}</button>
+              <button
+                className="bg-gray-50 p-2 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={currentPage * pageSize >= raffles.length}
+                onClick={() => {
+                  if (currentPage * pageSize >= raffles.length) {
+                    return
+                  }
+                  setCurrentPage(currentPage + 1)
+                }}
+              >
+                <ArrowRightIcon className={`h-5 w-5 ${currentPage * pageSize >= raffles.length ? "text-gray-400" : "text-black"}`} />
+              </button>
+            </div> : null
+          }
         </div> :
         <div className="flex mb-10 justify-center">
           <label className="leading-[200px] font-flow font-medium text-base text-gray-500">
-            {isCurrentUser ?  "You haven't created Raffle yet" : "This account haven't created Raffle yet"}
+            {isCurrentUser ? "You haven't created Raffle yet" : "This account haven't created Raffle yet"}
           </label>
         </div>}
     </div>
