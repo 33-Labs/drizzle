@@ -43,6 +43,8 @@ if (!distributorsAddress) throw "Missing NEXT_PUBLIC_DISTRIBUTORS_ADDRESS"
 const floatAddress = process.env.NEXT_PUBLIC_FLOAT_ADDRESS
 if (!floatAddress) throw "Missing NEXT_PUBLIC_FLOAT_ADDRESS"
 
+const bannerSizeLimit = 500000
+
 const publicConfig = {
   chainEnv,
   accessNodeAPI,
@@ -58,7 +60,8 @@ const publicConfig = {
   eligibilityVerifiersAddress,
   distributorsAddress,
   floatAddress,
-  floatURL
+  floatURL,
+  bannerSizeLimit
 }
 
 export default publicConfig

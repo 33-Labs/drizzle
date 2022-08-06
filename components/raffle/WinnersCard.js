@@ -35,7 +35,7 @@ export default function WinnersCard(props) {
                         Reward Token ID
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Claimed
+                        Claim Status
                       </th>
                     </tr>
                   </thead>
@@ -59,9 +59,9 @@ export default function WinnersCard(props) {
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
-                            <div className="text-gray-500">
-                              {winner.isClaimed == true ? "True" : "False"}
-                            </div>
+                            <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${winner.isClaimed ? `text-green-800 bg-green-100`: `text-yellow-800 bg-yellow-100`}`}>
+                              {winner.isClaimed ? "CLAIMED" : "UNCLAIMED"}
+                            </label>
                           </td>
                         </tr>
                       ))}

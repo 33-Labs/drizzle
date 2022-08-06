@@ -11,7 +11,7 @@ const extractStatsPreview = (draft) => {
       link: `${publicConfig.flowscanURL}/contract/A.${draft.nftInfo.contractAddress.replace("0x", "")}.${draft.nftInfo.contractName}`
     },
     {
-      title: "# of Registrant",
+      title: "# of Registrants",
       content: `0`,
       color: green,
       link: null
@@ -36,7 +36,7 @@ const extractStats = (raffle) => {
       link: `${publicConfig.flowscanURL}/contract/A.${raffle.nftInfo.contractAddress.replace("0x", "")}.${raffle.nftInfo.contractName}`
     },
     {
-      title: "# of Registrant",
+      title: "# of Registrants",
       content: `${Object.keys(raffle.registrationRecords).length}`,
       color: green,
       link: null

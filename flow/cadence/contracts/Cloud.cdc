@@ -1,5 +1,5 @@
 // Made by Lanford33
-
+//
 // Cloud.cdc defines the FungibleToken DROP and the collections of it.
 
 import FungibleToken from "./core/FungibleToken.cdc"
