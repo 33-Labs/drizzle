@@ -151,7 +151,27 @@ const parseClaimed = (claimedRecords) => {
     }
     claimed.push(_record)
   }
-  return claimed.sort((a, b) => a.rawClaimedAt - b.rawClaimedAt)
+  return claimed.sort((a, b) => b.rawClaimedAt - a.rawClaimedAt)
+}
+
+// The first one who get max tokens.
+// claimed should be ordered for latest to old
+const getWinner = (drop, claimed) => {
+  if (!drop) return null
+  if (drop.distributor.type != "Random") return null
+  if (claimed.length != drop.distributor.capacity) { return null }
+  let max = new Decimal(0)
+  let winner = null
+  for (let i = 0; i < claimed.length; i++) {
+    const record = claimed[i]
+    const amount = new Decimal(record.amount)
+    if (amount.cmp(max) == 1) {
+      console.log(record)
+      max = amount
+      winner = record.account
+    }
+  } 
+  return winner
 }
 
 export default function StatsCard(props) {
@@ -164,6 +184,7 @@ export default function StatsCard(props) {
   const pageSize = 10
 
   const claimed = drop ? parseClaimed(drop.claimedRecords) : []
+  const winner = getWinner(drop, claimed)
   const cards = drop ? extractStats(drop) :
     extractStatsPreview(packetMode, randomTotalAmount, identicalAmount, totalTokenAmount, capacity, symbol)
   return (
@@ -212,7 +233,7 @@ export default function StatsCard(props) {
                           <td className="py-3.5 pl-4 pr-3 text-left text-sm sm:pl-6">
                             <a
                               href={`${publicConfig.flowscanURL}/account/${claim.account}`}
-                              className="block font-medium text-gray-900 break-words max-w-[200px]"
+                              className={`block ${claim.account == winner ? "text-yellow-400 font-bold" : "text-gray-900 font-medium"} break-words max-w-[200px]`}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -220,7 +241,7 @@ export default function StatsCard(props) {
                             </a>
                           </td>
                           <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">
-                            <div className="text-gray-500">
+                            <div className={`${claim.account == winner ? "text-yellow-400 font-bold" : "text-gray-500"}`}>
                               {new Decimal(claim.amount).toString()} {symbol}
                             </div>
                           </td>
