@@ -8,6 +8,7 @@ import {
   transactionInProgressState
 } from "../lib/atoms"
 import publicConfig from "../publicConfig"
+import styles from "../styles/Landing.module.css"
 
 export default function Landing(props) {
   const router = useRouter()
@@ -18,14 +19,14 @@ export default function Landing(props) {
       <div className="mt-10 flex gap-y-5 sm:gap-x-5 flex-col-reverse sm:flex-row justify-between items-center">
         <div className="flex flex-col gap-y-8 items-start">
           <div className="flex flex-col gap-y-2">
-            <a href="https://cointelegraph.com/news/what-is-a-crypto-airdrop-and-how-does-it-work"
-              target="_blank"
-              rel="noopener noreferrer">
-              <label className={`cursor-pointer font-flow text-black font-bold text-5xl sm:text-6xl underline decoration-drizzle-green decoration-3`}>
-                Airdrop,
-              </label>
-            </a>
-            <label className={`font-flow text-black font-bold text-5xl sm:text-6xl`}>never been</label>
+            <div className={styles.landing}>
+              <div className={styles.ltitle}>
+                <div className="underline text-black font-bold decoration-drizzle-green decoration-4">Airdrop,</div>
+                <div className="underline text-black font-bold decoration-drizzle-green decoration-4">Raffle,</div>
+              </div>
+            </div>
+
+            <label className={`-mt-1 font-flow text-black font-bold text-5xl sm:text-6xl`}>never been</label>
             <label className={`font-flow text-black font-bold text-5xl sm:text-6xl`}>so easy</label>
           </div>
           <div className="flex flex-col">
