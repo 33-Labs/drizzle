@@ -1,7 +1,14 @@
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/outline'
+import { current } from 'daisyui/src/colors'
 import Image from 'next/image'
+import { useState } from "react"
+import { getItemsInPage } from '../../lib/utils'
 
 export default function FloatEventList(props) {
   const events = props.events
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 5 
 
   return (
     <>
@@ -28,7 +35,7 @@ export default function FloatEventList(props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {events.map((event) => (
+                    {getItemsInPage(events, currentPage, pageSize).map((event) => (
                       <tr key={event.eventId}>
                         <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
                           <div className="flex items-center">
@@ -62,6 +69,38 @@ export default function FloatEventList(props) {
               </div>
             </div>
           </div>
+          {events.length > pageSize ?
+            <div className="mt-2 flex justify-between">
+              <button
+                className="bg-gray-50 p-2 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={currentPage == 1}
+                onClick={() => {
+                  if (currentPage == 1) { return }
+                  setCurrentPage(currentPage - 1)
+                }}
+              >
+                <ArrowLeftIcon
+                  className={`h-5 w-5 ${currentPage == 1 ? "text-gray-400" : "text-black"}`}
+                />
+              </button>
+              <button
+                className="bg-gray-50 h-9 w-9 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={true}
+              >{currentPage}</button>
+              <button
+                className="bg-gray-50 p-2 rounded-full overflow-hidden shadow ring-1 ring-black ring-opacity-5"
+                disabled={currentPage * pageSize >= events.length}
+                onClick={() => {
+                  if (currentPage * pageSize >= events.length) {
+                    return
+                  }
+                  setCurrentPage(currentPage + 1)
+                }}
+              >
+                <ArrowRightIcon className={`h-5 w-5 ${currentPage * pageSize >= events.length ? "text-gray-400" : "text-black"}`} />
+              </button>
+            </div> : null
+          }
         </div> :
         <div className="flex mb-10 justify-center">
           <label className="leading-[200px] font-flow font-medium text-base text-gray-500">

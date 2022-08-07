@@ -37,13 +37,20 @@ export default function BasicInfoBoard(props) {
             <label className="block text-2xl font-bold font-flow">
               Banner
             </label>
-            <label className="block text-md font-flow leading-6 mt-2 mb-2">Banner size should not be larger than 500 KB</label>
+            <label className="block text-md font-flow leading-6 mt-2 mb-2">Banner size should not be larger than 500 KB. Compress it&nbsp;
+              <a href="https://tinypng.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-bold decoration-drizzle-green decoration-2"
+              >
+                here
+              </a> if you need.</label>
             <ImageSelector imageSelectedCallback={(_banner, _bannerSize) => {
               setBanner(_banner)
               setBannerSize(_bannerSize)
             }} />
           </div>
-          <BasicInfoMemoizeBanner banner={banner || "/flow-banner.jpg"} />
+          <BasicInfoMemoizeBanner banner={banner || "/banner.png"} />
         </div>
 
         {/** name */}

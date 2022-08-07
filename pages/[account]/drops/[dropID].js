@@ -5,7 +5,7 @@ import { SpinnerCircular } from 'spinners-react'
 
 import DropPresenter from '../../../components/drop/DropPresenter'
 
-import { 
+import {
   queryDrop,
   queryClaimStatus,
 } from '../../../lib/cloud-scripts'
@@ -50,18 +50,24 @@ export default function Drop(props) {
   return (
     <>
       <div className="container mx-auto max-w-[880px] min-w-[380px] px-6">
-      {
-        drop ?
-        <DropPresenter 
-          drop={drop}
-          claimStatus={claimStatus}
-          user={user}
-          host={host}
-        /> : 
-        <div className="flex h-[200px] mt-10 justify-center">
-          <SpinnerCircular size={50} thickness={180} speed={100} color="#00d588" secondaryColor="#e2e8f0" />
+        <div className="flex justify-center mb-5">
+          <div className="text-xs sm:text-base w-[400px] py-2 px-3 flex flex-col justify-center items-center bg-drizzle-green-light rounded-2xl">
+            <label>🎉 <span className="font-bold">Drizzle</span> has been launched on FLOW mainnet! 🎉</label>
+            <label>Claim the commemorative <span className="font-bold">FLOAT</span> now!</label>
+          </div>
         </div>
-      }
+        {
+          drop ?
+            <DropPresenter
+              drop={drop}
+              claimStatus={claimStatus}
+              user={user}
+              host={host}
+            /> :
+            <div className="flex h-[200px] mt-10 justify-center">
+              <SpinnerCircular size={50} thickness={180} speed={100} color="#00d588" secondaryColor="#e2e8f0" />
+            </div>
+        }
       </div>
     </>
   )

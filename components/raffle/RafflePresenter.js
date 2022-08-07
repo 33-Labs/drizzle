@@ -14,8 +14,6 @@ export default function RafflePresenter(props) {
   const [showClaimedModal, setShowClaimedModal] = useState(false)
   const [showRegisteredModal, setShowRegisteredModal] = useState(false)
   const [rewardInfo, setRewardInfo] = useState('')
-  console.log(raffle)
-  console.log(claimStatus)
 
   return (
     <>

@@ -124,7 +124,7 @@ export default function RaffleCard(props) {
       items-stretch rounded-3xl overflow-hidden grow
       sm:min-w-[320px]
       md:w-[480px]">
-        <MemoizeBanner banner={banner || "/flow-banner.jpg"} />
+        <MemoizeBanner banner={banner || "/banner.png"} />
         <div className="flex flex-col p-5 sm:p-8 gap-y-5">
           <MemoizeName name={name} url={url} />
           <MemoizeBasicInfo
