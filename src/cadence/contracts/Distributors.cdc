@@ -1,3 +1,9 @@
+// Distributors defines the ways to setting the reward amount
+//
+// In Drizzle, for setting the amount of reward, you have two choices as well:
+// 1. Identical: All claimers will get identical amount of reward.
+// 2. Random: The claimers will get a random amount of reward (the range should be from 0.00000001 to (2.0 * available amount / available capacity - 0.00000001)). To simplify user interaction, a somewhat naive implementation is applied here, and someone might get a higher reward by using “Try & Abort”, so please use it for fun only.
+
 pub contract Distributors {
 
     pub struct interface IDistributor {

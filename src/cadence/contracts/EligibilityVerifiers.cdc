@@ -1,7 +1,13 @@
+// EligibilityVerifiers are used to check the eligibility of accounts
+//
+// With drizzle, you can decide who is eligible for your rewards by using our different modes.
+// 1. FLOAT Event. You can limit the eligibility to people who own FLOATs of specific FLOAT Event at the time of the DROP being created.
+// 2. FLOAT Group. You can also limit the eligibility to people who own FLOATs in a FLOAT Group. You can set a threshold to the number of FLOATs the users should have.
+// 3. Whitelist. You can upload a whitelist. Only accounts on the whitelist are eligible for rewards.
+
 import FungibleToken from "./core/FungibleToken.cdc"
 import FLOAT from "./float/FLOAT.cdc"
 
-// In Drizzle, EligibilityReviewer determines an account is eligible or not
 pub contract EligibilityVerifiers {
 
     pub enum VerifyMode: UInt8 {

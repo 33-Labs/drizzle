@@ -1,5 +1,4 @@
 import { builtInMethods, executeScript, getAccountAddress, mintFlow, sendTransaction, shallPass, shallResolve } from "flow-js-testing"
-import { getMiddlewareManifest } from "next/dist/client/route-loader"
 import { getMistAdmin } from "./common"
 import { NFT_mintExampleNFT, NFT_setupExampleNFTCollection } from "./examplenft"
 

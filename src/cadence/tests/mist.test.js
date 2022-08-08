@@ -3,7 +3,6 @@ import {
   emulator,
   init,
   getAccountAddress,
-  setBlockOffset
 } from "flow-js-testing";
 import {
   deployCoreContracts,
@@ -30,10 +29,7 @@ import {
   mintExampleNFTs, 
   registerRaffle,
   togglePause,
-  withdrawAllNFTs
 } from "./src/mist";
-import exp from "constants";
-import { withdrawAllFunds } from "./src/cloud";
 
 jest.setTimeout(1000000)
 
@@ -146,8 +142,8 @@ describe("Mist", () => {
 
     await new Promise(r => setTimeout(r, 2000))
     const [, error] = await registerRaffle(raffleID, Alice, Bob)
-
-    expect(error.includes("drawing")).toBeTruthy()
+    // no registrant, so the raffle is drawn
+    expect(error.includes("drawn")).toBeTruthy()
   })
 
   it("Mist - Should not be ok for host to draw reward before registery ended", async () => {
@@ -224,7 +220,7 @@ describe("Mist", () => {
     expect(Object.keys(raffle2.rewardDisplays).length).toBe(3)
 
     const [, errorDraw3] = await draw(raffleID, Alice)
-    expect(errorDraw3.includes("no candidates")).toBeTruthy()
+    expect(errorDraw3.includes("drawn")).toBeTruthy()
   })
 
   it("Mist - Should not be ok for host to draw reward if drawn", async () => {

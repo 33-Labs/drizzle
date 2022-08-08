@@ -1,12 +1,17 @@
 // Made by Lanford33
 //
 // Cloud.cdc defines the FungibleToken DROP and the collections of it.
+//
+// There are 4 stages in a DROP.
+// 1. You create a new DROP by setting the basic information, depositing funds, setting the criteria for eligible accounts and token distribution mode, then share the DROP link to your community;
+// 2. Community members access the DROP page via the link, check their eligibility and claim the token if they are eligible.
 
 import FungibleToken from "./core/FungibleToken.cdc"
 import Distributors from "./Distributors.cdc"
 import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
 
 pub contract Cloud {
+
     pub let CloudAdminStoragePath: StoragePath
     pub let CloudAdminPublicPath: PublicPath
     pub let CloudAdminPrivatePath: PrivatePath
@@ -58,7 +63,7 @@ pub contract Cloud {
         }
     }
 
-    // TokenInfo stores the information of the FungibleToken of a DROP
+    // TokenInfo stores the information of the FungibleToken in a DROP
     pub struct TokenInfo {
         pub let tokenIdentifier: String
         pub let providerIdentifier: String
@@ -150,7 +155,6 @@ pub contract Cloud {
     // The airdrop created in Drizzle is called DROP.
     // IDropPublic defined the public fields and functions of a DROP
     pub resource interface IDropPublic {
-        // unique ID of this DROP.
         pub let dropID: UInt64
         pub let name: String
         pub let description: String
@@ -573,8 +577,10 @@ pub contract Cloud {
         }
 
         pub fun deleteDrop(dropID: UInt64, receiver: &{FungibleToken.Receiver}) {
+            // Clean the Drop before make it ownerless
+            let dropRef = self.borrowDropRef(dropID: dropID) ?? panic("This drop does not exist")
+            dropRef.end(receiver: receiver)
             let drop <- self.drops.remove(key: dropID) ?? panic("This drop does not exist")
-            drop.end(receiver: receiver)
             destroy drop
         }
 

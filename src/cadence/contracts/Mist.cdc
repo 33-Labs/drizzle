@@ -2,10 +2,11 @@
 //
 // Mist.cdc defines the NFT Raffle and the collections of it.
 //
-// There are three stages in a NFT Raffle. 
-// Stage 1. Eligible accounts register themselves to the raffle, and be the winner candidates
-// Stage 2. After the registeration ended, the host can draw the winner from candidates.
-// Stage 3. The winners claim their reward
+// There are 4 stages in a NFT Raffle. 
+// 1. You create a new NFT Raffle by setting the basic information, depositing NFTs and setting the criteria for eligible accounts, then share the Raffle link to your community;
+// 2. Community members go to the Raffle page, check their eligibility and register for the Raffle if they are eligible;
+// 3. Once the registration end, you can draw the winners. For each draw, a winner will be selected randomly from registrants, and an NFT will be picked out randomly from NFTs in the Raffle as the reward for winner;
+// 4. Registrants go to the Raffle page to check whether they are winners or not, and claim the reward if they are.
 
 import NonFungibleToken from "./core/NonFungibleToken.cdc"
 import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
@@ -525,10 +526,10 @@ pub contract Mist {
             let winnerIndex = unsafeRandom() % UInt64(self.candidates.length)
             let winner = self.candidates[winnerIndex]
 
+            assert(self.winners[winner] == nil, message: "winner already recorded")
+
             let rewardIndex = unsafeRandom() % UInt64(self.nftToBeDrawn.length)
             let rewardTokenID = self.nftToBeDrawn[rewardIndex]
-
-            assert(self.winners[winner] == nil, message: "winner already recorded")
 
             let winnerRecord = WinnerRecord(
                 address: winner, 
@@ -564,10 +565,10 @@ pub contract Mist {
                 let winnerIndex = unsafeRandom() % UInt64(self.candidates.length)
                 let winner = self.candidates[winnerIndex]
 
+                assert(self.winners[winner] == nil, message: "winner already recorded")
+
                 let rewardIndex = unsafeRandom() % UInt64(self.nftToBeDrawn.length)
                 let rewardTokenID = self.nftToBeDrawn[rewardIndex]
-
-                assert(self.winners[winner] == nil, message: "winner already recorded")
 
                 let winnerRecord = WinnerRecord(
                     address: winner, 
@@ -710,8 +711,8 @@ pub contract Mist {
     }
 
     pub resource Admin: IMistPauser {
-        // Use to pause the creation of new DROP
-        // If we want to migrate the contracts, we can make sure no more DROP in old contracts be created.
+        // Use to pause the creation of new Raffle
+        // If we want to migrate the contracts, we can make sure no more Raffle in old contracts be created.
         pub fun toggleContractPause(): Bool {
             Mist.isPaused = !Mist.isPaused
             return Mist.isPaused
