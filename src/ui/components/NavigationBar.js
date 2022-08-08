@@ -89,16 +89,12 @@ export default function NavigationBar(props) {
             drizzle
           </label>
         </Link>
-        {publicConfig.chainEnv === "testnet" ?
-          <>
-            <label className="hidden sm:block px-1 text-center font-flow text-drizzle-green font-medium text-xs border border-1 border-drizzle-green">
-              TESTNET
-            </label>
-            <label className="block sm:hidden px-1 text-center font-flow text-drizzle-green font-medium text-xs border border-1 border-drizzle-green">
-              T
-            </label>
-          </> : null
-        }
+        <label className="hidden sm:block px-1 text-center font-flow text-drizzle-green font-medium text-xs border border-1 border-drizzle-green">
+          {`${publicConfig.chainEnv == "mainnet" ? "BETA" : "TESTNET"}`}
+        </label>
+        <label className="block sm:hidden px-1 text-center font-flow text-drizzle-green font-medium text-xs border border-1 border-drizzle-green">
+          {`${publicConfig.chainEnv == "mainnet" ? "BETA" : "T"}`}
+        </label>
       </div>
 
 
