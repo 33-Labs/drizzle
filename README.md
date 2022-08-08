@@ -19,7 +19,7 @@ The main process of a DROP is quite simple:
 - You create a new DROP by setting the basic information, depositing funds, setting the criteria for eligible accounts and token distribution mode, then share the DROP link to your community;
 - Community members access the DROP page via the link, check their eligibility and claim the token if they are eligible.
 
-To decide who is eligible for your DROP, you can check **[here](##-who-is-eligible?)**.
+To decide who is eligible for your DROP, you can check **[here](#who-is-eligible)**.
 
 For setting the token distribution mode, you have two choices:
 
@@ -37,7 +37,7 @@ NFT Raffle is a way to airdrop NFTs. There are 4 main stages in an NFT Raffle:
 - Once the registration end, you can draw the winners. For each draw, a winner will be selected randomly from registrants, and an NFT will be picked out randomly from NFTs in the Raffle as the reward for winner.
 - Registrants go to the Raffle page to check whether they are winners or not, and claim the reward if they are.
 
-To decide who is eligible for your Raffle, you can check **[here](##-who-is-eligible?)**.
+To decide who is eligible for your Raffle, you can check **[here](#who-is-eligible)**.
 
 ## Who is eligible?
 
