@@ -23,8 +23,7 @@ export const getFloatEvent = async (eventHost, eventID) => {
       _image: event.image, 
       _name: event.name, 
       _transferrable: event.transferrable, 
-      _url: event.url, 
-      _claimed: event.getClaimed()
+      _url: event.url 
     )
   }
   
@@ -39,7 +38,6 @@ export const getFloatEvent = async (eventHost, eventID) => {
     pub let name: String
     pub let transferrable: Bool
     pub let url: String
-    pub let claimed: {Address: FLOAT.TokenIdentifier}
   
     init(
         _claimable: Bool,
@@ -51,8 +49,7 @@ export const getFloatEvent = async (eventHost, eventID) => {
         _image: String, 
         _name: String,
         _transferrable: Bool,
-        _url: String,
-        _claimed: {Address: FLOAT.TokenIdentifier}
+        _url: String
     ) {
         self.claimable = _claimable
         self.dateCreated = _dateCreated
@@ -64,7 +61,6 @@ export const getFloatEvent = async (eventHost, eventID) => {
         self.name = _name
         self.transferrable = _transferrable
         self.url = _url
-        self.claimed = _claimed
     }
   }
   `
@@ -106,8 +102,7 @@ export const getFloatEventsInGroup = async (eventHost, groupName) => {
         _image: event.image, 
         _name: event.name, 
         _transferrable: event.transferrable, 
-        _url: event.url, 
-        _claimed: event.getClaimed()
+        _url: event.url 
       )
       answer.append(metadata)
     }
@@ -127,7 +122,6 @@ export const getFloatEventsInGroup = async (eventHost, groupName) => {
     pub let name: String
     pub let transferrable: Bool
     pub let url: String
-    pub let claimed: {Address: FLOAT.TokenIdentifier}
   
     init(
         _claimable: Bool,
@@ -139,8 +133,7 @@ export const getFloatEventsInGroup = async (eventHost, groupName) => {
         _image: String, 
         _name: String,
         _transferrable: Bool,
-        _url: String,
-        _claimed: {Address: FLOAT.TokenIdentifier}
+        _url: String
     ) {
         self.claimable = _claimable
         self.dateCreated = _dateCreated
@@ -152,7 +145,6 @@ export const getFloatEventsInGroup = async (eventHost, groupName) => {
         self.name = _name
         self.transferrable = _transferrable
         self.url = _url
-        self.claimed = _claimed
     }
   }
   `

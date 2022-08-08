@@ -8,7 +8,7 @@ export default function FloatEventList(props) {
   const events = props.events
 
   const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 5 
+  const pageSize = 5
 
   return (
     <>
@@ -24,13 +24,10 @@ export default function FloatEventList(props) {
                         Name
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Created at
-                      </th>
-                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Groups
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Claimed
+                        Created at
                       </th>
                     </tr>
                   </thead>
@@ -49,17 +46,12 @@ export default function FloatEventList(props) {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="text-gray-500">
-                            {(new Date(parseFloat(event.dateCreated) * 1000)).toLocaleDateString()}
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <div className="text-gray-500">
                             {event.groups.toString()}
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="text-gray-500">
-                            {Object.keys(event.claimed).length}
+                            {(new Date(parseFloat(event.dateCreated) * 1000)).toLocaleString()}
                           </div>
                         </td>
                       </tr>
