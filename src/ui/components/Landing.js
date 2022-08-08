@@ -95,7 +95,7 @@ export default function Landing(props) {
           target="_blank"
           rel="noopener noreferrer">
           <div className="flex items-center rounded-full bg-drizzle-green-light px-3 py-1 text-xs sm:text-sm text-drizzle-green-dark">
-            <Image src="/float_logo.png" alt="" layout="intrinsic" width={20} height={20} objectFit="cover" priority={true} />&nbsp;Eligibility checking with FLOAT is now available!
+            <Image src="/float_logo.png" alt="" layout="intrinsic" width={20} height={20} objectFit="cover" />&nbsp;Eligibility checking with FLOAT is now available!
           </div>
         </a>
       </div>

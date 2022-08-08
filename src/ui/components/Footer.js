@@ -10,7 +10,7 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             <div className="min-w-[20px]">
-              <Image src="/github.png" alt="" width={20} height={20} priority />
+              <Image src="/github.png" alt="" width={20} height={20} />
             </div>
           </a>
           <a href="https://lanford33.com"
@@ -18,7 +18,7 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             <div className="min-w-[20px]">
-              <Image src="/33.png" alt="" width={20} height={20} priority />
+              <Image src="/33.png" alt="" width={20} height={20} />
             </div>
           </a>
           <a href="https://twitter.com/33_labs"
@@ -26,7 +26,7 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             <div className="min-w-[20px]">
-              <Image src="/twitter.png" alt="" width={20} height={20} objectFit="contain" priority />
+              <Image src="/twitter.png" alt="" width={20} height={20} objectFit="contain" />
             </div>
           </a>
           <a href="https://bayou33.app"
@@ -34,7 +34,7 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             <div className="min-w-[20px]">
-              <Image src="/bayou.png" alt="" width={20} height={20} priority />
+              <Image src="/bayou.png" alt="" width={20} height={20} />
             </div>
           </a>
         </div>

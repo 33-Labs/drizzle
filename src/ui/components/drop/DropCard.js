@@ -19,7 +19,7 @@ import TagsCard from "../common/TagsCard"
 const MemoizeBanner = React.memo(({ banner }) => {
   return (
     <div className="w-full h-[240px] bg-drizzle-green relative">
-      <Image priority={true} src={banner} alt="" layout="fill" objectFit="cover" />
+      <Image src={banner} alt="" layout="fill" objectFit="cover" />
     </div>
   )
 })
