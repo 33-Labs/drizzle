@@ -10,7 +10,7 @@ export default function About(props) {
       <br></br>
       <p className={p}>Token distribution is a common need in crypto space. A project may want to airdrop to its community; A DAO may need to reward some contributors; A member of a Discord channel may want to distribute some tokens to other members to show appreciation or just for fun.</p>
       <br></br>
-      <p className={p}>But currently it’s a bit tedious and annoying. You need to collect an access-list, run a program locally to determine how much an account in the access-list should get or who are the winners(well, this is more than trivial, this is not transparent), and at last transfer to the eligible accounts or winners one by one, or use bulk transfer tools like&nbsp; 
+      <p className={p}>But currently it’s a bit tedious and annoying. You need to collect an access-list, run a program locally or use a centralized service to determine how much an account in the access-list should get or who are the winners(well, this is more than trivial, this is not transparent), and at last transfer to the eligible accounts or winners one by one, or use bulk transfer tools like&nbsp; 
       <a href="https://bayou33.app/"
           target="_blank"
           rel="noopener noreferrer"
