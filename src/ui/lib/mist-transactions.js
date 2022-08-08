@@ -621,8 +621,15 @@ const doClaim = async (
           
           let raffle = raffleCollection.borrowPublicRaffleRef(raffleID: raffleID)
               ?? panic("Could not borrow the public Raffle from the collection")
-  
-          if (acct.borrow<&${nftContractName}.Collection>(from: ${storagePath}) == nil) {
+          
+          if acct.borrow<&NonFungibleToken.Collection>(from: ${storagePath}) != nil 
+            && !acct.getCapability<&{${interfaces}}>(${publicPath}).check() {
+            acct.unlink(${publicPath})
+            acct.link<&{${interfaces}}>(
+              ${publicPath},
+              target: ${storagePath}
+            )
+          } else if (acct.borrow<&${nftContractName}.Collection>(from: ${storagePath}) == nil) {
               acct.save(<-${nftContractName}.createEmptyCollection(), to: ${storagePath})
   
               acct.link<&{${interfaces}}>(
@@ -646,6 +653,8 @@ const doClaim = async (
   .replace(MistPath, publicConfig.mistAddress)
 
   const code = imports.concat(rawCode)
+
+  console.log(code)
 
   const transactionId = await fcl.mutate({
     cadence: code,
