@@ -654,8 +654,6 @@ const doClaim = async (
 
   const code = imports.concat(rawCode)
 
-  console.log(code)
-
   const transactionId = await fcl.mutate({
     cadence: code,
     args: (arg, t) => (
