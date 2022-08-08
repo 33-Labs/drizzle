@@ -127,7 +127,7 @@
             ]
         },
         "mainnet": {
-            "dirzzle": [
+            "drizzle": [
                 "Distributors",
                 "EligibilityVerifiers",
                 "Cloud",
