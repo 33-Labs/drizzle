@@ -56,8 +56,10 @@ export default function Drop(props) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <label>🎉 <span className="font-bold">Drizzle</span> has been launched on FLOW mainnet! 🎉</label>
-              <label>Claim the commemorative <span className="font-bold">FLOAT</span> now!</label>
+              <div className="flex flex-col items-center justify-center">
+                <label>🎉 <span className="font-bold">Drizzle</span> has been launched on FLOW mainnet! 🎉</label>
+                <label><span className="font-bold">CLICK TO CLAIM</span> the commemorative <span className="font-bold">FLOAT</span> now!</label>
+              </div>
             </a>
           </div>
         </div>
