@@ -1,0 +1,65 @@
+.landing {
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    height: 90px;
+  }
+
+.ltitle {
+    font-family: acumin-pro, sans-serif;
+    font-size: 3.75rem;
+    line-height: 1.5;
+    display: block;
+    font-weight: 700;
+    overflow: hidden;
+    position: absolute;
+    top: 0.2rem;
+    animation: openclose 5s ease-in-out infinite;
+}
+
+@keyframes openclose {
+    0% {
+      top: 0;
+      width: 0;
+    }
+    5% {
+      top: 0;
+      width: 0;
+    }
+    15% {
+      top: 0;
+      width: 250px;
+    }
+    45% {
+      top: 0;
+      width: 250px;
+    }
+    48% {
+      top: 0;
+      width: 0;
+    }
+    50% {
+      top: 0;
+      width: 0;
+    }
+    53% {
+      top: -5.625rem;
+      width: 0;
+    }
+    63% {
+      top: -5.625rem;
+      width: 200px;
+    }
+    93% {
+      top: -5.625rem;
+      width: 200px;
+    }
+    97% {
+      top: -5.625rem;
+      width: 0;
+    }
+    100% {
+      top: 0;
+      width: 0;
+    }
+  }
