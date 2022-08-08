@@ -71,10 +71,9 @@ export default function RaffleList(props) {
                         Eligibility
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Winners
-                      </th>
-                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Registrant
+                        <div className="tooltip tooltip-bottom" data-tip="Drawned / Max Winners / Registrants">
+                          D/W/R
+                        </div>
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Status
@@ -92,13 +91,13 @@ export default function RaffleList(props) {
                     }).map((raffle) => (
                       <Link key={`${raffle.raffleID}-link`} href={`${raffle.host}/raffles/${raffle.raffleID}`}>
                         <tr key={raffle.raffleID}>
-                          <td className="py-4 pl-4 pr-3 text-sm sm:pl-6">
+                          <td className="py-4 px-3 text-sm">
                             <div className="flex items-center">
-                              <div className="h-10 w-10 flex-shrink-0 relative">
-                                <Image className="rounded-xl" src={raffle.image ?? "/banner.png"} alt="" layout="fill" objectFit="contain" />
+                              <div className="h-10 w-24 flex-shrink-0 relative">
+                                <Image className="rounded-lg" src={raffle.image ?? "/banner.png"} alt="" layout="fill" objectFit="contain" />
                               </div>
                               <div className="ml-4">
-                                <label className="block font-medium text-gray-900 break-words max-w-[300px] min-w-[60px]">{raffle.name}</label>
+                                <label className="block font-medium text-gray-900 break-words w-[120px] max-w-[300px] min-w-[60px]">{`${raffle.name} Hello This is a gift to FLOAT community`}</label>
                               </div>
                             </div>
                           </td>
@@ -111,10 +110,7 @@ export default function RaffleList(props) {
                             {getVerifierType(raffle, "RAFFLE")}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {`${Object.keys(raffle.winners).length} / ${raffle.numberOfWinners}`}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {`${Object.keys(raffle.registrationRecords).length}`}
+                            {`${Object.keys(raffle.winners).length} / ${raffle.numberOfWinners} / ${Object.keys(raffle.registrationRecords).length}`}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${raffle.status.tagColor}`}>

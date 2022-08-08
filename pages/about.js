@@ -4,7 +4,7 @@ export default function About(props) {
   const h1 = "font-flow text-black font-bold text-2xl mb-3"
   const p = "leading-7 font-flow text-black text-base font-medium"
   return (
-    <div className="container mx-auto max-w-[880px] min-w-[380px] px-6">
+    <div className="container mx-auto max-w-[920px] min-w-[380px] px-6">
       <h1 className={h1}>What’s Drizzle?</h1>
       <p className={p}>Drizzle is a Token Distribution Tool <span className="text-drizzle-green">#onFlow</span>! Anyone can use it to create a DROP or start an NFT Raffle in a minute!</p>
       <br></br>

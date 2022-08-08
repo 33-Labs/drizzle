@@ -106,7 +106,7 @@ export default function Account(props) {
   }
 
   return (
-    <div className="container mx-auto max-w-[880px] min-w-[380px] px-6">
+    <div className="container mx-auto max-w-[920px] min-w-[380px] px-6">
       <div className="w-full flex justify-center">
         <div className="flex gap-x-1 bg-drizzle-green-light w-80 h-10
         rounded-lg justify-center p-1

@@ -17,7 +17,7 @@ export default function Landing(props) {
   return (
     <div className="flex flex-col gap-y-20">
       <div className="mt-10 flex gap-y-5 sm:gap-x-5 flex-col-reverse sm:flex-row justify-between items-center">
-        <div className="flex flex-col gap-y-8 items-start">
+        <div className="px-2 flex flex-col gap-y-8 items-start">
           <div className="flex flex-col gap-y-2">
             <div className={styles.landing}>
               <div className={styles.ltitle}>
@@ -86,7 +86,7 @@ export default function Landing(props) {
           }
         </div>
 
-        <div className="w-[350px] h-[350px] sm:w-[400px] sm:h-[400px] relative">
+        <div className="w-[350px] h-[350px] sm:w-[420px] sm:h-[420px] relative">
           <Image src="/landing.png" alt="" layout="responsive" width={400} height={400} objectFit="cover" priority={true} />
         </div>
       </div>

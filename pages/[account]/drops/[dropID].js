@@ -49,7 +49,7 @@ export default function Drop(props) {
 
   return (
     <>
-      <div className="container mx-auto max-w-[880px] min-w-[380px] px-6">
+      <div className="container mx-auto max-w-[920px] min-w-[380px] px-6">
         <div className="flex justify-center mb-5">
           <div className="text-xs sm:text-base w-[400px] py-2 px-3 flex flex-col justify-center items-center bg-drizzle-green-light rounded-2xl">
             <label>🎉 <span className="font-bold">Drizzle</span> has been launched on FLOW mainnet! 🎉</label>
