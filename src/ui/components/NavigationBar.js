@@ -76,7 +76,7 @@ export default function NavigationBar(props) {
   }
 
   return (
-    <div className="px-6 m-auto max-w-[920px] min-w-[380px] relative gap-x-8 flex items-center justify-between bg-transparent h-44">
+    <div className="px-6 m-auto max-w-[920px] min-w-[380px] relative gap-x-5 flex items-center justify-between bg-transparent h-44">
       <div className="flex items-center gap-x-2">
         <Link href="/">
           <div className="min-w-[40px]">
@@ -96,7 +96,6 @@ export default function NavigationBar(props) {
           {`${publicConfig.chainEnv == "mainnet" ? "BETA" : "T"}`}
         </label>
       </div>
-
 
       {user && user.loggedIn
         ? <AuthedState />
