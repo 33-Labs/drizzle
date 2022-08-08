@@ -25,8 +25,11 @@ export default function BasicInfoBoard(props) {
     banner, setBanner, setBannerSize,
     setName, setURL, setDescription,
     timeLockEnabled, setTimeLockEnabled,
-    setStartAt, setEndAt, NamePlaceholder, DescriptionPlaceholder
+    setStartAt, setEndAt, NamePlaceholder, DescriptionPlaceholder,
+    withTimeLimitPicker
   } = props
+
+  const showTimeLimit = withTimeLimitPicker == true 
 
   return (
     <>
@@ -116,13 +119,13 @@ export default function BasicInfoBoard(props) {
             />
           </div>
         </div>
-
+        {showTimeLimit ? 
         <TimeLimitPicker
           timeLockEnabled={timeLockEnabled}
           setTimeLockEnabled={setTimeLockEnabled}
           setStartAt={setStartAt}
           setEndAt={setEndAt}
-        />
+        /> : null}
       </div>
     </>
   )

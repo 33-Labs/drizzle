@@ -397,6 +397,7 @@ export default function DropCreator(props) {
           timeLockEnabled={timeLockEnabled} setTimeLockEnabled={setTimeLockEnabled}
           setStartAt={setStartAt} setEndAt={setEndAt}
           NamePlaceholder={NamePlaceholder} DescriptionPlaceholder={DescriptionPlaceholder}
+          withTimeLimitPicker={true}
         />
 
         <div className="flex flex-col gap-y-2">
