@@ -26,8 +26,15 @@ export const getNFTDisplays = async (account, nft) => {
 
   pub fun main(account: Address): {UInt64: NFTDisplay} {
       let NFTs: {UInt64: NFTDisplay} = {}
+      let owner = getAuthAccount(account)
+      let tempPathStr = "drizzleTempPath"
+      let tempPublicPath = PublicPath(identifier: tempPathStr)!
+      owner.link<&{MetadataViews.ResolverCollection}>(
+              tempPublicPath,
+              target: ${nft.collectionStoragePath}
+      )
 
-      if let collection = getAccount(account).getCapability(${nft.collectionPublicPath}).borrow<&{${interfaces}}>() {
+      if let collection = owner.getCapability<&{MetadataViews.ResolverCollection}>(tempPublicPath).borrow() {
           for tokenID in collection.getIDs() {
               let resolver = collection.borrowViewResolver(id: tokenID)
               if let display = MetadataViews.getDisplay(resolver) {

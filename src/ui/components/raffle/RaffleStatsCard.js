@@ -70,14 +70,14 @@ export default function RaffleStatsCard(props) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <div key={index} className={`cursor-pointer w-full rounded-2xl ring-1 ring-black ring-opacity-5 overflow-hidden ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow`}>
+                      <div key={index} className={`cursor-pointer h-full w-full rounded-2xl ring-1 ring-black ring-opacity-5 overflow-hidden ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow`}>
                         <label className="cursor-pointer text-sm font-medium text-gray-500 font-flow">
                           {card.title}
                         </label>
                         <label className="cursor-pointer text-2xl font-bold font-flow text-drizzle-green">{card.content}</label>
                       </div>
                     </a> :
-                    <div key={index} className={`w-full rounded-2xl ring-1 ring-black ring-opacity-5 overflow-hidden ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow`}>
+                    <div key={index} className={`h-full w-full rounded-2xl ring-1 ring-black ring-opacity-5 overflow-hidden ${card.color} flex flex-col bg-white px-5 pt-5 pb-10 gap-y-1 shadow`}>
                       <label className="text-sm font-medium text-gray-500 font-flow">
                         {card.title}
                       </label>

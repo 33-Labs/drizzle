@@ -166,7 +166,6 @@ const getWinner = (drop, claimed) => {
     const record = claimed[i]
     const amount = new Decimal(record.amount)
     if (amount.cmp(max) == 1) {
-      console.log(record)
       max = amount
       winner = record.account
     }

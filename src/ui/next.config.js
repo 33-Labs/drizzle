@@ -2,7 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['cdn.jsdelivr.net', 'raw.githubusercontent.com', 'ipfs.io'],
+    domains: [
+      'cdn.jsdelivr.net', 
+      'raw.githubusercontent.com', 
+      'ipfs.io', 
+      'flovatar.com'
+    ],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   }
 }
 

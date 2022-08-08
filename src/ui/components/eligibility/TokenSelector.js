@@ -18,6 +18,7 @@ export default function TokenSelector(props) {
   const [selectedToken, setSelectedToken] = useState()
   const [balance, setBalance] = useState(new Decimal(0))
   const [tokens, setTokens] = useState([]);
+  const [filteredTokens, setFilteredTokens] = useState([])
 
   useEffect(() => {
     let env = ENV.Mainnet
@@ -34,13 +35,16 @@ export default function TokenSelector(props) {
     })
   }, [setTokens])
 
-  const filteredTokens =
-    query === ""
+  useEffect(() => {
+    setFilteredTokens(
+      query === ""
       ? tokens
       : tokens.filter((token) => {
         const content = `${token.name} (${token.symbol})`
         return content.toLowerCase().includes(query.toLowerCase())
       })
+    )
+  }, [query, tokens])
 
   return (
     <Combobox as="div" className={props.className} value={props.user && props.user.loggedIn && selectedToken} onChange={async (token) => {

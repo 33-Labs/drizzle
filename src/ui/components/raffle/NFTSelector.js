@@ -12,7 +12,6 @@ import {
 
 import { NFTList } from "../../flow/nft-list"
 import publicConfig from "../../publicConfig.js"
-import { filterTokenIDs } from "../../lib/utils"
 import { getNFTDisplays } from "../../lib/mist-scripts"
 import NFTCard from "./NFTCard"
 
@@ -30,14 +29,18 @@ export default function NFTSelector(props) {
 
   const NFTs = NFTList(publicConfig.chainEnv)
   const [nftDisplays, setNFTDisplays] = useState({})
+  const [filteredNFTs, setFilteredNFTs] = useState([])
 
-  const filteredNFTs =
-    query === ""
-      ? NFTs
-      : NFTs.filter((nft) => {
-        const content = `${nft.name}`
-        return content.toLowerCase().includes(query.toLowerCase())
-      })
+  useEffect(() => {
+    setFilteredNFTs(
+      query === ""
+        ? NFTs
+        : NFTs.filter((nft) => {
+          const content = `${nft.name}`
+          return content.toLowerCase().includes(query.toLowerCase())
+        }))
+  }, [query, NFTs])
+
 
   return (
     <div className={"flex flex-col"}>
@@ -55,10 +58,11 @@ export default function NFTSelector(props) {
             setNFTDisplays({})
             setSelectedTokens({})
             getNFTDisplays(props.user.addr, nft).then((displays) => {
-              // for (const [key, value] of Object.entries(displays)) {
-              //   displays[key+1] = value
-              // }
               setNFTDisplays(displays)
+              if (Object.keys(displays).length == 0) {
+                setShowBasicNotification(true)
+                setBasicNotificationContent({ type: "exclamation", title: "Empty Collection", detail: "You don't have NFT in the colleciton or the collection isn't linked correctly" })
+              }
             })
           }
         }

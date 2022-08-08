@@ -76,8 +76,26 @@ export const mainnetNFTList = [
         "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
       ]
     },
-    logoURL: "/flovatar.png",
+    logoURL: "/flovatar.jpeg",
     collectionPublicPath: "/public/FlovatarComponentCollection",
     collectionStoragePath: "/storage/FlovatarComponentCollection"
-  }
+  },
+  // {
+  //   name: "StarlyCard",
+  //   nftType: "A.5b82f21c0edf76e3.StarlyCard.NFT",
+  //   contractName: "StarlyCard",
+  //   contractAddress: "0x5b82f21c0edf76e3",
+  //   collectionType: {
+  //     type: "A.5b82f21c0edf76e3.StarlyCard.Collection",
+  //     restrictions: [
+  //       "A.5b82f21c0edf76e3.StarlyCard.StarlyCardCollectionPublic",
+  //       "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+  //       "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+  //       "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+  //     ]
+  //   },
+  //   logoURL: "/starly.jpeg",
+  //   collectionPublicPath: "/public/starlyCardCollection",
+  //   collectionStoragePath: "/storage/starlyCardCollection"
+  // }
 ]

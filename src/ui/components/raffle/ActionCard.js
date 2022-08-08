@@ -188,7 +188,7 @@ export default function ActionCard(props) {
   ">
         <label className="block w-full text-center text-[60px]">{emoji}</label>
         <label className="block w-full mt-5 text-center text-lg font-semibold font-flow">{description}</label>
-        <label className="block w-full text-center mt-1 text-2xl font-bold font-flow text-drizzle-green">{amount}</label>
+        <label className="block w-full text-center mt-1 text-xl font-bold font-flow text-drizzle-green break-words">{amount}</label>
         <button
           type="button"
           className={classNames(
