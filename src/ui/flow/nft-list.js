@@ -44,4 +44,40 @@ export const testnetNFTList = [
 ]
 
 export const mainnetNFTList = [
+  {
+    name: "FLOAT",
+    nftType: "A.2d4c3caffbeab845.FLOAT.NFT",
+    contractName: "FLOAT",
+    contractAddress: "0x2d4c3caffbeab845",
+    collectionType: {
+      type: "A.2d4c3caffbeab845.FLOAT.Collection",
+      restrictions: [
+        "A.2d4c3caffbeab845.FLOAT.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+        "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+      ]
+    },
+    logoURL: "/float.png",
+    collectionPublicPath: "/public/FLOATCollectionPublicPath",
+    collectionStoragePath: "/storage/FLOATCollectionStoragePath"
+  },
+  {
+    name: "FlovatarComponent",
+    nftType: "A.921ea449dffec68a.FlovatarComponent.NFT",
+    contractName: "FlovatarComponent",
+    contractAddress: "0x921ea449dffec68a",
+    collectionType: {
+      type: "A.921ea449dffec68a.FlovatarComponent.Collection",
+      restrictions: [
+        "A.921ea449dffec68a.FlovatarComponent.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+        "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+      ]
+    },
+    logoURL: "/flovatar.png",
+    collectionPublicPath: "/public/FlovatarComponentCollection",
+    collectionStoragePath: "/storage/FlovatarComponentCollection"
+  }
 ]
