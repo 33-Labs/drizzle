@@ -47,6 +47,14 @@ export default function Footer() {
         >
           Made by <span className="underline font-bold decoration-drizzle-green decoration-2">33Labs</span> with ❤️
         </a>
+        <a
+          href="https://discord.gg/vE9fQ35Y"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-flow text-sm whitespace-pre"
+        >
+           Get support on <span className="underline font-bold decoration-drizzle-green decoration-2">Emerald City DAO</span>
+        </a>
       </div>
 
     </footer>

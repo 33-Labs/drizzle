@@ -93,6 +93,12 @@ const parseClaimStatus = (user, claimStatus, displayName, isPreview) => {
       elements.description = "MAY YOU BE THE WINNER"  
       elements.amount = null
       elements.title = "RAFFLE DRAWING"
+    } else if (eStatusR == "0") {
+      // eligible for registration but not late
+      elements.emoji = "🦥"
+      elements.description = "YOU ARE LATE FOR REGISTRATION"
+      elements.title = "TOO LATE"
+      elements.amount = null  
     } else {
       elements.emoji = "🙉"
       elements.description = "YOU ARE NOT ELIGIBLE"
@@ -114,6 +120,12 @@ const parseClaimStatus = (user, claimStatus, displayName, isPreview) => {
       elements.emoji = "🙈"
       elements.description = "YOU ARE NOT WINNER"
       elements.title = "NOT WINNER"
+      elements.amount = null
+    } else if (eStatusR == "0") {
+      // eligible for registration but not late
+      elements.emoji = "🦥"
+      elements.description = "YOU ARE LATE FOR REGISTRATION"
+      elements.title = "TOO LATE"
       elements.amount = null  
     } else {
       elements.emoji = "🙉"
