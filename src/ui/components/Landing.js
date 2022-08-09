@@ -31,7 +31,7 @@ export default function Landing(props) {
           </div>
           <div className="flex flex-col">
             <label className={`-mt-5 font-flow text-gray-400 font-medium text-md`}>
-              Create DROP or Raffle in one minute!
+              Create a DROP or Raffle in one minute!
             </label>
             <Link href="/about">
               <label className={`cursor-pointer font-flow text-drizzle-green font-medium text-md underline decoration-drizzle-green decoration-3`}>
