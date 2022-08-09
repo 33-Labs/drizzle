@@ -80,6 +80,24 @@ export const mainnetNFTList = [
     collectionPublicPath: "/public/FlovatarComponentCollection",
     collectionStoragePath: "/storage/FlovatarComponentCollection"
   },
+  {
+    name: "Geeft",
+    nftType: "A.80ec5732ee129467.Geeft.NFT",
+    contractName: "Geeft",
+    contractAddress: "0x80ec5732ee129467",
+    collectionType: {
+      type: "A.80ec5732ee129467.Geeft.Collection",
+      restrictions: [
+        "A.80ec5732ee129467.Geeft.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+        "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+      ]
+    },
+    logoURL: "/geeft.png",
+    collectionPublicPath: "/public/GeeftCollection",
+    collectionStoragePath: "/storage/GeeftCollection"
+  }
   // {
   //   name: "StarlyCard",
   //   nftType: "A.5b82f21c0edf76e3.StarlyCard.NFT",

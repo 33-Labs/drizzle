@@ -97,7 +97,7 @@ export default function RaffleList(props) {
                                 <Image className="rounded-lg" src={raffle.image ?? "/banner.png"} alt="" layout="fill" objectFit="contain" />
                               </div>
                               <div className="ml-4">
-                                <label className="block font-medium text-gray-900 break-words w-[120px] max-w-[300px] min-w-[60px]">{`${raffle.name} Hello This is a gift to FLOAT community`}</label>
+                                <label className="block font-medium text-gray-900 break-words w-[120px] max-w-[300px] min-w-[60px]">{`${raffle.name}`}</label>
                               </div>
                             </div>
                           </td>
