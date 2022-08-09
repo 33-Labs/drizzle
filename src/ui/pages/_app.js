@@ -19,8 +19,8 @@ function MyApp({ Component, pageProps }) {
       <div className="bg-white text-black bg-[url('/bg.png')] bg-cover bg-center min-h-screen">
         <RecoilRoot>
           <Head>
-            <title>drizzle | reward the ones you care</title>
-            <meta property="og:title" content="drizzle | airdrop tool" key="title" />
+            <title>drizzle | token distribution tool</title>
+            <meta property="og:title" content="drizzle | token distribution tool" key="title" />
           </Head>
           <NavigationBar user={user} />
           <Component {...pageProps} user={user} />
