@@ -6,7 +6,8 @@ const nextConfig = {
       'cdn.jsdelivr.net', 
       'raw.githubusercontent.com', 
       'ipfs.io', 
-      'flovatar.com'
+      'flovatar.com',
+      'i.imgur.com'
     ],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
