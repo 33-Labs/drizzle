@@ -9,6 +9,7 @@
 import FungibleToken from "./core/FungibleToken.cdc"
 import Distributors from "./Distributors.cdc"
 import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
+import DrizzleRecorder from "./DrizzleRecorder.cdc"
 
 pub contract Cloud {
 
@@ -242,6 +243,18 @@ pub contract Cloud {
                 tokenIdentifier: self.tokenInfo.tokenIdentifier,
                 amount: claimRecord.amount
             )
+
+            if let recorderRef = params["recorderRef"] as? &DrizzleRecorder.Recorder {
+                recorderRef.addRecord(DrizzleRecorder.CloudDrop(
+                    dropID: self.dropID,
+                    host: self.host,
+                    name: self.name,
+                    tokenSymbol: self.tokenInfo.symbol,
+                    claimedAmount: claimRecord.amount,
+                    claimedAt: getCurrentBlock().timestamp,
+                    extraData: {}
+                ))
+            }
 
             let v <- self.dropVault.withdraw(amount: claimRecord.amount)
             receiver.deposit(from: <- v)

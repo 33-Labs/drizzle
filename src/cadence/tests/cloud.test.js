@@ -15,7 +15,6 @@ import {
 import {
   claimDrop,
   depositToDrop,
-  withdrawAllFunds,
   togglePause,
   getAllDrops,
   getDrop,
@@ -48,6 +47,7 @@ const deployContracts = async () => {
   await deployFLOATContracts(deployer)
   await deployByName(deployer, "Distributors")
   await deployByName(deployer, "EligibilityVerifiers")
+  await deployByName(deployer, "DrizzleRecorder")
   await deployByName(deployer, "Cloud")
 }
 

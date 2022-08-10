@@ -23,6 +23,7 @@ import {
   getAllRaffles, 
   getClaimStatus, 
   getRaffle, 
+  getRecords, 
   getRegistrationRecord, 
   getRegistrationRecords, 
   getWinner, 
@@ -40,6 +41,7 @@ const deployContracts = async () => {
   await deployExampleNFTContracts(deployer)
   await deployByName(deployer, "Distributors")
   await deployByName(deployer, "EligibilityVerifiers")
+  await deployByName(deployer, "DrizzleRecorder")
   await deployByName(deployer, "Mist")
 }
 
@@ -538,5 +540,66 @@ describe("Mist", () => {
 
     const records = await getRegistrationRecords(raffleID, Alice)
     expect(Object.keys(records).length).toBe(1)
+  })
+
+  it("Mist - Recorder should be able to record registration and claim", async () => {
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+    const Carl = await getAccountAddress("Carl")
+    const Dave = await getAccountAddress("Dave")
+
+    await mintExampleNFTs(Alice)
+    const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
+    const registrationEndAt = new Date().getTime() / 1000 + 2 
+    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt: registrationEndAt, numberOfWinners: 3 })
+
+    const raffles = await getAllRaffles(Alice)
+    const raffleID = parseInt(Object.keys(raffles)[0])
+
+    const [, errorBob] = await registerRaffle(raffleID, Alice, Bob)
+    expect(errorBob).toBeNull()
+    const [, errorCarl] = await registerRaffle(raffleID, Alice, Carl)
+    expect(errorCarl).toBeNull()
+    const [, errorDave] = await registerRaffle(raffleID, Alice, Dave)
+    expect(errorDave).toBeNull()
+
+    // setTimeOut can't change block timestamp
+    // setTimestampOffset is not working for contracts
+    // so we add this trick to make the block time pass
+    const [, errorCarl2] = await registerRaffle(raffleID, Alice, Carl)
+    expect(errorCarl2).not.toBeNull()
+    const [, errorCarl3] = await registerRaffle(raffleID, Alice, Carl)
+    expect(errorCarl3).not.toBeNull()
+    const [, errorCarl4] = await registerRaffle(raffleID, Alice, Carl)
+    expect(errorCarl4).not.toBeNull()
+    const [, errorCarl5] = await registerRaffle(raffleID, Alice, Carl)
+    expect(errorCarl5).not.toBeNull()
+
+    const [recordsBob, errorRecordBob] = await getRecords(Bob)
+    expect(errorRecordBob).toBeNull()
+    expect(Object.keys(recordsBob).length == 1)
+    const recordBob = recordsBob[`${raffleID}`]
+    expect(recordBob.host).toBe(Alice)
+    expect(recordBob.rewardTokenIDs.length).toBe(0)
+    expect(recordBob.claimedAt).toBeNull()
+
+    const [, errorDraw] = await draw(raffleID, Alice)
+    expect(errorDraw).toBeNull()
+    const raffle1 = await getRaffle(raffleID, Alice) 
+    expect(Object.keys(raffle1.winners).length).toBe(1)
+    const winner = Object.keys(raffle1.winners)[0]
+
+    const [, errorWinner] = await claimRaffle(raffleID, Alice, winner)
+    expect(errorWinner).toBeNull()
+
+    const [recordsWinner, errorRecordWinner] = await getRecords(winner)
+    expect(errorRecordWinner).toBeNull()
+    expect(Object.keys(recordsWinner).length == 1)
+    const recordWinner = recordsWinner[`${raffleID}`]
+    expect(recordWinner.rewardTokenIDs.length).toBe(1)
+    expect(recordWinner.claimedAt).not.toBeNull()
+
+    const winnerRecord = await getWinner(raffleID, Alice, winner)
+    expect(winnerRecord.isClaimed).toBeTruthy() 
   })
 })
