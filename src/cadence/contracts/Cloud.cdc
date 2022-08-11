@@ -244,8 +244,9 @@ pub contract Cloud {
                 amount: claimRecord.amount
             )
 
-            if let recorderRef = params["recorderRef"] as? &DrizzleRecorder.Recorder {
-                recorderRef.addRecord(DrizzleRecorder.CloudDrop(
+            if let recorderRef = params["recorderRef"] {
+                let _recorderRef = recorderRef as! &DrizzleRecorder.Recorder 
+                _recorderRef.insertOrUpdateRecord(DrizzleRecorder.CloudDrop(
                     dropID: self.dropID,
                     host: self.host,
                     name: self.name,

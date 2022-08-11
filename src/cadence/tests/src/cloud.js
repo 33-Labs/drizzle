@@ -217,3 +217,10 @@ export const getDropBalance = async (dropID, host) => {
   return result
 }
 
+export const getRecords = async (account) => {
+  const name = "cloud/get_records"
+  const args = [account]
+  return await executeScript({ name: name, args: args })
+}
+
+
