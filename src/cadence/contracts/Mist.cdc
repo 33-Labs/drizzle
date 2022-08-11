@@ -307,7 +307,7 @@ pub contract Mist {
                     raffleID: self.raffleID,
                     host: self.host,
                     name: self.name,
-                    nftType: self.nftInfo.nftType,
+                    nftName: self.nftInfo.name,
                     registeredAt: getCurrentBlock().timestamp,
                     extraData: {}
                 ))

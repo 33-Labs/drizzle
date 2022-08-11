@@ -7,6 +7,7 @@ const NonFungibleTokenPath = "0xNonFungibleToken"
 const MistPath = "0xMist"
 const MetadataViewsPath = "0xMetadataViews"
 const EligibilityReviewersPath = "0xEligibilityVerifiers"
+const DrizzleRecorderPath = "0xDrizzleRecorder"
 
 export const createRaffle = async (
   name, description, image, url,
@@ -292,10 +293,12 @@ const doRegister = async (
   const code = `
   import NonFungibleToken from 0xNonFungibleToken
   import Mist from 0xMist
+  import DrizzleRecorder from 0xDrizzleRecorder
   
   transaction(raffleID: UInt64, host: Address) {
       let raffle: &{Mist.IRafflePublic}
       let address: Address
+      let recorderRef: &DrizzleRecorder.Recorder
   
       prepare(acct: AuthAccount) {
           self.address = acct.address
@@ -307,17 +310,32 @@ const doRegister = async (
           
           let raffle = raffleCollection.borrowPublicRaffleRef(raffleID: raffleID)
               ?? panic("Could not borrow the public Raffle from the collection")
+
+          if (acct.borrow<&DrizzleRecorder.Recorder>(from: DrizzleRecorder.RecorderStoragePath) == nil) {
+              acct.save(<-DrizzleRecorder.createEmptyRecorder(), to: DrizzleRecorder.RecorderStoragePath)
+  
+              acct.link<&{DrizzleRecorder.IRecorderPublic}>(
+                  DrizzleRecorder.RecorderPublicPath,
+                  target: DrizzleRecorder.RecorderStoragePath
+              )
+            }
   
           self.raffle = raffle 
+          self.recorderRef = acct
+            .borrow<&DrizzleRecorder.Recorder>(from: DrizzleRecorder.RecorderStoragePath)
+            ?? panic("Could not borrow Recorder")
       }
   
       execute {
-          self.raffle.register(account: self.address, params: {})
+        self.raffle.register(account: self.address, params: {
+          "recorderRef": self.recorderRef
+        })
       }
   }
     `
     .replace(MistPath, publicConfig.mistAddress)
     .replace(NonFungibleTokenPath, publicConfig.nonFungibleTokenAddress)
+    .replace(DrizzleRecorderPath, publicConfig.drizzleRecorderAddress)
 
   const transactionId = await fcl.mutate({
     cadence: code,
@@ -608,10 +626,12 @@ const doClaim = async (
 
   const rawCode = `
   import Mist from 0xMist
+  import DrizzleRecorder from 0xDrizzleRecorder
   
   transaction(raffleID: UInt64, host: Address) {
       let raffle: &{Mist.IRafflePublic}
       let receiver: &{NonFungibleToken.CollectionPublic}
+      let recorderRef: &DrizzleRecorder.Recorder
   
       prepare(acct: AuthAccount) {
           let raffleCollection = getAccount(host)
@@ -637,20 +657,36 @@ const doClaim = async (
                   target: ${storagePath}
               )
           }
+
+          if (acct.borrow<&DrizzleRecorder.Recorder>(from: DrizzleRecorder.RecorderStoragePath) == nil) {
+            acct.save(<-DrizzleRecorder.createEmptyRecorder(), to: DrizzleRecorder.RecorderStoragePath)
+
+            acct.link<&{DrizzleRecorder.IRecorderPublic}>(
+                DrizzleRecorder.RecorderPublicPath,
+                target: DrizzleRecorder.RecorderStoragePath
+            )
+          }
           
           self.raffle = raffle 
           self.receiver = acct
               .getCapability(${publicPath})
               .borrow<&{NonFungibleToken.CollectionPublic}>()
               ?? panic("Could not borrow Receiver")
+
+          self.recorderRef = acct
+            .borrow<&DrizzleRecorder.Recorder>(from: DrizzleRecorder.RecorderStoragePath)
+            ?? panic("Could not borrow Recorder")
       }
   
       execute {
-          self.raffle.claim(receiver: self.receiver, params: {})
+        self.raffle.claim(receiver: self.receiver, params: {
+          "recorderRef": self.recorderRef
+        })
       }
   }
   `
   .replace(MistPath, publicConfig.mistAddress)
+  .replace(DrizzleRecorderPath, publicConfig.drizzleRecorderAddress)
 
   const code = imports.concat(rawCode)
 

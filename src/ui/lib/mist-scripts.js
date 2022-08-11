@@ -2,10 +2,7 @@ import publicConfig from "../publicConfig"
 import * as fcl from "@onflow/fcl"
 import { generateImportsAndInterfaces } from "./utils"
 
-const NonFungibleTokenPath = "0xNonFungibleToken"
 const MistPath = "0xMist"
-const EligibilityReviewersPath = "0xEligibilityVerifiers"
-const MetadataViewsPath = "0xMetadataViews"
 
 export const getNFTDisplays = async (account, nft) => {
   const [imports, interfaces] = generateImportsAndInterfaces(nft.collectionType.restrictions)

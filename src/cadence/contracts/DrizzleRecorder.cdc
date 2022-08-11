@@ -6,6 +6,10 @@ pub contract DrizzleRecorder {
 
     pub event ContractInitialized()
 
+    pub event RecordInserted(recorder: Address, type: String, uuid: UInt64, host: Address)
+    pub event RecordUpdated(recorder: Address, type: String, uuid: UInt64, host: Address)
+    pub event RecordRemoved(recorder: Address, type: String, uuid: UInt64, host: Address)
+
     pub struct CloudDrop {
         pub let dropID: UInt64
         pub let host: Address
@@ -38,7 +42,7 @@ pub contract DrizzleRecorder {
         pub let raffleID: UInt64
         pub let host: Address
         pub let name: String
-        pub let nftType: Type
+        pub let nftName: String
         pub let registeredAt: UFix64
         pub let rewardTokenIDs: [UInt64]
         pub var claimedAt: UFix64?
@@ -48,14 +52,14 @@ pub contract DrizzleRecorder {
             raffleID: UInt64,
             host: Address,
             name: String,
-            nftType: Type,
+            nftName: String,
             registeredAt: UFix64,
             extraData: {String: AnyStruct}
         ) {
             self.raffleID = raffleID
             self.host = host
             self.name = name
-            self.nftType = nftType
+            self.nftName = nftName
             self.registeredAt = registeredAt
             self.rewardTokenIDs = []
             self.claimedAt = nil
@@ -75,26 +79,26 @@ pub contract DrizzleRecorder {
     }
 
     pub resource interface IRecorderPublic {
-        pub fun getRecords(): {Type: {UInt64: AnyStruct}}
+        pub fun getRecords(): {String: {UInt64: AnyStruct}}
         pub fun getRecordsByType(_ type: Type): {UInt64: AnyStruct}
         pub fun getRecord(type: Type, uuid: UInt64): AnyStruct?
     }
 
     pub resource Recorder: IRecorderPublic {
-        pub let records: {Type: {UInt64: AnyStruct}}
+        pub let records: {String: {UInt64: AnyStruct}}
 
-        pub fun getRecords(): {Type: {UInt64: AnyStruct}} {
+        pub fun getRecords(): {String: {UInt64: AnyStruct}} {
             return self.records
         }
 
         pub fun getRecordsByType(_ type: Type): {UInt64: AnyStruct} {
             self.initTypeRecords(type: type)
-            return self.records[type]!
+            return self.records[type.identifier]!
         }
 
         pub fun getRecord(type: Type, uuid: UInt64): AnyStruct? {
             self.initTypeRecords(type: type)
-            return self.records[type]![uuid]
+            return self.records[type.identifier]![uuid]
         }
 
         pub fun insertOrUpdateRecord(_ record: AnyStruct) {
@@ -103,10 +107,44 @@ pub contract DrizzleRecorder {
 
             if record.isInstance(Type<CloudDrop>()) {
                 let dropInfo = record as! CloudDrop
-                self.records[type]!.insert(key: dropInfo.dropID, dropInfo)
+                let oldValue = self.records[type.identifier]!.insert(key: dropInfo.dropID, dropInfo)
+
+                if oldValue == nil {
+                    emit RecordInserted(
+                        recorder: self.owner!.address,
+                        type: type.identifier,
+                        uuid: dropInfo.dropID,
+                        host: dropInfo.host
+                    )
+                } else {
+                    emit RecordUpdated(
+                        recorder: self.owner!.address,
+                        type: type.identifier,
+                        uuid: dropInfo.dropID,
+                        host: dropInfo.host
+                    )
+                }
+
             } else if record.isInstance(Type<MistRaffle>()) {
                 let raffleInfo = record as! MistRaffle
-                self.records[type]!.insert(key: raffleInfo.raffleID, raffleInfo)
+                let oldValue = self.records[type.identifier]!.insert(key: raffleInfo.raffleID, raffleInfo)
+
+                if oldValue == nil {
+                    emit RecordInserted(
+                        recorder: self.owner!.address,
+                        type: type.identifier,
+                        uuid: raffleInfo.raffleID,
+                        host: raffleInfo.host
+                    )
+                } else {
+                    emit RecordUpdated(
+                        recorder: self.owner!.address,
+                        type: type.identifier,
+                        uuid: raffleInfo.raffleID,
+                        host: raffleInfo.host
+                    )
+                }
+
             } else {
                 panic("Invalid record type")
             }
@@ -115,12 +153,27 @@ pub contract DrizzleRecorder {
         pub fun removeRecord(_ record: AnyStruct) {
             let type = record.getType()
             self.initTypeRecords(type: type)
+
             if record.isInstance(Type<CloudDrop>()) {
                 let dropInfo = record as! CloudDrop
-                self.records[type]!.remove(key: dropInfo.dropID)
+                self.records[type.identifier]!.remove(key: dropInfo.dropID)
+
+                emit RecordRemoved(
+                    recorder: self.owner!.address,
+                    type: type.identifier,
+                    uuid: dropInfo.dropID,
+                    host: dropInfo.host
+                )
             } else if record.isInstance(Type<MistRaffle>()) {
                 let raffleInfo = record as! MistRaffle
-                self.records[type]!.remove(key: raffleInfo.raffleID)
+                self.records[type.identifier]!.remove(key: raffleInfo.raffleID)
+
+                emit RecordRemoved(
+                    recorder: self.owner!.address,
+                    type: type.identifier,
+                    uuid: raffleInfo.raffleID,
+                    host: raffleInfo.host
+                )
             } else {
                 panic("Invalid record type")
             }
@@ -128,8 +181,8 @@ pub contract DrizzleRecorder {
 
         access(self) fun initTypeRecords(type: Type) {
             assert(type == Type<CloudDrop>() || type == Type<MistRaffle>(), message: "Invalid Type")
-            if self.records[type] == nil {
-                self.records[type] = {}
+            if self.records[type.identifier] == nil {
+                self.records[type.identifier] = {}
             }
         }
 
@@ -137,8 +190,7 @@ pub contract DrizzleRecorder {
             self.records = {}
         }
 
-        destroy() {
-        }
+        destroy() {}
     }
 
     pub fun createEmptyRecorder(): @Recorder {

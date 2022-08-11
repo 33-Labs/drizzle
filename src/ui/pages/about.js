@@ -8,9 +8,11 @@ export default function About(props) {
       <h1 className={h1}>What’s Drizzle?</h1>
       <p className={p}>Drizzle is a Token Distribution Tool <span className="text-drizzle-green">#onFlow</span>! Anyone can use it to create a DROP or start an NFT Raffle in a minute!</p>
       <br></br>
-      <p className={p}>Token distribution is a common need in crypto space. A project may want to airdrop to its community; A DAO may need to reward some contributors; A member of a Discord channel may want to distribute some tokens to other members to show appreciation or just for fun.</p>
+      <p className={p}>Token distribution (Airdrop/Raffle etc) is a common need in crypto space now. A project may want to send giveaway to its community; A DAO may need to reward some contributors; A member of a Discord channel may want to distribute some tokens to other members to show appreciation or just to liven up the channel.</p>
       <br></br>
-      <p className={p}>But currently it’s a bit tedious and annoying. You need to collect an access-list, run a program locally or use a centralized service to determine how much an account in the access-list should get or who are the winners(well, this is more than trivial, this is not transparent), and at last transfer to the eligible accounts or winners one by one, or use bulk transfer tools like&nbsp; 
+      <p className={p}>Over the past two years, small DAOs are blooming in Web3, and there will be more and more DAOs crowding into the Web3 world, increasing the needs for Token Distribution. But it’s hard for small communities to find experienced smart contract developers to help them to make Token Distribution Tools, and the currently available tools on Flow are not user-friendly enough:</p>
+      <br></br>
+      <p className={p}>After collecting an access-list by using FLOAT or Hype.Day, you need to run a program locally or use a centralized service to determine how much an account in the access-list should get or who are the winners(well, this is more than just tedious, it is not transparent), and eventually transfer to the eligible accounts or winners one by one, or use bulk transfer tools like&nbsp; 
       <a href="https://bayou33.app/"
           target="_blank"
           rel="noopener noreferrer"

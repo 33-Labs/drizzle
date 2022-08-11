@@ -6,6 +6,7 @@ const FungibleTokenPath = "0xFungibleToken"
 const CloudPath = "0xCloud"
 const EligibilityReviewersPath = "0xEligibilityVerifiers"
 const DistributorsPath = "0xDistributors"
+const DrizzleRecorderPath = "0xDrizzleRecorder"
 
 export const createDrop = async (
   name, description, image, url,
@@ -355,10 +356,12 @@ const doClaim = async (
   import FungibleToken from 0xFungibleToken
   import ${tokenContractName} from ${tokenIssuer}
   import Cloud from 0xCloud
+  import DrizzleRecorder from 0xDrizzleRecorder
 
   transaction(dropID: UInt64, host: Address) {
       let drop: &{Cloud.IDropPublic}
       let receiver : &${tokenContractName}.Vault{FungibleToken.Receiver}
+      let recorderRef: &DrizzleRecorder.Recorder
 
       prepare(acct: AuthAccount) {
           let dropCollection = getAccount(host)
@@ -385,21 +388,37 @@ const doClaim = async (
                 target: providerPath
             )
         }
+
+        if (acct.borrow<&DrizzleRecorder.Recorder>(from: DrizzleRecorder.RecorderStoragePath) == nil) {
+          acct.save(<-DrizzleRecorder.createEmptyRecorder(), to: DrizzleRecorder.RecorderStoragePath)
+
+          acct.link<&{DrizzleRecorder.IRecorderPublic}>(
+              DrizzleRecorder.RecorderPublicPath,
+              target: DrizzleRecorder.RecorderStoragePath
+          )
+        }
           
           self.drop = drop 
           self.receiver = acct
               .getCapability(receiverPath)
               .borrow<&${tokenContractName}.Vault{FungibleToken.Receiver}>()
               ?? panic("Could not borrow Receiver")
+
+          self.recorderRef = acct
+              .borrow<&DrizzleRecorder.Recorder>(from: DrizzleRecorder.RecorderStoragePath)
+              ?? panic("Could not borrow Recorder")
       }
 
       execute {
-          self.drop.claim(receiver: self.receiver, params: {})
+        self.drop.claim(receiver: self.receiver, params: {
+          "recorderRef": self.recorderRef
+      })
       }
   }
   `
   .replace(FungibleTokenPath, publicConfig.fungibleTokenAddress)
   .replace(CloudPath, publicConfig.cloudAddress)
+  .replace(DrizzleRecorderPath, publicConfig.drizzleRecorderAddress)
 
   const transactionId = await fcl.mutate({
     cadence: code,

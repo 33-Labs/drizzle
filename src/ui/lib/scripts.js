@@ -1,7 +1,15 @@
-import DrizzleRecorder from "../../contracts/DrizzleRecorder.cdc"
-import Mist from "../../contracts/Mist.cdc"
+import publicConfig from "../publicConfig"
+import * as fcl from "@onflow/fcl"
 
-pub struct RaffleRecord {
+const DrizzleRecorderPath = "0xDrizzleRecorder"
+const MistPath = "0xMist"
+
+export const queryRecords = async (account) => {
+  const code = `
+  import DrizzleRecorder from 0xDrizzleRecorder
+  import Mist from 0xMist
+
+  pub struct RaffleRecord {
     pub let raffleID: UInt64
     pub let host: Address
     pub let name: String
@@ -55,25 +63,44 @@ pub fun getRaffleStatus(account: Address, record: DrizzleRecorder.MistRaffle): S
     return status
 }
 
-pub fun main(account: Address): {UInt64: AnyStruct} {
-    let recorder =
-        getAccount(account)
-        .getCapability(DrizzleRecorder.RecorderPublicPath)
-        .borrow<&{DrizzleRecorder.IRecorderPublic}>()
-    
-    if let _recorder = recorder {
-        let type = Type<DrizzleRecorder.MistRaffle>()
-        let records = _recorder.getRecordsByType(type)
-        let res: {UInt64: AnyStruct} = {}
-        for key in records.keys {
-            let _record = records[key]!
-            let record = _record as! DrizzleRecorder.MistRaffle
-            let status = getRaffleStatus(account: account, record: record)
-            let rec = RaffleRecord(mistRaffle: record, status: status)
-            res[key] = rec
-        }
-        return res
-    }
+  pub fun main(account: Address): {String: {UInt64: AnyStruct}} {
+      let recorder =
+          getAccount(account)
+          .getCapability(DrizzleRecorder.RecorderPublicPath)
+          .borrow<&{DrizzleRecorder.IRecorderPublic}>()
+      
+      let res: {String: {UInt64: AnyStruct}} = {}
+      if let _recorder = recorder {
+          let dropType = Type<DrizzleRecorder.CloudDrop>()
+          let dropRecords = _recorder.getRecordsByType(dropType)
 
-    return {}
+          let raffleType = Type<DrizzleRecorder.MistRaffle>()
+          let raffleRecords = _recorder.getRecordsByType(raffleType)
+          let raffleRes: {UInt64: AnyStruct} = {}
+          for key in raffleRecords.keys {
+              let _record = raffleRecords[key]!
+              let record = _record as! DrizzleRecorder.MistRaffle
+              let status = getRaffleStatus(account: account, record: record)
+              let rec = RaffleRecord(mistRaffle: record, status: status)
+              raffleRes[key] = rec
+          }
+          res[dropType.identifier] = dropRecords
+          res[raffleType.identifier] = raffleRes
+          return res
+      }
+  
+      return {}
+  }
+  `
+  .replace(DrizzleRecorderPath, publicConfig.drizzleRecorderAddress)
+  .replace(MistPath, publicConfig.mistAddress)
+
+  const records = await fcl.query({
+    cadence: code,
+    args: (arg, t) => [
+      arg(account, t.Address)
+    ]
+  }) 
+
+  return records
 }
