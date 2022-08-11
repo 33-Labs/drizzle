@@ -93,6 +93,13 @@
         "Mist": {
             "source": "./contracts/Mist.cdc",
             "aliases": {
+                "testnet": "0x91c0d5719248ed76",
+                "mainnet": "0x39b144ab4d348e2b"
+            }
+        },
+        "DrizzleRecorder": {
+            "source": "./contracts/DrizzleRecorder.cdc",
+            "aliases": {
                 "testnet": "0xdc34f5a7b807bcfb",
                 "mainnet": "0x39b144ab4d348e2b"
             }
@@ -123,7 +130,8 @@
                 "Distributors",
                 "EligibilityVerifiers",
                 "Cloud",
-                "Mist" 
+                "DrizzleRecorder",
+                "Mist"
             ]
         },
         "mainnet": {
@@ -131,7 +139,8 @@
                 "Distributors",
                 "EligibilityVerifiers",
                 "Cloud",
-                "Mist"
+                "Mist",
+                "DrizzleRecorder"
             ]
         }
     }
