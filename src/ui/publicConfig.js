@@ -40,6 +40,9 @@ if (!eligibilityVerifiersAddress) throw "Missing NEXT_PUBLIC_ELIGIBILITY_VERIFIE
 const distributorsAddress = process.env.NEXT_PUBLIC_DISTRIBUTORS_ADDRESS
 if (!distributorsAddress) throw "Missing NEXT_PUBLIC_DISTRIBUTORS_ADDRESS"
 
+const drizzleRecorderAddress = process.env.NEXT_PUBLIC_DRIZZLE_RECORDER_ADDRESS
+if (!drizzleRecorderAddress) throw "Missing NEXT_PUBLIC_DRIZZLE_RECORDER_ADDRESS"
+
 const floatAddress = process.env.NEXT_PUBLIC_FLOAT_ADDRESS
 if (!floatAddress) throw "Missing NEXT_PUBLIC_FLOAT_ADDRESS"
 
@@ -57,6 +60,7 @@ const publicConfig = {
   flowTokenAddress,
   cloudAddress,
   mistAddress,
+  drizzleRecorderAddress,
   eligibilityVerifiersAddress,
   distributorsAddress,
   floatAddress,

@@ -9,6 +9,9 @@ import { queryDrops } from '../../lib/cloud-scripts'
 import RaffleList from '../../components/raffle/RaffleList'
 import { classNames } from '../../lib/utils'
 import { queryRaffles } from '../../lib/mist-scripts'
+import { queryRecords } from '../../lib/scripts'
+import ClaimHistory from '../../components/drop/ClaimHistory'
+import EnrolledHistory from '../../components/raffle/EnrolledHistory'
 
 const convertDrops = (dropMaps) => {
   const dropIDs = Object.keys(dropMaps)
@@ -42,6 +45,27 @@ const rafflesFetcher = async (funcName, address) => {
   return await queryRaffles(address)
 }
 
+const recordsFetcher = async(funcName, address) => {
+  return await queryRecords(address)
+}
+
+const extractRecords = (records) => {
+  let dropRecords = []
+  let raffleRecords = []
+  for (const [type, typeRecords] of Object.entries(records)) {
+    if (type.includes("CloudDrop")) {
+      dropRecords = Object.values(typeRecords).sort((a, b) => {
+        return parseInt(b.dropID) - parseInt(a.dropID)
+      })
+    } else if (type.includes("MistRaffle")) {
+        raffleRecords = Object.values(typeRecords).sort((a, b) => {
+        return parseInt(b.raffleID) - parseInt(a.raffleID)
+      })
+    }
+  }
+  return { dropRecords: dropRecords, raffleRecords: raffleRecords }
+}
+
 export default function Account(props) {
   const router = useRouter()
   const { account } = router.query
@@ -53,8 +77,14 @@ export default function Account(props) {
   const { data: rafflesData, error: rafflesError } = useSWR(
     account ? ["rafflesFetcher", account] : null, rafflesFetcher)
 
+  const { data: recordsData, error: recordsError } = useSWR(
+    account ? ["recordsFetcher", account] : null, recordsFetcher)
+
   const [showDrop, setShowDrop] = useState(true)
   const [showRaffle, setShowRaffle] = useState(false)
+
+  const [dropRecords, setDropRecords] = useState([])
+  const [raffleRecords, setRaffleRecords] = useState([])
 
   useEffect(() => {
     if (dropsData) {
@@ -64,6 +94,14 @@ export default function Account(props) {
       setRaffles(convertRaffles(rafflesData))
     }
   }, [dropsData, rafflesData])
+
+  useEffect(() => {
+    if (recordsData) {
+      const { dropRecords: drs, raffleRecords: rrs } = extractRecords(recordsData)
+      setDropRecords(drs)
+      setRaffleRecords(rrs)
+    }
+  }, [recordsData])
 
   const showList = () => {
     if (showDrop) {
@@ -75,11 +113,11 @@ export default function Account(props) {
         )
       } else {
         return (
-          <div className="mt-10">
+          <div className="mt-10 flex flex-col gap-y-10">
             <DropList drops={drops} user={props.user} pageAccount={account} /> 
+            <ClaimHistory records={dropRecords} user={props.user} pageAccount={account} />
           </div>
         )
-        
       }
     }
 
@@ -92,8 +130,9 @@ export default function Account(props) {
         )
       } else {
         return (
-          <div className="mt-10">
+          <div className="mt-10 flex flex-col gap-y-10">
             <RaffleList raffles={raffles} user={props.user} pageAccount={account} />
+            <EnrolledHistory records={raffleRecords} user={props.user} pageAccount={account} />
           </div>
         )
       }

@@ -15,7 +15,6 @@ import {
 import {
   claimDrop,
   depositToDrop,
-  withdrawAllFunds,
   togglePause,
   getAllDrops,
   getDrop,
@@ -28,7 +27,8 @@ import {
   toggleCloudPause,
   deleteDrop,
   createFUSDDrop,
-  endDrop
+  endDrop,
+  getRecords
 } from "./src/cloud";
 import {
   FLOAT_claim,
@@ -48,6 +48,7 @@ const deployContracts = async () => {
   await deployFLOATContracts(deployer)
   await deployByName(deployer, "Distributors")
   await deployByName(deployer, "EligibilityVerifiers")
+  await deployByName(deployer, "DrizzleRecorder")
   await deployByName(deployer, "Cloud")
 }
 
@@ -639,6 +640,37 @@ describe("Drop - FLOATs", () => {
 
     const postDrop = await getDrop(dropID, Alice)
     expect(parseFloat(postDrop.claimedAmount)).toBe(eligibleAmount)
+  })
+
+  it("FLOATs - Record - Should record the claim correctly", async () => {
+    const FLOATCreator = await getAccountAddress("FLOATCreator")
+    // We have 3 events by default, and we need 2 of them to be eligible
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
+
+    const threshold = 2
+    const Bob = await getAccountAddress("Bob")
+    for (let i = 0; i < threshold; i++) {
+      const eventID = eventIDs[i]
+      await FLOAT_claim(Bob, eventID, FLOATCreator)
+    }
+    const floatIDs = await FLOAT_getFLOATIDs(Bob)
+    expect(floatIDs.length).toBe(threshold)
+
+    const Alice = await getAccountAddress("Alice")
+    await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true }) 
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const [, error] = await claimDrop(dropID, Alice, Bob)
+    expect(error).toBeNull()
+
+    const [records, errorRecords] = await getRecords(Bob)
+    expect(errorRecords).toBeNull()
+    expect(Object.keys(records).length == 1)
+    const record = records[`${dropID}`]
+    expect(record.claimedAt).not.toBeNull()
   })
 
   it("FLOATs - Should not be ok for claimers to claim if they are not meet the threshold", async () => {

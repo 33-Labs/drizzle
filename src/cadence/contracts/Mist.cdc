@@ -10,6 +10,7 @@
 
 import NonFungibleToken from "./core/NonFungibleToken.cdc"
 import EligibilityVerifiers from "./EligibilityVerifiers.cdc"
+import DrizzleRecorder from "./DrizzleRecorder.cdc"
 
 pub contract Mist {
 
@@ -299,6 +300,18 @@ pub contract Mist {
 
             self.registrationRecords[account] = RegistrationRecord(address: account, extraData: {})
             self.candidates.append(account)
+            
+            if let recorderRef = params["recorderRef"] {
+                let _recorderRef = recorderRef as! &DrizzleRecorder.Recorder 
+                _recorderRef.insertOrUpdateRecord(DrizzleRecorder.MistRaffle(
+                    raffleID: self.raffleID,
+                    host: self.host,
+                    name: self.name,
+                    nftName: self.nftInfo.name,
+                    registeredAt: getCurrentBlock().timestamp,
+                    extraData: {}
+                ))
+            }
         }
 
         pub fun hasRegistered(account: Address): Bool {
@@ -340,6 +353,18 @@ pub contract Mist {
                 nftIdentifier: self.nftInfo.nftType.identifier, 
                 tokenIDs: winnerRecord.rewardTokenIDs
             )
+
+            if let recorderRef = params["recorderRef"] {
+                let _recorderRef = recorderRef as! &DrizzleRecorder.Recorder 
+                if let record = _recorderRef.getRecord(type: Type<DrizzleRecorder.MistRaffle>(), uuid: self.raffleID) {
+                    let _record = record as! DrizzleRecorder.MistRaffle
+                    _record.markAsClaimed(
+                        rewardTokenIDs: winnerRecord.rewardTokenIDs,
+                        extraData: {}
+                    )
+                    _recorderRef.insertOrUpdateRecord(_record)
+                }
+            }
 
             for tokenID in winnerRecord.rewardTokenIDs {
                 let nft <- self.collection.withdraw(withdrawID: tokenID)

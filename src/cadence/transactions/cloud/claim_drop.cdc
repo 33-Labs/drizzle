@@ -1,10 +1,12 @@
 import FungibleToken from "../contracts/core/FungibleToken.cdc"
 import FUSD from "../contracts/core/FUSD.cdc"
 import Cloud from "../contracts/Cloud.cdc"
+import DrizzleRecorder from "../../contracts/DrizzleRecorder.cdc"
 
 transaction(dropID: UInt64, host: Address) {
     let drop: &{Cloud.IDropPublic}
     let receiver : &FUSD.Vault{FungibleToken.Receiver}
+    let recorderRef: &DrizzleRecorder.Recorder
 
     prepare(acct: AuthAccount) {
         let dropCollection = getAccount(host)
@@ -28,15 +30,30 @@ transaction(dropID: UInt64, host: Address) {
                 target: /storage/fusdVault
             )
         }
+
+        if (acct.borrow<&DrizzleRecorder.Recorder>(from: DrizzleRecorder.RecorderStoragePath) == nil) {
+            acct.save(<-DrizzleRecorder.createEmptyRecorder(), to: DrizzleRecorder.RecorderStoragePath)
+
+            acct.link<&{DrizzleRecorder.IRecorderPublic}>(
+                DrizzleRecorder.RecorderPublicPath,
+                target: DrizzleRecorder.RecorderStoragePath
+            )
+        }
         
         self.drop = drop 
         self.receiver = acct
             .getCapability(/public/fusdReceiver)
             .borrow<&FUSD.Vault{FungibleToken.Receiver}>()
             ?? panic("Could not borrow Receiver")
+
+        self.recorderRef = acct
+            .borrow<&DrizzleRecorder.Recorder>(from: DrizzleRecorder.RecorderStoragePath)
+            ?? panic("Could not borrow Recorder")
     }
 
     execute {
-        self.drop.claim(receiver: self.receiver, params: {})
+        self.drop.claim(receiver: self.receiver, params: {
+            "recorderRef": self.recorderRef
+        })
     }
 }

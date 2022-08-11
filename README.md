@@ -2,11 +2,13 @@
 
 ## What’s Drizzle?
 
-Drizzle is a Token Distribution Tool #onFLOW! Anyone can use it to create a DROP or start an NFT Raffle in a minute!
+Drizzle is a Token Distribution Tool #onFlow! Anyone can use it to create a DROP or start an NFT Raffle in a minute!
 
-Token distribution is a common need in crypto space. A project may want to airdrop to its community; A DAO may need to reward some contributors; A member of a Discord channel may want to distribute some tokens to other members to show appreciation or just for fun. 
+Token distribution (Airdrop/Raffle etc) is a common need in crypto space now. A project may want to send giveaway to its community; A DAO may need to reward some contributors; A member of a Discord channel may want to distribute some tokens to other members to show appreciation or just to liven up the channel.
 
-But currently it’s a bit tedious and annoying. You need to collect an access-list, run a program locally or use a centralized service to determine how much an account in the access-list should get or who are the winners(well, this is more than trivial, this is not transparent), and at last transfer to the eligible accounts or winners one by one, or use bulk transfer tools like **[bayou](https://www.bayou33.app)**. 
+Over the past two years, small DAOs are blooming in Web3, and there will be more and more DAOs crowding into the Web3 world, increasing the needs for Token Distribution. But it’s hard for small communities to find experienced smart contract developers to help them to make Token Distribution Tools, and the currently available tools on Flow are not user-friendly enough:
+
+After collecting an access-list by using FLOAT or Hype.Day, you need to run a program locally or use a centralized service to determine how much an account in the access-list should get or who are the winners(well, this is more than just tedious, it is not transparent), and eventually transfer to the eligible accounts or winners one by one, or use bulk transfer tools like **[bayou](https://bayou33.app/)**.
 
 Drizzle aims to make this simple! You can collect your access-list by using **[FLOAT](https://floats.city)** or **[hype.day](https://hype.day)**, and then create a DROP or NFT Raffle on chain in less than one minute by using Drizzle! Fast & Transparent!
 

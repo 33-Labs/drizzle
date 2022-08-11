@@ -10,20 +10,21 @@ import { classNames, floatEventInputHandler, floatGroupInputHandler, isValidFlow
 import { getFloatEvent, getFloatEventsInGroup } from '../../lib/float-scripts'
 import FloatEventList from './FloatEventList'
 import Warning from '../common/Warning'
+import publicConfig from '../../publicConfig'
 
 export const FloatModeFloatEvent = {
   key: "FLOATEvent",
   title: "FLOAT Event",
-  description: `Enter the url of the FLOAT Event. Or enter event id and event host, concat them with "@". For instance: 98963710@0x257c27ba4951541d.`,
-  placeholder: "98963710@0x257c27ba4951541d",
+  description: `Enter the url of the FLOAT Event. Or enter event id and event host, concat them with "@". For instance: ${publicConfig.chainEnv == "testnet" ? "98963710@0x257c27ba4951541d" : "420442474@0x39b144ab4d348e2b"}.`,
+  placeholder: `${publicConfig.chainEnv == "testnet" ? "98963710@0x257c27ba4951541d" : "420442474@0x39b144ab4d348e2b"}`,
   inputHandler: floatEventInputHandler
 }
 
 export const FloatModeFloatGroup = {
   key: "FLOATGroup",
   title: "FLOAT Group",
-  description: `Enter the url of the FLOAT Group. Or enter group name and group creator, concat them with "@". For instance: Drizzle@0x257c27ba4951541d.`,
-  placeholder: "Drizzle@0x257c27ba4951541d",
+  description: `Enter the url of the FLOAT Group. Or enter group name and group creator, concat them with "@". For instance: ${publicConfig.chainEnv == "testnet" ? "Drizzle@0x257c27ba4951541d" : "Drizzle@0x39b144ab4d348e2b"}.`,
+  placeholder: `${publicConfig.chainEnv == "testnet" ? "Drizzle@0x257c27ba4951541d" : "Drizzle@0x39b144ab4d348e2b"}`,
   inputHandler: floatGroupInputHandler
 }
 

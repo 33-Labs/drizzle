@@ -145,7 +145,7 @@ export default function NFTSelector(props) {
       {
         Object.entries(selectedTokens).filter(([, info]) => info.isSelected).length > 0 ?
           <div className="mt-10 flex flex-col p-4 sm:p-8 rounded-3xl border-4 border-drizzle-green-light border-dashed">
-            <label className="block text-2xl font-flow font-bold">Selected NFT</label>
+            <label className="block text-2xl font-flow font-bold">Selected NFTs</label>
             <div className={`
           px-1 py-3 pb-3 mt-4 sm:flex sm:flex-wrap grid grid-rows-2 grid-flow-col gap-3 sm:gap-4 justify-start w-full overflow-auto sm:max-h-[464px]
         `}>

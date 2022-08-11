@@ -38,6 +38,7 @@ export const deployDrizzleContracts = async (deployer) => {
   await mintFlow(Deployer, 1000.0)
   await deployByName(Deployer, "Distributors")
   await deployByName(Deployer, "EligibilityVerifiers")
+  await deployByName(Deployer, "Recorder")
   await deployByName(Deployer, "Cloud")
   await deployByName(Deployer, "Mist")
 }

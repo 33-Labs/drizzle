@@ -227,11 +227,9 @@ export const getRaffle = async (raffleID, host, mustResolve = true) => {
   return [result, error]
 }
 
-// export const getRaffleBalance = async (raffleID, host) => {
-//   const name = "mist/get_raffle_balance"
-//   const args = [raffleID, host]
-//   const [result, error] = await executeScript({ name: name, args: args })
-//   expect(error).toBeNull()
-//   return result
-// }
+export const getRecords = async (account) => {
+  const name = "mist/get_records"
+  const args = [account]
+  return await executeScript({ name: name, args: args })
+}
 
