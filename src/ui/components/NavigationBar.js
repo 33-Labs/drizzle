@@ -7,6 +7,7 @@ import config from "../flow/config.js"
 import { LogoutIcon } from "@heroicons/react/outline"
 import publicConfig from "../publicConfig.js"
 import { useEffect } from "react"
+import { displayUsername } from "../lib/utils.js"
 
 import { useRecoilState } from "recoil"
 import {
@@ -45,7 +46,7 @@ export default function NavigationBar(props) {
             }
           }}
         >
-          {user && user.addr}
+          {user && displayUsername(user)}
         </button>
         <button
           type="button"

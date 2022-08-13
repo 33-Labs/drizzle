@@ -5,7 +5,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/solid"
 
 const getStatusColor = (status) => {
   if (status == "YES") return "text-green-800 bg-green-100"
-  if (status == "NO" || status == "UNEXIST") return "text-red-800 bg-red-100"
+  if (status == "NO" || status == "NOT FOUND") return "text-red-800 bg-red-100"
   if (status == "UNKNOWN") return "text-yellow-800 bg-yellow-100"
   return "text-yellow-800 bg-yellow-100"
 }

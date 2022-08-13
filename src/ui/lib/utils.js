@@ -1,5 +1,24 @@
 import Decimal from "decimal.js"
 import publicConfig from "../publicConfig"
+import { queryAddressOfDomains, queryDomainOfAddresses } from "./scripts"
+
+export const displayUsername = (userWithDomains) => {
+  if (userWithDomains.domains.flowns) {
+    return userWithDomains.domains.flowns
+  }
+  if (userWithDomains.domains.find) {
+    return userWithDomains.domains.find
+  }
+  return userWithDomains.addr
+}
+
+export const domainOfAddressesFetcher = async (funcName, addresses) => {
+  return await queryDomainOfAddresses(addresses)
+}
+
+export const addressOfDomainsFetcher = async (funcName, domains) => {
+  return await queryAddressOfDomains(domains)
+}
 
 export const convertURI = (uri) => {
   if (uri.startsWith("ipfs://")) {

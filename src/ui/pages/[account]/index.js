@@ -7,7 +7,7 @@ import DropList from '../../components/drop/DropList'
 import Custom404 from '../404'
 import { queryDrops } from '../../lib/cloud-scripts'
 import RaffleList from '../../components/raffle/RaffleList'
-import { classNames } from '../../lib/utils'
+import { classNames, isValidFlowAddress } from '../../lib/utils'
 import { queryRaffles } from '../../lib/mist-scripts'
 import { queryRecords } from '../../lib/scripts'
 import ClaimHistory from '../../components/drop/ClaimHistory'
@@ -66,9 +66,29 @@ const extractRecords = (records) => {
   return { dropRecords: dropRecords, raffleRecords: raffleRecords }
 }
 
+const accountFetcher = async (funcName, address) => {
+  if (isValidFlowAddress(address)) {
+    return address
+  }
+  if (address.endsWith(".fn")) {
+    // TODO: query to flowns
+  }
+  if (address.endsWith(".find")) {
+    // TODO: query to .find
+  }
+}
+
 export default function Account(props) {
+  // const [account, setAccount] = useState(null)
+
   const router = useRouter()
   const { account } = router.query
+
+  // if (isValidFlowAddress(username)) {
+  //   setAccount(username)
+  // } else {
+
+  // }
 
   const [drops, setDrops] = useState([])
   const [raffles, setRaffles] = useState([])

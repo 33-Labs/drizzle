@@ -3,6 +3,141 @@ import * as fcl from "@onflow/fcl"
 
 const DrizzleRecorderPath = "0xDrizzleRecorder"
 const MistPath = "0xMist"
+const FlownsPath = "0xFlowns"
+const Domains = "0xDomains"
+const FINDPath = "0xFIND"
+
+export const queryDomainOfAddresses = async (addresses) => {
+  const code = `
+  import Flowns from 0xFlowns
+  import Domains from 0xDomains
+  import FIND from 0xFIND
+
+  pub fun main(addresses: [Address]): {Address: {String: String?}} {
+    let res: {Address: {String: String?}} = {}
+    for address in addresses {
+        let domains: {String: String?} = {"flowns": nil, "find": nil}
+        if let domain = FIND.reverseLookup(address) {
+            domains["find"] = domain.concat(".find")
+        }
+        if let domain = getFlownsDomain(address: address) {
+            domains["flowns"] = domain
+        }
+        res[address] = domains
+    }
+    return res
+  }
+
+  pub fun getFlownsDomain(address: Address): String? {
+      let account = getAccount(address)
+      let collectionCap = account.getCapability<&{Domains.CollectionPublic}>(Domains.CollectionPublicPath)
+      if !collectionCap.check() {
+          return nil
+      }
+
+      let collection = collectionCap.borrow()!
+      let ids = collection.getIDs()
+      if ids.length == 0 {
+          return nil
+      }
+
+      var defaultDomainID: UInt64 = ids[0]
+      for id in ids {
+          let domain = collection.borrowDomain(id: id)
+          let isDefault = domain.getText(key: "isDefault")
+          if isDefault == "true" {
+              defaultDomainID = id
+              break
+          }
+      }
+
+      let domain = collection.borrowDomain(id: defaultDomainID)
+      return domain.name.concat(".").concat(domain.parent)
+  }
+  `
+  .replace(FlownsPath, publicConfig.flownsAddress)
+  .replace(Domains, publicConfig.domainsAddress)
+  .replace(FINDPath, publicConfig.findAddress)
+
+  const domains = await fcl.query({
+    cadence: code,
+    args: (arg, t) => [
+      arg(addresses, t.Array(t.Address)),
+    ]
+  })
+
+  console.log("domains: ", domains)
+
+  return domains
+}
+
+export const queryAddressOfDomains = async (domains) => {
+  const names = []
+  const roots = []
+  for (let i = 0; i < domains.length; i++) {
+    const domain = domains[i]
+    const elements = domain.split(".")
+    if (elements.length != 2) {
+      continue
+    }
+
+    names.push(elements[0])
+    roots.push(elements[1])
+  }
+
+  const code = `
+  import Flowns from 0xFlowns
+  import Domains from 0xDomains
+  import FIND from 0xFIND
+
+  pub fun main(names: [String], roots: [String]): {String: Address} {
+    pre {
+        names.length == roots.length: "names and roots should have the same length"
+    }
+
+    let res: {String: Address} = {}
+    for index, name in names {
+        let root = roots[index]
+        let domain = name.concat(".").concat(root)
+        if let address = getAddressOfDomain(domain: domain, name: name, root: root) {
+          res[domain] = address
+        }
+    }
+
+    return res
+  }
+
+  pub fun getAddressOfDomain(domain: String, name: String, root: String): Address? {
+      if FIND.validateFindName(domain) {
+          if let address = FIND.lookupAddress(domain) {
+              return address
+          }
+      }
+
+      return getFlownsAddress(name: name, root: root)
+  }
+
+  pub fun getFlownsAddress(name: String, root: String): Address? {
+      let prefix = "0x"
+      let rootHash = Flowns.hash(node: "", lable: root)
+      let nameHash = prefix.concat(Flowns.hash(node: rootHash, lable: name))
+      return Domains.getRecords(nameHash)
+  }
+  `
+  .replace(FlownsPath, publicConfig.flownsAddress)
+  .replace(Domains, publicConfig.domainsAddress)
+  .replace(FINDPath, publicConfig.findAddress)
+
+  const addresses = await fcl.query({
+    cadence: code,
+    args: (arg, t) => [
+      arg(names, t.Array(t.String)),
+      arg(roots, t.Array(t.String)),
+    ]
+  }) 
+
+  return addresses
+}
 
 export const queryRecords = async (account) => {
   const code = `
@@ -54,10 +189,10 @@ pub fun getRaffleStatus(account: Address, record: DrizzleRecorder.MistRaffle): S
                     }
                 }
             } else {
-                status = "UNEXIST"
+                status = "NOT FOUND"
             }
         } else {
-            status = "UNEXIST"
+            status = "NOT FOUND"
         }
     }
     return status

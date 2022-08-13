@@ -9,10 +9,30 @@ import NavigationBar from '../components/NavigationBar'
 import Footer from '../components/Footer'
 import TransactionNotification from '../components/common/TransactionNotification'
 import BasicNotification from '../components/common/BasicNotification'
+import publicConfig from '../publicConfig'
+import useSWRImmutable from 'swr'
+import { domainOfAddressesFetcher } from '../lib/utils'
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState({ loggedIn: null })
   useEffect(() => fcl.currentUser.subscribe(setUser), [])
+
+  const { data: domainData, error: domainError} = useSWRImmutable(
+    user.loggedIn == true ? ["domainOfAddressesFetcher", [user.addr]] : null, domainOfAddressesFetcher
+  )
+
+  console.log(domainError)
+  console.log(domainData)
+  
+  const [domains, setDomains] = useState({})
+
+  useEffect(() => {
+    if (domainData && user && user.loggedIn) {
+      setDomains(domainData[user.addr])    
+    }
+  }, [domainData])
+
+  console.log(domains)
 
   return (
     <>
@@ -22,8 +42,8 @@ function MyApp({ Component, pageProps }) {
             <title>drizzle | token distribution tool</title>
             <meta property="og:title" content="drizzle | token distribution tool" key="title" />
           </Head>
-          <NavigationBar user={user} />
-          <Component {...pageProps} user={user} />
+          <NavigationBar user={{...user, domains: domains}} />
+          <Component {...pageProps} user={{...user, domains: domains}} />
           <Footer />
           <TransactionNotification />
           <BasicNotification />
