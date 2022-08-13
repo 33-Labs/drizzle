@@ -164,10 +164,10 @@
     "@babel/runtime" "^7.18.6"
     "@onflow/util-actor" "^1.1.1"
 
-"@onflow/fcl@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@onflow/fcl/-/fcl-1.1.1.tgz#07815fea05aca4ba05267316addeeba254c8da4e"
-  integrity sha512-xdYsBMmWHCTp3lUh9J4WShYQMhXPYUEgCG/XFGv2eurC/nXeca46KWuAXhvQqBqCJ3/+JRbrKLhB33ypKvBIjQ==
+"@onflow/fcl@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@onflow/fcl/-/fcl-1.2.0.tgz#cce0ec8ab3efe4ca4c86d5e968b52690b1a40fc7"
+  integrity sha512-vgPsDuYhRmCVEQWRcfyY3KPxHAk+EGF4MLv08VUpN4vudDUY1J3AXM/NBk/ebeBis7CfgqC5gAarLsHX1omvIg==
   dependencies:
     "@babel/runtime" "^7.18.6"
     "@onflow/config" "^1.0.3"
@@ -184,7 +184,7 @@
 
 "@onflow/interaction@0.0.11":
   version "0.0.11"
-  resolved "https://registry.npmjs.org/@onflow/interaction/-/interaction-0.0.11.tgz"
+  resolved "https://registry.yarnpkg.com/@onflow/interaction/-/interaction-0.0.11.tgz#4db8f4304039e33d6fc3b14c38b392d724113374"
   integrity sha512-Xuq1Mmx6Wyba/F/L+QLQs0yJeQDsIDwy5SKk5vrCuVgIj0yD8k506g5L8ODrbM1LWll8i0tQsoOi0F85vNl5sA==
 
 "@onflow/rlp@^1.0.2":
@@ -211,16 +211,6 @@
     "@onflow/util-template" "^1.0.3"
     deepmerge "^4.2.2"
     sha3 "^2.1.4"
-
-"@onflow/transport-http@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/@onflow/transport-http/-/transport-http-1.2.0.tgz"
-  integrity sha512-+Qejt1flUpB1B4sS1uFA9RNuL5+ZrOXC/1EyH2UpwuTZ4MIN3ATCVWiGaHr+LydgHzcBKugkiQLxAVYbBtFq6A==
-  dependencies:
-    "@onflow/util-address" "^1.0.1"
-    "@onflow/util-invariant" "^1.0.1"
-    "@onflow/util-node-http-modules" "^1.0.2"
-    "@onflow/util-template" "^1.0.1"
 
 "@onflow/transport-http@^1.4.0":
   version "1.4.0"
@@ -249,22 +239,12 @@
     "@babel/runtime" "^7.18.6"
     queue-microtask "1.1.2"
 
-"@onflow/util-address@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@onflow/util-address/-/util-address-1.0.1.tgz"
-  integrity sha512-KanTfsZTBS4iETegtNWDfmQEXd7FapSyTm//N0tdF6hVoTxLI/DNd0Y39adhQasAyrO294q/I72wQUVO+WT7Fg==
-
 "@onflow/util-address@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@onflow/util-address/-/util-address-1.0.2.tgz#ef9bdbd295b258b0034bb5b25e5a99d6d1c9d34e"
   integrity sha512-2kjRZK+DxyEoujm4+1gO0lqGFLdaTJC1DuvBF7XqgocmFdayad/OdPFVgaEi06xymmi2kfdn/JFdvBwdZHkJGQ==
   dependencies:
     "@babel/runtime" "^7.18.6"
-
-"@onflow/util-invariant@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@onflow/util-invariant/-/util-invariant-1.0.1.tgz"
-  integrity sha512-FYLgxASDmD2qVru8G8MX9y3jE8DFie1fk7lWnWndnJvsO94/jmZaql73ytmZme37TQoTWSNfilAgU9T0HcG/gA==
 
 "@onflow/util-invariant@^1.0.2":
   version "1.0.2"
@@ -280,16 +260,6 @@
   dependencies:
     "@babel/runtime" "^7.18.6"
     "@onflow/config" "^1.0.3"
-
-"@onflow/util-node-http-modules@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.npmjs.org/@onflow/util-node-http-modules/-/util-node-http-modules-1.0.2.tgz"
-  integrity sha512-aj+G1Q9Irk0SBFY3jFHPhxe5Tcfn6YKZULTnsEiedsLsanNoTIZ6RGGcD4Z/LEZp3mW9MIni8voPFJifrSND5w==
-
-"@onflow/util-template@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@onflow/util-template/-/util-template-1.0.1.tgz"
-  integrity sha512-+aRn0tjWkE5csPXtijoETxIkwZwH+vSQJgjSL6s6gfeleS6kJNI3uXyrJberATAg/oK5XDtymNwxJxh8lxZS3g==
 
 "@onflow/util-template@^1.0.3":
   version "1.0.3"
@@ -513,7 +483,7 @@ balanced-match@^1.0.0:
 
 base64-js@^1.3.1:
   version "1.5.1"
-  resolved "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
 binary-extensions@^2.0.0:
@@ -548,7 +518,7 @@ browserslist@^4.20.3:
 
 buffer@6.0.3, buffer@^6.0.3:
   version "6.0.3"
-  resolved "https://registry.npmjs.org/buffer/-/buffer-6.0.3.tgz"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-6.0.3.tgz#2ace578459cc8fbe2a70aaa8f52ee63b6a74c6c6"
   integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
   dependencies:
     base64-js "^1.3.1"
@@ -715,7 +685,7 @@ deep-is@^0.1.3:
 
 deepmerge@^4.2.2:
   version "4.2.2"
-  resolved "https://registry.npmjs.org/deepmerge/-/deepmerge-4.2.2.tgz"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-4.2.2.tgz#44d2ea3679b8f4d4ffba33f03d865fc1e7bf4955"
   integrity sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==
 
 define-properties@^1.1.3, define-properties@^1.1.4:
@@ -1275,7 +1245,7 @@ has@^1.0.3:
 
 ieee754@^1.2.1:
   version "1.2.1"
-  resolved "https://registry.npmjs.org/ieee754/-/ieee754-1.2.1.tgz"
+  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
 
 ignore@^5.2.0:
@@ -1861,7 +1831,7 @@ qrcode.react@^3.1.0:
 
 queue-microtask@1.1.2:
   version "1.1.2"
-  resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.1.2.tgz"
+  resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.1.2.tgz#139bf8186db0c545017ec66c2664ac646d5c571e"
   integrity sha512-F9wwNePtXrzZenAB3ax0Y8TSKGvuB7Qw16J30hspEUTbfUM+H827XyN3rlpwhVmtm5wuZtbKIHjOnwDn7MUxWQ==
 
 queue-microtask@^1.2.2:
@@ -1997,7 +1967,7 @@ semver@^7.3.7:
 
 sha3@^2.1.4:
   version "2.1.4"
-  resolved "https://registry.npmjs.org/sha3/-/sha3-2.1.4.tgz"
+  resolved "https://registry.yarnpkg.com/sha3/-/sha3-2.1.4.tgz#000fac0fe7c2feac1f48a25e7a31b52a6492cc8f"
   integrity sha512-S8cNxbyb0UGUM2VhRD4Poe5N58gJnJsLJ5vC7FYWGUmGhcsj4++WaIOBFVDxlG0W3To6xBuiRh+i0Qp2oNCOtg==
   dependencies:
     buffer "6.0.3"

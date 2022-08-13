@@ -11,8 +11,8 @@
   "dependencies": {
     "@headlessui/react": "^1.6.5",
     "@heroicons/react": "^1.0.6",
-    "@onflow/fcl": "^1.1.1",
-    "@onflow/transport-http": "^1.2.0",
+    "@onflow/fcl": "^1.2.0",
+    "@onflow/transport-http": "^1.4.0",
     "@tailwindcss/forms": "^0.5.2",
     "daisyui": "^2.19.0",
     "decimal.js": "^10.3.1",
