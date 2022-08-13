@@ -109,14 +109,18 @@ export default function FloatPicker(props) {
                   if (events.length > 0) {
                     setFloatEventPairs(floatEvents)
                     setFloatEvents(events)
+                  } else {
+                    throw "No events"
                   }
                 } else if (mode.key === "FLOATGroup") {
                   const group = await mode.inputHandler(rawEventStr)
                   const _events = await getFloatEventsInGroup(group.groupHost, group.groupName)
-                  if (_events) {
+                  if (_events && _events.length > 0) {
                     events = _events.sort((a, b) => b.eventId - a.eventId)
                     setFloatGroup(group)
                     setFloatEvents(events)
+                  } else {
+                    throw "Group not exist or no events in group"
                   }
                 }
 
