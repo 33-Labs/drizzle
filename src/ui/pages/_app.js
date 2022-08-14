@@ -21,9 +21,6 @@ function MyApp({ Component, pageProps }) {
     user.loggedIn == true ? ["domainOfAddressesFetcher", [user.addr]] : null, domainOfAddressesFetcher
   )
 
-  console.log(domainError)
-  console.log(domainData)
-  
   const [domains, setDomains] = useState({})
 
   useEffect(() => {
@@ -31,8 +28,6 @@ function MyApp({ Component, pageProps }) {
       setDomains(domainData[user.addr])    
     }
   }, [domainData])
-
-  console.log(domains)
 
   return (
     <>

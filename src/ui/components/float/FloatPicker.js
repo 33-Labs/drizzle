@@ -93,6 +93,8 @@ export default function FloatPicker(props) {
           )}
           disabled={transactionInProgress}
           onClick={async () => {
+            setFloatEventPairs([])
+            setFloatEvents([])
             setShowBasicNotification(false)
             if (rawEventStr && mode) {
               try {
@@ -122,6 +124,11 @@ export default function FloatPicker(props) {
 
               } catch (error) {
                 let err = error.message || error
+                if (err.includes("This event does not exist in the account")) {
+                  err = "This event does not exist in the account"
+                } else if (err.includes("This group doesn't exist")) {
+                  err = "This group doesn't exist"
+                }
                 setShowBasicNotification(true)
                 setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: err })
               }

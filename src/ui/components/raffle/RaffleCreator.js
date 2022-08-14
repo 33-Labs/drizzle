@@ -95,19 +95,17 @@ export default function RaffleCreator(props) {
 
   useEffect(() => {
     if (float && float.trim() != '') {
-      try {
-        const eventPairs = floatEventInputHandler(float)
+      floatEventInputHandler(float).then((eventPairs) => {
         setFloatEventPairs(eventPairs)
         setEligibilityMode(EligibilityModeFLOAT)
-      } catch (e) { }
+      }).catch(console.error)
     }
 
     if (float_group && float_group.trim() != '') {
-      try {
-        const group = floatGroupInputHandler(float_group)
+      floatGroupInputHandler(float_group).then((group) => {
         setFloatGroup(group)
         setEligibilityMode(EligibilityModeFLOATGroup)
-      } catch (e) { }
+      })
     }
   }, [float, float_group])
 

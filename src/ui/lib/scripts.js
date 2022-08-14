@@ -66,8 +66,6 @@ export const queryDomainOfAddresses = async (addresses) => {
     ]
   })
 
-  console.log("domains: ", domains)
-
   return domains
 }
 
@@ -98,8 +96,8 @@ export const queryAddressOfDomains = async (domains) => {
     let res: {String: Address} = {}
     for index, name in names {
         let root = roots[index]
-        let domain = name.concat(".").concat(root)
-        if let address = getAddressOfDomain(domain: domain, name: name, root: root) {
+        if let address = getAddressOfDomain(name: name, root: root) {
+          let domain = name.concat(".").concat(root)
           res[domain] = address
         }
     }
@@ -107,9 +105,9 @@ export const queryAddressOfDomains = async (domains) => {
     return res
   }
 
-  pub fun getAddressOfDomain(domain: String, name: String, root: String): Address? {
-      if FIND.validateFindName(domain) {
-          if let address = FIND.lookupAddress(domain) {
+  pub fun getAddressOfDomain(name: String, root: String): Address? {
+      if FIND.validateFindName(name) && root == "find" {
+          if let address = FIND.lookupAddress(name) {
               return address
           }
       }

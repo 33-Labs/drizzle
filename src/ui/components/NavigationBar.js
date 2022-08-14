@@ -46,7 +46,7 @@ export default function NavigationBar(props) {
             }
           }}
         >
-          {user && displayUsername(user)}
+          {user && user.addr}
         </button>
         <button
           type="button"
