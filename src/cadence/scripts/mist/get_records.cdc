@@ -46,10 +46,10 @@ pub fun getRaffleStatus(account: Address, record: DrizzleRecorder.MistRaffle): S
                     }
                 }
             } else {
-                status = "UNEXIST"
+                status = "NOT FOUND"
             }
         } else {
-            status = "UNEXIST"
+            status = "NOT FOUND"
         }
     }
     return status

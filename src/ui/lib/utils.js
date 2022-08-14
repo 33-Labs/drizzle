@@ -1,5 +1,24 @@
 import Decimal from "decimal.js"
 import publicConfig from "../publicConfig"
+import { queryAddressOfDomains, queryDomainOfAddresses } from "./scripts"
+
+export const displayUsername = (userWithDomains) => {
+  if (userWithDomains.domains.flowns) {
+    return userWithDomains.domains.flowns
+  }
+  if (userWithDomains.domains.find) {
+    return userWithDomains.domains.find
+  }
+  return userWithDomains.addr
+}
+
+export const domainOfAddressesFetcher = async (funcName, addresses) => {
+  return await queryDomainOfAddresses(addresses)
+}
+
+export const addressOfDomainsFetcher = async (funcName, domains) => {
+  return await queryAddressOfDomains(domains)
+}
 
 export const convertURI = (uri) => {
   if (uri.startsWith("ipfs://")) {
@@ -45,7 +64,7 @@ export const classNames = (...classes) => {
   return classes.filter(Boolean).join(' ')
 }
 
-export const floatEventInputHandler = (raw) => {
+export const floatEventInputHandler = async (raw) => {
   const result = raw.trim().replace("#", "").split("@")
   let host = ''
   let id = '0'
@@ -61,7 +80,11 @@ export const floatEventInputHandler = (raw) => {
   }
 
   if (!isValidFlowAddress(host)) {
-    throw "Invalid address"
+    const addresses = await addressOfDomainsFetcher("addressOfDomainsFetcher", [host])
+    if (Object.keys(addresses).length == 0) {
+      throw "Invalid host"
+    }
+    host = addresses[host]
   }
 
   const _id = new Decimal(id)
@@ -72,7 +95,7 @@ export const floatEventInputHandler = (raw) => {
   return [{ eventID: id, eventHost: host }]
 }
 
-export const floatGroupInputHandler = (raw) => {
+export const floatGroupInputHandler = async (raw) => {
   const result = raw.trim().replace("#", "").split("@")
   let host = ''
   let groupName = ''
@@ -88,7 +111,11 @@ export const floatGroupInputHandler = (raw) => {
   }
 
   if (!isValidFlowAddress(host)) {
-    throw "Invalid address"
+    const addresses = await addressOfDomainsFetcher("addressOfDomainsFetcher", [host])
+    if (Object.keys(addresses).length == 0) {
+      throw "Invalid host"
+    }
+    host = addresses[host]
   }
 
   if (groupName && groupName == '') {
