@@ -6,58 +6,17 @@ const MistPath = "0xMist"
 const FlownsPath = "0xFlowns"
 const Domains = "0xDomains"
 const FINDPath = "0xFIND"
+const DomainUtils = "0xDomainUtils"
 
-export const queryDomainOfAddresses = async (addresses) => {
+export const queryDefaultDomainsOfAddresses = async (addresses) => {
   const code = `
-  import Flowns from 0xFlowns
-  import Domains from 0xDomains
-  import FIND from 0xFIND
+  import DomainUtils from 0xDomainUtils
 
-  pub fun main(addresses: [Address]): {Address: {String: String?}} {
-    let res: {Address: {String: String?}} = {}
-    for address in addresses {
-        let domains: {String: String?} = {"flowns": nil, "find": nil}
-        if let domain = FIND.reverseLookup(address) {
-            domains["find"] = domain.concat(".find")
-        }
-        if let domain = getFlownsDomain(address: address) {
-            domains["flowns"] = domain
-        }
-        res[address] = domains
-    }
-    return res
-  }
-
-  pub fun getFlownsDomain(address: Address): String? {
-      let account = getAccount(address)
-      let collectionCap = account.getCapability<&{Domains.CollectionPublic}>(Domains.CollectionPublicPath)
-      if !collectionCap.check() {
-          return nil
-      }
-
-      let collection = collectionCap.borrow()!
-      let ids = collection.getIDs()
-      if ids.length == 0 {
-          return nil
-      }
-
-      var defaultDomainID: UInt64 = ids[0]
-      for id in ids {
-          let domain = collection.borrowDomain(id: id)
-          let isDefault = domain.getText(key: "isDefault")
-          if isDefault == "true" {
-              defaultDomainID = id
-              break
-          }
-      }
-
-      let domain = collection.borrowDomain(id: defaultDomainID)
-      return domain.name.concat(".").concat(domain.parent)
+  pub fun main(addresses: [Address]): {Address: {String: String}} {
+      return DomainUtils.getDefaultDomainsOfAddresses(addresses)
   }
   `
-  .replace(FlownsPath, publicConfig.flownsAddress)
-  .replace(Domains, publicConfig.domainsAddress)
-  .replace(FINDPath, publicConfig.findAddress)
+  .replace(DomainUtils, publicConfig.domainUtilsAddress)
 
   const domains = await fcl.query({
     cadence: code,
@@ -69,7 +28,7 @@ export const queryDomainOfAddresses = async (addresses) => {
   return domains
 }
 
-export const queryAddressOfDomains = async (domains) => {
+export const queryAddressesOfDomains = async (domains) => {
   const names = []
   const roots = []
   for (let i = 0; i < domains.length; i++) {
@@ -84,47 +43,13 @@ export const queryAddressOfDomains = async (domains) => {
   }
 
   const code = `
-  import Flowns from 0xFlowns
-  import Domains from 0xDomains
-  import FIND from 0xFIND
+  import DomainUtils from 0xDomainUtils
 
   pub fun main(names: [String], roots: [String]): {String: Address} {
-    pre {
-        names.length == roots.length: "names and roots should have the same length"
-    }
-
-    let res: {String: Address} = {}
-    for index, name in names {
-        let root = roots[index]
-        if let address = getAddressOfDomain(name: name, root: root) {
-          let domain = name.concat(".").concat(root)
-          res[domain] = address
-        }
-    }
-
-    return res
-  }
-
-  pub fun getAddressOfDomain(name: String, root: String): Address? {
-      if FIND.validateFindName(name) && root == "find" {
-          if let address = FIND.lookupAddress(name) {
-              return address
-          }
-      }
-
-      return getFlownsAddress(name: name, root: root)
-  }
-
-  pub fun getFlownsAddress(name: String, root: String): Address? {
-      let prefix = "0x"
-      let rootHash = Flowns.hash(node: "", lable: root)
-      let nameHash = prefix.concat(Flowns.hash(node: rootHash, lable: name))
-      return Domains.getRecords(nameHash)
+      return DomainUtils.getAddressesOfDomains(names: names, roots: roots)
   }
   `
-  .replace(FlownsPath, publicConfig.flownsAddress)
-  .replace(Domains, publicConfig.domainsAddress)
-  .replace(FINDPath, publicConfig.findAddress)
+  .replace(DomainUtils, publicConfig.domainUtilsAddress)
 
   const addresses = await fcl.query({
     cadence: code,
@@ -141,10 +66,41 @@ export const queryRecords = async (account) => {
   const code = `
   import DrizzleRecorder from 0xDrizzleRecorder
   import Mist from 0xMist
+  import DomainUtils from 0xDomainUtils
+
+  pub struct Host {
+    pub let address: Address
+    pub let domains: {String: String}
+
+    init(address: Address, domains: {String: String}) {
+      self.address = address
+      self.domains = domains
+    }
+  }
+
+  pub struct DropRecord {
+    pub let dropID: UInt64
+    pub let host: Host
+    pub let name: String
+    pub let tokenSymbol: String
+    pub let claimedAmount: UFix64
+    pub let claimedAt: UFix64
+    pub let extraData: {String: AnyStruct}
+
+    init(cloudDrop: DrizzleRecorder.CloudDrop) {
+      self.dropID = cloudDrop.dropID
+      self.host = Host(address: cloudDrop.host, domains: DomainUtils.getDefaultDomainsOfAddress(cloudDrop.host))
+      self.name = cloudDrop.name
+      self.tokenSymbol = cloudDrop.tokenSymbol
+      self.claimedAmount = cloudDrop.claimedAmount
+      self.claimedAt = cloudDrop.claimedAt
+      self.extraData = cloudDrop.extraData
+    }
+  }
 
   pub struct RaffleRecord {
     pub let raffleID: UInt64
-    pub let host: Address
+    pub let host: Host
     pub let name: String
     pub let nftName: String
     pub let registeredAt: UFix64
@@ -155,7 +111,7 @@ export const queryRecords = async (account) => {
 
     init(mistRaffle: DrizzleRecorder.MistRaffle, status: String) {
         self.raffleID = mistRaffle.raffleID
-        self.host = mistRaffle.host
+        self.host = Host(address: mistRaffle.host, domains: DomainUtils.getDefaultDomainsOfAddress(mistRaffle.host))
         self.name = mistRaffle.name
         self.nftName = mistRaffle.nftName
         self.registeredAt = mistRaffle.registeredAt
@@ -206,6 +162,13 @@ pub fun getRaffleStatus(account: Address, record: DrizzleRecorder.MistRaffle): S
       if let _recorder = recorder {
           let dropType = Type<DrizzleRecorder.CloudDrop>()
           let dropRecords = _recorder.getRecordsByType(dropType)
+          let dropRes: {UInt64: AnyStruct} = {}
+          for key in dropRecords.keys {
+            let _record = dropRecords[key]!
+            let record = _record as! DrizzleRecorder.CloudDrop
+            let rec = DropRecord(cloudDrop: record)
+            dropRes[key] = rec
+          }
 
           let raffleType = Type<DrizzleRecorder.MistRaffle>()
           let raffleRecords = _recorder.getRecordsByType(raffleType)
@@ -217,7 +180,7 @@ pub fun getRaffleStatus(account: Address, record: DrizzleRecorder.MistRaffle): S
               let rec = RaffleRecord(mistRaffle: record, status: status)
               raffleRes[key] = rec
           }
-          res[dropType.identifier] = dropRecords
+          res[dropType.identifier] = dropRes
           res[raffleType.identifier] = raffleRes
           return res
       }
@@ -227,6 +190,7 @@ pub fun getRaffleStatus(account: Address, record: DrizzleRecorder.MistRaffle): S
   `
   .replace(DrizzleRecorderPath, publicConfig.drizzleRecorderAddress)
   .replace(MistPath, publicConfig.mistAddress)
+  .replace(DomainUtils, publicConfig.domainUtilsAddress)
 
   const records = await fcl.query({
     cadence: code,

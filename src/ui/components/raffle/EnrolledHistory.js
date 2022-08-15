@@ -1,7 +1,9 @@
 import { useState } from "react"
 import Link from 'next/link'
-import { convertCadenceDateTime, getItemsInPage } from '../../lib/utils'
+import { convertCadenceDateTime, displayUsername, getItemsInPage } from '../../lib/utils'
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/solid"
+import { nameServiceState } from "../../lib/atoms"
+import { useRecoilState } from "recoil"
 
 const getStatusColor = (status) => {
   if (status == "YES") return "text-green-800 bg-green-100"
@@ -12,6 +14,7 @@ const getStatusColor = (status) => {
 
 export default function EnrolledHistory(props) {
   const { records, user, pageAccount } = props
+  const [nameService, ] = useRecoilState(nameServiceState)
 
   let isCurrentUser = false
   if (user && user.addr === pageAccount) {
@@ -65,13 +68,13 @@ export default function EnrolledHistory(props) {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {getItemsInPage(records, currentPage, pageSize).map((raffle) => (
-                      <Link key={`${raffle.raffleID}-link`} href={`${raffle.host}/raffles/${raffle.raffleID}`}>
+                      <Link key={`${raffle.raffleID}-link`} href={`${raffle.host.address}/raffles/${raffle.raffleID}`}>
                         <tr key={raffle.raffleID}>
                           <td className="py-4 px-3 text-sm sm:pl-6">
                             <label className="block font-medium text-gray-900 break-words max-w-[300px] min-w-[60px]">{raffle.name}</label>
                           </td>
                           <td className="py-4 px-3 text-sm">
-                            <label className="block font-medium text-gray-500 break-words max-w-[300px] min-w-[60px]">{raffle.host}</label>
+                            <label className="block font-medium text-gray-500 break-words max-w-[300px] min-w-[60px]">{displayUsername(raffle.host, nameService)}</label>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <div className="text-gray-500">

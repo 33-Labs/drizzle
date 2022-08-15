@@ -6,9 +6,22 @@ import { SpinnerCircular } from 'spinners-react'
 import Custom404 from '../../404'
 import { queryRaffle, queryClaimStatus } from '../../../lib/mist-scripts'
 import RafflePresenter from '../../../components/raffle/RafflePresenter'
+import { queryDefaultDomainsOfAddresses } from '../../../lib/scripts'
 
 const raffleFetcher = async (funcName, raffleID, host) => {
-  return await queryRaffle(raffleID, host)
+  const raffle = await queryRaffle(raffleID, host)
+  const hostDomains = await queryDefaultDomainsOfAddresses([host])
+  raffle.host = {address: host, domains: hostDomains[host]}
+  const winnerAddresses = Object.keys(raffle.winners)
+  const domains = await queryDefaultDomainsOfAddresses(winnerAddresses)
+  const winners = {}
+  for (let [address, record] of Object.entries(raffle.winners)) {
+    let r = Object.assign({}, record)
+    r.domains = domains[address]
+    winners[address] = r
+  }
+  raffle.winners = winners
+  return raffle
 }
 
 const raffleClaimStatusFetcher = async (funcName, raffleID, host, claimer) => {

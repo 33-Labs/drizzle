@@ -10,9 +10,26 @@ import {
   queryClaimStatus,
 } from '../../../lib/cloud-scripts'
 import Custom404 from '../../404'
+import { queryDefaultDomainsOfAddresses } from '../../../lib/scripts'
 
 const dropFetcher = async (funcName, dropID, host) => {
-  return await queryDrop(dropID, host)
+  const drop = await queryDrop(dropID, host)
+  const hostDomains = await queryDefaultDomainsOfAddresses([host])
+  drop.host = {address: host, domains: hostDomains[host]}
+  const claimerAddresses = Object.keys(drop.claimedRecords) 
+  // TODO: what if there are a lot of claimers? Only show domain name
+  // what the claimerAddresses less than 100 now
+  if (claimerAddresses.length < 100) {
+    const domains = await queryDefaultDomainsOfAddresses(claimerAddresses)
+    const claimedRecords = {}
+    for (let [address, record] of Object.entries(drop.claimedRecords)) {
+      let r = Object.assign({}, record)
+      r.domains = domains[address]
+      claimedRecords[address] = r
+    }
+    drop.claimedRecords = claimedRecords
+  }
+  return drop
 }
 
 const claimStatusFetcher = async (funcName, dropID, host, claimer) => {

@@ -4,7 +4,9 @@ import publicConfig from "../../publicConfig"
 import { PacketModeRandom } from "./PacketModeSelector"
 import { ArrowLeftIcon } from "@heroicons/react/solid"
 import { ArrowRightIcon } from "@heroicons/react/solid"
-import { getItemsInPage } from "../../lib/utils"
+import { displayUsername, getItemsInPage } from "../../lib/utils"
+import { nameServiceState } from "../../lib/atoms"
+import { useRecoilState } from "recoil"
 
 const extractStatsPreview = (packetMode,
   randomTotalAmount,
@@ -140,16 +142,19 @@ const extractStats = (drop) => {
 }
 
 const parseClaimed = (claimedRecords) => {
+  console.log("claimedRecords: ", claimedRecords)
   let claimed = []
   for (let [address, record] of Object.entries(claimedRecords)) {
     const _record = {
       account: address,
+      domains: record.domains,
       amount: new Decimal(record.amount).toString(),
       rawClaimedAt: parseFloat(record.claimedAt),
       claimedAt: (new Date(parseFloat(record.claimedAt) * 1000)).toLocaleString()
     }
     claimed.push(_record)
   }
+  console.log("claimed: ", claimed)
   return claimed.sort((a, b) => b.rawClaimedAt - a.rawClaimedAt)
 }
 
@@ -179,6 +184,7 @@ export default function StatsCard(props) {
     capacity, drop } = props
   const symbol = (drop && drop.tokenInfo.symbol) || (isPreview && token && token.symbol)
   const [currentPage, setCurrentPage] = useState(1)
+  const [nameService, ] = useRecoilState(nameServiceState)
   const pageSize = 10
 
   const claimed = drop ? parseClaimed(drop.claimedRecords) : []
@@ -235,7 +241,7 @@ export default function StatsCard(props) {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              {claim.account}
+                              {displayUsername(claim, nameService)}
                             </a>
                           </td>
                           <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">

@@ -1,23 +1,40 @@
 import Decimal from "decimal.js"
 import publicConfig from "../publicConfig"
-import { queryAddressOfDomains, queryDomainOfAddresses } from "./scripts"
+import { queryAddressesOfDomains, queryDefaultDomainsOfAddresses } from "./scripts"
 
-export const displayUsername = (userWithDomains) => {
-  if (userWithDomains.domains.flowns) {
-    return userWithDomains.domains.flowns
+export const NameService = {
+  flowns: "flowns",
+  find: "find",
+  none: "none"
+}
+
+export const displayUsername = (userWithDomains, preferredNameService) => {
+  if (!userWithDomains.domains || !preferredNameService) {
+    return userWithDomains.addr || userWithDomains.address || userWithDomains.account
   }
-  if (userWithDomains.domains.find) {
-    return userWithDomains.domains.find
+
+  console.log("preferred", preferredNameService)
+  if (userWithDomains.domains[preferredNameService]) {
+    return userWithDomains.domains[preferredNameService]
   }
-  return userWithDomains.addr
+
+  let nameService = NameService.flowns
+  if (preferredNameService == NameService.flowns) {
+    nameService = NameService.find
+  }
+
+  if (userWithDomains.domains[nameService]) {
+    return userWithDomains.domains[nameService]
+  }
+  return userWithDomains.addr || userWithDomains.address || userWithDomains.account
 }
 
 export const domainOfAddressesFetcher = async (funcName, addresses) => {
-  return await queryDomainOfAddresses(addresses)
+  return await queryDefaultDomainsOfAddresses(addresses)
 }
 
 export const addressOfDomainsFetcher = async (funcName, domains) => {
-  return await queryAddressOfDomains(domains)
+  return await queryAddressesOfDomains(domains)
 }
 
 export const convertURI = (uri) => {

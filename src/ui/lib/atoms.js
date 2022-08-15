@@ -29,3 +29,8 @@ export const alertModalContentState = atom({
   key: "alertModalContentState",
   default: {content: "", actionTitle: "", action: null}
 })
+
+export const nameServiceState = atom({
+  key: "nameServiceState",
+  default: null
+})
