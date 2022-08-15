@@ -142,7 +142,6 @@ const extractStats = (drop) => {
 }
 
 const parseClaimed = (claimedRecords) => {
-  console.log("claimedRecords: ", claimedRecords)
   let claimed = []
   for (let [address, record] of Object.entries(claimedRecords)) {
     const _record = {
@@ -154,7 +153,6 @@ const parseClaimed = (claimedRecords) => {
     }
     claimed.push(_record)
   }
-  console.log("claimed: ", claimed)
   return claimed.sort((a, b) => b.rawClaimedAt - a.rawClaimedAt)
 }
 

@@ -9,6 +9,10 @@ const FINDPath = "0xFIND"
 const DomainUtils = "0xDomainUtils"
 
 export const queryDefaultDomainsOfAddresses = async (addresses) => {
+  if (addresses.length == 0) {
+    return {}
+  }
+
   const code = `
   import DomainUtils from 0xDomainUtils
 
@@ -29,6 +33,10 @@ export const queryDefaultDomainsOfAddresses = async (addresses) => {
 }
 
 export const queryAddressesOfDomains = async (domains) => {
+  if (domains.length == 0) {
+    return {}
+  }
+
   const names = []
   const roots = []
   for (let i = 0; i < domains.length; i++) {

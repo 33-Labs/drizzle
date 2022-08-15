@@ -60,7 +60,7 @@ export default function WhitelistWithAmountInput(props) {
                 "h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-md text-black"
               )}
               disabled={transactionInProgress}
-              onClick={() => {
+              onClick={async () => {
                 if (!token) {
                   setShowBasicNotification(true)
                   setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "Token is not selected" })
@@ -73,7 +73,7 @@ export default function WhitelistWithAmountInput(props) {
                   return
                 }
 
-                const [valids, invalids] = filterRecords(rawRecordsStr.trim())
+                const [valids, invalids] = await filterRecords(rawRecordsStr.trim())
                 setValidRecords(valids)
                 setInvalidRecords(invalids)
                 const sum = valids.map((r) => r.amount).reduce((p, c) => p.add(c), new Decimal(0))
