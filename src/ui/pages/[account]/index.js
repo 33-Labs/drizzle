@@ -9,7 +9,7 @@ import { queryDrops } from '../../lib/cloud-scripts'
 import RaffleList from '../../components/raffle/RaffleList'
 import { classNames, isValidFlowAddress } from '../../lib/utils'
 import { queryRaffles } from '../../lib/mist-scripts'
-import { queryRecords } from '../../lib/scripts'
+import { queryAddressesOfDomains, queryRecords } from '../../lib/scripts'
 import ClaimHistory from '../../components/drop/ClaimHistory'
 import EnrolledHistory from '../../components/raffle/EnrolledHistory'
 
@@ -66,39 +66,38 @@ const extractRecords = (records) => {
   return { dropRecords: dropRecords, raffleRecords: raffleRecords }
 }
 
-const accountFetcher = async (funcName, address) => {
-  if (isValidFlowAddress(address)) {
-    return address
-  }
-  if (address.endsWith(".fn")) {
-    // TODO: query to flowns
-  }
-  if (address.endsWith(".find")) {
-    // TODO: query to .find
-  }
-}
-
 export default function Account(props) {
-  // const [account, setAccount] = useState(null)
-
   const router = useRouter()
   const { account } = router.query
 
-  // if (isValidFlowAddress(username)) {
-  //   setAccount(username)
-  // } else {
+  const [username, setUsername] = useState(null)
 
-  // }
+  useEffect(() => {
+    if (account) {
+      if (isValidFlowAddress(account)) {
+        setUsername(account)
+      } else {
+        queryAddressesOfDomains([account]).then((result) => {
+          if (result[account]) {
+            setUsername(result[account])
+          } else {
+            // trigger 400 page
+            setUsername(account)
+          }
+        }).catch(console.error)
+      }
+    }
+  }, [account])
 
   const [drops, setDrops] = useState([])
   const [raffles, setRaffles] = useState([])
   const { data: dropsData, error: dropsError } = useSWR(
-    account ? ["dropsFetcher", account] : null, dropsFetcher)
+    username ? ["dropsFetcher", username] : null, dropsFetcher)
   const { data: rafflesData, error: rafflesError } = useSWR(
-    account ? ["rafflesFetcher", account] : null, rafflesFetcher)
+    username ? ["rafflesFetcher", username] : null, rafflesFetcher)
 
   const { data: recordsData, error: recordsError } = useSWR(
-    account ? ["recordsFetcher", account] : null, recordsFetcher)
+    username ? ["recordsFetcher", username] : null, recordsFetcher)
 
   const [showDrop, setShowDrop] = useState(true)
   const [showRaffle, setShowRaffle] = useState(false)
@@ -134,8 +133,8 @@ export default function Account(props) {
       } else {
         return (
           <div className="mt-10 flex flex-col gap-y-10">
-            <DropList drops={drops} user={props.user} pageAccount={account} /> 
-            <ClaimHistory records={dropRecords} user={props.user} pageAccount={account} />
+            <DropList drops={drops} user={props.user} pageAccount={username} /> 
+            <ClaimHistory records={dropRecords} user={props.user} pageAccount={username} />
           </div>
         )
       }
@@ -151,8 +150,8 @@ export default function Account(props) {
       } else {
         return (
           <div className="mt-10 flex flex-col gap-y-10">
-            <RaffleList raffles={raffles} user={props.user} pageAccount={account} />
-            <EnrolledHistory records={raffleRecords} user={props.user} pageAccount={account} />
+            <RaffleList raffles={raffles} user={props.user} pageAccount={username} />
+            <EnrolledHistory records={raffleRecords} user={props.user} pageAccount={username} />
           </div>
         )
       }
