@@ -354,37 +354,37 @@ export default function DropCreator(props) {
 
       {/** preview */}
       {showPreview ?
-        <>
-          <div className="flex justify-center mb-10">
-            <DropCard
-              isPreview={true}
-              banner={banner}
-              name={(!name || name.length == 0) ? NamePlaceholder : name}
-              url={url}
-              host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
-              createdAt={CreatedAtPlaceholder}
-              description={description ?? ""}
-              token={token || TokenPlaceholder}
-              timeLockEnabled={timeLockEnabled}
-              startAt={startAt}
-              endAt={endAt}
-              amount={AmountPlaceholder}
-              eligibilityMode={eligibilityMode}
-              packetMode={packetMode}
-              floatGroup={floatGroup}
-              floatEventPairs={floatEventPairs}
-              threshold={threshold}
-            />
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <StatsCard isPreview={true} token={token}
-              packetMode={packetMode}
-              randomTotalAmount={totalAmount}
-              identicalAmount={identicalAmount}
-              totalTokenAmount={whitelistWithAmountReviewerCallback && whitelistWithAmountReviewerCallback.tokenAmount}
-              capacity={capacity}
-            />
-          </div>
+      <>
+        <div className="flex justify-center mb-10">
+          <DropCard
+            isPreview={true}
+            banner={banner}
+            name={(!name || name.length == 0) ? NamePlaceholder : name}
+            url={url}
+            host={props.user || HostPlaceholder}
+            createdAt={CreatedAtPlaceholder}
+            description={description ?? DescriptionPlaceholder}
+            token={token || TokenPlaceholder}
+            timeLockEnabled={timeLockEnabled}
+            startAt={startAt}
+            endAt={endAt}
+            amount={AmountPlaceholder}
+            eligibilityMode={eligibilityMode}
+            packetMode={packetMode}
+            floatGroup={floatGroup}
+            floatEventPairs = {floatEventPairs}
+            threshold={threshold}
+          />
+        </div> 
+        <div className="flex flex-col items-center justify-center">
+          <StatsCard isPreview={true} token={token} 
+            packetMode={packetMode} 
+            randomTotalAmount={totalAmount}
+            identicalAmount={identicalAmount} 
+            totalTokenAmount={whitelistWithAmountReviewerCallback && whitelistWithAmountReviewerCallback.tokenAmount}
+            capacity={capacity}
+          />
+        </div>
         </>
         : null
       }

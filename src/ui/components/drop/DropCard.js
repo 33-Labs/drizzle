@@ -67,10 +67,11 @@ const MemoizeBasicInfo = React.memo(({ nameService, host, createdAt, token, elig
         {"Created by "}
         <span>
           <a
-            href={`${publicConfig.appURL}/${host.address}`}
+            href={`${publicConfig.appURL}/${typeof host == "string" ? host : host.address}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-black underline decoration-drizzle-green decoration-2">{displayUsername(host, nameService)}
+            className="text-black underline decoration-drizzle-green decoration-2">
+              {typeof host == "string" ? host : displayUsername(host, nameService)}
           </a>
         </span>
       </label>
@@ -154,7 +155,7 @@ export default function DropCard(props) {
         />
         {
           dropID && host ?
-            <ShareCard url={`${publicConfig.appURL}/${host}/drops/${dropID}`} />
+            <ShareCard url={`${publicConfig.appURL}/${host.address}/drops/${dropID}`} />
             : <ShareCard disabled={true} url={`${publicConfig.appURL}/create/ft_drop`} />
         }
       </div>

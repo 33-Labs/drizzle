@@ -25,7 +25,7 @@ export default function NFTSelector(props) {
   const [transactionInProgress] = useRecoilState(transactionInProgressState)
 
   const [query, setQuery] = useState("")
-  const { selectedNFT, setSelectedNFT, selectedTokens, setSelectedTokens } = props
+  const { user, selectedNFT, setSelectedNFT, selectedTokens, setSelectedTokens } = props
 
   const NFTs = NFTList(publicConfig.chainEnv)
   const [nftDisplays, setNFTDisplays] = useState({})
@@ -46,18 +46,18 @@ export default function NFTSelector(props) {
     <div className={"flex flex-col"}>
       <label className="block text-2xl font-flow font-bold">NFT<span className="text-red-600">*</span></label>
       {
-        props.user && props.user.loggedIn ?
+        user && user.loggedIn ?
           <label className="block text-md font-flow leading-6 mt-2 mb-2">Select the NFT to add to the Raffle</label>
           : <label className="block text-md font-flow leading-6 mt-2 mb-2">Connect wallet to select NFT</label>
       }
 
-      <Combobox as="div" className={props.className} value={props.user && props.user.loggedIn && selectedNFT} onChange={async (nft) => {
-        if (props.user && props.user.loggedIn) {
+      <Combobox as="div" className={props.className} value={user && user.loggedIn && selectedNFT} onChange={async (nft) => {
+        if (user && user.loggedIn) {
           if (!selectedNFT || nft.contractName != selectedNFT.contractName || Object.keys(nftDisplays).length == 0) {
             setSelectedNFT(nft)
             setNFTDisplays({})
             setSelectedTokens({})
-            getNFTDisplays(props.user.addr, nft).then((displays) => {
+            getNFTDisplays(user.addr, nft).then((displays) => {
               setNFTDisplays(displays)
               if (Object.keys(displays).length == 0) {
                 setShowBasicNotification(true)

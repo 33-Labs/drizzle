@@ -39,7 +39,7 @@ export default function RafflePresenter(props) {
                 user && user.loggedIn && claimStatus && (user.addr == host) ? (
                   <RaffleManageCard
                     raffle={raffle}
-                    manager={host}
+                    manager={user}
                     claimStatus={claimStatus}
                   />
                 ) : null

@@ -142,7 +142,7 @@ export default function ClaimCard(props) {
               return
             }
 
-            const res = await claim(drop.dropID, host, tokenInfo,
+            const res = await claim(drop.dropID, host.address, tokenInfo,
               setTransactionInProgress,
               setTransactionStatus)
 
@@ -155,8 +155,8 @@ export default function ClaimCard(props) {
               }
             } 
 
-            mutate(["claimStatusFetcher", drop.dropID, host, user && user.addr])
-            mutate(["dropFetcher", drop.dropID, host])
+            mutate(["claimStatusFetcher", drop.dropID, host.address, user && user.addr])
+            mutate(["dropFetcher", drop.dropID, host.address])
           }}
         >
           {title}

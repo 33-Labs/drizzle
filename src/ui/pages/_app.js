@@ -37,8 +37,8 @@ function MyApp({ Component, pageProps }) {
             <title>drizzle | token distribution tool</title>
             <meta property="og:title" content="drizzle | token distribution tool" key="title" />
           </Head>
-          <NavigationBar user={{...user, domains: domains}} />
-          <Component {...pageProps} user={{...user, domains: domains}} />
+          <NavigationBar user={{...user, domains: domains, address: user.addr}} />
+          <Component {...pageProps} user={{...user, domains: domains, address: user.addr}} />
           <Footer />
           <TransactionNotification />
           <BasicNotification />
