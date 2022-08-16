@@ -43,7 +43,6 @@ export default function Drop(props) {
   const [host, setHost] = useState(null)
 
   useEffect(() => {
-    console.log("Address: ", account)
     if (account) {
       if (isValidFlowAddress(account)) {
         setHost(account)
