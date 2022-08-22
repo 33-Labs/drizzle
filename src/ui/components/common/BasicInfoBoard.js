@@ -59,7 +59,7 @@ export default function BasicInfoBoard(props) {
         {/** name */}
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            Name
+            Name<span className="text-red-600">*</span>
           </label>
           <div className="mt-1">
             <input

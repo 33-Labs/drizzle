@@ -65,7 +65,7 @@ export default function FloatPicker(props) {
   return (
     <div className="space-y-2">
       <label className="block text-2xl font-bold font-flow">
-        {mode.title}
+        {mode.title}<span className="text-red-600">*</span>
       </label>
       <Warning content="FLOAT(s) received after the creation of this DROP will not be counted in when checking eligibility." />
       <label className="block font-flow text-md leading-6 mt-2 mb-2">

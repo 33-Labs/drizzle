@@ -93,7 +93,7 @@ export default function PacketSelector(props) {
   return (
     <div className="flex flex-col gap-y-2">
       <label className="block text-2xl font-bold font-flow">
-        Amount
+        Amount<span className="text-red-600">*</span>
       </label>
       <PacketModeSelector mode={mode} setMode={setMode} />
       {

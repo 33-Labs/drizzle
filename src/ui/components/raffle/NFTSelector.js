@@ -44,7 +44,7 @@ export default function NFTSelector(props) {
 
   return (
     <div className={"flex flex-col"}>
-      <label className="block text-2xl font-flow font-bold">NFT</label>
+      <label className="block text-2xl font-flow font-bold">NFT<span className="text-red-600">*</span></label>
       {
         props.user && props.user.loggedIn ?
           <label className="block text-md font-flow leading-6 mt-2 mb-2">Select the NFT to add to the Raffle</label>

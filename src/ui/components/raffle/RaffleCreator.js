@@ -380,7 +380,7 @@ export default function RaffleCreator(props) {
 
         <div className="flex flex-col">
           <label className="text-2xl font-bold font-flow">
-            # of Winners
+            # of Winners<span className="text-red-600">*</span>
           </label>
           <label className="block text-md font-flow leading-6 mt-2 mb-2">
             The max number of winners to be drawn
@@ -400,7 +400,7 @@ export default function RaffleCreator(props) {
 
         <div className="flex flex-col">
           <label className="text-2xl font-bold font-flow">
-            Registration Deadline{timezone ? ` (${timezone})` : ''}
+            Registration Deadline{timezone ? ` (${timezone})` : ''}<span className="text-red-600">*</span>
           </label>
           <label className="block text-md font-flow leading-6 mt-2 mb-2">
             To be a candidate, eligible accounts should register before this date
@@ -416,7 +416,7 @@ export default function RaffleCreator(props) {
 
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            Registration Eligibility
+            Registration Eligibility<span className="text-red-600">*</span>
           </label>
           <EligibilityModeSelector type="RAFFLE" mode={eligibilityMode} setMode={setEligibilityMode} />
         </div>

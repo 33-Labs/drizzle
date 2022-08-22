@@ -128,12 +128,16 @@ export default function DropCreator(props) {
       return [false, Hints.BannerOversize]
     }
 
-    if (endAt && isFinite(endAt) && endAt.getTime() < (new Date()).getTime()) {
-      return [false, Hints.DropEnded]
+    if (endAt && isFinite(endAt)) {
+      if (endAt.getTime() < (new Date()).getTime()) {
+        return [false, Hints.DropEnded]
+      }
     }
 
-    if (startAt && isFinite(startAt) && endAt && startAt.getTime() >= endAt.getTime()) {
-      return [false, Hints.InvalidTimeLimit]
+    if (startAt && endAt && isFinite(startAt) && isFinite(endAt)) {
+      if (startAt.getTime() >= endAt.getTime()) {
+        return [false, Hints.InvalidTimeLimit]
+      }
     }
 
     return [true, null]
@@ -402,7 +406,7 @@ export default function DropCreator(props) {
 
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
-            Eligibility
+            Eligibility<span className="text-red-600">*</span>
           </label>
           <EligibilityModeSelector mode={eligibilityMode} setMode={setEligibilityMode} setPacketMode={setPacketMode} />
         </div>

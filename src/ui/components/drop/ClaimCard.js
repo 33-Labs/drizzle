@@ -22,7 +22,7 @@ const isClaimable = (claimStatus) => {
 // [Emoji, Description, Amount, Title]
 const parseClaimStatus = (user, claimStatus, tokenSymbol, isPreview, distributor) => {
   const elements = {
-    emoji: "🎉", description: "YOU ARE ELIGIBLE FOR", amount: `42 FLOW`, title: "PREVIEWING"
+    emoji: "🎉", description: "YOU ARE ELIGIBLE FOR", amount: `❓ FLOW`, title: "PREVIEWING"
   }
   if (isPreview) { return elements }
 

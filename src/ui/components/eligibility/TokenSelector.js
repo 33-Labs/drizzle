@@ -61,7 +61,7 @@ export default function TokenSelector(props) {
         props.onTokenSelected(token)
       }
     }}>
-      <Combobox.Label className="block text-2xl font-flow font-bold">Token</Combobox.Label>
+      <Combobox.Label className="block text-2xl font-flow font-bold">Token<span className="text-red-600">*</span></Combobox.Label>
       {props.user && props.user.loggedIn ? (selectedToken
         ? <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Your balance is {balance.toString()} {selectedToken.symbol}</Combobox.Label>
         : <Combobox.Label className="block text-md font-flow leading-6 mt-2 mb-2">Select the token to add to the DROP</Combobox.Label>

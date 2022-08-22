@@ -31,7 +31,13 @@ export default function TimeLimitPicker(props) {
         <Switch
           disabled={transactionInProgress}
           checked={timeLockEnabled}
-          onChange={setTimeLockEnabled}
+          onChange={() => {
+            if (timeLockEnabled) {
+              setStartAt(null)
+              setEndAt(null)
+            }
+            setTimeLockEnabled(!timeLockEnabled)
+          }}
           className={classNames(
             timeLockEnabled ? 'bg-drizzle-green' : 'bg-gray-200',
             'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-drizzle-green'
@@ -48,6 +54,7 @@ export default function TimeLimitPicker(props) {
       </div>
 
       {timeLockEnabled ?
+        <>
         <div className="mt-2 flex flex-col sm:flex-row justify-between gap-x-4 gap-y-2 flex-wrap">
           <div className="flex items-center gap-x-2">
             <label className="inline-block w-12 font-flow font-bold">Start</label>
@@ -70,7 +77,8 @@ export default function TimeLimitPicker(props) {
               onChange={(e) => { setEndAt(new Date(e.target.value)) }}
             />
           </div>
-        </div> : null}
+        </div>
+        </> : null}
     </div>
   )
 }
