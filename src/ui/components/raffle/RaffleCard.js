@@ -146,7 +146,7 @@ export default function RaffleCard(props) {
           claimStatus={claimStatus}
           raffle={raffle}
           host={host}
-          token={nft}
+          nft={nft}
           user={user}
           setShowClaimedModal={setShowClaimedModal}
           setShowRegisteredModal={setShowRegisteredModal}
