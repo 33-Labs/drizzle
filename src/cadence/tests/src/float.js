@@ -24,7 +24,7 @@ export const FLOAT_createEvent = async (signer, params = {}) => {
   const description = "TEST"
   const image = ""
   const url = ""
-  const transferrable = false
+  const transferrable = true
   const timelock = false
   const dateStart = 0.0
   const timePeriod = 0.0
@@ -76,6 +76,17 @@ export const FLOAT_claim = async (signer, eventID, eventHost) => {
 
   const args = [
     eventID, eventHost, null 
+  ]
+
+  await shallPass(sendTransaction({ name: txName, signers: signers, args: args })) 
+}
+
+export const FLOAT_transfer = async (signer, floatID, recipient) => {
+  const signers = [signer]
+  const txName = "float/transfer_float"
+
+  const args = [
+    floatID, recipient
   ]
 
   await shallPass(sendTransaction({ name: txName, signers: signers, args: args })) 

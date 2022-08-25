@@ -218,6 +218,7 @@ pub contract Cloud {
         access(self) let dropVault: @FungibleToken.Vault
 
         pub fun claim(receiver: &{FungibleToken.Receiver}, params: {String: AnyStruct}) {
+            params.insert(key: "recordUsedNFT", true)
             let availability = self.checkAvailability(params: params)
             assert(availability.status == AvailabilityStatus.ok, message: availability.getStatus())
 
@@ -318,16 +319,29 @@ pub contract Cloud {
             } 
 
             params.insert(key: "claimer", account)
+            var recordUsedNFT = false 
+            if let _recordUsedNFT = params["recordUsedNFT"] {
+                recordUsedNFT = _recordUsedNFT as! Bool
+            }
             let newParams: {String: AnyStruct} = self.combinedParams(params: params)
+
             var isEligible = false
             if self.verifyMode == EligibilityVerifiers.VerifyMode.oneOf {
                 for identifier in self.verifiers.keys {
-                    let verifiers = self.verifiers[identifier]!
-                    for verifier in verifiers {
-                        if verifier.verify(account: account, params: newParams).isEligible {
+                    let _verifiers = &self.verifiers[identifier]! as &[{EligibilityVerifiers.IEligibilityVerifier}]
+                    var counter = 0
+                    while counter < _verifiers.length {
+                        let result = _verifiers[counter].verify(account: account, params: newParams)
+                        if result.isEligible {
+                            if recordUsedNFT {
+                                if let v = _verifiers[counter] as? {EligibilityVerifiers.INFTRecorder} {
+                                    (_verifiers[counter] as! {EligibilityVerifiers.INFTRecorder}).addUsedNFTs(account: account, nftTokenIDs: result.usedNFTs)
+                                }
+                            }
                             isEligible = true
                             break
                         }
+                        counter = counter + 1
                     }
                     if isEligible {
                         break
@@ -335,16 +349,38 @@ pub contract Cloud {
                 }
             } else if self.verifyMode == EligibilityVerifiers.VerifyMode.all {
                 isEligible = true
+                let tempUsedNFTs: {String: {UInt64: [UInt64]}} = {}
+
                 for identifier in self.verifiers.keys {
-                    let verifiers = self.verifiers[identifier]!
-                    for verifier in verifiers {
-                        if !verifier.verify(account: account, params: newParams).isEligible {
+                    let _verifiers = &self.verifiers[identifier]! as &[{EligibilityVerifiers.IEligibilityVerifier}]
+                    var counter: UInt64 = 0
+                    while counter < UInt64(_verifiers.length) {
+                        let result = _verifiers[counter].verify(account: account, params: params)
+                        if !result.isEligible {
                             isEligible = false
                             break
                         }
+                        if recordUsedNFT && result.usedNFTs.length > 0 {
+                            if tempUsedNFTs[identifier] == nil {
+                                let v: {UInt64: [UInt64]} = {}
+                                tempUsedNFTs[identifier] = v
+                            }
+                            (tempUsedNFTs[identifier]! as! {UInt64: [UInt64]}).insert(key: counter, result.usedNFTs)
+                        }
+                        counter = counter + 1
                     }
                     if !isEligible {
                         break
+                    }
+                }
+
+                if isEligible && recordUsedNFT {
+                    for identifier in tempUsedNFTs.keys {
+                        let usedNFTsInfo = tempUsedNFTs[identifier]!
+                        let _verifiers = &self.verifiers[identifier]! as &[{EligibilityVerifiers.IEligibilityVerifier}]
+                        for index in usedNFTsInfo.keys {
+                            (_verifiers[index] as! {EligibilityVerifiers.INFTRecorder}).addUsedNFTs(account: account, nftTokenIDs: usedNFTsInfo[index]!)
+                        }
                     }
                 }
             }
