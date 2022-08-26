@@ -40,6 +40,9 @@ const parseDisplays = (raffle) => {
     if (!display.status) {
       display.status = CardStatus.UNDRAWN
     }
+    if (display.name.length == 0) {
+      display.name = `${raffle.nftInfo.contractName} #${display.tokenID}`
+    }
   }
   return displays
 }

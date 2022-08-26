@@ -63,6 +63,24 @@ export const mainnetNFTList = [
     collectionStoragePath: "/storage/FLOATCollectionStoragePath"
   },
   {
+    name: "Flovatar",
+    nftType: "A.921ea449dffec68a.Flovatar.NFT",
+    contractName: "Flovatar",
+    contractAddress: "0x921ea449dffec68a",
+    collectionType: {
+      type: "A.921ea449dffec68a.Flovatar.Collection",
+      restrictions: [
+        "A.921ea449dffec68a.Flovatar.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+        "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+      ]
+    },
+    logoURL: "/flovatar.jpeg",
+    collectionPublicPath: "/public/FlovatarCollection",
+    collectionStoragePath: "/storage/FlovatarCollection"
+  },
+  {
     name: "FlovatarComponent",
     nftType: "A.921ea449dffec68a.FlovatarComponent.NFT",
     contractName: "FlovatarComponent",

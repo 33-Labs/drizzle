@@ -35,9 +35,13 @@ export const getNFTDisplays = async (account, nft) => {
           for tokenID in collection.getIDs() {
               let resolver = collection.borrowViewResolver(id: tokenID)
               if let display = MetadataViews.getDisplay(resolver) {
+                  var name = display.name
+                  if name.length == 0 {
+                    name = "${nft.contractName} #".concat(tokenID.toString())
+                  }
                   NFTs[tokenID] = NFTDisplay(
                     tokenID: tokenID,
-                    name: display.name,
+                    name: name,
                     description: display.description,
                     thumbnail: display.thumbnail.uri()
                   )

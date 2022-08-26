@@ -7,6 +7,7 @@ const nextConfig = {
       'raw.githubusercontent.com', 
       'ipfs.io', 
       'flovatar.com',
+      'images.flovatar.com',
       'i.imgur.com'
     ],
     dangerouslyAllowSVG: true,
