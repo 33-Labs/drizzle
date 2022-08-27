@@ -1,5 +1,5 @@
-import Mist from "../contracts/Mist.cdc"
-import EligibilityVerifiers from "../contracts/EligibilityVerifiers.cdc"
+import Mist from "../../contracts/Mist.cdc"
+import EligibilityVerifiers from "../../contracts/EligibilityVerifiers.cdc"
 
 pub fun main(raffleID: UInt64, host: Address):  {String: [{EligibilityVerifiers.IEligibilityVerifier}]}{
     let raffleCollection =

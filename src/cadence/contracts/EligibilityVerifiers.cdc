@@ -207,56 +207,23 @@ pub contract EligibilityVerifiers {
         }
     }
 
-    // pub struct Flovatar: IEligibilityVerifier {
-    //     pub let rarityScoreThreshold: UFix64
+    pub struct Flovatar: IEligibilityVerifier {
+        pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResultV2 {
+            let flovatarCollection = getAccount(account)
+                .getCapability(Flovatar.CollectionPublicPath)
+                .borrow<&{Flovatar.CollectionPublic}>()
 
-    //     init(
-    //         rarityScoreThreshold: UFix64 
-    //     ) {
-    //         self.rarityScoreThreshold = rarityScoreThreshold
-    //     }
+            if flovatarCollection == nil {
+                return VerifyResultV2(isEligible: false, extraData: {})
+            }
 
-    //     pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResult {
-    //         let flovatarCollection = getAccount(account)
-    //             .getCapability(Flovatar.CollectionPublicPath)
-    //             .borrow<&{Flovatar.CollectionPublic}>()
+            let flovatarIDs = flovatarCollection!.getIDs()
+            let isEligible = flovatarIDs.length > 0
+            return VerifyResultV2(isEligible: isEligible, extraData: {})
+        }
 
-    //         if flovatarCollection == nil {
-    //             return VerifyResultV2(isEligible: false, extraData: {})
-    //         }
-
-    //         let flovatarIDs = flovatarCollection!.getIDs()
-    //         var totalRarityScore: UFix64 = 0.0
-    //         let components: {UInt64: Bool} = {}
-    //         let flovatars: {UInt64: Bool} = {}
-    //         for id in flovatarIDs {
-    //             let flovatar = flovatarCollection!.borrowFlovatar(id: id)!
-    //             let score = flovatar.getRarityScore()
-    //             totalRarityScore = totalRarityScore + score
-    //             let metadata = flovatar.getMetadata()
-    //             let components = metadata.getComponents()
-    //             for componentID in components.values {
-    //                 components[componentID] = true
-    //             }
-    //             flovatars[id] = true
-    //         }
-
-    //         let extraData: {String: AnyStruct} = {
-    //             "score": {
-    //                 "Flovatar": totalRarityScore
-    //             },
-    //             "nfts": {
-    //                 "FlovatarComponent": compoenents,
-    //                 "Flovatar": flovatars
-    //             }
-    //         }
-
-    //         if totalRarityScore > self.rarityScoreThreshold {
-    //             return VerifyResultV2(isEligible: true, extraData: extraData)
-    //         }
-    //         return VerifyResultV2(isEligible: false, extraData: extraData)
-    //     }
-    // }
+        init() {}
+    }
 
     // Deprecated
     pub struct VerifyResult {

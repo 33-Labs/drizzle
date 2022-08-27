@@ -256,8 +256,9 @@ const doCreateDrop = async (
                   events.append(event)
                   counter = counter + 1
               }
-              verifier = EligibilityVerifiers.FLOATs(
+              verifier = EligibilityVerifiers.FLOATsV2(
                   events: events,
+                  mintedBefore: getCurrentBlock().timestamp,
                   threshold: threshold!
               )
           } else if withFloatGroup {
@@ -265,8 +266,9 @@ const doCreateDrop = async (
                   host: floatGroupHost!,
                   name: floatGroupName!
               )
-              verifier = EligibilityVerifiers.FLOATGroup(
+              verifier = EligibilityVerifiers.FLOATGroupV2(
                   group: groupData,
+                  mintedBefore: getCurrentBlock().timestamp,
                   threshold: threshold!
               )
           } else {
