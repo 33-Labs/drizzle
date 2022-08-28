@@ -50,19 +50,6 @@ export default function Drop(props) {
   return (
     <>
       <div className="container mx-auto max-w-[920px] min-w-[380px] px-6">
-        <div className="flex justify-center mb-5">
-          <div className="text-xs sm:text-base w-[400px] py-2 px-3 flex flex-col justify-center items-center bg-drizzle-green-light rounded-2xl">
-            <a href="https://floats.city/0x39b144ab4d348e2b/event/420442474"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="flex flex-col items-center justify-center">
-                <label>🎉 <span className="font-bold">Drizzle</span> has been launched on FLOW mainnet! 🎉</label>
-                <label><span className="font-bold">CLICK TO CLAIM</span> the commemorative <span className="font-bold">FLOAT</span> now!</label>
-              </div>
-            </a>
-          </div>
-        </div>
         {
           drop ?
             <DropPresenter
