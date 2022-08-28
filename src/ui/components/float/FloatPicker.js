@@ -47,6 +47,8 @@ export default function FloatPicker(props) {
     setFloatGroup,
     setFloatEventPairs
   } = props
+  
+  console.log(threshold)
 
   useEffect(() => {
     setThreshold('')
@@ -149,7 +151,7 @@ export default function FloatPicker(props) {
         <div className="w-full mt-2">
           <FloatEventList events={floatEvents} />
           {
-            floatEvents.length > 1 ?
+            floatEvents.length >= 1 ?
               <div className="w-full flex flex-col gap-y-2 mt-3">
                 <div className="flex items-center gap-x-2 sm:justify-between sm:w-full">
                   <label className="block w-[75px] shrink-0 font-flow font-bold">Threshold</label>
