@@ -368,7 +368,7 @@ export default function DropCreator(props) {
             url={url}
             host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
             createdAt={CreatedAtPlaceholder}
-            description={description ?? DescriptionPlaceholder}
+            description={description ?? ""}
             token={token || TokenPlaceholder}
             timeLockEnabled={timeLockEnabled}
             startAt={startAt}

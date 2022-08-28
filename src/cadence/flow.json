@@ -119,7 +119,11 @@
 			"address": "f8d6e0586b0a20c7",
 			"key": "fae10f262a46ca34e438a48daff66d6672340a49e634bb7d0f7f9eeb78d7fa1b"
         },
-        "drizzle": {
+        "drizzle-testnet-2": {
+			"address": "f8d6e0586b0a20c7",
+			"key": "fae10f262a46ca34e438a48daff66d6672340a49e634bb7d0f7f9eeb78d7fa1b"
+        },
+        "drizzle-mainnet": {
 			"address": "f8d6e0586b0a20c7",
 			"key": "fae10f262a46ca34e438a48daff66d6672340a49e634bb7d0f7f9eeb78d7fa1b"
         }
@@ -130,12 +134,14 @@
                 "Distributors",
                 "EligibilityVerifiers",
                 "Cloud",
-                "DrizzleRecorder",
+                "DrizzleRecorder"
+            ],
+            "drizzle-testnet-2": [
                 "Mist"
             ]
         },
         "mainnet": {
-            "drizzle": [
+            "drizzle-mainnet": [
                 "Distributors",
                 "EligibilityVerifiers",
                 "Cloud",

@@ -284,6 +284,7 @@ pub contract Mist {
         access(self) let rewardDisplays: {UInt64: NFTDisplay}
 
         pub fun register(account: Address, params: {String: AnyStruct}) {
+            params.insert(key: "recordUsedNFT", true)
             let availability = self.checkAvailability(params: params)
             assert(availability.status == AvailabilityStatus.registering, message: availability.getStatus())
 
@@ -335,6 +336,7 @@ pub contract Mist {
         }
 
         pub fun claim(receiver: &{NonFungibleToken.CollectionPublic}, params: {String: AnyStruct}) {
+            params.insert(key: "recordUsedNFT", true)
             let availability = self.checkAvailability(params: params)
             assert(availability.status == AvailabilityStatus.drawn || availability.status == AvailabilityStatus.drawing, message: availability.getStatus())
 
@@ -445,7 +447,7 @@ pub contract Mist {
             let isEligible = self.isEligible(
                 account: account,
                 mode: self.registrationVerifyMode,
-                verifiers: self.registrationVerifiers,
+                verifiers: &self.registrationVerifiers as &{String: [{EligibilityVerifiers.IEligibilityVerifier}]},
                 params: params
             ) 
 
@@ -481,14 +483,14 @@ pub contract Mist {
             let isEligible = self.isEligible(
                 account: account,
                 mode: self.claimVerifyMode,
-                verifiers: self.claimVerifiers,
+                verifiers: &self.claimVerifiers as &{String: [{EligibilityVerifiers.IEligibilityVerifier}]},
                 params: params
             ) 
 
             return Eligibility(
                 status: isEligible ? 
                     EligibilityStatus.eligibleForClaiming: 
-                    EligibilityStatus.eligibleForClaiming,
+                    EligibilityStatus.notEligibleForClaiming,
                 eligibleNFTs: record.rewardTokenIDs,
                 extraData: {}
             ) 
@@ -509,28 +511,61 @@ pub contract Mist {
         access(self) fun isEligible(
             account: Address,
             mode: EligibilityVerifiers.VerifyMode, 
-            verifiers: {String: [{EligibilityVerifiers.IEligibilityVerifier}]},
+            verifiers: &{String: [{EligibilityVerifiers.IEligibilityVerifier}]},
             params: {String: AnyStruct}
         ): Bool {
             params.insert(key: "claimer", account)
+            var recordUsedNFT = false 
+            if let _recordUsedNFT = params["recordUsedNFT"] {
+                recordUsedNFT = _recordUsedNFT as! Bool
+            }
             if mode == EligibilityVerifiers.VerifyMode.oneOf {
                 for identifier in verifiers.keys {
-                    let verifiers = verifiers[identifier]!
-                    for verifier in verifiers {
-                        if verifier.verify(account: account, params: params).isEligible {
+                    let _verifiers = &verifiers[identifier]! as &[{EligibilityVerifiers.IEligibilityVerifier}]
+                    var counter = 0
+                    while counter < _verifiers.length {
+                        let result = _verifiers[counter].verify(account: account, params: params)
+                        if result.isEligible {
+                            if recordUsedNFT {
+                                if let v = _verifiers[counter] as? {EligibilityVerifiers.INFTRecorder} {
+                                    (_verifiers[counter] as! {EligibilityVerifiers.INFTRecorder}).addUsedNFTs(account: account, nftTokenIDs: result.usedNFTs)
+                                }
+                            }
                             return true
                         }
+                        counter = counter + 1
                     }
                 }
                 return false
             } 
-            
+
             if mode == EligibilityVerifiers.VerifyMode.all {
+                let tempUsedNFTs: {String: {UInt64: [UInt64]}} = {}
                 for identifier in verifiers.keys {
-                    let verifiers = verifiers[identifier]!
-                    for verifier in verifiers {
-                        if !verifier.verify(account: account, params: params).isEligible {
+                    let _verifiers = &verifiers[identifier]! as &[{EligibilityVerifiers.IEligibilityVerifier}]
+                    var counter: UInt64 = 0
+                    while counter < UInt64(_verifiers.length) {
+                        let result = _verifiers[counter].verify(account: account, params: params)
+                        if !result.isEligible {
                             return false
+                        }
+                        if recordUsedNFT && result.usedNFTs.length > 0 {
+                            if tempUsedNFTs[identifier] == nil {
+                                let v: {UInt64: [UInt64]} = {}
+                                tempUsedNFTs[identifier] = v
+                            }
+                            (tempUsedNFTs[identifier]! as! {UInt64: [UInt64]}).insert(key: counter, result.usedNFTs)
+                        }
+                        counter = counter + 1
+                    }
+                }
+
+                if recordUsedNFT {
+                    for identifier in tempUsedNFTs.keys {
+                        let usedNFTsInfo = tempUsedNFTs[identifier]!
+                        let _verifiers = &verifiers[identifier]! as &[{EligibilityVerifiers.IEligibilityVerifier}]
+                        for index in usedNFTsInfo.keys {
+                            (_verifiers[index] as! {EligibilityVerifiers.INFTRecorder}).addUsedNFTs(account: account, nftTokenIDs: usedNFTsInfo[index]!)
                         }
                     }
                 }

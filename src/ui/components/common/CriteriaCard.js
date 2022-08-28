@@ -33,7 +33,7 @@ const getCriteriaLabel = (drizzle, type) => {
             className="text-drizzle-green">
             {verifier.group.name}
           </a>
-        </span>&nbsp;<span className="font-bold">BEFORE</span> <span className="font-bold text-drizzle-green">{convertCadenceDateTime(verifier.receivedBefore).toLocaleString()}</span>
+        </span>&nbsp;<span className="font-bold">MINTED BEFORE</span> <span className="font-bold text-drizzle-green">{convertCadenceDateTime(verifier.mintedBefore).toLocaleString()}</span>
       </label>
     )
   }
@@ -49,7 +49,7 @@ const getCriteriaLabel = (drizzle, type) => {
             className="text-drizzle-green">
             {verifier.events[0].eventID}
           </a>
-        </span>&nbsp;<span className="font-bold">BEFORE</span> <span className="font-bold text-drizzle-green">{convertCadenceDateTime(verifier.receivedBefore).toLocaleString()}</span>
+        </span>&nbsp;<span className="font-bold">MINTED BEFORE</span> <span className="font-bold text-drizzle-green">{convertCadenceDateTime(verifier.mintedBefore).toLocaleString()}</span>
       </label>
     )
   }
@@ -81,7 +81,7 @@ const getCriteriaLabelPreview = (
             className="text-drizzle-green">
             {floatGroup.groupName}
           </a>
-        </span>&nbsp;<span className="font-bold">BEFORE</span> <span className="font-bold text-drizzle-green">{new Date().toLocaleString()}</span>
+        </span>&nbsp;<span className="font-bold">MINTED BEFORE</span> <span className="font-bold text-drizzle-green">{new Date().toLocaleString()}</span>
       </label>
     )
   }
@@ -99,7 +99,7 @@ const getCriteriaLabelPreview = (
             className="text-drizzle-green">
             {eventID}
           </a>
-        </span>&nbsp;<span className="font-bold">BEFORE</span> <span className="font-bold text-drizzle-green">{new Date().toLocaleString()}</span>
+        </span>&nbsp;<span className="font-bold">MINTED BEFORE</span> <span className="font-bold text-drizzle-green">{new Date().toLocaleString()}</span>
       </label>
     )
   }

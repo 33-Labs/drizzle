@@ -1,6 +1,7 @@
 import { builtInMethods, executeScript, getAccountAddress, mintFlow, sendTransaction, shallPass, shallResolve } from "flow-js-testing"
 import { getMistAdmin } from "./common"
 import { NFT_mintExampleNFT, NFT_setupExampleNFTCollection } from "./examplenft"
+import { FLOAT_getEventIDs } from "./float"
 
 export const mintExampleNFTs = async (recipient) => {
   await NFT_setupExampleNFTCollection(recipient)
@@ -207,6 +208,15 @@ export const getRegistrationRecords = async (raffleID, host) => {
   expect(error).toBeNull()
   return result
 }
+
+export const getRegistrationVerifiers = async (raffleID, host) => {
+  const name = "mist/get_registration_verifiers"
+  const args = [raffleID, host]
+  const [result, error] = await executeScript({ name: name, args: args })
+  expect(error).toBeNull()
+  return result
+}
+
 
 export const getWinner = async (raffleID, host, winner) => {
   const name = "mist/get_winner"

@@ -26,11 +26,14 @@ import {
   getRecords, 
   getRegistrationRecord, 
   getRegistrationRecords, 
+  getRegistrationVerifiers, 
   getWinner, 
   mintExampleNFTs, 
   registerRaffle,
   togglePause,
 } from "./src/mist";
+import { createDefaultEvents } from "./src/cloud";
+import { FLOAT_claim, FLOAT_createEventsWithGroup, FLOAT_getEventIDs, FLOAT_getFLOATIDs, FLOAT_setupAccount, FLOAT_transfer } from "./src/float";
 
 jest.setTimeout(1000000)
 
@@ -502,13 +505,25 @@ describe("Mist", () => {
     expect(newTokenIDs).toEqual(tokenIDs)
   }) 
 
-  it("Mist - Should be ok for eligible users to register", async () => {
+  it("Mist - FLOATGroup - Should be ok for eligible users to register", async () => {
     const Alice = await getAccountAddress("Alice")
     await mintExampleNFTs(Alice)
     const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
-    await createExampleNFTRaffle(Alice, { withWhitelist: true, rewardTokenIDs: tokenIDs, registrationEndAt:  (new Date()).getTime() / 1000 + 100})
 
+    const FLOATCreator = await getAccountAddress("FLOATCreator")
+    await FLOAT_createEventsWithGroup(FLOATCreator)
+
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    const threshold = 2
     const Bob = await getAccountAddress("Bob")
+    for (let i = 0; i < threshold; i++) {
+      const eventID = eventIDs[i]
+      await FLOAT_claim(Bob, eventID, FLOATCreator)
+    }
+    const floatIDs = await FLOAT_getFLOATIDs(Bob)
+    expect(floatIDs.length).toBe(threshold)
+
+    await createExampleNFTRaffle(Alice, { withFloatGroup: true, rewardTokenIDs: tokenIDs, registrationEndAt:  (new Date()).getTime() / 1000 + 100})
 
     const raffles = await getAllRaffles(Alice)
     const raffleID = parseInt(Object.keys(raffles)[0])
@@ -540,6 +555,85 @@ describe("Mist", () => {
 
     const records = await getRegistrationRecords(raffleID, Alice)
     expect(Object.keys(records).length).toBe(1)
+
+    const verifiers = await getRegistrationVerifiers(raffleID, Alice)
+    
+    // Cannot register if the FLOAT has been used
+    const Carl = await getAccountAddress("Carl")
+    await FLOAT_setupAccount(Carl)
+    for (let i = 0; i < floatIDs.length; i++) {
+      await FLOAT_transfer(Bob, floatIDs[i], Carl)
+    }
+    const CarlFloatIDs = await FLOAT_getFLOATIDs(Carl)
+    expect(CarlFloatIDs.length).toBe(threshold)
+    const [, CarlError] = await registerRaffle(raffleID, Alice, Carl)
+    expect(CarlError.includes("not eligible")).toBeTruthy()
+  })
+
+  it("Mist - FLOATs - Should be ok for eligible users to register", async () => {
+    const Alice = await getAccountAddress("Alice")
+    await mintExampleNFTs(Alice)
+    const tokenIDs = (await NFT_getIDs(Alice)).map((id) => parseInt(id)).sort()
+
+    const FLOATCreator = await getAccountAddress("FLOATCreator")
+    await createDefaultEvents(FLOATCreator)
+
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
+    const threshold = 2
+    const Bob = await getAccountAddress("Bob")
+    for (let i = 0; i < threshold; i++) {
+      const eventID = eventIDs[i]
+      await FLOAT_claim(Bob, eventID, FLOATCreator)
+    }
+    const floatIDs = await FLOAT_getFLOATIDs(Bob)
+    expect(floatIDs.length).toBe(threshold)
+
+    await createExampleNFTRaffle(Alice, { withFloats: true, rewardTokenIDs: tokenIDs, registrationEndAt:  (new Date()).getTime() / 1000 + 100})
+
+    const raffles = await getAllRaffles(Alice)
+    const raffleID = parseInt(Object.keys(raffles)[0])
+
+    const raffle = await getRaffle(raffleID, Alice)
+    expect(Object.keys(raffle.rewardDisplays).map((id) => parseInt(id)).sort()).toEqual(tokenIDs)
+    expect(raffle.nftToBeDrawn.sort()).toEqual(tokenIDs)
+
+    const preClaimed = await getClaimStatus(raffleID, Alice, Bob)
+    expect(preClaimed.availability.status.rawValue).toBe(2)
+    expect(preClaimed.eligibilityForRegistration.status.rawValue).toBe(0)
+    expect(preClaimed.eligibilityForClaim.status.rawValue).toBe(3)
+    const eligibleNFTs = preClaimed.eligibilityForRegistration.eligibleNFTs
+    expect(eligibleNFTs.length).toBe(0)
+
+    const [, error] = await registerRaffle(raffleID, Alice, Bob)
+    expect(error).toBeNull()
+
+    const [, error2] = await registerRaffle(raffleID, Alice, Bob)
+    expect(error2.includes("has registered")).toBeTruthy()
+
+    const postClaimed = await getClaimStatus(raffleID, Alice, Bob)
+    expect(postClaimed.availability.status.rawValue).toBe(2)
+    expect(postClaimed.eligibilityForRegistration.status.rawValue).toBe(4)
+    expect(preClaimed.eligibilityForClaim.status.rawValue).toBe(3)
+
+    const record = await getRegistrationRecord(raffleID, Alice, Bob)
+    expect(record.address).toBe(Bob)
+
+    const records = await getRegistrationRecords(raffleID, Alice)
+    expect(Object.keys(records).length).toBe(1)
+
+    const verifiers = await getRegistrationVerifiers(raffleID, Alice)
+    
+    // Cannot register if the FLOAT has been used
+    const Carl = await getAccountAddress("Carl")
+    await FLOAT_setupAccount(Carl)
+    for (let i = 0; i < floatIDs.length; i++) {
+      await FLOAT_transfer(Bob, floatIDs[i], Carl)
+    }
+    const CarlFloatIDs = await FLOAT_getFLOATIDs(Carl)
+    expect(CarlFloatIDs.length).toBe(threshold)
+    const [, CarlError] = await registerRaffle(raffleID, Alice, Carl)
+    expect(CarlError.includes("not eligible")).toBeTruthy()
   })
 
   it("Mist - Recorder should be able to record registration and claim", async () => {

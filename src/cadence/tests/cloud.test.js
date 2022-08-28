@@ -35,7 +35,9 @@ import {
   FLOAT_createEventsWithGroup,
   FLOAT_getEventIDs,
   FLOAT_getEventsInGroup,
-  FLOAT_getFLOATIDs
+  FLOAT_getFLOATIDs,
+  FLOAT_setupAccount,
+  FLOAT_transfer
 } from "./src/float";
 
 import Decimal from "decimal.js"
@@ -535,7 +537,7 @@ describe("Drop - FLOATGroup", () => {
     expect(error.includes("not eligible")).toBeTruthy()
   })
 
-  it("FLOATGroup - Should not be ok for claimers to claim if they reach the threshold after the creation of DROP", async () => {
+  it("FLOATGroup - Should not be ok for claimers to claim if they mint to reach the threshold after the creation of DROP", async () => {
     const Alice = await getAccountAddress("Alice")
     await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
     await new Promise(r => setTimeout(r, 2000));
@@ -564,6 +566,77 @@ describe("Drop - FLOATGroup", () => {
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("not eligible")).toBeTruthy()
+  })
+
+  it("FLOATGroup - Should not be ok for claimers to claim if the FLOATs have been used", async () => {
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+    const FLOATCreator = await getAccountAddress("FLOATCreator")
+    // We have 3 events by default, and we need 2 of them to be eligible
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
+    const threshold = 2
+  
+    for (let i = 0; i < threshold; i++) {
+      await FLOAT_claim(Bob, eventIDs[i], FLOATCreator)
+    }
+  
+    const floatIDs = await FLOAT_getFLOATIDs(Bob)
+    expect(floatIDs.length).toBe(threshold)
+
+    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
+  
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+  
+    const drop = await getDrop(dropID, Alice)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
+    expect(threshold).toBe(2)
+  
+    const [, error] = await claimDrop(dropID, Alice, Bob)
+    expect(error).toBeNull()
+
+    const Carl = await getAccountAddress("Carl")
+    await FLOAT_setupAccount(Carl)
+    for (let i = 0; i < floatIDs.length; i++) {
+      await FLOAT_transfer(Bob, floatIDs[i], Carl)
+    }
+    const [, errorCarl] = await claimDrop(dropID, Alice, Carl)
+    expect(errorCarl.includes("not eligible")).toBeTruthy()
+  })
+
+  it("FLOATGroup - Should be ok for claimers to claim if the FLOATs are transferred after the creation of DROP", async () => {
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+    const FLOATCreator = await getAccountAddress("FLOATCreator")
+    // We have 3 events by default, and we need 2 of them to be eligible
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
+    const threshold = 2
+  
+    for (let i = 0; i < threshold; i++) {
+      await FLOAT_claim(Bob, eventIDs[i], FLOATCreator)
+    }
+  
+    const floatIDs = await FLOAT_getFLOATIDs(Bob)
+    expect(floatIDs.length).toBe(threshold)
+
+    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
+  
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+  
+    const drop = await getDrop(dropID, Alice)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
+    expect(threshold).toBe(2)
+  
+    const Carl = await getAccountAddress("Carl")
+    await FLOAT_setupAccount(Carl)
+    for (let i = 0; i < floatIDs.length; i++) {
+      await FLOAT_transfer(Bob, floatIDs[i], Carl)
+    }
+    const [, errorCarl] = await claimDrop(dropID, Alice, Carl)
+    expect(errorCarl).toBeNull()
   })
 })
 
@@ -698,7 +771,7 @@ describe("Drop - FLOATs", () => {
     expect(error.includes("not eligible")).toBeTruthy()
   })
 
-  it("FLOATs - Should not be ok for claimers to claim if they reach the threshold after the creation of DROP", async () => {
+  it("FLOATs - Should not be ok for claimers to claim if they mint to the threshold after the creation of DROP with default `mintBefore`", async () => {
     const Alice = await getAccountAddress("Alice")
     await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true }) 
     await new Promise(r => setTimeout(r, 2000));
@@ -726,6 +799,78 @@ describe("Drop - FLOATs", () => {
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("not eligible")).toBeTruthy()
+  })
+
+  it("FLOATs - Should not be ok for claimers to claim if the FLOATs have been used", async () => {
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+    const FLOATCreator = await getAccountAddress("FLOATCreator")
+    // We have 3 events by default, and we need 2 of them to be eligible
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
+    const threshold = 2
+  
+    for (let i = 0; i < threshold; i++) {
+      await FLOAT_claim(Bob, eventIDs[i], FLOATCreator)
+    }
+  
+    const floatIDs = await FLOAT_getFLOATIDs(Bob)
+    expect(floatIDs.length).toBe(threshold)
+
+    await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true }) 
+  
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+  
+    const drop = await getDrop(dropID, Alice)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
+    expect(threshold).toBe(2)
+  
+    const [, error] = await claimDrop(dropID, Alice, Bob)
+    expect(error).toBeNull()
+
+    const Carl = await getAccountAddress("Carl")
+    await FLOAT_setupAccount(Carl)
+    for (let i = 0; i < floatIDs.length; i++) {
+      await FLOAT_transfer(Bob, floatIDs[i], Carl)
+    }
+    const [, errorCarl] = await claimDrop(dropID, Alice, Carl)
+    expect(errorCarl.includes("not eligible")).toBeTruthy()
+  })
+
+  it("FLOATs - Should be ok for claimers to claim if the FLOATs are transferred after the creation of DROP", async () => {
+    const Alice = await getAccountAddress("Alice")
+    const Bob = await getAccountAddress("Bob")
+    const FLOATCreator = await getAccountAddress("FLOATCreator")
+    // We have 3 events by default, and we need 2 of them to be eligible
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
+    const threshold = 2
+  
+    for (let i = 0; i < threshold; i++) {
+      await FLOAT_claim(Bob, eventIDs[i], FLOATCreator)
+    }
+  
+    const floatIDs = await FLOAT_getFLOATIDs(Bob)
+    expect(floatIDs.length).toBe(threshold)
+
+    await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true }) 
+    await new Promise(r => setTimeout(r, 2000));
+  
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+  
+    const drop = await getDrop(dropID, Alice)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
+    expect(threshold).toBe(2)
+  
+    const Carl = await getAccountAddress("Carl")
+    await FLOAT_setupAccount(Carl)
+    for (let i = 0; i < floatIDs.length; i++) {
+      await FLOAT_transfer(Bob, floatIDs[i], Carl)
+    }
+    const [, errorCarl] = await claimDrop(dropID, Alice, Carl)
+    expect(errorCarl).toBeNull()
   })
 })
 
