@@ -207,23 +207,23 @@ pub contract EligibilityVerifiers {
         }
     }
 
-    pub struct Flovatar: IEligibilityVerifier {
-        pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResultV2 {
-            let flovatarCollection = getAccount(account)
-                .getCapability(Flovatar.CollectionPublicPath)
-                .borrow<&{Flovatar.CollectionPublic}>()
+    // pub struct Flovatar: IEligibilityVerifier {
+    //     pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResultV2 {
+    //         let flovatarCollection = getAccount(account)
+    //             .getCapability(Flovatar.CollectionPublicPath)
+    //             .borrow<&{Flovatar.CollectionPublic}>()
 
-            if flovatarCollection == nil {
-                return VerifyResultV2(isEligible: false, extraData: {})
-            }
+    //         if flovatarCollection == nil {
+    //             return VerifyResultV2(isEligible: false, extraData: {})
+    //         }
 
-            let flovatarIDs = flovatarCollection!.getIDs()
-            let isEligible = flovatarIDs.length > 0
-            return VerifyResultV2(isEligible: isEligible, extraData: {})
-        }
+    //         let flovatarIDs = flovatarCollection!.getIDs()
+    //         let isEligible = flovatarIDs.length > 0
+    //         return VerifyResultV2(isEligible: isEligible, extraData: {})
+    //     }
 
-        init() {}
-    }
+    //     init() {}
+    // }
 
     // Deprecated
     pub struct VerifyResult {
