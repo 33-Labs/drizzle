@@ -197,17 +197,40 @@ export const EligibilityModeFLOATGroup = {
   }
 }
 
+export const EligibilityModeFlovatar = {
+  key: "Flovatar",
+  name: 'Flovatar',
+  intro: (type) => {
+    if (type === "DROP") {
+      return 'Distribute tokens to Flovatar owners. FCFS'
+    }
+
+    if (type === "RAFFLE") {
+      return 'Flovatar owners are eligible for registration'
+    }
+
+    return ""
+  },
+  checkParams: () => {
+    return [true, Hints.Valid]
+  },
+  checkRaffleParams: () => {
+    return [true, Hints.Valid]
+  }
+}
+
 const dropModes = [
   EligibilityModeFLOAT,
   EligibilityModeFLOATGroup,
   EligibilityModeWhitelist,
-  EligibilityModeWhitelistWitAmount,
+  EligibilityModeWhitelistWitAmount
 ]
 
 const raffleModes = [
   EligibilityModeFLOAT,
   EligibilityModeFLOATGroup,
-  EligibilityModeWhitelist 
+  EligibilityModeWhitelist,
+  EligibilityModeFlovatar
 ]
 
 export default function EligibilityModeSelector(props) {

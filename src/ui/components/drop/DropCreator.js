@@ -21,7 +21,8 @@ import EligibilityModeSelector, {
   EligibilityModeFLOAT,
   EligibilityModeFLOATGroup,
   EligibilityModeWhitelistWitAmount,
-  EligibilityModeWhitelist
+  EligibilityModeWhitelist,
+  EligibilityModeFlovatar
 } from '../eligibility/EligibilityModeSelector'
 import WhitelistWithAmountReviewer from '../eligibility/WhitelistWithAmountReviewer'
 import FloatReviewer from '../eligibility/FloatReviewer'
@@ -224,7 +225,8 @@ export default function DropCreator(props) {
       eventHosts: [],
       withFloatGroup: false,
       floatGroupName: null,
-      floatGroupHost: null
+      floatGroupHost: null,
+      withFlovatar: false
     }
 
     if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
@@ -254,6 +256,8 @@ export default function DropCreator(props) {
       params.threshold = threshold
       params.floatGroupName = floatGroup.groupName
       params.floatGroupHost = floatGroup.groupHost
+    } else if (eligibilityMode.key == EligibilityModeFlovatar.key) {
+      params.withFlovatar = true
     }
 
     if (packetMode && packetMode.key === PacketModeIdentical.key) {
@@ -267,7 +271,7 @@ export default function DropCreator(props) {
       params.withRandomDistributor = true
       params.capacity = capacity
       params.totalRandomAmount = totalRandomAmount
-    }
+    } 
 
     const args = Object.values(params)
     const res = await createDrop(...args,

@@ -207,23 +207,40 @@ pub contract EligibilityVerifiers {
         }
     }
 
-    // pub struct Flovatar: IEligibilityVerifier {
-    //     pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResultV2 {
-    //         let flovatarCollection = getAccount(account)
-    //             .getCapability(Flovatar.CollectionPublicPath)
-    //             .borrow<&{Flovatar.CollectionPublic}>()
+    pub struct Flovatar: IEligibilityVerifier, INFTRecorder {
+        pub let type: String
+        pub let usedNFTs: {UInt64: Address}
 
-    //         if flovatarCollection == nil {
-    //             return VerifyResultV2(isEligible: false, extraData: {})
-    //         }
+        pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResultV2 {
+            let flovatarCollection = getAccount(account)
+                .getCapability(Flovatar.CollectionPublicPath)
+                .borrow<&{Flovatar.CollectionPublic}>()
 
-    //         let flovatarIDs = flovatarCollection!.getIDs()
-    //         let isEligible = flovatarIDs.length > 0
-    //         return VerifyResultV2(isEligible: isEligible, extraData: {})
-    //     }
+            if flovatarCollection == nil {
+                return VerifyResultV2(isEligible: false, usedNFTs: [], extraData: {})
+            }
 
-    //     init() {}
-    // }
+            let flovatarIDs = flovatarCollection!.getIDs()
+            let usedFlovatar: [UInt64] = []
+            let isEligible = flovatarIDs.length > 0
+            if isEligible {
+                usedFlovatar.append(flovatarIDs[0])
+            }
+
+            return VerifyResultV2(isEligible: isEligible, usedNFTs: usedFlovatar, extraData: {})
+        }
+
+        init() {
+            self.type = "Flovatar"
+            self.usedNFTs = {}
+        }
+
+        pub fun addUsedNFTs(account: Address, nftTokenIDs: [UInt64]) {
+            for tokenID in nftTokenIDs {
+                self.usedNFTs[tokenID] = account
+            }
+        }
+    }
 
     // Deprecated
     pub struct VerifyResult {
