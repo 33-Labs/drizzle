@@ -12,12 +12,14 @@ export const getNFTDisplays = async (account, nft) => {
     pub let name: String
     pub let description: String
     pub let thumbnail: String
+    pub let extraData: {String: AnyStruct}
 
-    init(tokenID: UInt64, name: String, description: String, thumbnail: String) {
+    init(tokenID: UInt64, name: String, description: String, thumbnail: String, extraData: {String: AnyStruct}) {
       self.tokenID = tokenID
       self.name = name
       self.description = description
       self.thumbnail = thumbnail
+      self.extraData = extraData
     }
   }
 
@@ -43,7 +45,8 @@ export const getNFTDisplays = async (account, nft) => {
                     tokenID: tokenID,
                     name: name,
                     description: display.description,
-                    thumbnail: display.thumbnail.uri()
+                    thumbnail: display.thumbnail.uri(),
+                    extraData: {}
                   )
               }
           }
@@ -53,6 +56,65 @@ export const getNFTDisplays = async (account, nft) => {
   }
   `
 
+  if (nft.contractName == "FlovatarComponent" || nft.contractName == "TopShot" || nft.contractName == "Flovatar") {
+    rawCode = `
+    pub struct NFTDisplay {
+      pub let tokenID: UInt64
+      pub let name: String
+      pub let description: String
+      pub let thumbnail: String
+      pub let extraData: {String: AnyStruct}
+  
+      init(tokenID: UInt64, name: String, description: String, thumbnail: String, extraData: {String: AnyStruct}) {
+        self.tokenID = tokenID
+        self.name = name
+        self.description = description
+        self.thumbnail = thumbnail
+        self.extraData = extraData
+      }
+    }
+  
+    pub fun main(account: Address): {UInt64: NFTDisplay} {
+        let NFTs: {UInt64: NFTDisplay} = {}
+        let owner = getAuthAccount(account)
+        let tempPathStr = "drizzleTempPath"
+        let tempPublicPath = PublicPath(identifier: tempPathStr)!
+        owner.link<&{MetadataViews.ResolverCollection}>(
+                tempPublicPath,
+                target: ${nft.collectionStoragePath}
+        )
+  
+        if let collection = owner.getCapability<&{MetadataViews.ResolverCollection}>(tempPublicPath).borrow() {
+            for tokenID in collection.getIDs() {
+                let resolver = collection.borrowViewResolver(id: tokenID)
+                let extraData: {String: AnyStruct} = {}
+                if let rarity = MetadataViews.getRarity(resolver) {
+                  if let description = rarity.description {
+                    extraData["rarityDesc"] = rarity.description
+                  }
+                }
+
+                if let display = MetadataViews.getDisplay(resolver) {
+                    var name = display.name
+                    if name.length == 0 {
+                      name = "${nft.contractName} #".concat(tokenID.toString())
+                    }
+                    NFTs[tokenID] = NFTDisplay(
+                      tokenID: tokenID,
+                      name: name,
+                      description: display.description,
+                      thumbnail: display.thumbnail.uri(),
+                      extraData: extraData
+                    )
+                }
+            }
+        }
+  
+        return NFTs
+    }
+    `
+  }
+
   if (nft.contractName == "FLOAT") {
     rawCode = `
     pub struct NFTDisplay {
@@ -60,12 +122,14 @@ export const getNFTDisplays = async (account, nft) => {
       pub let name: String
       pub let description: String
       pub let thumbnail: String
+      pub let extraData: {String: AnyStruct}
   
-      init(tokenID: UInt64, name: String, description: String, thumbnail: String) {
+      init(tokenID: UInt64, name: String, description: String, thumbnail: String, extraData: {String: AnyStruct}) {
         self.tokenID = tokenID
         self.name = name
         self.description = description
         self.thumbnail = thumbnail
+        self.extraData = extraData
       }
     }
   
@@ -81,7 +145,8 @@ export const getNFTDisplays = async (account, nft) => {
                         tokenID: tokenID,
                         name: display.name,
                         description: display.description,
-                        thumbnail: display.thumbnail.uri()
+                        thumbnail: display.thumbnail.uri(),
+                        extraData: {}
                     )
                 }
             }

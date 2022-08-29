@@ -139,10 +139,17 @@ const doCreateRaffle = async (
           for tokenID in rewardTokenIDs {
               let resolver = self.nftCollectionRef.borrowViewResolver(id: tokenID)
               let mDisplay = MetadataViews.getDisplay(resolver)!
+              // Mist.NFTDisplay has no extraData field, we put rarity desc to description temporarily
+              var desc = mDisplay.description
+              if let mRarity = MetadataViews.getRarity(resolver) {
+                  if let rarityDesc = mRarity.description {
+                      desc = rarityDesc
+                  }
+              }
               let display = Mist.NFTDisplay(
                   tokenID: tokenID,
                   name: mDisplay.name,
-                  description: mDisplay.description,
+                  description: desc,
                   thumbnail: mDisplay.thumbnail.uri()
               )
               self.rewardDisplays[tokenID] = display

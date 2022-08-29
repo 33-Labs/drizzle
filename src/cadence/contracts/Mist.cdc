@@ -119,6 +119,9 @@ pub contract Mist {
 
     // We want to get the thumbnail uri directly from Raffle
     // so we define NFTDisplay rather than use MetadataViews.Display
+
+    // due to lack of extraData field, we use description to store rarityDescription
+    // temporarily
     pub struct NFTDisplay {
         pub let tokenID: UInt64
         pub let name: String
