@@ -288,10 +288,7 @@ export default function RaffleCreator(props) {
     if (mode.key === EligibilityModeWhitelist.key) {
       return (
         <WhitelistReviewer
-          user={props.user}
           callback={setWhitelistReviewerCallback}
-          withTokenSelector={false}
-          withDistributorSelector={false}
         />
       )
     }
@@ -299,7 +296,6 @@ export default function RaffleCreator(props) {
     if (mode.key === EligibilityModeFLOAT.key || mode.key === EligibilityModeFLOATGroup.key) {
       return (
         <FloatReviewer
-          user={props.user}
           floatMode={mode.detail}
           threshold={threshold} setThreshold={setThreshold}
           rawFloatInput={float || float_group}
@@ -307,8 +303,6 @@ export default function RaffleCreator(props) {
           setFloatEvents={setFloatEvents}
           setFloatEventPairs={setFloatEventPairs}
           setFloatGroup={setFloatGroup}
-          withTokenSelector={false}
-          withDistributorSelector={false}
         />
       )
     }

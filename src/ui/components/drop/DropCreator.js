@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import * as fcl from "@onflow/fcl"
 import Decimal from 'decimal.js'
 
+import TokenSelector from './TokenSelector'
+import PacketSelector from './PacketSelector'
 import DropCard from './DropCard'
 
 import {
@@ -27,7 +29,7 @@ import WhitelistWithAmountReviewer from '../eligibility/WhitelistWithAmountRevie
 import FloatReviewer from '../eligibility/FloatReviewer'
 import BasicInfoBoard from '../common/BasicInfoBoard'
 import Hints from '../../lib/hints'
-import { PacketModeIdentical, PacketModeRandom } from '../eligibility/PacketModeSelector'
+import { PacketModeIdentical, PacketModeRandom } from './PacketModeSelector'
 import WhitelistReviewer from '../eligibility/WhitelistReviewer'
 import CreatedModal from '../common/CreatedModal'
 import publicConfig from '../../publicConfig'
@@ -65,6 +67,8 @@ export default function DropCreator(props) {
 
   const [eligibilityMode, setEligibilityMode] = useState(null)
 
+  const [withDistributorSelector, setWithDistributorSelector] = useState(false)
+
   // For WhitelistWithAmountReviewer
   const [whitelistWithAmountReviewerCallback, setWhitelistWithAmountReviewerCallback] = useState(null)
 
@@ -92,6 +96,18 @@ export default function DropCreator(props) {
 
   const [showCreatedModal, setShowCreatedModal] = useState(false)
   const [newDropURL, setNewDropURL] = useState(null)
+
+  useEffect(() => {
+    if (!eligibilityMode) {
+      setWithDistributorSelector(false)
+      return
+    }
+    if (eligibilityMode.key == EligibilityModeWhitelistWitAmount.key) {
+      setWithDistributorSelector(false)
+    } else {
+      setWithDistributorSelector(true)
+    }
+  }, [eligibilityMode])
 
   // For url query fast creation
   // TODO: need to should EventList?
@@ -292,11 +308,8 @@ export default function DropCreator(props) {
     if (mode.key == EligibilityModeWhitelistWitAmount.key) {
       return (
         <WhitelistWithAmountReviewer
-          user={props.user}
           token={token}
-          setToken={setToken}
           tokenBalance={tokenBalance}
-          setTokenBalance={setTokenBalance}
           callback={setWhitelistWithAmountReviewerCallback}
         />
       )
@@ -305,16 +318,7 @@ export default function DropCreator(props) {
     if (mode.key === EligibilityModeWhitelist.key) {
       return (
         <WhitelistReviewer
-          user={props.user}
-          setToken={setToken}
-          setTokenBalance={setTokenBalance}
           callback={setWhitelistReviewerCallback}
-          packetMode={packetMode} setPacketMode={setPacketMode}
-          capacity={capacity} setCapacity={setCapacity}
-          identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
-          totalAmount={totalAmount} setTotalAmount={setTotalAmount}
-          withTokenSelector={true}
-          withDistributorSelector={true}
         />
       )
     }
@@ -322,13 +326,6 @@ export default function DropCreator(props) {
     if (mode.key === EligibilityModeFLOAT.key || mode.key === EligibilityModeFLOATGroup.key) {
       return (
         <FloatReviewer
-          user={props.user}
-          token={token} setToken={setToken}
-          tokenBalance={tokenBalance} setTokenBalance={setTokenBalance}
-          packetMode={packetMode} setPacketMode={setPacketMode}
-          capacity={capacity} setCapacity={setCapacity}
-          identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
-          totalAmount={totalAmount} setTotalAmount={setTotalAmount}
           floatMode={mode.detail}
           threshold={threshold} setThreshold={setThreshold}
           rawFloatInput={float || float_group}
@@ -336,8 +333,6 @@ export default function DropCreator(props) {
           setFloatEvents={setFloatEvents}
           setFloatEventPairs={setFloatEventPairs}
           setFloatGroup={setFloatGroup}
-          withTokenSelector={true}
-          withDistributorSelector={true}
         />
       )
     }
@@ -359,37 +354,37 @@ export default function DropCreator(props) {
 
       {/** preview */}
       {showPreview ?
-      <>
-        <div className="flex justify-center mb-10">
-          <DropCard
-            isPreview={true}
-            banner={banner}
-            name={(!name || name.length == 0) ? NamePlaceholder : name}
-            url={url}
-            host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
-            createdAt={CreatedAtPlaceholder}
-            description={description ?? ""}
-            token={token || TokenPlaceholder}
-            timeLockEnabled={timeLockEnabled}
-            startAt={startAt}
-            endAt={endAt}
-            amount={AmountPlaceholder}
-            eligibilityMode={eligibilityMode}
-            packetMode={packetMode}
-            floatGroup={floatGroup}
-            floatEventPairs = {floatEventPairs}
-            threshold={threshold}
-          />
-        </div> 
-        <div className="flex flex-col items-center justify-center">
-          <StatsCard isPreview={true} token={token} 
-            packetMode={packetMode} 
-            randomTotalAmount={totalAmount}
-            identicalAmount={identicalAmount} 
-            totalTokenAmount={whitelistWithAmountReviewerCallback && whitelistWithAmountReviewerCallback.tokenAmount}
-            capacity={capacity}
-          />
-        </div>
+        <>
+          <div className="flex justify-center mb-10">
+            <DropCard
+              isPreview={true}
+              banner={banner}
+              name={(!name || name.length == 0) ? NamePlaceholder : name}
+              url={url}
+              host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
+              createdAt={CreatedAtPlaceholder}
+              description={description ?? ""}
+              token={token || TokenPlaceholder}
+              timeLockEnabled={timeLockEnabled}
+              startAt={startAt}
+              endAt={endAt}
+              amount={AmountPlaceholder}
+              eligibilityMode={eligibilityMode}
+              packetMode={packetMode}
+              floatGroup={floatGroup}
+              floatEventPairs={floatEventPairs}
+              threshold={threshold}
+            />
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <StatsCard isPreview={true} token={token}
+              packetMode={packetMode}
+              randomTotalAmount={totalAmount}
+              identicalAmount={identicalAmount}
+              totalTokenAmount={whitelistWithAmountReviewerCallback && whitelistWithAmountReviewerCallback.tokenAmount}
+              capacity={capacity}
+            />
+          </div>
         </>
         : null
       }
@@ -404,6 +399,13 @@ export default function DropCreator(props) {
           withTimeLimitPicker={true}
         />
 
+        <TokenSelector
+          user={props.user}
+          className="w-full"
+          onTokenSelected={setToken}
+          onBalanceFetched={setTokenBalance}
+        />
+
         <div className="flex flex-col gap-y-2">
           <label className="block text-2xl font-bold font-flow">
             Eligibility<span className="text-red-600">*</span>
@@ -412,6 +414,15 @@ export default function DropCreator(props) {
         </div>
 
         {showEligibilityModeInputs(eligibilityMode)}
+
+        {withDistributorSelector ?
+          <PacketSelector
+            mode={packetMode} setMode={setPacketMode}
+            capacity={capacity} setCapacity={setCapacity}
+            identicalAmount={identicalAmount} setIdenticalAmount={setIdenticalAmount}
+            totalAmount={totalAmount} setTotalAmount={setTotalAmount}
+          /> : null
+        }
       </div>
 
       {/** create button */}

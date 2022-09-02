@@ -7,5 +7,5 @@ config({
   "discovery.wallet": publicConfig.walletDiscovery,
   "sdk.transport": httpSend,
   "app.detail.title": "drizzle",
-  "app.detail.icon": "https://drizzle-mauve.vercel.app/_next/image?url=%2Fdrizzle.png&w=128&q=100"
+  "app.detail.icon": "https://www.drizzle33.app/_next/image?url=%2Fdrizzle.png&w=128&q=75"
 })

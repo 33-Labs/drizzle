@@ -1,7 +1,7 @@
 import { getDistributorType, getVerifierType } from "../../lib/utils"
 import publicConfig from "../../publicConfig"
 import { EligibilityModeFLOAT, EligibilityModeFLOATGroup, EligibilityModeWhitelist, EligibilityModeWhitelistWitAmount } from "../eligibility/EligibilityModeSelector"
-import { PacketModeIdentical, PacketModeRandom } from "../eligibility/PacketModeSelector"
+import { PacketModeIdentical, PacketModeRandom } from "../drop/PacketModeSelector"
 
 const getReviewerTitlePreview = (eligibilityMode) => {
   // Whitelist or WhitelistWithAmount
