@@ -512,6 +512,40 @@ describe("Drop - FLOATGroup", () => {
     expect(parseFloat(postDrop.claimedAmount)).toBe(eligibleAmount)
   })
 
+  it("FLOATGroup - What's matters is the amount of events, rather than the amount of FLOATs", async () => {
+    const FLOATCreator = await getAccountAddress("FLOATCreator")
+    // We have 3 events by default, and we need 2 of them to be eligible
+    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
+    expect(events.length).toBe(3)
+
+    const threshold = 2
+    const Bob = await getAccountAddress("Bob")
+    const Carl = await getAccountAddress("Carl")
+    const event = events[0]
+    await FLOAT_claim(Bob, event.eventId, FLOATCreator)
+    await FLOAT_claim(Carl, event.eventId, FLOATCreator)
+
+    const floatIDsCarl = await FLOAT_getFLOATIDs(Carl)
+    expect(floatIDsCarl.length).toBe(1)
+
+    const floatIDCarl = floatIDsCarl[0]
+    await FLOAT_transfer(Carl, floatIDCarl, Bob)
+
+    const floatIDs = await FLOAT_getFLOATIDs(Bob)
+    expect(floatIDs.length).toBe(2)
+
+    const Alice = await getAccountAddress("Alice")
+    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
+
+    const drops = await getAllDrops(Alice)
+    const dropID = parseInt(Object.keys(drops)[0])
+
+    const drop = await getDrop(dropID, Alice)
+    const [, error] = await claimDrop(dropID, Alice, Bob)
+    expect(error.includes("not eligible")).toBeTruthy()
+  })
+
+
   it("FLOATGroup - Should not be ok for claimers to claim if they are not meet the threshold", async () => {
     const FLOATCreator = await getAccountAddress("FLOATCreator")
     // We have 3 events by default, and we need 2 of them to be eligible

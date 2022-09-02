@@ -116,16 +116,13 @@
 			"key": "fae10f262a46ca34e438a48daff66d6672340a49e634bb7d0f7f9eeb78d7fa1b"
 		},
         "drizzle-testnet": {
-			"address": "f8d6e0586b0a20c7",
-			"key": "fae10f262a46ca34e438a48daff66d6672340a49e634bb7d0f7f9eeb78d7fa1b"
+            "fromFile": "drizzle.private.json"
         },
         "drizzle-testnet-2": {
-			"address": "f8d6e0586b0a20c7",
-			"key": "fae10f262a46ca34e438a48daff66d6672340a49e634bb7d0f7f9eeb78d7fa1b"
+            "fromFile": "drizzle.private.json"
         },
         "drizzle-mainnet": {
-			"address": "f8d6e0586b0a20c7",
-			"key": "fae10f262a46ca34e438a48daff66d6672340a49e634bb7d0f7f9eeb78d7fa1b"
+            "fromFile": "drizzle.private.json"
         }
 	},
 	"deployments": {

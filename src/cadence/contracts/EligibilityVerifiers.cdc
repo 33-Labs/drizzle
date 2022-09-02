@@ -182,14 +182,24 @@ pub contract EligibilityVerifiers {
             } 
 
             let validFLOATs: [UInt64] = []
+            // What if some one have several FLOATs of one event in the group?
+            // It should not pass the verification
+
+            // EventID: FloatID
+            let eventFLOAT: {UInt64: UInt64} = {}
             for eventID in eventIDs {
                 let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: eventID)
                 for floatID in ownedIDs {
+                    if eventFLOAT[eventID] != nil {
+                        break
+                    }
+
                     if self.usedNFTs[floatID] == nil {
                         if let float = floatCollection!.borrowFLOAT(id: floatID) {
                             if float.dateReceived <= self.mintedBefore {
                                 validFLOATs.append(floatID)
-                                if UInt32(validFLOATs.length) >= self.threshold {
+                                eventFLOAT.insert(key: eventID, floatID)
+                                if UInt32(eventFLOAT.keys.length) >= self.threshold {
                                     return VerifyResultV2(isEligible: true, usedNFTs: validFLOATs, extraData: {})
                                 }
                             }
