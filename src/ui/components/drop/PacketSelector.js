@@ -71,7 +71,7 @@ export default function PacketSelector(props) {
             />
           </div>
           <div className="flex items-center gap-x-2">
-            <label className="block w-[75px] shrink-0 font-flow font-bold">Amount Per Entry</label>
+            <label className="block w-[75px] shrink-0 font-flow font-bold">Amt Per Account</label>
             <input
               type="number"
               disabled={disabled}
