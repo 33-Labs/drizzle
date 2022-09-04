@@ -3,7 +3,6 @@ import Image from "next/image"
 import { useRouter } from 'next/router'
 import { classNames } from "../lib/utils"
 import { useRecoilState } from "recoil"
-import Link from "next/link"
 import {
   transactionInProgressState
 } from "../lib/atoms"
@@ -33,11 +32,14 @@ export default function Landing(props) {
             <label className={`-mt-5 font-flow text-gray-400 font-medium text-md`}>
               Create a DROP or Raffle in one minute!
             </label>
-            <Link href="/about">
+            <a href="https://www.notion.so/lanford33/drizzle-d4713d571a944361a5fc80a915e01fc7"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <label className={`cursor-pointer font-flow text-drizzle-green font-medium text-md underline decoration-drizzle-green decoration-3`}>
                 Want to know more?
               </label>
-            </Link>
+            </a>
           </div>
 
           {props.user && props.user.loggedIn ?
