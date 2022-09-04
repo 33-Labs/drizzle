@@ -111,7 +111,7 @@ export default function RaffleManageCard(props) {
               }
             }}
           >
-            {raffle && raffle.isPaused ? "UNPAUSE" : "PAUSE"}
+            {raffle && raffle.isPaused ? "RESUME" : "PAUSE"}
           </button>
           <button
             type="button"

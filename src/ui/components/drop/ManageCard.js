@@ -75,7 +75,7 @@ export default function ManageCard(props) {
               }
             }}
           >
-            {drop && drop.isPaused ? "UNPAUSE" : "PAUSE"}
+            {drop && drop.isPaused ? "RESUME" : "PAUSE"}
           </button>
           <button
             type="button"
