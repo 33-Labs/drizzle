@@ -133,26 +133,25 @@ export const mainnetNFTList = [
     logoURL: "/driverz.png",
     collectionPublicPath: "/public/DriverzNFTCollection",
     collectionStoragePath: "/storage/DriverzNFTCollection"
-  } 
-  // Waiting for the thumbnail supported
-  // {
-  //   name: "NBATopShot",
-  //   nftType: "A.0b2a3299cc857e29.TopShot.NFT",
-  //   contractName: "TopShot",
-  //   contractAddress: "0x0b2a3299cc857e29",
-  //   collectionType: {
-  //     type: "A.0b2a3299cc857e29.TopShot.Collection",
-  //     restrictions: [
-  //       "A.0b2a3299cc857e29.TopShot.MomentCollectionPublic",
-  //       "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
-  //       "A.1d7e57aa55817448.NonFungibleToken.Receiver",
-  //       "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
-  //     ]
-  //   },
-  //   logoURL: "/topshot.png",
-  //   collectionPublicPath: "/public/MomentCollection",
-  //   collectionStoragePath: "/storage/MomentCollection"
-  // }
+  }, 
+  {
+    name: "NBATopShot",
+    nftType: "A.0b2a3299cc857e29.TopShot.NFT",
+    contractName: "TopShot",
+    contractAddress: "0x0b2a3299cc857e29",
+    collectionType: {
+      type: "A.0b2a3299cc857e29.TopShot.Collection",
+      restrictions: [
+        "A.0b2a3299cc857e29.TopShot.MomentCollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+        "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+      ]
+    },
+    logoURL: "/topshot.png",
+    collectionPublicPath: "/public/MomentCollection",
+    collectionStoragePath: "/storage/MomentCollection"
+  }
   // {
   //   name: "StarlyCard",
   //   nftType: "A.5b82f21c0edf76e3.StarlyCard.NFT",

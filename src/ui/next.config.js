@@ -9,7 +9,8 @@ const nextConfig = {
       'flovatar.com',
       'images.flovatar.com',
       'i.imgur.com',
-      'ipfs.dapperlabs.com'
+      'ipfs.dapperlabs.com',
+      'assets.nbatopshot.com'
     ],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
