@@ -43,6 +43,9 @@ if (!distributorsAddress) throw "Missing NEXT_PUBLIC_DISTRIBUTORS_ADDRESS"
 const drizzleRecorderAddress = process.env.NEXT_PUBLIC_DRIZZLE_RECORDER_ADDRESS
 if (!drizzleRecorderAddress) throw "Missing NEXT_PUBLIC_DRIZZLE_RECORDER_ADDRESS"
 
+const domainUtilsAddress = process.env.NEXT_PUBLIC_DOMAIN_UTILS_ADDRESS
+if (!domainUtilsAddress) throw "Missing NEXT_PUBLIC_DOMAIN_UTILS_ADDRESS"
+
 const floatAddress = process.env.NEXT_PUBLIC_FLOAT_ADDRESS
 if (!floatAddress) throw "Missing NEXT_PUBLIC_FLOAT_ADDRESS"
 
@@ -72,6 +75,7 @@ const publicConfig = {
   drizzleRecorderAddress,
   eligibilityVerifiersAddress,
   distributorsAddress,
+  domainUtilsAddress,
   floatAddress,
   flownsAddress,
   domainsAddress,

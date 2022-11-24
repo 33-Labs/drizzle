@@ -1,23 +1,39 @@
 import Decimal from "decimal.js"
 import publicConfig from "../publicConfig"
-import { queryAddressOfDomains, queryDomainOfAddresses } from "./scripts"
+import { queryAddressesOfDomains, queryDefaultDomainsOfAddresses } from "./scripts"
 
-export const displayUsername = (userWithDomains) => {
-  if (userWithDomains.domains.flowns) {
-    return userWithDomains.domains.flowns
+export const NameService = {
+  flowns: "flowns",
+  find: "find",
+  none: "none"
+}
+
+export const displayUsername = (userWithDomains, preferredNameService) => {
+  if (!userWithDomains.domains || !preferredNameService) {
+    return userWithDomains.addr || userWithDomains.address || userWithDomains.account
   }
-  if (userWithDomains.domains.find) {
-    return userWithDomains.domains.find
+
+  if (userWithDomains.domains[preferredNameService]) {
+    return userWithDomains.domains[preferredNameService]
   }
-  return userWithDomains.addr
+
+  let nameService = NameService.flowns
+  if (preferredNameService == NameService.flowns) {
+    nameService = NameService.find
+  }
+
+  if (userWithDomains.domains[nameService]) {
+    return userWithDomains.domains[nameService]
+  }
+  return userWithDomains.addr || userWithDomains.address || userWithDomains.account
 }
 
 export const domainOfAddressesFetcher = async (funcName, addresses) => {
-  return await queryDomainOfAddresses(addresses)
+  return await queryDefaultDomainsOfAddresses(addresses)
 }
 
 export const addressOfDomainsFetcher = async (funcName, domains) => {
-  return await queryAddressOfDomains(domains)
+  return await queryAddressesOfDomains(domains)
 }
 
 export const convertURI = (uri) => {
@@ -319,25 +335,51 @@ export const getWhitelistFromAddresses = (addresses) => {
   return whitelist
 }
 
-export const filterAddresses = (rawRecordsStr) => {
+export const filterAddresses = async (rawRecordsStr) => {
   const rawRecords = rawRecordsStr.trim().split("\n").filter((r) => r != '')
 
   let addresses = {}
   let validAddresses = []
   let invalidAddresses = []
+  let candidates = []
 
   for (var i = 0; i < rawRecords.length; i++) {
     let address = rawRecords[i].trim()
-
-    try {
-      if (!isValidFlowAddress(address)) { throw "Invalid address" }
-      if (addresses[address]) { throw "Duplicate addresses" }
+      if (addresses[address]) { 
+        invalidAddresses.push(`${address}: Duplicate address`)
+        continue
+      }
       addresses[address] = true
-      validAddresses.push(address)
-    } catch (e) {
-      invalidAddresses.push(address)
+
+      if (!isValidFlowAddress(address)) { 
+        const elements = address.split(".")
+        if (elements.length == 2) {
+          // Might be domain
+          candidates.push(address)
+          continue
+        } 
+        invalidAddresses.push(`${address}: Invalid address format`)
+      } else {
+        validAddresses.push(address)
+      }
+  }
+
+  const domains = await queryAddressesOfDomains(candidates)
+  for (let i = 0; i < candidates.length; i++) {
+    const candidate = candidates[i]
+    const address = domains[candidate]
+    if (address) {
+      if (addresses[address]) {
+        invalidAddresses.push(`${candidate}(${address}): Duplicate address`)
+      } else {
+        addresses[address] = true
+        validAddresses.push(address)
+      }
+    } else {
+      invalidAddresses.push(`${candidate}: Address not found`)
     }
   }
+
   return [validAddresses, invalidAddresses]
 }
 
@@ -358,27 +400,58 @@ export const getWhitelistFromRecords = (records) => {
   return whitelist
 }
 
-export const filterRecords = (rawRecordsStr) => {
+export const filterRecords = async (rawRecordsStr) => {
   const rawRecords = rawRecordsStr.trim().split("\n").filter((r) => r != '')
 
   let addresses = {}
   let validRecords = []
+  let candidates = []
   let invalidRecords = []
 
   for (var i = 0; i < rawRecords.length; i++) {
     let rawRecord = rawRecords[i].trim()
 
-    try {
-      const [address, rawAmount] = rawRecord.split(",")
-      const amount = new Decimal(rawAmount)
-      if (!amount.isPositive() || amount.decimalPlaces() > 8) { throw "Invalid amount. Should be positive with 8 decimal places at most" }
-      if (!isValidFlowAddress(address)) { throw "Invalid address" }
-      if (addresses[address]) { throw "Duplicate addresses" }
-      addresses[address] = true
+    const [address, rawAmount] = rawRecord.split(",")
+    const amount = new Decimal(rawAmount)
+    if (!amount.isPositive() || amount.decimalPlaces() > 8) { 
+      invalidRecords.push(`${rawRecord}: Invalid amount. Should be positive with 8 decimal places at most`)
+      continue
+    }
+
+    if (addresses[address]) { 
+      invalidRecords.push(`${rawRecord}: Duplicate address`)
+      continue
+    }
+    addresses[address] = true
+
+    if (!isValidFlowAddress(address)) { 
+      const elements = address.split(".")
+      if (elements.length == 2) {
+        // Might be domain
+        candidates.push({ id: i, address: address, amount: amount, rawRecord: rawRecord})
+        continue
+      }
+      invalidRecords.push(`${rawRecord}: Invalid address format`)
+    } else {
       validRecords.push({ id: i, address: address, amount: amount, rawRecord: rawRecord })
-    } catch (e) {
-      invalidRecords.push(rawRecord)
     }
   }
+
+  const domains = await queryAddressesOfDomains(candidates.map((c) => c.address))
+  for (let i = 0; i < candidates.length; i++) {
+    const candidate = candidates[i]
+    const address = domains[candidate.address]
+    if (address) {
+      if (addresses[address]) {
+        invalidRecords.push(`${candidate.rawRecord}: duplicate address, ${candidate.address} is ${address}`)
+      } else {
+        addresses[address] = true
+        validRecords.push(candidate)
+      }
+    } else {
+      invalidRecords.push(`${candidate.rawRecord}: Address not found`)
+    }
+  }
+
   return [validRecords, invalidRecords]
 }

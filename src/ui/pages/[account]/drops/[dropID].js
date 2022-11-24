@@ -10,9 +10,27 @@ import {
   queryClaimStatus,
 } from '../../../lib/cloud-scripts'
 import Custom404 from '../../404'
+import { queryAddressesOfDomains, queryDefaultDomainsOfAddresses } from '../../../lib/scripts'
+import { isValidFlowAddress } from '../../../lib/utils'
 
 const dropFetcher = async (funcName, dropID, host) => {
-  return await queryDrop(dropID, host)
+  const drop = await queryDrop(dropID, host)
+  const hostDomains = await queryDefaultDomainsOfAddresses([host])
+  drop.host = {address: host, domains: hostDomains[host]}
+  const claimerAddresses = Object.keys(drop.claimedRecords) 
+  // TODO: what if there are a lot of claimers? Only show domain name
+  // what the claimerAddresses less than 100 now
+  if (claimerAddresses.length < 100) {
+    const domains = await queryDefaultDomainsOfAddresses(claimerAddresses)
+    const claimedRecords = {}
+    for (let [address, record] of Object.entries(drop.claimedRecords)) {
+      let r = Object.assign({}, record)
+      r.domains = domains[address]
+      claimedRecords[address] = r
+    }
+    drop.claimedRecords = claimedRecords
+  }
+  return drop
 }
 
 const claimStatusFetcher = async (funcName, dropID, host, claimer) => {
@@ -22,7 +40,25 @@ const claimStatusFetcher = async (funcName, dropID, host, claimer) => {
 export default function Drop(props) {
   const router = useRouter()
   const { account, dropID } = router.query
-  const host = account
+  const [host, setHost] = useState(null)
+
+  useEffect(() => {
+    if (account) {
+      if (isValidFlowAddress(account)) {
+        setHost(account)
+      } else {
+        queryAddressesOfDomains([account]).then((result) => {
+          if (result[account]) {
+            setHost(result[account])
+          } else {
+            // trigger 400 page
+            setHost(account)
+          }
+        }).catch(console.error)
+      }
+    }
+  }, [account])
+
   const user = props.user
 
   const [drop, setDrop] = useState(null)

@@ -1,7 +1,9 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/solid"
 import { useState } from "react"
-import { getItemsInPage } from "../../lib/utils"
+import { displayUsername, getItemsInPage } from "../../lib/utils"
 import publicConfig from "../../publicConfig"
+import { nameServiceState } from "../../lib/atoms"
+import { useRecoilState } from "recoil"
 
 const parseWinners = (raffle) => {
   let winners = []
@@ -13,9 +15,11 @@ const parseWinners = (raffle) => {
 
 export default function WinnersCard(props) {
   const { raffle } = props
-  const winners = raffle ? parseWinners(raffle) : []
+  const [nameService, ] = useRecoilState(nameServiceState)
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 10
+
+  const winners = raffle ? parseWinners(raffle) : []
 
   return (
     <div className="w-full flex flex-col">
@@ -50,7 +54,7 @@ export default function WinnersCard(props) {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              {winner.address}
+                              {displayUsername(winner, nameService)}
                             </a>
                           </td>
                           <td className="whitespace-nowrap px-3 py-3.4 text-sm text-gray-500">

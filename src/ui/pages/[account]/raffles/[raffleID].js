@@ -6,9 +6,23 @@ import { SpinnerCircular } from 'spinners-react'
 import Custom404 from '../../404'
 import { queryRaffle, queryClaimStatus } from '../../../lib/mist-scripts'
 import RafflePresenter from '../../../components/raffle/RafflePresenter'
+import { queryAddressesOfDomains, queryDefaultDomainsOfAddresses } from '../../../lib/scripts'
+import { isValidFlowAddress } from '../../../lib/utils'
 
 const raffleFetcher = async (funcName, raffleID, host) => {
-  return await queryRaffle(raffleID, host)
+  const raffle = await queryRaffle(raffleID, host)
+  const hostDomains = await queryDefaultDomainsOfAddresses([host])
+  raffle.host = {address: host, domains: hostDomains[host]}
+  const winnerAddresses = Object.keys(raffle.winners)
+  const domains = await queryDefaultDomainsOfAddresses(winnerAddresses)
+  const winners = {}
+  for (let [address, record] of Object.entries(raffle.winners)) {
+    let r = Object.assign({}, record)
+    r.domains = domains[address]
+    winners[address] = r
+  }
+  raffle.winners = winners
+  return raffle
 }
 
 const raffleClaimStatusFetcher = async (funcName, raffleID, host, claimer) => {
@@ -18,7 +32,25 @@ const raffleClaimStatusFetcher = async (funcName, raffleID, host, claimer) => {
 export default function Raffle(props) {
   const router = useRouter()
   const { account, raffleID } = router.query
-  const host = account
+  const [host, setHost] = useState(null)
+
+  useEffect(() => {
+    if (account) {
+      if (isValidFlowAddress(account)) {
+        setHost(account)
+      } else {
+        queryAddressesOfDomains([account]).then((result) => {
+          if (result[account]) {
+            setHost(result[account])
+          } else {
+            // trigger 400 page
+            setHost(account)
+          }
+        }).catch(console.error)
+      }
+    }
+  }, [account])
+
   const user = props.user
 
   const [raffle, setRaffle] = useState(null)

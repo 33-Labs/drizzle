@@ -1,11 +1,15 @@
 import { useState } from "react"
 import Link from 'next/link'
-import { convertCadenceDateTime, getItemsInPage } from '../../lib/utils'
+import { convertCadenceDateTime, displayUsername, getItemsInPage } from '../../lib/utils'
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/solid"
 import Decimal from "decimal.js"
+import { nameServiceState } from "../../lib/atoms"
+import { useRecoilState } from "recoil"
 
 export default function ClaimHistory(props) {
   const { records, user, pageAccount } = props
+
+  const [nameService, ] = useRecoilState(nameServiceState)
 
   let isCurrentUser = false
   if (user && user.addr === pageAccount) {
@@ -48,13 +52,15 @@ export default function ClaimHistory(props) {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {getItemsInPage(records, currentPage, pageSize).map((drop) => (
-                      <Link key={`${drop.dropID}-link`} href={`${drop.host}/drops/${drop.dropID}`}>
+                      <Link key={`${drop.dropID}-link`} href={`${drop.host.address}/drops/${drop.dropID}`}>
                         <tr key={drop.dropID}>
                           <td className="py-4 px-3 text-sm sm:pl-6">
                             <label className="block font-medium text-gray-900 break-words max-w-[300px] min-w-[60px]">{drop.name}</label>
                           </td>
                           <td className="py-4 px-3 text-sm">
-                            <label className="block font-medium text-gray-500 break-words max-w-[300px] min-w-[60px]">{drop.host}</label>
+                            <label className="block font-medium text-gray-500 break-words max-w-[300px] min-w-[60px]">
+                              {displayUsername(drop.host, nameService)}
+                            </label>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <div className="text-gray-500">

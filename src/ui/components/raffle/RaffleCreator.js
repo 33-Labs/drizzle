@@ -331,7 +331,7 @@ export default function RaffleCreator(props) {
               banner={banner}
               name={(!name || name.length == 0) ? NamePlaceholder : name}
               url={url}
-              host={(props.user && props.user.addr) ? props.user.addr : HostPlaceholder}
+              host={props.user || HostPlaceholder}
               createdAt={CreatedAtPlaceholder}
               description={description ?? DescriptionPlaceholder}
               nft={selectedNFT}

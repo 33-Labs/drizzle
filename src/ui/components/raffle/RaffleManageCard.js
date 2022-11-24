@@ -58,8 +58,8 @@ export default function RaffleManageCard(props) {
                   setTransactionStatus
                 )
 
-                mutate(["raffleClaimStatusFetcher", raffle.raffleID, manager, manager])
-                mutate(["raffleFetcher", raffle.raffleID, manager])
+                mutate(["raffleClaimStatusFetcher", raffle.raffleID, manager.address, manager.address])
+                mutate(["raffleFetcher", raffle.raffleID, manager.address])
               }
             }}
           >
@@ -80,8 +80,8 @@ export default function RaffleManageCard(props) {
                   setTransactionStatus
                 )
 
-                mutate(["raffleClaimStatusFetcher", raffle.raffleID, manager, manager])
-                mutate(["raffleFetcher", raffle.raffleID, manager])
+                mutate(["raffleClaimStatusFetcher", raffle.raffleID, manager.address, manager.address])
+                mutate(["raffleFetcher", raffle.raffleID, manager.address])
               }
             }}>
             BATCH DRAW
@@ -106,8 +106,8 @@ export default function RaffleManageCard(props) {
                   setTransactionStatus
                 )
 
-                mutate(["raffleClaimStatusFetcher", raffle.raffleID, manager, manager])
-                mutate(["raffleFetcher", raffle.raffleID, manager])
+                mutate(["raffleClaimStatusFetcher", raffle.raffleID, manager.address, manager.address])
+                mutate(["raffleFetcher", raffle.raffleID, manager.address])
               }
             }}
           >
@@ -135,8 +135,8 @@ export default function RaffleManageCard(props) {
                       setTransactionStatus
                     )
 
-                    mutate(["raffleClaimStatusFetcher", raffle.raffleID, manager, manager])
-                    mutate(["raffleFetcher", raffle.raffleID, manager])
+                    mutate(["raffleClaimStatusFetcher", raffle.raffleID, manager.address, manager.address])
+                    mutate(["raffleFetcher", raffle.raffleID, manager.address])
                   }
                 }
               })
@@ -167,7 +167,7 @@ export default function RaffleManageCard(props) {
                       setTransactionStatus
                     )
 
-                    mutate(["raffleFetcher", raffle.raffleID, manager])
+                    mutate(["raffleFetcher", raffle.raffleID, manager.address])
                   }
                 }
               })

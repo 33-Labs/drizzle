@@ -5,11 +5,12 @@ import publicConfig from "../../publicConfig"
 import { useRecoilState } from "recoil"
 import {
   transactionInProgressState,
-  transactionStatusState
+  transactionStatusState,
+  nameServiceState
 } from "../../lib/atoms"
 
 import { ExternalLinkIcon } from "@heroicons/react/outline"
-import { convertCadenceDateTime } from "../../lib/utils"
+import { convertCadenceDateTime, displayUsername } from "../../lib/utils"
 import ShareCard from "../common/ShareCard"
 import ClaimCard from "./ClaimCard"
 import CriteriaCard from "../common/CriteriaCard"
@@ -51,7 +52,7 @@ const MemoizeName = React.memo(({ name, url }) => {
 })
 MemoizeName.displayName = "MemoizeName"
 
-const MemoizeBasicInfo = React.memo(({ host, createdAt, token, eligibilityMode, packetMode, drop }) => {
+const MemoizeBasicInfo = React.memo(({ nameService, host, createdAt, token, eligibilityMode, packetMode, drop }) => {
   return (
     <div className="w-full flex flex-col -mt-3">
       <TagsCard info={{
@@ -66,10 +67,11 @@ const MemoizeBasicInfo = React.memo(({ host, createdAt, token, eligibilityMode, 
         {"Created by "}
         <span>
           <a
-            href={`${publicConfig.appURL}/${host}`}
+            href={`${publicConfig.appURL}/${typeof host == "string" ? host : host.address}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-black underline decoration-drizzle-green decoration-2">{host}
+            className="text-black underline decoration-drizzle-green decoration-2">
+              {typeof host == "string" ? host : displayUsername(host, nameService)}
           </a>
         </span>
       </label>
@@ -95,6 +97,7 @@ MemoizeDescription.displayName = "MemoizeDescription"
 export default function DropCard(props) {
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
+  const [nameService, ] = useRecoilState(nameServiceState)
 
   const isPreview = props.isPreview == true
   const setShowClaimedModal = props.setShowClaimedModal
@@ -125,7 +128,7 @@ export default function DropCard(props) {
         <MemoizeBanner banner={banner || "/banner.png"} />
         <div className="flex flex-col p-5 sm:p-8 gap-y-5">
           <MemoizeName name={name} url={url} />
-          <MemoizeBasicInfo
+          <MemoizeBasicInfo nameService={nameService}
             host={host} createdAt={createdAt} token={token} eligibilityMode={eligibilityMode} packetMode={packetMode} drop={drop}
           />
           {(startAt || endAt) ?
@@ -152,7 +155,7 @@ export default function DropCard(props) {
         />
         {
           dropID && host ?
-            <ShareCard url={`${publicConfig.appURL}/${host}/drops/${dropID}`} />
+            <ShareCard url={`${publicConfig.appURL}/${host.address}/drops/${dropID}`} />
             : <ShareCard disabled={true} url={`${publicConfig.appURL}/create/ft_drop`} />
         }
       </div>

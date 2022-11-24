@@ -57,14 +57,14 @@ export default function WhitelistInput(props) {
                 "h-12 w-40 px-6 text-base rounded-2xl font-medium shadow-md text-black"
               )}
               disabled={transactionInProgress}
-              onClick={() => {
+              onClick={async () => {
                 if (rawRecordsStr.trim().length == 0) {
                   setShowBasicNotification(true)
                   setBasicNotificationContent({ type: "exclamation", title: "Invalid Params", detail: "NO addresses provided" })
                   return
                 }
 
-                const [valids, invalids] = filterAddresses(rawRecordsStr.trim())
+                const [valids, invalids] = await filterAddresses(rawRecordsStr.trim())
                 setValidRecords(valids)
                 setInvalidRecords(invalids)
                 const whitelist = getWhitelistFromAddresses(valids)

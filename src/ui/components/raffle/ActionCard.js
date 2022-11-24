@@ -221,7 +221,7 @@ export default function ActionCard(props) {
 
             // Registering
             if (claimStatus.availability.status.rawValue == "2") {
-              const res = await register(raffle.raffleID, host,
+              const res = await register(raffle.raffleID, host.address,
                 setTransactionInProgress,
                 setTransactionStatus)
 
@@ -232,7 +232,7 @@ export default function ActionCard(props) {
                 }
               } 
             } else if (claimStatus.availability.status.rawValue == "3" || claimStatus.availability.status.rawValue == "4") {
-              const res = await claim(raffle.raffleID, host, raffle.nftInfo,
+              const res = await claim(raffle.raffleID, host.address, raffle.nftInfo,
                 setTransactionInProgress,
                 setTransactionStatus)
 
@@ -245,8 +245,8 @@ export default function ActionCard(props) {
               }  
             }
 
-            mutate(["raffleClaimStatusFetcher", raffle.raffleID, host, user && user.addr])
-            mutate(["raffleFetcher", raffle.raffleID, host])
+            mutate(["raffleClaimStatusFetcher", raffle.raffleID, host.address, user && user.addr])
+            mutate(["raffleFetcher", raffle.raffleID, host.address])
           }}
         >
           {title}

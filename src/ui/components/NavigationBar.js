@@ -12,7 +12,8 @@ import { displayUsername } from "../lib/utils.js"
 import { useRecoilState } from "recoil"
 import {
   showBasicNotificationState,
-  basicNotificationContentState
+  basicNotificationContentState,
+  nameServiceState
 } from "../lib/atoms.js"
 
 export default function NavigationBar(props) {
@@ -20,6 +21,7 @@ export default function NavigationBar(props) {
   const router = useRouter()
   const [, setShowBasicNotification] = useRecoilState(showBasicNotificationState)
   const [, setBasicNotificationContent] = useRecoilState(basicNotificationContentState)
+  const [nameService, ] = useRecoilState(nameServiceState)
 
   useEffect(() => {
     window.addEventListener("message", async (d) => {
@@ -46,7 +48,7 @@ export default function NavigationBar(props) {
             }
           }}
         >
-          {user && user.addr}
+          {user && displayUsername(user, nameService)}
         </button>
         <button
           type="button"
