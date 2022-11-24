@@ -71,7 +71,7 @@ export default function NavigationBar(props) {
           className="h-12 px-6 text-base rounded-2xl font-flow font-semibold shadow-sm text-black bg-drizzle-green hover:bg-drizzle-green-dark"
           onClick={fcl.logIn}
         >
-          <label className="hidden sm:block">Connect Wallet</label>
+          <label className="hidden sm:block">Connect YOUR Wallet</label>
           <label className="block sm:hidden">Connect</label>
         </button>
       </div>
