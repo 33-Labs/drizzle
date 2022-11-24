@@ -361,7 +361,7 @@ export default function DropCreator(props) {
             banner={banner}
             name={(!name || name.length == 0) ? NamePlaceholder : name}
             url={url}
-            host={props.user || HostPlaceholder}
+            host={props.user.addr || HostPlaceholder}
             createdAt={CreatedAtPlaceholder}
             description={description ?? DescriptionPlaceholder}
             token={token || TokenPlaceholder}
