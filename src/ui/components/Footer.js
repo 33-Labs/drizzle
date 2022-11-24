@@ -8,17 +8,19 @@ export default function Footer() {
   const [nameService, setNameService] = useRecoilState(nameServiceState)
 
   useEffect(() => {
+    const _nameService = localStorage.getItem('PreferredNameService')
+    if (_nameService) {
+      setNameService(_nameService)
+    } else {
+      setNameService(NameService.find)
+    }
+  }, [])
+
+  useEffect(() => {
     if (nameService != null) {
       localStorage.setItem('PreferredNameService', nameService);
     }
   }, [nameService]);
-
-  useEffect(() => {
-    const _nameService = localStorage.getItem('PreferredNameService')
-    if (_nameService) {
-      setNameService(_nameService)
-    }
-  }, [])
 
   return (
     <footer className="m-auto mt-60 max-w-[920px] flex flex-1 justify-center items-center py-8 border-t border-solid box-border">
