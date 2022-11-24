@@ -32,4 +32,5 @@ yarn-error.log*
 .vercel
 
 flow.secret.json
-drizzle.private.json
+*.private.json
+*.bak
