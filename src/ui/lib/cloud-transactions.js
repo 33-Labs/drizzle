@@ -18,7 +18,6 @@ export const createDrop = async (
   withIdenticalDistributor, capacity, amountPerEntry,
   withRandomDistributor, totalRandomAmount,
   withFloats, threshold, eventIDs, eventHosts,
-  withFloatGroup, groupName, groupHost,
   setTransactionInProgress,
   setTransactionStatus
 ) => {
@@ -32,8 +31,7 @@ export const createDrop = async (
       withWhitelist, whitelist,
       withIdenticalDistributor, capacity, amountPerEntry,
       withRandomDistributor, totalRandomAmount,
-      withFloats, threshold, eventIDs, eventHosts,
-      withFloatGroup, groupName, groupHost
+      withFloats, threshold, eventIDs, eventHosts
     )
   }
 
@@ -133,7 +131,6 @@ const doCreateDrop = async (
   withIdenticalDistributor, capacity, amountPerEntry,
   withRandomDistributor, totalRandomAmount,
   withFloats, threshold, eventIDs, eventHosts,
-  withFloatGroup, groupName, groupHost
 ) => {
   const tokenIssuer = token.address
   const tokenContractName = token.contractName
@@ -182,10 +179,6 @@ const doCreateDrop = async (
       threshold: UInt32?,
       eventIDs: [UInt64],
       eventHosts: [Address],
-  
-      withFloatGroup: Bool,
-      floatGroupName: String?,
-      floatGroupHost: Address?
     ) {
       let dropCollection: &Cloud.DropCollection
       let vault: &FungibleToken.Vault
@@ -261,16 +254,6 @@ const doCreateDrop = async (
                   mintedBefore: getCurrentBlock().timestamp,
                   threshold: threshold!
               )
-          } else if withFloatGroup {
-              let groupData = EligibilityVerifiers.FLOATGroupData(
-                  host: floatGroupHost!,
-                  name: floatGroupName!
-              )
-              verifier = EligibilityVerifiers.FLOATGroupV2(
-                  group: groupData,
-                  mintedBefore: getCurrentBlock().timestamp,
-                  threshold: threshold!
-              )
           } else {
               panic("invalid verifier")
           }
@@ -327,10 +310,7 @@ const doCreateDrop = async (
         arg(withFloats, t.Bool),
         arg(threshold, t.Optional(t.UInt32)),
         arg(eventIDs, t.Array(t.UInt64)),
-        arg(eventHosts, t.Array(t.Address)),
-        arg(withFloatGroup, t.Bool),
-        arg(groupName, t.Optional(t.String)),
-        arg(groupHost, t.Optional(t.Address))
+        arg(eventHosts, t.Array(t.Address))
       ]
 
       return args

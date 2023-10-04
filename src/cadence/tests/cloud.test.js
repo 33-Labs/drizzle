@@ -798,7 +798,7 @@ describe("Drop - Identical Packet", () => {
   })
 })
 
-describe.only("Drop - Random Packet", () => {
+describe("Drop - Random Packet", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080

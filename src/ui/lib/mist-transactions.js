@@ -28,7 +28,6 @@ export const createRaffle = async (
   whitelist,
   // Floats
   withFloats, threshold, eventIDs, eventHosts,
-  withFloatGroup, groupName, groupHost,
   setTransactionInProgress,
   setTransactionStatus
 ) => {
@@ -49,7 +48,6 @@ export const createRaffle = async (
       withWhitelist,
       whitelist,
       withFloats, threshold, eventIDs, eventHosts,
-      withFloatGroup, groupName, groupHost
     )
   }
 
@@ -71,8 +69,7 @@ const doCreateRaffle = async (
   rewardTokenIDs,
   withWhitelist,
   whitelist,
-  withFloats, threshold, eventIDs, eventHosts,
-  withFloatGroup, groupName, groupHost
+  withFloats, threshold, eventIDs, eventHosts
 ) => {
   const code = `
   import Mist from 0xMist
@@ -110,10 +107,6 @@ const doCreateRaffle = async (
       threshold: UInt32?,
       eventIDs: [UInt64],
       eventHosts: [Address],
-  
-      withFloatGroup: Bool,
-      floatGroupName: String?,
-      floatGroupHost: Address?
   ) {
       let raffleCollection: &Mist.RaffleCollection
       let nftCollectionRef: &${nftContractName}.Collection
@@ -192,16 +185,6 @@ const doCreateRaffle = async (
                   mintedBefore: getCurrentBlock().timestamp,
                   threshold: threshold!
               )
-          } else if withFloatGroup {
-              let groupData = EligibilityVerifiers.FLOATGroupData(
-                  host: floatGroupHost!,
-                  name: floatGroupName!
-              )
-              verifier = EligibilityVerifiers.FLOATGroupV2(
-                  group: groupData,
-                  mintedBefore: getCurrentBlock().timestamp,
-                  threshold: threshold!
-              )
           } else {
               panic("invalid verifier")
           }
@@ -268,10 +251,7 @@ const doCreateRaffle = async (
         arg(withFloats, t.Bool),
         arg(threshold, t.Optional(t.UInt32)),
         arg(eventIDs, t.Array(t.UInt64)),
-        arg(eventHosts, t.Array(t.Address)),
-        arg(withFloatGroup, t.Bool),
-        arg(groupName, t.Optional(t.String)),
-        arg(groupHost, t.Optional(t.Address))
+        arg(eventHosts, t.Array(t.Address))
       ]
 
       return args
