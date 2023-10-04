@@ -5,22 +5,23 @@
     "main": "test.js",
     "scripts": {
       "test": "jest --runInBand",
-      "t cloud": "jest cloud.test.js",
-      "t mist": "jest mist.test.js"
+      "cloud": "jest cloud.test.js",
+      "mist": "jest mist.test.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
-      "@babel/core": "^7.17.5",
-      "@babel/preset-env": "^7.16.11",
-      "babel-jest": "^27.5.1",
-      "flow-js-testing": "^0.2.3-alpha.4",
-      "jest": "^27.5.1",
-      "jest-environment-node": "^27.5.1"
+        "@babel/core": "^7.17.5",
+        "@babel/preset-env": "^7.16.11",
+        "babel-jest": "^27.5.1",
+        "jest": "^27.5.1",
+        "jest-environment-node": "^27.5.1"
     },
     "dependencies": {
-      "path": "^0.12.7"
+        "@onflow/fcl": "^1.6.0",
+        "@onflow/flow-js-testing": "^0.3.0-alpha.17",
+        "decimal.js": "^10.4.2"
     }
 }
   

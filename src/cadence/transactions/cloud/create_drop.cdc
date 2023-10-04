@@ -37,10 +37,6 @@ transaction(
     threshold: UInt32?,
     eventIDs: [UInt64],
     eventHosts: [Address],
-
-    withFloatGroup: Bool,
-    floatGroupName: String?,
-    floatGroupHost: Address?
 ) {
     let dropCollection: &Cloud.DropCollection
     let vault: &FungibleToken.Vault
@@ -113,16 +109,6 @@ transaction(
             }
             verifier = EligibilityVerifiers.FLOATsV2(
                 events: events,
-                mintedBefore: getCurrentBlock().timestamp,
-                threshold: threshold!
-            )
-        } else if withFloatGroup {
-            let groupData = EligibilityVerifiers.FLOATGroupData(
-                host: floatGroupHost!,
-                name: floatGroupName!
-            )
-            verifier = EligibilityVerifiers.FLOATGroupV2(
-                group: groupData,
                 mintedBefore: getCurrentBlock().timestamp,
                 threshold: threshold!
             )

@@ -69,23 +69,6 @@ const getCriteriaLabelPreview = (
     )
   }
 
-  if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-    return (
-      <label className="w-full font-flow font-medium text-sm break-words">
-        Own <span className="font-bold text-drizzle-green">{threshold} </span>
-        FLOAT(s) in Group&nbsp;<span className="font-bold">
-          <a
-            href={`${publicConfig.floatURL}/${floatGroup.groupHost}/group/${floatGroup.groupName}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-drizzle-green">
-            {floatGroup.groupName}
-          </a>
-        </span>&nbsp;<span className="font-bold">MINTED BEFORE</span> <span className="font-bold text-drizzle-green">{new Date().toLocaleString()}</span>
-      </label>
-    )
-  }
-
   if (eligibilityMode.key === EligibilityModeFLOAT.key) {
     const eventID = floatEventPairs[0].eventID
     const eventHost = floatEventPairs[0].eventHost

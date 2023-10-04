@@ -9,9 +9,6 @@ const getReviewerTitlePreview = (eligibilityMode) => {
     eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
     return "Whitelist"
   }
-  if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-    return "FLOAT Group"
-  }
   if (eligibilityMode.key === EligibilityModeFLOAT.key) {
     return "FLOAT"
   }

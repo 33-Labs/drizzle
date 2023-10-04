@@ -1,29 +1,33 @@
-import FLOAT from "../../contracts/float/FLOAT.cdc"
-import FLOATVerifiers from "../../contracts/float/FLOATVerifiers.cdc"
-import NonFungibleToken from "../../contracts/core/NonFungibleToken.cdc"
-import MetadataViews from "../../contracts/core/MetadataViews.cdc"
-import GrantedAccountAccess from "../../contracts/float//GrantedAccountAccess.cdc"
+import FLOAT from "../FLOAT.cdc"
+import FLOATVerifiers from "../FLOATVerifiers.cdc"
+import NonFungibleToken from "../utility/NonFungibleToken.cdc"
+import MetadataViews from "../utility/MetadataViews.cdc"
+import FlowToken from "../utility/FlowToken.cdc"
 
 transaction(
-  forHost: Address, 
-  claimable: Bool, 
   name: String, 
   description: String, 
-  image: String, 
   url: String, 
-  transferrable: Bool, 
-  timelock: Bool, 
+  logo: String,
+  backImage: String,
+  certificateImage: String,
+  transferrable: Bool,
+  claimable: Bool, 
+  eventType: String,
+  certificateType: String,
+  timelockToggle: Bool, 
   dateStart: UFix64, 
   timePeriod: UFix64, 
-  secret: Bool, 
+  secretToggle: Bool, 
   secretPK: String, 
-  limited: Bool, 
+  limitedToggle: Bool, 
   capacity: UInt64, 
-  initialGroups: [String], 
-  flowTokenPurchase: Bool, 
+  flowTokenPurchaseToggle: Bool, 
   flowTokenCost: UFix64,
   minimumBalanceToggle: Bool,
-  minimumBalance: UFix64
+  minimumBalance: UFix64,
+  visibilityMode: String, // "certificate" or "picture"
+  allowMultipleClaim: Bool
 ) {
 
   let FLOATEvents: &FLOAT.FLOATEvents
@@ -31,6 +35,7 @@ transaction(
   prepare(acct: AuthAccount) {
     // SETUP COLLECTION
     if acct.borrow<&FLOAT.Collection>(from: FLOAT.FLOATCollectionStoragePath) == nil {
+        acct.unlink(FLOAT.FLOATCollectionPublicPath)
         acct.save(<- FLOAT.createEmptyCollection(), to: FLOAT.FLOATCollectionStoragePath)
         acct.link<&FLOAT.Collection{NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection, FLOAT.CollectionPublic}>
                 (FLOAT.FLOATCollectionPublicPath, target: FLOAT.FLOATCollectionStoragePath)
@@ -38,26 +43,14 @@ transaction(
 
     // SETUP FLOATEVENTS
     if acct.borrow<&FLOAT.FLOATEvents>(from: FLOAT.FLOATEventsStoragePath) == nil {
+      acct.unlink(FLOAT.FLOATEventsPublicPath)
       acct.save(<- FLOAT.createEmptyFLOATEventCollection(), to: FLOAT.FLOATEventsStoragePath)
       acct.link<&FLOAT.FLOATEvents{FLOAT.FLOATEventsPublic, MetadataViews.ResolverCollection}>
                 (FLOAT.FLOATEventsPublicPath, target: FLOAT.FLOATEventsStoragePath)
     }
 
-    // SETUP SHARED MINTING
-    if acct.borrow<&GrantedAccountAccess.Info>(from: GrantedAccountAccess.InfoStoragePath) == nil {
-        acct.save(<- GrantedAccountAccess.createInfo(), to: GrantedAccountAccess.InfoStoragePath)
-        acct.link<&GrantedAccountAccess.Info{GrantedAccountAccess.InfoPublic}>
-                (GrantedAccountAccess.InfoPublicPath, target: GrantedAccountAccess.InfoStoragePath)
-    }
-    
-    if forHost != acct.address {
-      let FLOATEvents = acct.borrow<&FLOAT.FLOATEvents>(from: FLOAT.FLOATEventsStoragePath)
-                        ?? panic("Could not borrow the FLOATEvents from the signer.")
-      self.FLOATEvents = FLOATEvents.borrowSharedRef(fromHost: forHost)
-    } else {
-      self.FLOATEvents = acct.borrow<&FLOAT.FLOATEvents>(from: FLOAT.FLOATEventsStoragePath)
-                        ?? panic("Could not borrow the FLOATEvents from the signer.")
-    }
+    self.FLOATEvents = acct.borrow<&FLOAT.FLOATEvents>(from: FLOAT.FLOATEventsStoragePath)
+                      ?? panic("Could not borrow the FLOATEvents from the signer.")
   }
 
   execute {
@@ -65,16 +58,17 @@ transaction(
     var SecretV2: FLOATVerifiers.SecretV2? = nil
     var Limited: FLOATVerifiers.Limited? = nil
     var MinimumBalance: FLOATVerifiers.MinimumBalance? = nil
+
     var verifiers: [{FLOAT.IVerifier}] = []
-    if timelock {
+    if timelockToggle {
       Timelock = FLOATVerifiers.Timelock(_dateStart: dateStart, _timePeriod: timePeriod)
       verifiers.append(Timelock!)
     }
-    if secret {
+    if secretToggle {
       SecretV2 = FLOATVerifiers.SecretV2(_publicKey: secretPK)
       verifiers.append(SecretV2!)
     }
-    if limited {
+    if limitedToggle {
       Limited = FLOATVerifiers.Limited(_capacity: capacity)
       verifiers.append(Limited!)
     }
@@ -82,12 +76,30 @@ transaction(
       MinimumBalance = FLOATVerifiers.MinimumBalance(_amount: minimumBalance)
       verifiers.append(MinimumBalance!)
     }
+
     let extraMetadata: {String: AnyStruct} = {}
-    if flowTokenPurchase {
-      let tokenInfo = FLOAT.TokenInfo(_path: /public/flowTokenReceiver, _price: flowTokenCost)
-      extraMetadata["prices"] = {"A.1654653399040a61.FlowToken.Vault": tokenInfo}
+    if flowTokenPurchaseToggle {
+      let tokenInfo: FLOAT.TokenInfo = FLOAT.TokenInfo(_path: /public/flowTokenReceiver, _price: flowTokenCost)
+      let flowTokenVaultIdentifier: String = Type<@FlowToken.Vault>().identifier
+      extraMetadata["prices"] = {flowTokenVaultIdentifier: tokenInfo}
     }
-    self.FLOATEvents.createEvent(claimable: claimable, description: description, image: image, name: name, transferrable: transferrable, url: url, verifiers: verifiers, extraMetadata, initialGroups: initialGroups)
+    extraMetadata["backImage"] = backImage
+    extraMetadata["eventType"] = eventType
+    extraMetadata["certificateImage"] = certificateImage
+
+    self.FLOATEvents.createEvent(
+      claimable: claimable, 
+      description: description, 
+      image: logo, 
+      name: name, 
+      transferrable: transferrable, 
+      url: url, 
+      verifiers: verifiers, 
+      allowMultipleClaim: allowMultipleClaim,
+      certificateType: certificateType,
+      visibilityMode: visibilityMode,
+      extraMetadata: extraMetadata
+    )
     log("Started a new event for host.")
   }
-}  
+}

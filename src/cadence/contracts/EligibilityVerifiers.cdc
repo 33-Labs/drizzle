@@ -138,6 +138,7 @@ pub contract EligibilityVerifiers {
         }
     }
 
+    // Deprecated for FLOAT v2 removed Group
     pub struct FLOATGroupV2: IEligibilityVerifier, INFTRecorder {
         pub let group: FLOATGroupData
         pub let threshold: UInt32
@@ -164,49 +165,49 @@ pub contract EligibilityVerifiers {
         }
 
         pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResultV2 {
-            let floatEventCollection = getAccount(self.group.host)
-                .getCapability(FLOAT.FLOATEventsPublicPath)
-                .borrow<&FLOAT.FLOATEvents{FLOAT.FLOATEventsPublic}>()
-                ?? panic("Could not borrow the FLOAT Events Collection from the account.")
+            // let floatEventCollection = getAccount(self.group.host)
+            //     .getCapability(FLOAT.FLOATEventsPublicPath)
+            //     .borrow<&FLOAT.FLOATEvents{FLOAT.FLOATEventsPublic}>()
+            //     ?? panic("Could not borrow the FLOAT Events Collection from the account.")
             
-            let group = floatEventCollection.getGroup(groupName: self.group.name) 
-                ?? panic("This group doesn't exist.")
-            let eventIDs = group.getEvents()
+            // let group = floatEventCollection.getGroup(groupName: self.group.name) 
+            //     ?? panic("This group doesn't exist.")
+            // let eventIDs = group.getEvents()
 
-            let floatCollection = getAccount(account)
-                .getCapability(FLOAT.FLOATCollectionPublicPath)
-                .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
+            // let floatCollection = getAccount(account)
+            //     .getCapability(FLOAT.FLOATCollectionPublicPath)
+            //     .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
 
-            if floatCollection == nil {
-                return VerifyResultV2(isEligible: false, usedNFTs: [], extraData: {})
-            } 
+            // if floatCollection == nil {
+            //     return VerifyResultV2(isEligible: false, usedNFTs: [], extraData: {})
+            // } 
 
-            let validFLOATs: [UInt64] = []
-            // What if some one have several FLOATs of one event in the group?
-            // It should not pass the verification
+            // let validFLOATs: [UInt64] = []
+            // // What if some one have several FLOATs of one event in the group?
+            // // It should not pass the verification
 
-            // EventID: FloatID
-            let eventFLOAT: {UInt64: UInt64} = {}
-            for eventID in eventIDs {
-                let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: eventID)
-                for floatID in ownedIDs {
-                    if eventFLOAT[eventID] != nil {
-                        break
-                    }
+            // // EventID: FloatID
+            // let eventFLOAT: {UInt64: UInt64} = {}
+            // for eventID in eventIDs {
+            //     let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: eventID)
+            //     for floatID in ownedIDs {
+            //         if eventFLOAT[eventID] != nil {
+            //             break
+            //         }
 
-                    if self.usedNFTs[floatID] == nil {
-                        if let float = floatCollection!.borrowFLOAT(id: floatID) {
-                            if float.dateReceived <= self.mintedBefore {
-                                validFLOATs.append(floatID)
-                                eventFLOAT.insert(key: eventID, floatID)
-                                if UInt32(eventFLOAT.keys.length) >= self.threshold {
-                                    return VerifyResultV2(isEligible: true, usedNFTs: validFLOATs, extraData: {})
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            //         if self.usedNFTs[floatID] == nil {
+            //             if let float = floatCollection!.borrowFLOAT(id: floatID) {
+            //                 if float.dateReceived <= self.mintedBefore {
+            //                     validFLOATs.append(floatID)
+            //                     eventFLOAT.insert(key: eventID, floatID)
+            //                     if UInt32(eventFLOAT.keys.length) >= self.threshold {
+            //                         return VerifyResultV2(isEligible: true, usedNFTs: validFLOATs, extraData: {})
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
             return VerifyResultV2(isEligible: false, usedNFTs: [], extraData: {})
         }
 
@@ -270,37 +271,37 @@ pub contract EligibilityVerifiers {
         }
 
         pub fun verify(account: Address, params: {String: AnyStruct}): VerifyResultV2 {
-            let floatEventCollection = getAccount(self.group.host)
-                .getCapability(FLOAT.FLOATEventsPublicPath)
-                .borrow<&FLOAT.FLOATEvents{FLOAT.FLOATEventsPublic}>()
-                ?? panic("Could not borrow the FLOAT Events Collection from the account.")
+            // let floatEventCollection = getAccount(self.group.host)
+            //     .getCapability(FLOAT.FLOATEventsPublicPath)
+            //     .borrow<&FLOAT.FLOATEvents{FLOAT.FLOATEventsPublic}>()
+            //     ?? panic("Could not borrow the FLOAT Events Collection from the account.")
             
-            let group = floatEventCollection.getGroup(groupName: self.group.name) 
-                ?? panic("This group doesn't exist.")
-            let eventIDs = group.getEvents()
+            // let group = floatEventCollection.getGroup(groupName: self.group.name) 
+            //     ?? panic("This group doesn't exist.")
+            // let eventIDs = group.getEvents()
 
-            let floatCollection = getAccount(account)
-                .getCapability(FLOAT.FLOATCollectionPublicPath)
-                .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
+            // let floatCollection = getAccount(account)
+            //     .getCapability(FLOAT.FLOATCollectionPublicPath)
+            //     .borrow<&FLOAT.Collection{FLOAT.CollectionPublic}>()
 
-            if floatCollection == nil {
-                return VerifyResultV2(isEligible: false, usedNFTs: [], extraData: {})
-            } 
+            // if floatCollection == nil {
+            //     return VerifyResultV2(isEligible: false, usedNFTs: [], extraData: {})
+            // } 
 
-            var validCount: UInt32 = 0
-            for eventID in eventIDs {
-                let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: eventID)
-                for ownedEventID in ownedIDs {
-                    if let float = floatCollection!.borrowFLOAT(id: ownedEventID) {
-                        if float.dateReceived <= self.receivedBefore {
-                            validCount = validCount + 1
-                            if validCount >= self.threshold {
-                                return VerifyResultV2(isEligible: true, usedNFTs: [], extraData: {})
-                            }
-                        }
-                    }
-                }
-            }
+            // var validCount: UInt32 = 0
+            // for eventID in eventIDs {
+            //     let ownedIDs = floatCollection!.ownedIdsFromEvent(eventId: eventID)
+            //     for ownedEventID in ownedIDs {
+            //         if let float = floatCollection!.borrowFLOAT(id: ownedEventID) {
+            //             if float.dateReceived <= self.receivedBefore {
+            //                 validCount = validCount + 1
+            //                 if validCount >= self.threshold {
+            //                     return VerifyResultV2(isEligible: true, usedNFTs: [], extraData: {})
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
             return VerifyResultV2(isEligible: false, usedNFTs: [], extraData: {})
         }
     }

@@ -6,7 +6,7 @@ import {
   shallPass,
   shallResolve,
   mintFlow
-} from "flow-js-testing"
+} from "@onflow/flow-js-testing";
 
 export const getCloudAdmin = async () => getAccountAddress("CloudAdmin")
 export const getMistAdmin = async () => getAccountAddress("MistAdmin")
@@ -17,12 +17,12 @@ export const deployCoreContracts = async (deployer) => {
   await deployByName(Deployer, "core/NonFungibleToken")
   await deployByName(Deployer, "core/MetadataViews")
   await deployByName(Deployer, "core/FUSD")
+  await deployByName(Deployer, "find/FindViews")
 }
 
 export const deployFLOATContracts = async (deployer) => {
   const Deployer = deployer
   await mintFlow(Deployer, 1000.0)
-  await deployByName(Deployer, "float/GrantedAccountAccess")
   await deployByName(Deployer, "float/FLOAT")
   await deployByName(Deployer, "float/FLOATVerifiers")
 }

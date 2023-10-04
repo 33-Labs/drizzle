@@ -18,9 +18,9 @@ transaction(id: UInt64, recipient: Address) {
   pre {
     self.Collection.borrowFLOAT(id: id) != nil:
       "You do not own this FLOAT."
-    self.Collection.borrowFLOAT(id: id)!.getEventMetadata() != nil:
+    self.Collection.borrowFLOAT(id: id)!.getEventRef() != nil:
       "Could not borrow the public FLOAT Event data."
-    self.Collection.borrowFLOAT(id: id)!.getEventMetadata()!.transferrable:
+    self.Collection.borrowFLOAT(id: id)!.getEventRef()!.transferrable:
       "This FLOAT is not giftable on the FLOAT platform."
   }
 

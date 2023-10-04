@@ -162,12 +162,6 @@ export default function RaffleCreator(props) {
   }
 
   const checkEligibilityParams = () => {
-    if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-      return EligibilityModeFLOATGroup.checkRaffleParams(
-        floatEvents, threshold
-      )
-    }
-
     if (eligibilityMode.key === EligibilityModeFLOAT.key) {
       return EligibilityModeFLOAT.checkRaffleParams(
         floatEvents, threshold
@@ -236,10 +230,7 @@ export default function RaffleCreator(props) {
       withFloats: false,
       threshold: null,
       eventIDs: [],
-      eventHosts: [],
-      withFloatGroup: false,
-      floatGroupName: null,
-      floatGroupHost: null
+      eventHosts: []
     }
 
     if (eligibilityMode.key === EligibilityModeWhitelist.key) {
@@ -256,12 +247,6 @@ export default function RaffleCreator(props) {
       params.threshold = `${eventIDs.length}`
       params.eventIDs = eventIDs
       params.eventHosts = eventHosts
-
-    } else if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-      params.withFloatGroup = true
-      params.threshold = threshold
-      params.floatGroupName = floatGroup.groupName
-      params.floatGroupHost = floatGroup.groupHost
     }
 
     const args = Object.values(params)
@@ -293,7 +278,7 @@ export default function RaffleCreator(props) {
       )
     }
 
-    if (mode.key === EligibilityModeFLOAT.key || mode.key === EligibilityModeFLOATGroup.key) {
+    if (mode.key === EligibilityModeFLOAT.key) {
       return (
         <FloatReviewer
           floatMode={mode.detail}

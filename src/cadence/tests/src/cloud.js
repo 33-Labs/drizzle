@@ -3,7 +3,7 @@ import {
   mintFlow,
   sendTransaction,
   executeScript
-} from "flow-js-testing"
+} from "@onflow/flow-js-testing";
 import { 
   checkFUSDBalance,
   getCloudAdmin,
@@ -34,17 +34,13 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
     withIdenticalDistributor, capacity, amountPerEntry,
     withRandomDistributor, totalRandomAmount,
     withFloats, threshold, eventIDs, eventHosts,
-    withFloatGroup, floatGroupName, floatGroupHost,
     returnErr} = overrides
 
-  const needFloats = withFloats || withFloatGroup
+  const needFloats = withFloats
   const creator = await getAccountAddress("FLOATCreator")
   const defaultEventIDs = needFloats ? await FLOAT_getEventIDs(creator) : []
   const defaultEventHosts = needFloats ? [creator, creator, creator] : []
 
-  const defaultFloatGroupName = "GTEST"
-  const defaultFloatGroupHost = creator
-  
   const args = {
     name: "TEST", 
     description: "Test DROP", 
@@ -59,22 +55,21 @@ export const createFUSDDrop = async (signer, overrides = {}) => {
 
     withExclusiveWhitelist: withExclusiveWhitelist || false,
     exclusiveWhitelist: exclusiveWhitelist || defaultExclusiveWhitelist, 
-    whitelistTokenAmount: whitelistTokenAmount || 150.0,
+    whitelistTokenAmount: `${whitelistTokenAmount || 150.0}`,
     withWhitelist: withWhitelist || false, whitelist: whitelist || defaultWhitelist,
-    withIdenticalDistributor: withIdenticalDistributor || false, capacity: capacity || 2, amountPerEntry: amountPerEntry || 20.0,
-    withRandomDistributor: withRandomDistributor || false, totalRandomAmount: totalRandomAmount || 150.0,
-    withFloats: withFloats || false, threshold: threshold || 2, eventIDs: eventIDs || defaultEventIDs, eventHosts: eventHosts || defaultEventHosts,
-    withFloatGroup: withFloatGroup || false, floatGroupName: floatGroupName || defaultFloatGroupName, floatGroupHost: floatGroupHost || defaultFloatGroupHost
+    withIdenticalDistributor: withIdenticalDistributor || false, capacity: `${capacity || 2}`, amountPerEntry: `${amountPerEntry || 20.0}`,
+    withRandomDistributor: withRandomDistributor || false, totalRandomAmount: `${totalRandomAmount || 150.0}`,
+    withFloats: withFloats || false, threshold: `${threshold || 2}`, eventIDs: eventIDs || defaultEventIDs, eventHosts: eventHosts || defaultEventHosts
   }
 
-  const flowAmount = initFlowAmount ?? 100.0
-  const fusdAmount = initFUSDAmount ?? 1000.0
+  const flowAmount = `${initFlowAmount ?? 100.0}`
+  const fusdAmount = `${initFUSDAmount ?? 1000.0}`
 
   await mintFlow(signer, flowAmount)
   await setupFUSDVault(signer)
 
   await mintFUSD(await getCloudAdmin(), fusdAmount, signer)
-  await checkFUSDBalance(signer, fusdAmount)
+  await checkFUSDBalance(signer, parseFloat(fusdAmount))
 
   const [tx, error] = await createDrop(signer, Object.values(args))
   if (returnErr === true) {

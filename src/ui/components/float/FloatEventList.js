@@ -24,9 +24,6 @@ export default function FloatEventList(props) {
                         Name
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Groups
-                      </th>
-                      <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Created at
                       </th>
                     </tr>
@@ -42,11 +39,6 @@ export default function FloatEventList(props) {
                             <div className="ml-4">
                               <label className="block font-medium text-gray-900 break-words max-w-[300px]">{event.name}</label>
                             </div>
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <div className="text-gray-500">
-                            {event.groups.toString()}
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

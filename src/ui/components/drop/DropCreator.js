@@ -160,14 +160,6 @@ export default function DropCreator(props) {
   }
 
   const checkEligibilityParams = () => {
-    if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-      return EligibilityModeFLOATGroup.checkParams(
-        floatEvents, threshold,
-        packetMode, tokenBalance, capacity,
-        { identicalAmount: identicalAmount, totalAmount: totalAmount }
-      )
-    }
-
     if (eligibilityMode.key === EligibilityModeFLOAT.key) {
       return EligibilityModeFLOAT.checkParams(
         floatEvents, threshold,
@@ -237,10 +229,7 @@ export default function DropCreator(props) {
       withFloats: false,
       threshold: null,
       eventIDs: [],
-      eventHosts: [],
-      withFloatGroup: false,
-      floatGroupName: null,
-      floatGroupHost: null
+      eventHosts: []
     }
 
     if (eligibilityMode.key === EligibilityModeWhitelistWitAmount.key) {
@@ -265,11 +254,6 @@ export default function DropCreator(props) {
       params.eventIDs = eventIDs
       params.eventHosts = eventHosts
 
-    } else if (eligibilityMode.key === EligibilityModeFLOATGroup.key) {
-      params.withFloatGroup = true
-      params.threshold = threshold
-      params.floatGroupName = floatGroup.groupName
-      params.floatGroupHost = floatGroup.groupHost
     }
 
     if (packetMode && packetMode.key === PacketModeIdentical.key) {
@@ -323,7 +307,7 @@ export default function DropCreator(props) {
       )
     }
 
-    if (mode.key === EligibilityModeFLOAT.key || mode.key === EligibilityModeFLOATGroup.key) {
+    if (mode.key === EligibilityModeFLOAT.key) {
       return (
         <FloatReviewer
           floatMode={mode.detail}

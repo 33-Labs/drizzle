@@ -2,7 +2,6 @@ import FLOAT from "../../contracts/float/FLOAT.cdc"
 import FLOATVerifiers from "../../contracts/float/FLOATVerifiers.cdc"
 import NonFungibleToken from "../../contracts/core/NonFungibleToken.cdc"
 import MetadataViews from "../../contracts/core/MetadataViews.cdc"
-import GrantedAccountAccess from "../../contracts/float/GrantedAccountAccess.cdc"
 import FlowToken from "../../contracts/core/FlowToken.cdc"
 
 transaction(eventId: UInt64, host: Address, secret: String?) {
@@ -24,13 +23,6 @@ transaction(eventId: UInt64, host: Address, secret: String?) {
       acct.save(<- FLOAT.createEmptyFLOATEventCollection(), to: FLOAT.FLOATEventsStoragePath)
       acct.link<&FLOAT.FLOATEvents{FLOAT.FLOATEventsPublic, MetadataViews.ResolverCollection}>
                 (FLOAT.FLOATEventsPublicPath, target: FLOAT.FLOATEventsStoragePath)
-    }
-
-    // SETUP SHARED MINTING
-    if acct.borrow<&GrantedAccountAccess.Info>(from: GrantedAccountAccess.InfoStoragePath) == nil {
-        acct.save(<- GrantedAccountAccess.createInfo(), to: GrantedAccountAccess.InfoStoragePath)
-        acct.link<&GrantedAccountAccess.Info{GrantedAccountAccess.InfoPublic}>
-                (GrantedAccountAccess.InfoPublicPath, target: GrantedAccountAccess.InfoStoragePath)
     }
 
     let FLOATEvents = getAccount(host).getCapability(FLOAT.FLOATEventsPublicPath)

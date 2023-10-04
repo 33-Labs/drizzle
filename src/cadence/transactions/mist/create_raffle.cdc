@@ -32,11 +32,7 @@ transaction(
     withFloats: Bool,
     threshold: UInt32?,
     eventIDs: [UInt64],
-    eventHosts: [Address],
-
-    withFloatGroup: Bool,
-    floatGroupName: String?,
-    floatGroupHost: Address?
+    eventHosts: [Address]
 ) {
     let raffleCollection: &Mist.RaffleCollection
     let nftCollectionRef: &ExampleNFT.Collection
@@ -112,16 +108,6 @@ transaction(
             }
             verifier = EligibilityVerifiers.FLOATsV2(
                 events: events,
-                mintedBefore: getCurrentBlock().timestamp,
-                threshold: threshold!
-            )
-        } else if withFloatGroup {
-            let groupData = EligibilityVerifiers.FLOATGroupData(
-                host: floatGroupHost!,
-                name: floatGroupName!
-            )
-            verifier = EligibilityVerifiers.FLOATGroupV2(
-                group: groupData,
                 mintedBefore: getCurrentBlock().timestamp,
                 threshold: threshold!
             )

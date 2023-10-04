@@ -3,7 +3,7 @@ import {
   emulator,
   init,
   getAccountAddress,
-} from "flow-js-testing";
+} from "@onflow/flow-js-testing";
 import {
   checkFUSDBalance,
   deployCoreContracts,
@@ -34,7 +34,6 @@ import {
   FLOAT_claim,
   FLOAT_createEventsWithGroup,
   FLOAT_getEventIDs,
-  FLOAT_getEventsInGroup,
   FLOAT_getFLOATIDs,
   FLOAT_setupAccount,
   FLOAT_transfer
@@ -59,7 +58,7 @@ describe("Deployment", () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     return await new Promise(r => setTimeout(r, 2000));
   })
 
@@ -78,7 +77,7 @@ describe("Drop - WhitelistWithAmount", () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     await new Promise(r => setTimeout(r, 2000));
     return await deployContracts()
   })
@@ -102,14 +101,14 @@ describe("Drop - WhitelistWithAmount", () => {
     const Bob = await getAccountAddress("Bob")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const drop = await getDrop(dropID, Alice)
     expect(parseFloat(drop.claimedAmount)).toBe(0.0)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(preClaimed.availability.status.rawValue).toBe(0)
-    expect(preClaimed.eligibility.status.rawValue).toBe(0)
+    expect(preClaimed.availability.status.rawValue).toBe("0")
+    expect(preClaimed.eligibility.status.rawValue).toBe("0")
     const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)
     expect(eligibleAmount).toBe(100.0)
 
@@ -125,8 +124,8 @@ describe("Drop - WhitelistWithAmount", () => {
     expect(dropBalance).toBe(150.0 - eligibleAmount)
 
     const postClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(postClaimed.availability.status.rawValue).toBe(0)
-    expect(postClaimed.eligibility.status.rawValue).toBe(2)
+    expect(postClaimed.availability.status.rawValue).toBe("0")
+    expect(postClaimed.eligibility.status.rawValue).toBe("2")
 
     const record = await getClaimedRecord(dropID, Alice, Bob)
     expect(record.address).toBe(Bob)
@@ -147,19 +146,19 @@ describe("Drop - WhitelistWithAmount", () => {
     const Dave = await getAccountAddress("Dave")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const [, error] = await claimDrop(dropID, Alice, Dave)
     expect(error.includes("not eligible")).toBeTruthy()
   })
 })
 
-describe("DROP - Time Limit", () => {
+describe("Drop - Time Limit", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     await new Promise(r => setTimeout(r, 2000));
     return await deployContracts()
   })
@@ -176,7 +175,7 @@ describe("DROP - Time Limit", () => {
     const Bob = await getAccountAddress("Bob")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("not start yet")).toBeTruthy()
@@ -189,7 +188,7 @@ describe("DROP - Time Limit", () => {
     const Bob = await getAccountAddress("Bob")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("expired")).toBeTruthy()
@@ -197,28 +196,30 @@ describe("DROP - Time Limit", () => {
 
   it("Time Limit - Should be ok to claim the drop within the time window", async () => {
     const Alice = await getAccountAddress("Alice")
+    const startAt = (new Date()).getTime() / 1000 - 1000
+    const endAt = (new Date()).getTime() / 1000 + 1000
     await createFUSDDrop(Alice, {
       withExclusiveWhitelist: true, 
-      startAt: (new Date()).getTime() / 1000 - 1000,
-      endAt: (new Date()).getTime() / 1000 + 1000
+      startAt: `${startAt}`,
+      endAt: `${endAt}`
     })
 
     const Bob = await getAccountAddress("Bob")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error).toBeNull()
   })
 })
 
-describe("DROP - Management", () => {
+describe("Drop - Management", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     await new Promise(r => setTimeout(r, 2000));
     return await deployContracts()
   })
@@ -251,7 +252,7 @@ describe("DROP - Management", () => {
     const Bob = await getAccountAddress("Bob")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     await togglePause(dropID, Alice)
 
@@ -275,7 +276,7 @@ describe("DROP - Management", () => {
     await createFUSDDrop(Alice, { withExclusiveWhitelist: true, exclusiveWhitelist: whitelist })
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("must be less than or equal than")).toBeTruthy()
@@ -292,7 +293,7 @@ describe("DROP - Management", () => {
     await createFUSDDrop(Alice, { withExclusiveWhitelist: true })
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const FUSDInfo = await getFUSDInfo()
 
@@ -315,7 +316,7 @@ describe("DROP - Management", () => {
     await createFUSDDrop(Alice, { withExclusiveWhitelist: true })
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const FUSDInfo = await getFUSDInfo()
 
@@ -345,7 +346,7 @@ describe("Drop - Whitelist", () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     await new Promise(r => setTimeout(r, 2000));
     return await deployContracts()
   })
@@ -380,14 +381,14 @@ describe("Drop - Whitelist", () => {
     }) 
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const drop = await getDrop(dropID, Alice)
     expect(parseFloat(drop.claimedAmount)).toBe(0.0)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(preClaimed.availability.status.rawValue).toBe(0)
-    expect(preClaimed.eligibility.status.rawValue).toBe(0)
+    expect(preClaimed.availability.status.rawValue).toBe("0")
+    expect(preClaimed.eligibility.status.rawValue).toBe("0")
     const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)
     expect(eligibleAmount).toBe(20.0)
 
@@ -397,8 +398,8 @@ describe("Drop - Whitelist", () => {
     await checkFUSDBalance(Bob, eligibleAmount)
 
     const postClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(postClaimed.availability.status.rawValue).toBe(0)
-    expect(postClaimed.eligibility.status.rawValue).toBe(2)
+    expect(postClaimed.availability.status.rawValue).toBe("0")
+    expect(postClaimed.eligibility.status.rawValue).toBe("2")
 
     const record = await getClaimedRecord(dropID, Alice, Bob)
     expect(record.address).toBe(Bob)
@@ -414,7 +415,7 @@ describe("Drop - Whitelist", () => {
     await createFUSDDrop(Alice, { withWhitelist: true, withIdenticalDistributor: true }) 
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const [, error] = await claimDrop(dropID, Alice, Dave)
     expect(error.includes("not eligible")).toBeTruthy()
@@ -426,7 +427,7 @@ describe("EC - FLOAT", () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     await new Promise(r => setTimeout(r, 2000));
     return await deployContracts()
   })
@@ -442,244 +443,12 @@ describe("EC - FLOAT", () => {
   })
 })
 
-describe("Drop - FLOATGroup", () => {
-  beforeEach(async () => {
-    const basePath = path.resolve(__dirname, "..")
-    const port = 8080
-    await init(basePath, { port })
-    await emulator.start(port)
-    await new Promise(r => setTimeout(r, 2000));
-    await deployContracts()
-    const FLOATCreator = await getAccountAddress("FLOATCreator")
-    return await FLOAT_createEventsWithGroup(FLOATCreator)
-  })
-
-  afterEach(async () => {
-    await emulator.stop();
-    return await new Promise(r => setTimeout(r, 2000));
-  })
-
-  it("FLOATGroup - Should be ok if we create drop with valid params", async () => {
-    const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
-  })
-
-  it("FLOATGroup - Should be ok for eligible claimers to claim their reward", async () => {
-    const FLOATCreator = await getAccountAddress("FLOATCreator")
-    // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
-
-    const threshold = 2
-    const Bob = await getAccountAddress("Bob")
-    for (let i = 0; i < threshold; i++) {
-      const event = events[i]
-      await FLOAT_claim(Bob, event.eventId, FLOATCreator)
-    }
-    const floatIDs = await FLOAT_getFLOATIDs(Bob)
-    expect(floatIDs.length).toBe(threshold)
-
-    const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
-
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-
-    const drop = await getDrop(dropID, Alice)
-    expect(parseFloat(drop.claimedAmount)).toBe(0.0)
-    expect(threshold).toBe(Object.values(drop.verifiers)[0][0].threshold)
-
-    const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(preClaimed.availability.status.rawValue).toBe(0)
-    expect(preClaimed.eligibility.status.rawValue).toBe(0)
-    const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)
-    expect(eligibleAmount).toBe(20.0)
-
-    const [, error] = await claimDrop(dropID, Alice, Bob)
-    expect(error).toBeNull()
-
-    await checkFUSDBalance(Bob, eligibleAmount)
-
-    const postClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(postClaimed.availability.status.rawValue).toBe(0)
-    expect(postClaimed.eligibility.status.rawValue).toBe(2)
-
-    const record = await getClaimedRecord(dropID, Alice, Bob)
-    expect(record.address).toBe(Bob)
-    expect(parseFloat(record.amount)).toBe(eligibleAmount)
-
-    const postDrop = await getDrop(dropID, Alice)
-    expect(parseFloat(postDrop.claimedAmount)).toBe(eligibleAmount)
-  })
-
-  it("FLOATGroup - What's matters is the amount of events, rather than the amount of FLOATs", async () => {
-    const FLOATCreator = await getAccountAddress("FLOATCreator")
-    // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
-
-    const threshold = 2
-    const Bob = await getAccountAddress("Bob")
-    const Carl = await getAccountAddress("Carl")
-    const event = events[0]
-    await FLOAT_claim(Bob, event.eventId, FLOATCreator)
-    await FLOAT_claim(Carl, event.eventId, FLOATCreator)
-
-    const floatIDsCarl = await FLOAT_getFLOATIDs(Carl)
-    expect(floatIDsCarl.length).toBe(1)
-
-    const floatIDCarl = floatIDsCarl[0]
-    await FLOAT_transfer(Carl, floatIDCarl, Bob)
-
-    const floatIDs = await FLOAT_getFLOATIDs(Bob)
-    expect(floatIDs.length).toBe(2)
-
-    const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
-
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-
-    const drop = await getDrop(dropID, Alice)
-    const [, error] = await claimDrop(dropID, Alice, Bob)
-    expect(error.includes("not eligible")).toBeTruthy()
-  })
-
-
-  it("FLOATGroup - Should not be ok for claimers to claim if they are not meet the threshold", async () => {
-    const FLOATCreator = await getAccountAddress("FLOATCreator")
-    // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
-
-    const Bob = await getAccountAddress("Bob")
-    await FLOAT_claim(Bob, events[0].eventId, FLOATCreator)
-
-    const floatIDs = await FLOAT_getFLOATIDs(Bob)
-    expect(floatIDs.length).toBe(1)
-
-    const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
-
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-
-    const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(2)
-
-    const [, error] = await claimDrop(dropID, Alice, Bob)
-    expect(error.includes("not eligible")).toBeTruthy()
-  })
-
-  it("FLOATGroup - Should not be ok for claimers to claim if they mint to reach the threshold after the creation of DROP", async () => {
-    const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
-    await new Promise(r => setTimeout(r, 2000));
-
-    const Bob = await getAccountAddress("Bob")
-
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-
-    const drop = await getDrop(dropID, Alice)
-    const threshold = Object.values(drop.verifiers)[0][0].threshold
-    expect(threshold).toBe(2)
-
-    const FLOATCreator = await getAccountAddress("FLOATCreator")
-    // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
-
-    for (let i = 0; i < threshold; i++) {
-      const event = events[i]
-      await FLOAT_claim(Bob, event.eventId, FLOATCreator)
-    }
-
-    const floatIDs = await FLOAT_getFLOATIDs(Bob)
-    expect(floatIDs.length).toBe(threshold)
-
-    const [, error] = await claimDrop(dropID, Alice, Bob)
-    expect(error.includes("not eligible")).toBeTruthy()
-  })
-
-  it("FLOATGroup - Should not be ok for claimers to claim if the FLOATs have been used", async () => {
-    const Alice = await getAccountAddress("Alice")
-    const Bob = await getAccountAddress("Bob")
-    const FLOATCreator = await getAccountAddress("FLOATCreator")
-    // We have 3 events by default, and we need 2 of them to be eligible
-    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
-    expect(eventIDs.length).toBe(3)
-    const threshold = 2
-  
-    for (let i = 0; i < threshold; i++) {
-      await FLOAT_claim(Bob, eventIDs[i], FLOATCreator)
-    }
-  
-    const floatIDs = await FLOAT_getFLOATIDs(Bob)
-    expect(floatIDs.length).toBe(threshold)
-
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
-  
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-  
-    const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
-    expect(threshold).toBe(2)
-  
-    const [, error] = await claimDrop(dropID, Alice, Bob)
-    expect(error).toBeNull()
-
-    const Carl = await getAccountAddress("Carl")
-    await FLOAT_setupAccount(Carl)
-    for (let i = 0; i < floatIDs.length; i++) {
-      await FLOAT_transfer(Bob, floatIDs[i], Carl)
-    }
-    const [, errorCarl] = await claimDrop(dropID, Alice, Carl)
-    expect(errorCarl.includes("not eligible")).toBeTruthy()
-  })
-
-  it("FLOATGroup - Should be ok for claimers to claim if the FLOATs are transferred after the creation of DROP", async () => {
-    const Alice = await getAccountAddress("Alice")
-    const Bob = await getAccountAddress("Bob")
-    const FLOATCreator = await getAccountAddress("FLOATCreator")
-    // We have 3 events by default, and we need 2 of them to be eligible
-    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
-    expect(eventIDs.length).toBe(3)
-    const threshold = 2
-  
-    for (let i = 0; i < threshold; i++) {
-      await FLOAT_claim(Bob, eventIDs[i], FLOATCreator)
-    }
-  
-    const floatIDs = await FLOAT_getFLOATIDs(Bob)
-    expect(floatIDs.length).toBe(threshold)
-
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
-  
-    const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
-  
-    const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
-    expect(threshold).toBe(2)
-  
-    const Carl = await getAccountAddress("Carl")
-    await FLOAT_setupAccount(Carl)
-    for (let i = 0; i < floatIDs.length; i++) {
-      await FLOAT_transfer(Bob, floatIDs[i], Carl)
-    }
-    const [, errorCarl] = await claimDrop(dropID, Alice, Carl)
-    expect(errorCarl).toBeNull()
-  })
-})
-
 describe("Drop - FLOATs", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     await new Promise(r => setTimeout(r, 2000));
     await deployContracts()
     const creator = await getAccountAddress("FLOATCreator")
@@ -720,15 +489,15 @@ describe("Drop - FLOATs", () => {
     await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true }) 
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const drop = await getDrop(dropID, Alice)
     expect(parseFloat(drop.claimedAmount)).toBe(0.0)
-    expect(threshold).toBe(Object.values(drop.verifiers)[0][0].threshold)
+    expect(`${threshold}`).toBe(Object.values(drop.verifiers)[0][0].threshold)
 
     const preClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(preClaimed.availability.status.rawValue).toBe(0)
-    expect(preClaimed.eligibility.status.rawValue).toBe(0)
+    expect(preClaimed.availability.status.rawValue).toBe("0")
+    expect(preClaimed.eligibility.status.rawValue).toBe("0")
     const eligibleAmount = parseFloat(preClaimed.eligibility.eligibleAmount)
     expect(eligibleAmount).toBe(20.0)
 
@@ -738,8 +507,8 @@ describe("Drop - FLOATs", () => {
     await checkFUSDBalance(Bob, eligibleAmount)
 
     const postClaimed = await getClaimStatus(dropID, Alice, Bob)
-    expect(postClaimed.availability.status.rawValue).toBe(0)
-    expect(postClaimed.eligibility.status.rawValue).toBe(2)
+    expect(postClaimed.availability.status.rawValue).toBe("0")
+    expect(postClaimed.eligibility.status.rawValue).toBe("2")
 
     const record = await getClaimedRecord(dropID, Alice, Bob)
     expect(record.address).toBe(Bob)
@@ -768,7 +537,7 @@ describe("Drop - FLOATs", () => {
     await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true }) 
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error).toBeNull()
@@ -796,10 +565,10 @@ describe("Drop - FLOATs", () => {
     await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true }) 
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(2)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe("2")
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("not eligible")).toBeTruthy()
@@ -813,11 +582,11 @@ describe("Drop - FLOATs", () => {
     const Bob = await getAccountAddress("Bob")
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const drop = await getDrop(dropID, Alice)
     const threshold = Object.values(drop.verifiers)[0][0].threshold
-    expect(threshold).toBe(2)
+    expect(threshold).toBe("2")
 
     const FLOATCreator = await getAccountAddress("FLOATCreator")
     // We have 3 events by default, and we need 2 of them to be eligible
@@ -829,7 +598,7 @@ describe("Drop - FLOATs", () => {
     }
 
     const floatIDs = await FLOAT_getFLOATIDs(Bob)
-    expect(floatIDs.length).toBe(threshold)
+    expect(floatIDs.length).toBe(parseInt(threshold))
 
     const [, error] = await claimDrop(dropID, Alice, Bob)
     expect(error.includes("not eligible")).toBeTruthy()
@@ -854,10 +623,10 @@ describe("Drop - FLOATs", () => {
     await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true }) 
   
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
   
     const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(`${threshold}`)
     expect(threshold).toBe(2)
   
     const [, error] = await claimDrop(dropID, Alice, Bob)
@@ -892,10 +661,10 @@ describe("Drop - FLOATs", () => {
     await new Promise(r => setTimeout(r, 2000));
   
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
   
     const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(`${threshold}`)
     expect(threshold).toBe(2)
   
     const Carl = await getAccountAddress("Carl")
@@ -913,11 +682,11 @@ describe("Drop - Identical Packet", () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     await new Promise(r => setTimeout(r, 2000));
     await deployContracts()
     const FLOATCreator = await getAccountAddress("FLOATCreator")
-    return await FLOAT_createEventsWithGroup(FLOATCreator)
+    return await createDefaultEvents(FLOATCreator)
   })
 
   afterEach(async () => {
@@ -928,18 +697,18 @@ describe("Drop - Identical Packet", () => {
   it("Identical Packet - All the claimer's reward should be the same", async () => {
     const FLOATCreator = await getAccountAddress("FLOATCreator")
     // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
 
     const threshold = 2
     const Bob = await getAccountAddress("Bob")
     const Carl = await getAccountAddress("Carl")
     const Dave = await getAccountAddress("Dave")
     for (let i = 0; i < threshold; i++) {
-      const event = events[i]
-      await FLOAT_claim(Bob, event.eventId, FLOATCreator)
-      await FLOAT_claim(Carl, event.eventId, FLOATCreator)
-      await FLOAT_claim(Dave, event.eventId, FLOATCreator)
+      const eventID = eventIDs[i]
+      await FLOAT_claim(Bob, eventID, FLOATCreator)
+      await FLOAT_claim(Carl, eventID, FLOATCreator)
+      await FLOAT_claim(Dave, eventID, FLOATCreator)
     }
 
     const floatIDsOfBob = await FLOAT_getFLOATIDs(Bob)
@@ -950,26 +719,26 @@ describe("Drop - Identical Packet", () => {
     expect(floatIDsOfDave.length).toBe(threshold)
 
     const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true, capacity: 3 })
+    await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true, capacity: 3 })
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const preClaimedBob = await getClaimStatus(dropID, Alice, Bob)
-    expect(preClaimedBob.availability.status.rawValue).toBe(0)
-    expect(preClaimedBob.eligibility.status.rawValue).toBe(0)
+    expect(preClaimedBob.availability.status.rawValue).toBe("0")
+    expect(preClaimedBob.eligibility.status.rawValue).toBe("0")
     const eligibleAmountBob = parseFloat(preClaimedBob.eligibility.eligibleAmount)
     expect(eligibleAmountBob).toBe(20.0)
 
     const preClaimedCarl = await getClaimStatus(dropID, Alice, Carl)
-    expect(preClaimedCarl.availability.status.rawValue).toBe(0)
-    expect(preClaimedCarl.eligibility.status.rawValue).toBe(0)
+    expect(preClaimedCarl.availability.status.rawValue).toBe("0")
+    expect(preClaimedCarl.eligibility.status.rawValue).toBe("0")
     const eligibleAmountCarl = parseFloat(preClaimedCarl.eligibility.eligibleAmount)
     expect(eligibleAmountCarl).toBe(eligibleAmountBob)
 
     const preClaimedDave = await getClaimStatus(dropID, Alice, Dave)
-    expect(preClaimedDave.availability.status.rawValue).toBe(0)
-    expect(preClaimedDave.eligibility.status.rawValue).toBe(0)
+    expect(preClaimedDave.availability.status.rawValue).toBe("0")
+    expect(preClaimedDave.eligibility.status.rawValue).toBe("0")
     const eligibleAmountDave = parseFloat(preClaimedDave.eligibility.eligibleAmount)
     expect(eligibleAmountDave).toBe(eligibleAmountBob)
 
@@ -988,18 +757,18 @@ describe("Drop - Identical Packet", () => {
   it("Identical Packet - Should not be ok for claimers to claim if the DROP run out of capacity", async () => {
     const FLOATCreator = await getAccountAddress("FLOATCreator")
     // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
 
     const threshold = 2
     const Bob = await getAccountAddress("Bob")
     const Carl = await getAccountAddress("Carl")
     const Dave = await getAccountAddress("Dave")
     for (let i = 0; i < threshold; i++) {
-      const event = events[i]
-      await FLOAT_claim(Bob, event.eventId, FLOATCreator)
-      await FLOAT_claim(Carl, event.eventId, FLOATCreator)
-      await FLOAT_claim(Dave, event.eventId, FLOATCreator)
+      const eventID = eventIDs[i]
+      await FLOAT_claim(Bob, eventID, FLOATCreator)
+      await FLOAT_claim(Carl, eventID, FLOATCreator)
+      await FLOAT_claim(Dave, eventID, FLOATCreator)
     }
 
     const floatIDsOfBob = await FLOAT_getFLOATIDs(Bob)
@@ -1010,13 +779,13 @@ describe("Drop - Identical Packet", () => {
     expect(floatIDsOfDave.length).toBe(threshold)
 
     const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withIdenticalDistributor: true })
+    await createFUSDDrop(Alice, { withFloats: true, withIdenticalDistributor: true })
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(`${threshold}`)
 
     const [, errorBob] = await claimDrop(dropID, Alice, Bob)
     expect(errorBob).toBeNull()
@@ -1029,16 +798,16 @@ describe("Drop - Identical Packet", () => {
   })
 })
 
-describe("Drop - Random Packet", () => {
+describe.only("Drop - Random Packet", () => {
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "..")
     const port = 8080
     await init(basePath, { port })
-    await emulator.start(port)
+    await emulator.start()
     await new Promise(r => setTimeout(r, 2000));
     await deployContracts()
     const FLOATCreator = await getAccountAddress("FLOATCreator")
-    return await FLOAT_createEventsWithGroup(FLOATCreator)
+    return await createDefaultEvents(FLOATCreator)
   })
 
   afterEach(async () => {
@@ -1049,18 +818,18 @@ describe("Drop - Random Packet", () => {
   it("Random Packet - Claimer's reward should be random", async () => {
     const FLOATCreator = await getAccountAddress("FLOATCreator")
     // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
 
     const threshold = 2
     const Bob = await getAccountAddress("Bob")
     const Carl = await getAccountAddress("Carl")
     const Dave = await getAccountAddress("Dave")
     for (let i = 0; i < threshold; i++) {
-      const event = events[i]
-      await FLOAT_claim(Bob, event.eventId, FLOATCreator)
-      await FLOAT_claim(Carl, event.eventId, FLOATCreator)
-      await FLOAT_claim(Dave, event.eventId, FLOATCreator)
+      const eventID = eventIDs[i]
+      await FLOAT_claim(Bob, eventID, FLOATCreator)
+      await FLOAT_claim(Carl, eventID, FLOATCreator)
+      await FLOAT_claim(Dave, eventID, FLOATCreator)
     }
 
     const floatIDsOfBob = await FLOAT_getFLOATIDs(Bob)
@@ -1071,10 +840,10 @@ describe("Drop - Random Packet", () => {
     expect(floatIDsOfDave.length).toBe(threshold)
 
     const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withRandomDistributor: true, capacity: 3})
+    await createFUSDDrop(Alice, { withFloats: true, withRandomDistributor: true, capacity: 3})
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const [, errorBob] = await claimDrop(dropID, Alice, Bob)
     expect(errorBob).toBeNull()
@@ -1099,18 +868,18 @@ describe("Drop - Random Packet", () => {
   it("Random Packet - Should not be ok for claimers to claim if the DROP run out of capacity", async () => {
     const FLOATCreator = await getAccountAddress("FLOATCreator")
     // We have 3 events by default, and we need 2 of them to be eligible
-    const events = await FLOAT_getEventsInGroup(FLOATCreator, "GTEST")
-    expect(events.length).toBe(3)
+    const eventIDs = await FLOAT_getEventIDs(FLOATCreator)
+    expect(eventIDs.length).toBe(3)
 
     const threshold = 2
     const Bob = await getAccountAddress("Bob")
     const Carl = await getAccountAddress("Carl")
     const Dave = await getAccountAddress("Dave")
     for (let i = 0; i < threshold; i++) {
-      const event = events[i]
-      await FLOAT_claim(Bob, event.eventId, FLOATCreator)
-      await FLOAT_claim(Carl, event.eventId, FLOATCreator)
-      await FLOAT_claim(Dave, event.eventId, FLOATCreator)
+      const eventID = eventIDs[i]
+      await FLOAT_claim(Bob, eventID, FLOATCreator)
+      await FLOAT_claim(Carl, eventID, FLOATCreator)
+      await FLOAT_claim(Dave, eventID, FLOATCreator)
     }
 
     const floatIDsOfBob = await FLOAT_getFLOATIDs(Bob)
@@ -1121,13 +890,13 @@ describe("Drop - Random Packet", () => {
     expect(floatIDsOfDave.length).toBe(threshold)
 
     const Alice = await getAccountAddress("Alice")
-    await createFUSDDrop(Alice, { withFloatGroup: true, withRandomDistributor: true })
+    await createFUSDDrop(Alice, { withFloats: true, withRandomDistributor: true })
 
     const drops = await getAllDrops(Alice)
-    const dropID = parseInt(Object.keys(drops)[0])
+    const dropID = Object.keys(drops)[0]
 
     const drop = await getDrop(dropID, Alice)
-    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(threshold)
+    expect(Object.values(drop.verifiers)[0][0].threshold).toBe(`${threshold}`)
 
     const [, errorBob] = await claimDrop(dropID, Alice, Bob)
     expect(errorBob).toBeNull()

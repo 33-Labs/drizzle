@@ -1,4 +1,4 @@
-import { executeScript, sendTransaction, shallPass } from "flow-js-testing"
+import { executeScript, sendTransaction, shallPass } from "@onflow/flow-js-testing";
 
 export const NFT_setupExampleNFTCollection = async (signer) => {
   const signers = [signer]

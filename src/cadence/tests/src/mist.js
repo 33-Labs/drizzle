@@ -1,4 +1,4 @@
-import { builtInMethods, executeScript, getAccountAddress, mintFlow, sendTransaction, shallPass, shallResolve } from "flow-js-testing"
+import { builtInMethods, executeScript, getAccountAddress, mintFlow, sendTransaction, shallPass, shallResolve } from "@onflow/flow-js-testing";
 import { getMistAdmin } from "./common"
 import { NFT_mintExampleNFT, NFT_setupExampleNFTCollection } from "./examplenft"
 import { FLOAT_getEventIDs } from "./float"
@@ -29,24 +29,20 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
     rewardTokenIDs,
     withWhitelist, whitelist,
     withFloats, threshold, eventIDs, eventHosts,
-    withFloatGroup, floatGroupName, floatGroupHost,
     returnErr} = overrides
 
-  const needFloats = withFloats || withFloatGroup
+  const needFloats = withFloats
   const creator = await getAccountAddress("FLOATCreator")
   const defaultEventIDs = needFloats ? await FLOAT_getEventIDs(creator) : []
   const defaultEventHosts = needFloats ? [creator, creator, creator] : []
 
-  const defaultFloatGroupName = "GTEST"
-  const defaultFloatGroupHost = creator
-  
   const args = {
     name: "TEST", 
     description: "Test DROP", 
     image: image || null, url: url || null,
     startAt: startAt || null, endAt: endAt || null,
-    registrationEndAt: registrationEndAt || (new Date()).getTime() / 1000 + 2, 
-    numberOfWinners: numberOfWinners || 2,
+    registrationEndAt: `${registrationEndAt || (new Date()).getTime() / 1000 + 2}`,
+    numberOfWinners: `${numberOfWinners || 2}`,
     nftName: nftInfo.nftName,
     nftTypeIdentifer: nftInfo.nftTypeIdentifer,
     nftContractName: nftInfo.nftContractName,
@@ -58,11 +54,10 @@ export const createExampleNFTRaffle = async (signer, overrides = {}) => {
     nftCollectionStoragePath: nftInfo.nftCollectionStoragePath,
     rewardTokenIDs: rewardTokenIDs || [],
     withWhitelist: withWhitelist || false, whitelist: whitelist || defaultWhitelist,
-    withFloats: withFloats || false, threshold: threshold || 2, eventIDs: eventIDs || defaultEventIDs, eventHosts: eventHosts || defaultEventHosts,
-    withFloatGroup: withFloatGroup || false, floatGroupName: floatGroupName || defaultFloatGroupName, floatGroupHost: floatGroupHost || defaultFloatGroupHost
+    withFloats: withFloats || false, threshold: `${threshold || 2}`, eventIDs: eventIDs || defaultEventIDs, eventHosts: eventHosts || defaultEventHosts
   }
 
-  const flowAmount = initFlowAmount ?? 100.0
+  const flowAmount = initFlowAmount ?? "100.0"
 
   await mintFlow(signer, flowAmount)
 
@@ -122,7 +117,7 @@ export const toggleRafflePause = async (signer) => {
 export const registerRaffle = async (raffleID, host, registrator) => {
   const signers = [registrator]
   const name = "mist/register_raffle"
-  const args = [raffleID, host]
+  const args = [`${raffleID}`, host]
   return await sendTransaction({ name: name, signers: signers, args: args, transformers: [builtInMethods] })
 }
 

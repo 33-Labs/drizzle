@@ -18,7 +18,6 @@ export const getFloatEvent = async (eventHost, eventID) => {
       _dateCreated: event.dateCreated, 
       _description: event.description, 
       _eventId: event.eventId, 
-      _groups: event.getGroups(), 
       _host: event.host, 
       _image: event.image, 
       _name: event.name, 
@@ -32,7 +31,6 @@ export const getFloatEvent = async (eventHost, eventID) => {
     pub let dateCreated: UFix64
     pub let description: String 
     pub let eventId: UInt64
-    pub let groups: [String]
     pub let host: Address
     pub let image: String 
     pub let name: String
@@ -44,7 +42,6 @@ export const getFloatEvent = async (eventHost, eventID) => {
         _dateCreated: UFix64,
         _description: String, 
         _eventId: UInt64,
-        _groups: [String],
         _host: Address, 
         _image: String, 
         _name: String,
@@ -55,7 +52,6 @@ export const getFloatEvent = async (eventHost, eventID) => {
         self.dateCreated = _dateCreated
         self.description = _description
         self.eventId = _eventId
-        self.groups = _groups
         self.host = _host
         self.image = _image
         self.name = _name
@@ -97,7 +93,6 @@ export const getFloatEventsInGroup = async (eventHost, groupName) => {
         _dateCreated: event.dateCreated, 
         _description: event.description, 
         _eventId: event.eventId, 
-        _groups: event.getGroups(), 
         _host: event.host, 
         _image: event.image, 
         _name: event.name, 
@@ -116,7 +111,6 @@ export const getFloatEventsInGroup = async (eventHost, groupName) => {
     pub let dateCreated: UFix64
     pub let description: String 
     pub let eventId: UInt64
-    pub let groups: [String]
     pub let host: Address
     pub let image: String 
     pub let name: String
@@ -128,7 +122,6 @@ export const getFloatEventsInGroup = async (eventHost, groupName) => {
         _dateCreated: UFix64,
         _description: String, 
         _eventId: UInt64,
-        _groups: [String],
         _host: Address, 
         _image: String, 
         _name: String,
@@ -139,7 +132,6 @@ export const getFloatEventsInGroup = async (eventHost, groupName) => {
         self.dateCreated = _dateCreated
         self.description = _description
         self.eventId = _eventId
-        self.groups = _groups
         self.host = _host
         self.image = _image
         self.name = _name

@@ -135,78 +135,14 @@ export const EligibilityModeFLOAT = {
   }
 }
 
-export const EligibilityModeFLOATGroup = {
-  key: "FLOATGroup",
-  name: 'FLOAT Group',
-  intro: (type) => {
-    if (type === "DROP") {
-      return 'Distribute tokens to holders of FLOATs in specific FLOAT Group. FCFS'
-    }
-
-    if (type === "RAFFLE") {
-      return 'Holders of FLOATs in specific FLOAT Group is eligible for registration'
-    }
-
-    return ""
-  },
-  detail: FloatModeFloatGroup,
-  checkParams: (floatEvents, threshold, packetMode, totalBalance, capacity, amount = {}) => {
-    try {
-      const [valid, hint] = checkPacketMode(packetMode, totalBalance, capacity, amount)
-      if (!valid) {
-        throw hint
-      }
-
-      if (floatEvents.length == 0) {
-        throw Hints.EmptyFloatGroup
-      }
-
-      if (!threshold || isNaN(parseInt(threshold))) {
-        throw Hints.InvalidThreshold
-      }
-
-      const _threshold = new Decimal(threshold)
-      if (!(_threshold.isInteger() && _threshold.isPositive() && !_threshold.isZero() && _threshold.toNumber() <= floatEvents.length)) {
-        throw Hints.InvalidThreshold
-      }
-
-      return [true, Hints.Valid]
-    } catch (error) {
-      return [false, error]
-    }
-  },
-  checkRaffleParams: (floatEvents, threshold) => {
-    try {
-      if (floatEvents.length == 0) {
-        throw Hints.EmptyFloatGroup
-      }
-
-      if (!threshold || isNaN(parseInt(threshold))) {
-        throw Hints.InvalidThreshold
-      }
-
-      const _threshold = new Decimal(threshold)
-      if (!(_threshold.isInteger() && _threshold.isPositive() && !_threshold.isZero() && _threshold.toNumber() <= floatEvents.length)) {
-        throw Hints.InvalidThreshold
-      }
-
-      return [true, Hints.Valid]
-    } catch (error) {
-      return [false, error]
-    }
-  }
-}
-
 const dropModes = [
   EligibilityModeFLOAT,
-  EligibilityModeFLOATGroup,
   EligibilityModeWhitelist,
   EligibilityModeWhitelistWitAmount,
 ]
 
 const raffleModes = [
   EligibilityModeFLOAT,
-  EligibilityModeFLOATGroup,
   EligibilityModeWhitelist 
 ]
 

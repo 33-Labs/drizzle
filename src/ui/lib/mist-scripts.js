@@ -138,7 +138,7 @@ export const getNFTDisplays = async (account, nft) => {
   
         if let collection = getAccount(account).getCapability(${nft.collectionPublicPath}).borrow<&{${interfaces}}>() {
           for tokenID in collection.getIDs() {
-            if collection.borrowFLOAT(id: tokenID)!.getEventMetadata()?.transferrable == true {
+            if collection.borrowFLOAT(id: tokenID)!.getEventRef()?.transferrable == true {
                 let resolver = collection.borrowViewResolver(id: tokenID)
                 if let display = MetadataViews.getDisplay(resolver) {
                     NFTs[tokenID] = NFTDisplay(

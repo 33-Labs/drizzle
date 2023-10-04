@@ -62,13 +62,6 @@
                 "mainnet": "0x2d4c3caffbeab845"
             } 
         },
-        "GrantedAccountAccess": {
-            "source": "./contracts/float/GrantedAccountAccess.cdc",
-            "aliases": {
-                "testnet": "0x0afe396ebc8eee65",
-                "mainnet": "0x2d4c3caffbeab845"
-            } 
-        },
         "Distributors": {
             "source": "./contracts/Distributors.cdc",
             "aliases": {
@@ -112,16 +105,32 @@
 	},
 	"accounts": {
 		"emulator-account": {
-            "fromFile": "drizzle.private.json"
+			"address": "f8d6e0586b0a20c7",
+			"key": "fae10f262a46ca34e438a48daff66d6672340a49e634bb7d0f7f9eeb78d7fa1b"
 		},
         "drizzle-testnet": {
-            "fromFile": "drizzle.private.json"
+            "address": "dc34f5a7b807bcfb",
+            "key": {
+                "type": "file",
+                "location": "./drizzle-testnet.key"
+            }
         },
         "drizzle-testnet-2": {
-            "fromFile": "drizzle.private.json"
+            "address": "91c0d5719248ed76",
+            "key": {
+                "type": "file",
+                "location": "./drizzle-testnet-2.key"
+            }
         },
         "drizzle-mainnet": {
-            "fromFile": "drizzle.private.json"
+            "address": "39b144ab4d348e2b",
+            "key": {
+                "type": "file",
+                "index": 0,
+				"signatureAlgorithm": "ECDSA_secp256k1",
+				"hashAlgorithm": "SHA2_256",
+                "location": "./drizzle-mainnet.key"
+            }
         }
 	},
 	"deployments": {
