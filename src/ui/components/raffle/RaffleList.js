@@ -89,39 +89,39 @@ export default function RaffleList(props) {
                       raffle.status = status
                       return raffle
                     }).map((raffle) => (
-                      <Link key={`${raffle.raffleID}-link`} href={`${raffle.host}/raffles/${raffle.raffleID}`}>
-                        <tr key={raffle.raffleID}>
-                          <td className="py-4 px-3 text-sm">
-                            <div className="flex items-center">
-                              <div className="h-10 w-24 flex-shrink-0 relative">
-                                <Image className="rounded-lg" src={raffle.image ?? "/banner.png"} alt="" layout="fill" objectFit="contain" />
-                              </div>
-                              <div className="ml-4">
-                                <label className="block font-medium text-gray-900 break-words w-[120px] max-w-[300px] min-w-[60px]">{`${raffle.name}`}</label>
-                              </div>
+                      <tr key={raffle.raffleID} onClick={() => {
+                        router.push(`${raffle.host}/raffles/${raffle.raffleID}`)
+                      }}>
+                        <td className="py-4 px-3 text-sm">
+                          <div className="flex items-center">
+                            <div className="h-10 w-24 flex-shrink-0 relative">
+                              <Image className="rounded-lg" src={raffle.image ?? "/banner.png"} alt="" layout="fill" objectFit="contain" />
                             </div>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            <div className="text-gray-500">
-                              {raffle.nftInfo.name}
+                            <div className="ml-4">
+                              <label className="block font-medium text-gray-900 break-words w-[120px] max-w-[300px] min-w-[60px]">{`${raffle.name}`}</label>
                             </div>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {getVerifierType(raffle, "RAFFLE")}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {`${Object.keys(raffle.winners).length} / ${raffle.numberOfWinners} / ${Object.keys(raffle.registrationRecords).length}`}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${raffle.status.tagColor}`}>
-                              {raffle.status.title}
-                            </label>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {convertCadenceDateTime(raffle.createdAt).toLocaleString()}
-                          </td>
-                        </tr>
-                      </Link>
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <div className="text-gray-500">
+                            {raffle.nftInfo.name}
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {getVerifierType(raffle, "RAFFLE")}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {`${Object.keys(raffle.winners).length} / ${raffle.numberOfWinners} / ${Object.keys(raffle.registrationRecords).length}`}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${raffle.status.tagColor}`}>
+                            {raffle.status.title}
+                          </label>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {convertCadenceDateTime(raffle.createdAt).toLocaleString()}
+                        </td>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
