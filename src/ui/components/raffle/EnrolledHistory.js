@@ -4,6 +4,7 @@ import { convertCadenceDateTime, displayUsername, getItemsInPage } from '../../l
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/solid"
 import { nameServiceState } from "../../lib/atoms"
 import { useRecoilState } from "recoil"
+import { useRouter } from "next/router"
 
 const getStatusColor = (status) => {
   if (status == "YES") return "text-green-800 bg-green-100"
@@ -14,7 +15,8 @@ const getStatusColor = (status) => {
 
 export default function EnrolledHistory(props) {
   const { records, user, pageAccount } = props
-  const [nameService, ] = useRecoilState(nameServiceState)
+  const [nameService,] = useRecoilState(nameServiceState)
+  const router = useRouter()
 
   let isCurrentUser = false
   if (user && user.addr === pageAccount) {
@@ -50,7 +52,7 @@ export default function EnrolledHistory(props) {
                         Name
                       </th>
                       <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">
-                        Host 
+                        Host
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Reward NFT
@@ -68,32 +70,32 @@ export default function EnrolledHistory(props) {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {getItemsInPage(records, currentPage, pageSize).map((raffle) => (
-                      <Link key={`${raffle.raffleID}-link`} href={`${raffle.host.address}/raffles/${raffle.raffleID}`}>
-                        <tr key={raffle.raffleID}>
-                          <td className="py-4 px-3 text-sm sm:pl-6">
-                            <label className="block font-medium text-gray-900 break-words max-w-[300px] min-w-[60px]">{raffle.name}</label>
-                          </td>
-                          <td className="py-4 px-3 text-sm">
-                            <label className="block font-medium text-gray-500 break-words max-w-[300px] min-w-[60px]">{displayUsername(raffle.host, nameService)}</label>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            <div className="text-gray-500">
+                      <tr key={raffle.raffleID} onClick={() => {
+                        router.push(`${raffle.host.address}/raffles/${raffle.raffleID}`)
+                      }}>
+                        <td className="py-4 px-3 text-sm sm:pl-6">
+                          <label className="block font-medium text-gray-900 break-words max-w-[300px] min-w-[60px]">{raffle.name}</label>
+                        </td>
+                        <td className="py-4 px-3 text-sm">
+                          <label className="block font-medium text-gray-500 break-words max-w-[300px] min-w-[60px]">{displayUsername(raffle.host, nameService)}</label>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <div className="text-gray-500">
                             {raffle.nftName}
-                            </div>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {convertCadenceDateTime(raffle.registeredAt).toLocaleString()}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(raffle.status)}`}>
-                              {raffle.status}
-                            </label>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {raffle.claimedAt ? convertCadenceDateTime(raffle.claimedAt).toLocaleString() : null}
-                          </td>
-                        </tr>
-                      </Link>
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {convertCadenceDateTime(raffle.registeredAt).toLocaleString()}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <label className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(raffle.status)}`}>
+                            {raffle.status}
+                          </label>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {raffle.claimedAt ? convertCadenceDateTime(raffle.claimedAt).toLocaleString() : null}
+                        </td>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
@@ -135,7 +137,7 @@ export default function EnrolledHistory(props) {
         </div> :
         <div className="flex mb-10 justify-center">
           <label className="leading-[200px] font-flow font-medium text-base text-gray-500">
-          {isCurrentUser ? "You haven't enrolled any Raffle yet" : "This account haven't enrolled any Raffle yet"}
+            {isCurrentUser ? "You haven't enrolled any Raffle yet" : "This account haven't enrolled any Raffle yet"}
           </label>
         </div>}
     </div>
