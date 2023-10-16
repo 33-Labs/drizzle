@@ -12,6 +12,7 @@ import BasicNotification from '../components/common/BasicNotification'
 import publicConfig from '../publicConfig'
 import useSWRImmutable from 'swr'
 import { domainOfAddressesFetcher } from '../lib/utils'
+import { Analytics } from '@vercel/analytics/react'
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState({ loggedIn: null })
@@ -42,6 +43,7 @@ function MyApp({ Component, pageProps }) {
           <Footer />
           <TransactionNotification />
           <BasicNotification />
+          <Analytics />
         </RecoilRoot>
       </div>
     </>
