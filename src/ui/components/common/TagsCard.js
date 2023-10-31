@@ -25,8 +25,7 @@ const getEligibilityTag = ({drop, eligibilityMode, raffle}) => {
   if (drop || raffle) {
     return (
       <div
-        className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm"
-        data-tip="same amount to all users">
+        className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm">
         <label>
           {getVerifierType(drop ? drop : raffle, type)}
         </label>
@@ -37,8 +36,7 @@ const getEligibilityTag = ({drop, eligibilityMode, raffle}) => {
   if (eligibilityMode) {
     return (
       <div
-        className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm"
-        data-tip="same amount to all users">
+        className="px-2 bg-blue-300 rounded-full font-flow font-medium text-sm">
         <label>
           {getReviewerTitlePreview(eligibilityMode)}
         </label>
@@ -52,8 +50,7 @@ const getPacketTag = ({drop, packetMode}) => {
   if (drop) {
     return (
       <div
-        className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
-        data-tip="same amount to all users">
+        className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm">
         <label>
           {getDistributorType(drop)}
         </label>
@@ -63,8 +60,7 @@ const getPacketTag = ({drop, packetMode}) => {
 
   return (
     <div
-      className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm"
-      data-tip="same amount to all users">
+      className="tooltip px-2 bg-yellow-300 rounded-full font-flow font-medium text-sm">
       <label>
         {getPacketPreview(packetMode)}
       </label>
