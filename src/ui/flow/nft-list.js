@@ -151,7 +151,62 @@ export const mainnetNFTList = [
     logoURL: "/topshot.png",
     collectionPublicPath: "/public/MomentCollection",
     collectionStoragePath: "/storage/MomentCollection"
+  },
+  {
+    name: "Formula E: High Voltage",
+    nftType: "A.964f3bf23a966563.FEHVAsset.NFT",
+    contractName: "FEHVAsset",
+    contractAddress: "0x964f3bf23a966563",
+    collectionType: {
+      type: "A.964f3bf23a966563.FEHVAsset.Collection",
+      restrictions: [
+        "A.964f3bf23a966563.FEHVAsset.AssetCollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+        "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+      ]
+    },
+    logoURL: "/formula_e.png",
+    collectionPublicPath: "/public/FEHVAssetCollection",
+    collectionStoragePath: "/storage/FEHVAssetCollection"
+  },
+  {
+    name: "MotoGP Ignition Cards",
+    nftType: "A.a49cc0ee46c54bfb.MotoGPCard.NFT",
+    contractName: "MotoGPCard",
+    contractAddress: "0xa49cc0ee46c54bfb",
+    collectionType: {
+      type: "A.a49cc0ee46c54bfb.MotoGPCard.Collection",
+      restrictions: [
+        "A.a49cc0ee46c54bfb.MotoGPCard.ICardCollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+        "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+      ]
+    },
+    logoURL: "/motogp_card.jpg",
+    collectionPublicPath: "/public/motogpCardCollection",
+    collectionStoragePath: "/storage/motogpCardCollection"
+  },
+  {
+    name: "MotoGP Ignition Packs",
+    nftType: "A.a49cc0ee46c54bfb.MotoGPPack.NFT",
+    contractName: "MotoGPPack",
+    contractAddress: "0xa49cc0ee46c54bfb",
+    collectionType: {
+      type: "A.a49cc0ee46c54bfb.MotoGPPack.Collection",
+      restrictions: [
+        "A.a49cc0ee46c54bfb.MotoGPCard.IPackCollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.CollectionPublic",
+        "A.1d7e57aa55817448.NonFungibleToken.Receiver",
+        "A.1d7e57aa55817448.MetadataViews.ResolverCollection"
+      ]
+    },
+    logoURL: "/motogp_pack.jpg",
+    collectionPublicPath: "/public/motogpPackCollection",
+    collectionStoragePath: "/storage/motogpPackCollection"
   }
+
   // {
   //   name: "StarlyCard",
   //   nftType: "A.5b82f21c0edf76e3.StarlyCard.NFT",
