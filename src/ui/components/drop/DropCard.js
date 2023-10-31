@@ -71,7 +71,7 @@ const MemoizeBasicInfo = React.memo(({ nameService, host, createdAt, token, elig
             target="_blank"
             rel="noopener noreferrer"
             className="text-black underline decoration-drizzle-green decoration-2">
-              {typeof host == "string" ? host : displayUsername(host, nameService)}
+            {typeof host == "string" ? host : displayUsername(host, nameService)}
           </a>
         </span>
       </label>
@@ -84,10 +84,19 @@ const MemoizeBasicInfo = React.memo(({ nameService, host, createdAt, token, elig
 MemoizeBasicInfo.displayName = "MemoizeBasicInfo"
 
 const MemoizeDescription = React.memo(({ description }) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  let text = description || ""
+  const parts = text.split(urlRegex);
+
   return (
     <div className="w-full mb-10">
       <p className="w-full font-flow text-base break-words whitespace-pre-wrap">
-        {description}
+        {parts.map((part, index) =>
+          urlRegex.test(part) ?
+            <a className="text-drizzle-green" href={part} key={index}>{part}</a>
+            :
+            part
+        )}
       </p>
     </div>
   )
@@ -97,7 +106,7 @@ MemoizeDescription.displayName = "MemoizeDescription"
 export default function DropCard(props) {
   const [transactionInProgress, setTransactionInProgress] = useRecoilState(transactionInProgressState)
   const [, setTransactionStatus] = useRecoilState(transactionStatusState)
-  const [nameService, ] = useRecoilState(nameServiceState)
+  const [nameService,] = useRecoilState(nameServiceState)
 
   const isPreview = props.isPreview == true
   const setShowClaimedModal = props.setShowClaimedModal

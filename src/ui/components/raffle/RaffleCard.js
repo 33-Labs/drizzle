@@ -83,10 +83,19 @@ const MemoizeBasicInfo = React.memo(({ nameService, host, createdAt, nft, eligib
 MemoizeBasicInfo.displayName = "MemoizeBasicInfo"
 
 const MemoizeDescription = React.memo(({ description }) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  let text = description || ""
+  const parts = text.split(urlRegex);
+
   return (
     <div className="w-full mb-10">
       <p className="w-full font-flow text-base break-words whitespace-pre-wrap">
-        {description}
+        {parts.map((part, index) =>
+          urlRegex.test(part) ?
+            <a className="text-drizzle-green" href={part} key={index}>{part}</a>
+            :
+            part
+        )}
       </p>
     </div>
   )
