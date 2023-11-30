@@ -119,7 +119,7 @@ pub contract Distributors {
 
             let minAmount = 0.00000001
             let upperAmount = 2.0 * (availableAmount / UFix64(availableCapacity)) - minAmount
-            let amount = UFix64(unsafeRandom() / 100000000) / UFix64(UInt64.max / 100000000) * upperAmount
+            let amount = UFix64(revertibleRandom() / 100000000) / UFix64(UInt64.max / 100000000) * upperAmount
 
             // make sure no account will claim a 0 packet
             return amount < minAmount ? minAmount : amount
