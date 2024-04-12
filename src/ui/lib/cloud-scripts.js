@@ -184,7 +184,7 @@ export const queryBalance = async (token, address) => {
     
         let vaultRef = account
             .getCapability(${token.path.balance})
-            .borrow<&${token.contractName}.Vault{FungibleToken.Balance}>()
+            .borrow<&{FungibleToken.Balance}>()
          
         if let vault = vaultRef {
           return vault.balance
